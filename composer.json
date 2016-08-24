@@ -13,7 +13,15 @@
       "role": "Developer"
     }
   ],
-  "require": {},
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/greg-md/php-support"
+    }
+  ],
+  "require": {
+    "greg-md/php-support": "dev-master"
+  },
   "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
