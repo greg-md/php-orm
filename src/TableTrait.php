@@ -14,9 +14,13 @@ trait TableTrait
 
     protected $alias = null;
 
+    protected $label = null;
+
     protected $columns = [];
 
     protected $customColumnsTypes = [];
+
+    protected $nameColumn = null;
 
     protected $autoIncrement = null;
 
@@ -24,24 +28,110 @@ trait TableTrait
 
     protected $uniqueKeys = [];
 
-    protected $references = [];
-
-    protected $relationships = [];
-
-    protected $dependencies = [];
-
-    protected $relationshipsAliases = [];
-
-    protected $referencesAliases = [];
-
-    protected $nameColumn = null;
-
     protected $query = null;
 
     /**
      * @var StorageInterface|null
      */
     protected $storage = null;
+
+    public function setPrefix($name)
+    {
+        $this->prefix = (string)$name;
+
+        return $this;
+    }
+
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    public function setName($name)
+    {
+        $this->name = (string)$name;
+
+        return $this;
+    }
+
+    public function getName()
+    {
+        if (!$this->name) {
+            throw new \Exception('Table name is not defined.');
+        }
+
+        return $this->name;
+    }
+
+    public function fullName()
+    {
+        return $this->getPrefix() . $this->getName();
+    }
+
+    public function setAlias($name)
+    {
+        $this->alias = (string)$name;
+
+        return $this;
+    }
+
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    public function setLabel($name)
+    {
+        $this->label = (string)$name;
+
+        return $this;
+    }
+
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    public function addColumn(Column $column)
+    {
+        $this->columns[] = $column;
+
+        return $this;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    public function setCustomColumnType($key, $value)
+    {
+        $this->customColumnsTypes[$key] = (string)$value;
+
+        return $this;
+    }
+
+    public function getCustomColumnType($key)
+    {
+        return Arr::getRef($this->customColumnsTypes, $key);
+    }
+
+    public function getCustomColumnTypes()
+    {
+        return $this->customColumnsTypes;
+    }
+
+    public function setNameColumn($name)
+    {
+        $this->nameColumn = (string)$name;
+
+        return $this;
+    }
+
+    public function getNameColumn()
+    {
+        return $this->nameColumn;
+    }
 
     public function setAutoIncrement($columnName)
     {
@@ -82,7 +172,7 @@ trait TableTrait
         return Arr::firstRef($this->uniqueKeys);
     }
 
-    public function firstUniqueKeys()
+    public function firstUniqueIndex()
     {
         if ($autoIncrement = $this->getAutoIncrement()) {
             return [$autoIncrement];
@@ -99,11 +189,11 @@ trait TableTrait
         return array_keys($this->getColumns());
     }
 
-    public function combineFirstUniqueKeys($values)
+    public function combineFirstUniqueIndex($values)
     {
         $values = (array)$values;
 
-        if (!$keys = $this->firstUniqueKeys()) {
+        if (!$keys = $this->firstUniqueIndex()) {
             throw new \Exception('Table does not have primary keys.');
         }
 
@@ -201,7 +291,7 @@ trait TableTrait
 
         $query = $this->selectQuery();
 
-        $query->columns($query->concat($this->getFirstUniqueKeys(), ':'), $columnName);
+        $query->columns($query->concat($this->firstUniqueIndex(), ':'), $columnName);
 
         if ($whereIs) {
             $query->whereCols($whereIs);
@@ -217,161 +307,6 @@ trait TableTrait
     public function exists($column, $value)
     {
         return $this->selectQuery(new ExprQuery(1))->whereCol($column, $value)->exists();
-    }
-
-    public function fullName()
-    {
-        return $this->getPrefix() . $this->getName();
-    }
-
-    public function setPrefix($name)
-    {
-        $this->prefix = (string)$name;
-
-        return $this;
-    }
-
-    public function getPrefix()
-    {
-        return $this->prefix;
-    }
-
-    public function setName($name)
-    {
-        $this->name = (string)$name;
-
-        return $this;
-    }
-
-    public function getName()
-    {
-        if (!$this->name) {
-            throw new \Exception('Table name is not defined.');
-        }
-
-        return $this->name;
-    }
-
-    public function setAlias($name)
-    {
-        $this->alias = (string)$name;
-
-        return $this;
-    }
-
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    public function addColumn(Column $column)
-    {
-        $this->columns[] = $column;
-
-        return $this;
-    }
-
-    public function getColumns()
-    {
-        return $this->columns;
-    }
-
-    public function setCustomColumnType($key, $value)
-    {
-        $this->customColumnsTypes[$key] = (string)$value;
-
-        return $this;
-    }
-
-    public function getCustomColumnType($key)
-    {
-        return Arr::getRef($this->customColumnsTypes, $key);
-    }
-
-    public function getCustomColumnTypes()
-    {
-        return $this->customColumnsTypes;
-    }
-
-    public function addReference(TableConstraint $constraint)
-    {
-        $this->references[] = $constraint;
-    }
-
-    public function getReferences()
-    {
-        return $this->references;
-    }
-
-    public function addRelationship(TableConstraint $constraint)
-    {
-        $this->relationships[] = $constraint;
-    }
-
-    public function getRelationships()
-    {
-        return $this->relationships;
-    }
-
-    public function setDependence($name, $tableName, array $filter = [])
-    {
-        $this->dependencies[$name] = [
-            'tableName' => $tableName,
-            'filter' => $filter,
-        ];
-
-        return $this;
-    }
-
-    public function getDependencies()
-    {
-        return $this->dependencies;
-    }
-
-    public function setRelationshipAlias($key, $value)
-    {
-        $this->relationshipsAliases[$key] = (string)$value;
-
-        return $this;
-    }
-
-    public function getRelationshipAlias($key)
-    {
-        return Arr::getRef($this->relationshipsAliases, $key);
-    }
-
-    public function getRelationshipsAliases()
-    {
-        return $this->relationshipsAliases;
-    }
-
-    public function setReferenceAlias($key, $value)
-    {
-        $this->referencesAliases[$key] = (string)$value;
-
-        return $this;
-    }
-
-    public function getReferenceAlias($key)
-    {
-        return Arr::getRef($this->referencesAliases, $key);
-    }
-
-    public function getReferencesAliases()
-    {
-        return $this->referencesAliases;
-    }
-
-    public function setNameColumn($name)
-    {
-        $this->nameColumn = (string)$name;
-
-        return $this;
-    }
-
-    public function getNameColumn()
-    {
-        return $this->nameColumn;
     }
 
     public function setStorage(StorageInterface $storage)
