@@ -17,36 +17,17 @@ use Greg\Support\Debug;
  * @method DeleteQuery orWhereCols(array $columns)
  * @method DeleteQuery orWhereCol($column, $operator, $value = null)
  */
-class DeleteQuery extends QueryAbstract
+class DeleteQuery extends QueryAbstract implements DeleteQueryInterface
 {
     use FromQueryTrait, WhereQueryTrait;
 
     protected $delete = [];
 
-    public function from($table = null, $delete = false)
+    public function deleteFrom($table)
     {
-        if (func_num_args()) {
-            $this->from[] = $table;
+        $this->delete[] = $table;
 
-            if ($delete) {
-                $this->delete[] = $table;
-            }
-
-            return $this;
-        }
-
-        return $this->from;
-    }
-
-    public function delete($from = null)
-    {
-        if (func_num_args()) {
-            $this->delete[] = $from;
-
-            return $this;
-        }
-
-        return $this->delete;
+        return $this;
     }
 
     public function exec()
@@ -64,12 +45,10 @@ class DeleteQuery extends QueryAbstract
             'DELETE',
         ];
 
-        $delete = $this->delete();
-
-        if ($delete) {
+        if ($this->delete) {
             $data = [];
 
-            foreach($delete as $table) {
+            foreach($this->delete as $table) {
                 list($alias, $expr) = $this->fetchAlias($table);
 
                 $data[] = $alias ? $this->quoteName($alias) : $this->quoteNamedExpr($expr);

@@ -8,6 +8,8 @@ use Greg\Support\Arr;
 
 trait TableTrait
 {
+    use TableSelectTrait, TableUpdateTrait, TableDeleteTrait, TableInsertTrait;
+
     protected $prefix = null;
 
     protected $name = null;
@@ -202,85 +204,6 @@ trait TableTrait
         }
 
         return array_combine($keys, $values);
-    }
-
-    public function selectQuery($columns = null, $_ = null)
-    {
-        if (!is_array($columns)) {
-            $columns = func_get_args();
-        }
-
-        $query = $this->getStorage()->select($columns);
-
-        $query->from($this);
-
-        return $query;
-    }
-
-    public function select($columns = null, $_ = null)
-    {
-        $this->query = $this->selectQuery(...func_get_args());
-
-        return $this;
-    }
-
-    public function updateQuery(array $values = [])
-    {
-        $query = $this->getStorage()->update($this);
-
-        if ($values) {
-            $query->set($values);
-        }
-
-        return $query;
-    }
-
-    public function update(array $values = [])
-    {
-        $this->query = $this->updateQuery(...func_get_args());
-
-        return $this;
-    }
-
-    public function deleteQuery(array $whereIs = [])
-    {
-        $query = $this->getStorage()->delete($this, true);
-
-        if ($whereIs) {
-            $query->whereCols($whereIs);
-        }
-
-        return $query;
-    }
-
-    public function delete(array $whereIs = [])
-    {
-        $this->query = $this->deleteQuery(...func_get_args());
-
-        return $this;
-    }
-
-    public function insertQuery(array $data = [])
-    {
-        $query = $this->getStorage()->insert($this);
-
-        $query->data($data);
-
-        return $query;
-    }
-
-    public function insert(array $data = [])
-    {
-        $this->query = $this->insertQuery(...func_get_args());
-
-        return $this;
-    }
-
-    public function insertData(array $data = [])
-    {
-        $this->insertQuery($data)->exec();
-
-        return $this;
     }
 
     public function pairs(array $whereIs = [], callable $callable = null)

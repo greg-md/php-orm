@@ -18,7 +18,7 @@ use Greg\Support\Debug;
  * @method SelectQuery orWhereCols(array $columns)
  * @method SelectQuery orWhereCol($column, $operator, $value = null)
  */
-class SelectQuery extends QueryAbstract
+class SelectQuery extends QueryAbstract implements SelectQueryInterface
 {
     use FromQueryTrait, WhereQueryTrait;
 
@@ -43,39 +43,31 @@ class SelectQuery extends QueryAbstract
      */
     protected $table = null;
 
-    /*
-    public function only($column = null, $_ = null)
+    public function distinct($value = true)
     {
+        $this->distinct = (bool)$value;
+
+        return $this;
+    }
+
+    public function from($table, $column = null, $_ = null)
+    {
+        $this->from[] = $table;
+
         if (!is_array($column)) {
             $column = func_get_args();
+
+            array_shift($column);
         }
 
-        return $this->tableColumns($this->getTable(), $column);
-    }
-    */
-
-    public function from($table = null, $column = null, $_ = null)
-    {
-        if (func_num_args()) {
-            $this->from[] = $table;
-
-            if (!is_array($column)) {
-                $column = func_get_args();
-
-                array_shift($column);
-            }
-
-            if ($column) {
-                $this->tableColumns($table, $column);
-            }
-
-            return $this;
+        if ($column) {
+            $this->columnsFrom($table, $column);
         }
 
-        return $this->from;
+        return $this;
     }
 
-    public function tableColumns($table, $column, $_ = null)
+    public function columnsFrom($table, $column, $_ = null)
     {
         if (!is_array($column)) {
             $column = func_get_args();
@@ -103,24 +95,20 @@ class SelectQuery extends QueryAbstract
 
     public function column($column, $alias = null)
     {
-        $this->columns[] = $alias !== null ? [$alias => $column] : $column;
+        $this->columns[] = $alias ? [$alias => $column] : $column;
 
         return $this;
     }
 
-    public function columns($column = null, $_ = null)
+    public function columns($column, $_ = null)
     {
-        if (func_num_args()) {
-            if (!is_array($column)) {
-                $column = func_get_args();
-            }
-
-            array_map([$this, 'column'], $column);
-
-            return $this;
+        if (!is_array($column)) {
+            $column = func_get_args();
         }
 
-        return $this->columns;
+        array_map([$this, 'column'], $column);
+
+        return $this;
     }
 
     public function clearColumns()
@@ -130,15 +118,11 @@ class SelectQuery extends QueryAbstract
         return $this;
     }
 
-    public function group($expr = null)
+    public function group($expr)
     {
-        if (func_num_args()) {
-            $this->group[] = $expr;
+        $this->group[] = $expr;
 
-            return $this;
-        }
-
-        return $this->group;
+        return $this;
     }
 
     public function hasGroup()
@@ -153,22 +137,18 @@ class SelectQuery extends QueryAbstract
         return $this;
     }
 
-    public function order($expr = null, $type = null)
+    public function order($expr, $type = null)
     {
-        if (func_num_args()) {
-            if ($type and !in_array($type, [static::ORDER_ASC, static::ORDER_DESC])) {
-                throw new \Exception('Wrong select order type.');
-            }
-
-            $this->order[] = [
-                'expr' => $expr,
-                'type' => $type,
-            ];
-
-            return $this;
+        if ($type and !in_array($type, [static::ORDER_ASC, static::ORDER_DESC])) {
+            throw new \Exception('Wrong select order type.');
         }
 
-        return $this->order;
+        $this->order[] = [
+            'expr' => $expr,
+            'type' => $type,
+        ];
+
+        return $this;
     }
 
     public function hasOrder()
@@ -179,6 +159,20 @@ class SelectQuery extends QueryAbstract
     public function clearOrder()
     {
         $this->order = [];
+
+        return $this;
+    }
+
+    public function limit($number)
+    {
+        $this->limit = (int)$number;
+
+        return $this;
+    }
+
+    public function offset($number)
+    {
+        $this->offset = (int)$number;
 
         return $this;
     }
@@ -213,12 +207,10 @@ class SelectQuery extends QueryAbstract
             $query[] = 'DISTINCT';
         }
 
-        $columns = $this->columns();
-
-        if ($columns) {
+        if ($this->columns) {
             $cols = [];
 
-            foreach($columns as $column) {
+            foreach($this->columns as $column) {
                 $cols[] = $this->quoteAliasExpr($column);
 
                 list($alias, $expr) = $this->fetchAlias($column);
@@ -269,17 +261,6 @@ class SelectQuery extends QueryAbstract
         }
 
         return implode(' ', $query);
-    }
-
-    public function distinct($value = null)
-    {
-        if (func_num_args()) {
-            $this->distinct = (bool)$value;
-
-            return $this;
-        }
-
-        return $this->distinct;
     }
 
     public function stmt($execute = true)
@@ -639,28 +620,6 @@ class SelectQuery extends QueryAbstract
         return $this;
     }
     */
-
-    public function limit($number = null)
-    {
-        if (func_num_args()) {
-            $this->limit = (int)$number;
-
-            return $this;
-        }
-
-        return $this->limit;
-    }
-
-    public function offset($number = null)
-    {
-        if (func_num_args()) {
-            $this->offset = (int)$number;
-
-            return $this;
-        }
-
-        return $this->offset;
-    }
 
     public function __toString()
     {

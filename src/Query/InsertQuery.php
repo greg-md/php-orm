@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class InsertQuery extends QueryAbstract
+class InsertQuery extends QueryAbstract implements InsertQueryInterface
 {
     protected $into = null;
 
@@ -14,26 +14,18 @@ class InsertQuery extends QueryAbstract
 
     protected $select = null;
 
-    public function into($name = null)
+    public function into($name)
     {
-        if (func_num_args()) {
-            $this->into = $name;
+        $this->into = $name;
 
-            return $this;
-        }
-
-        return $this->into;
+        return $this;
     }
 
-    public function columns(array $columns = [])
+    public function columns(array $columns)
     {
-        if (func_num_args()) {
-            $this->columns = array_merge($this->columns, $columns);
+        $this->columns = array_merge($this->columns, $columns);
 
-            return $this;
-        }
-
-        return $this->columns;
+        return $this;
     }
 
     public function clearColumns()
@@ -43,15 +35,11 @@ class InsertQuery extends QueryAbstract
         return $this;
     }
 
-    public function values(array $values = [])
+    public function values(array $values)
     {
-        if (func_num_args()) {
-            $this->values = array_merge($this->values, $values);
+        $this->values = $values;
 
-            return $this;
-        }
-
-        return $this->values;
+        return $this;
     }
 
     public function clearValues()
@@ -63,22 +51,16 @@ class InsertQuery extends QueryAbstract
 
     public function data($data)
     {
-        $this->clearColumns()->columns(array_keys($data));
-
-        $this->clearValues()->values($data);
+        $this->columns(array_keys($data))->values($data);
 
         return $this;
     }
 
-    public function select($select = null)
+    public function select($select)
     {
-        if (func_num_args()) {
-            $this->select = (string)$select;
+        $this->select = (string)$select;
 
-            return $this;
-        }
-
-        return $this->select;
+        return $this;
     }
 
     public function clearSelect()
@@ -103,22 +85,19 @@ class InsertQuery extends QueryAbstract
             'INSERT INTO',
         ];
 
-        $into = $this->into();
-        if (!$into) {
+        if (!$this->into) {
             throw new \Exception('Undefined insert table.');
         }
 
-        list($intoAlias, $intoName) = $this->fetchAlias($into);
+        list($intoAlias, $intoName) = $this->fetchAlias($this->into);
 
         unset($intoAlias);
 
         $query[] = $this->quoteNamedExpr($intoName);
 
-        $columns = $this->columns();
-
         $quoteColumns = array_map(function($column) {
             return $this->quoteNamedExpr($column);
-        }, $columns);
+        }, $this->columns);
 
         if (!$quoteColumns) {
             throw new \Exception('Undefined insert columns.');
@@ -126,20 +105,18 @@ class InsertQuery extends QueryAbstract
 
         $query[] = '(' . implode(', ', $quoteColumns) . ')';
 
-        $select = $this->select();
-
-        if ($select) {
-            $query[] = $select;
+        if ($this->select) {
+            $query[] = $this->select;
         } else {
             $values = [];
-            foreach($columns as $column) {
+            foreach($this->columns as $column) {
                 $values[] = $this->values($column);
             }
             $this->bindParams($values);
 
             $query[] = 'VALUES';
 
-            $query[] = '(' . implode(', ', str_split(str_repeat('?', sizeof($columns)))) . ')';
+            $query[] = '(' . implode(', ', str_split(str_repeat('?', sizeof($this->columns)))) . ')';
         }
 
         return implode(' ', $query);

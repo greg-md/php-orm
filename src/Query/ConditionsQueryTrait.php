@@ -225,7 +225,7 @@ trait ConditionsQueryTrait
 
             $expr = $query->toString();
 
-            $params = $query->bindParams();
+            $params = $query->getBoundParams();
         } else {
             $params = is_array($param) ? $param : array_slice(func_get_args(), 2);
         }

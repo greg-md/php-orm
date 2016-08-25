@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class UpdateQuery extends QueryAbstract
+class UpdateQuery extends QueryAbstract implements UpdateQueryInterface
 {
     use WhereQueryTrait;
 
@@ -12,38 +12,22 @@ class UpdateQuery extends QueryAbstract
 
     protected $set = [];
 
-    public function table($table)
+    public function table($table, $_ = null)
     {
-        $this->tables[] = $table;
+        if (!is_array($table)) {
+            $table = func_get_args();
+        }
+
+        $this->tables = array_merge($this->tables, $table);
 
         return $this;
     }
 
-    public function set(array $values = [])
+    public function set(array $values)
     {
-        if (func_num_args()) {
-            $this->set = array_merge($this->set, $values);
+        $this->set = array_merge($this->set, $values);
 
-            return $this;
-        }
-
-        return $this->set;
-    }
-
-    public function tables($tables = null, $_ = null)
-    {
-        if (func_num_args()) {
-
-            if (!is_array($tables)) {
-                $tables = func_get_args();
-            }
-
-            $this->tables = array_merge($this->tables, $tables);
-
-            return $this;
-        }
-
-        return $this->tables;
+        return $this;
     }
 
     public function exec()
