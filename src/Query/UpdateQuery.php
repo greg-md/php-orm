@@ -4,9 +4,9 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class UpdateQuery extends QueryAbstract implements UpdateQueryInterface
+class UpdateQuery implements QueryInterface, UpdateQueryInterface
 {
-    use WhereQueryTrait;
+    use QueryTrait, WhereQueryTrait;
 
     protected $tables = [];
 

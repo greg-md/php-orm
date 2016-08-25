@@ -4,9 +4,9 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class WhereQuery extends QueryAbstract
+class WhereQuery
 {
-    use WhereQueryTrait;
+    use QueryTrait, WhereQueryTrait;
 
     public function toString()
     {

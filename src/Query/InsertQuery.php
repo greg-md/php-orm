@@ -4,8 +4,10 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class InsertQuery extends QueryAbstract implements InsertQueryInterface
+class InsertQuery implements QueryInterface, InsertQueryInterface
 {
+    use QueryTrait;
+
     protected $into = null;
 
     protected $columns = [];

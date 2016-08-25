@@ -7,7 +7,7 @@ use Greg\Orm\Storage\StorageInterface;
 use Greg\Orm\TableInterface;
 use Greg\Support\Str;
 
-abstract class QueryAbstract implements QueryInterface
+trait QueryTrait
 {
     use BoundParamsTrait;
 
@@ -25,6 +25,43 @@ abstract class QueryAbstract implements QueryInterface
         }
 
         return $this;
+    }
+
+    static public function quoteLike($string, $escape = '\\')
+    {
+        return strtr($string, [
+            '_' => $escape . '_',
+            '%' => $escape . '%',
+        ]);
+    }
+
+    static public function concat($array, $delimiter = '')
+    {
+        return implode(' + ' . $delimiter . ' + ', $array);
+    }
+
+    public function setQuoteNameWith($value)
+    {
+        $this->quoteNameWith = (string)$value;
+
+        return $this;
+    }
+
+    public function getQuoteNameWith()
+    {
+        return $this->quoteNameWith;
+    }
+
+    public function setStorage(StorageInterface $storage)
+    {
+        $this->storage = $storage;
+
+        return $this;
+    }
+
+    public function getStorage()
+    {
+        return $this->storage;
     }
 
     protected function fetchAlias($name)
@@ -131,19 +168,6 @@ abstract class QueryAbstract implements QueryInterface
         return Str::quote($name, $this->getQuoteNameWith());
     }
 
-    public function quoteLike($string, $escape = '\\')
-    {
-        return strtr($string, [
-            '_' => $escape . '_',
-            '%' => $escape . '%',
-        ]);
-    }
-
-    public function concat($array, $delimiter = '')
-    {
-        return implode(' + ' . $delimiter . ' + ', $array);
-    }
-
     protected function bindParamsToStmt(StmtInterface $stmt)
     {
         $k = 1;
@@ -157,29 +181,5 @@ abstract class QueryAbstract implements QueryInterface
         }
 
         return $this;
-    }
-
-    public function setQuoteNameWith($value)
-    {
-        $this->quoteNameWith = (string)$value;
-
-        return $this;
-    }
-
-    public function getQuoteNameWith()
-    {
-        return $this->quoteNameWith;
-    }
-
-    public function setStorage(StorageInterface $storage)
-    {
-        $this->storage = $storage;
-
-        return $this;
-    }
-
-    public function getStorage()
-    {
-        return $this->storage;
     }
 }

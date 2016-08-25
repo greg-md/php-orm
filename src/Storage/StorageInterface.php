@@ -41,11 +41,10 @@ interface StorageInterface
 
     /**
      * @param null $from
-     * @param bool $delete
      * @return DeleteQuery
      * @throws \Exception
      */
-    public function delete($from = null, $delete = false);
+    public function delete($from = null);
 
     /**
      * @param null $table

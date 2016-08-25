@@ -4,9 +4,9 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class OnQuery extends QueryAbstract
+class OnQuery
 {
-    use OnQueryTrait;
+    use QueryTrait, OnQueryTrait;
 
     public function toString()
     {

@@ -2,7 +2,6 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Query\ExprQuery;
 use Greg\Orm\Storage\StorageInterface;
 use Greg\Support\Arr;
 
@@ -204,32 +203,6 @@ trait TableTrait
         }
 
         return array_combine($keys, $values);
-    }
-
-    public function pairs(array $whereIs = [], callable $callable = null)
-    {
-        if (!$columnName = $this->getNameColumn()) {
-            throw new \Exception('Undefined column name for table `' . $this->getName() . '`.');
-        }
-
-        $query = $this->selectQuery();
-
-        $query->columns($query->concat($this->firstUniqueIndex(), ':'), $columnName);
-
-        if ($whereIs) {
-            $query->whereCols($whereIs);
-        }
-
-        if ($callable) {
-            $callable($query);
-        }
-
-        return $query->pairs();
-    }
-
-    public function exists($column, $value)
-    {
-        return $this->selectQuery(new ExprQuery(1))->whereCol($column, $value)->exists();
     }
 
     public function setStorage(StorageInterface $storage)

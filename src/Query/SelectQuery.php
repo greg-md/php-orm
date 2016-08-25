@@ -18,9 +18,9 @@ use Greg\Support\Debug;
  * @method SelectQuery orWhereCols(array $columns)
  * @method SelectQuery orWhereCol($column, $operator, $value = null)
  */
-class SelectQuery extends QueryAbstract implements SelectQueryInterface
+class SelectQuery implements QueryInterface, SelectQueryInterface
 {
-    use FromQueryTrait, WhereQueryTrait;
+    use QueryTrait, FromQueryTrait, WhereQueryTrait;
 
     const ORDER_ASC = 'ASC';
 
@@ -100,6 +100,11 @@ class SelectQuery extends QueryAbstract implements SelectQueryInterface
         return $this;
     }
 
+    public function columnRaw($column, $alias = null)
+    {
+        return $this->column(new ExprQuery($column), $alias);
+    }
+
     public function columns($column, $_ = null)
     {
         if (!is_array($column)) {
@@ -107,6 +112,17 @@ class SelectQuery extends QueryAbstract implements SelectQueryInterface
         }
 
         array_map([$this, 'column'], $column);
+
+        return $this;
+    }
+
+    public function columnsRaw($column, $_ = null)
+    {
+        if (!is_array($column)) {
+            $column = func_get_args();
+        }
+
+        array_map([$this, 'columnRaw'], $column);
 
         return $this;
     }

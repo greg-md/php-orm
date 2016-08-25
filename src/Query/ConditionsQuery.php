@@ -4,9 +4,9 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class ConditionsQuery extends QueryAbstract
+class ConditionsQuery
 {
-    use ConditionsQueryTrait;
+    use QueryTrait, ConditionsQueryTrait;
 
     public function toString()
     {

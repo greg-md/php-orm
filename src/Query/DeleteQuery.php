@@ -17,9 +17,9 @@ use Greg\Support\Debug;
  * @method DeleteQuery orWhereCols(array $columns)
  * @method DeleteQuery orWhereCol($column, $operator, $value = null)
  */
-class DeleteQuery extends QueryAbstract implements DeleteQueryInterface
+class DeleteQuery implements QueryInterface, DeleteQueryInterface
 {
-    use FromQueryTrait, WhereQueryTrait;
+    use QueryTrait, FromQueryTrait, WhereQueryTrait;
 
     protected $delete = [];
 

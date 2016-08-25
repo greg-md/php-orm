@@ -68,9 +68,23 @@ trait TableSelectTrait
         return $this;
     }
 
+    public function columnRaw($column, $alias = null)
+    {
+        $this->needSelectQuery()->columnRaw($column, $alias);
+
+        return $this;
+    }
+
     public function columns($column, $_ = null)
     {
         $this->needSelectQuery()->columns(...func_get_args());
+
+        return $this;
+    }
+
+    public function columnsRaw($column, $_ = null)
+    {
+        $this->needSelectQuery()->columnsRaw(...func_get_args());
 
         return $this;
     }
@@ -177,8 +191,28 @@ trait TableSelectTrait
         return $this->needSelectQuery()->assocAll();
     }
 
+    public function selectKeyValue()
+    {
+        if (!$columnName = $this->getNameColumn()) {
+            throw new \Exception('Undefined column name for table `' . $this->getName() . '`.');
+        }
+
+        $this->needSelectQuery()
+            ->column($this->concat($this->firstUniqueIndex(), ':'), 'key')
+            ->column($columnName, 'value');
+
+        return $this;
+    }
+
+    public function rowExists($column, $value)
+    {
+        return $this->selectQuery()->columnRaw(1)->whereCol($column, $value)->exists();
+    }
+
     /**
      * @return StorageInterface
      */
     abstract public function getStorage();
+
+    abstract public function concat($array, $delimiter = '');
 }

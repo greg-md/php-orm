@@ -3,8 +3,10 @@
 namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\AdapterInterface;
+use Greg\Orm\Query\QueryTrait;
 use Greg\Orm\Storage\Mysql\Query\MysqlDeleteQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlInsertQuery;
+use Greg\Orm\Storage\Mysql\Query\MysqlQueryTrait;
 use Greg\Orm\Storage\Mysql\Query\MysqlSelectQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlUpdateQuery;
 use Greg\Support\Arr;
@@ -357,12 +359,12 @@ class Mysql implements StorageInterface
         return $query;
     }
 
-    public function delete($from = null, $delete = false)
+    public function delete($from = null)
     {
         $query = new MysqlDeleteQuery($this);
 
         if ($from !== null) {
-            $query->from($from, $delete);
+            $query->from($from);
         }
 
         return $query;
@@ -377,6 +379,16 @@ class Mysql implements StorageInterface
         }
 
         return $query;
+    }
+
+    static public function quoteLike($string, $escape = '\\')
+    {
+        return QueryTrait::quoteLike($string, $escape);
+    }
+
+    static public function concat($array, $delimiter = '')
+    {
+        return MysqlQueryTrait::concat($array, $delimiter);
     }
 
     public function beginTransaction()
