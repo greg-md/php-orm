@@ -17,7 +17,7 @@ use Greg\Support\Debug;
  * @method DeleteQuery orWhereCols(array $columns)
  * @method DeleteQuery orWhereCol($column, $operator, $value = null)
  */
-class DeleteQuery implements QueryInterface, DeleteQueryInterface
+class DeleteQuery implements DeleteQueryInterface
 {
     use QueryTrait, FromQueryTrait, WhereQueryTrait;
 
@@ -49,7 +49,7 @@ class DeleteQuery implements QueryInterface, DeleteQueryInterface
             $data = [];
 
             foreach($this->delete as $table) {
-                list($alias, $expr) = $this->fetchAlias($table);
+                list($alias, $expr) = $this->parseAlias($table);
 
                 $data[] = $alias ? $this->quoteName($alias) : $this->quoteNamedExpr($expr);
             }

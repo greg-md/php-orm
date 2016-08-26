@@ -7,6 +7,8 @@ use Greg\Orm\Storage\StorageInterface;
 
 trait TableSelectTrait
 {
+    use TableFromTrait;
+
     /**
      * @return SelectQueryInterface
      * @throws \Exception

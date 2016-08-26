@@ -16,14 +16,14 @@ trait WhereQueryTrait
         return $this->clearConditions();
     }
 
-    public function where($expr = null, $value = null, $_ = null)
+    public function whereRaw($expr, $value = null, $_ = null)
     {
-        return $this->condition(...func_get_args());
+        return $this->conditionRaw(...func_get_args());
     }
 
-    public function orWhere($expr, $value = null, $_ = null)
+    public function orWhereRaw($expr, $value = null, $_ = null)
     {
-        return $this->orCondition(...func_get_args());
+        return $this->orConditionRaw(...func_get_args());
     }
 
     public function whereRel($column1, $operator, $column2 = null)
@@ -36,24 +36,24 @@ trait WhereQueryTrait
         return $this->orConditionRel(...func_get_args());
     }
 
-    public function whereCols(array $columns)
+    public function whereAre(array $columns)
     {
-        return $this->conditionCols(...func_get_args());
+        return $this->conditions(...func_get_args());
     }
 
-    public function whereCol($column, $operator, $value = null)
+    public function where($column, $operator, $value = null)
     {
-        return $this->conditionCol(...func_get_args());
+        return $this->condition(...func_get_args());
     }
 
-    public function orWhereCols(array $columns)
+    public function orWhereAre(array $columns)
     {
-        return $this->orConditionCols(...func_get_args());
+        return $this->orConditions(...func_get_args());
     }
 
-    public function orWhereCol($column, $operator, $value = null)
+    public function orWhere($column, $operator, $value = null)
     {
-        return $this->orConditionCol(...func_get_args());
+        return $this->orCondition(...func_get_args());
     }
 
     protected function newConditions()

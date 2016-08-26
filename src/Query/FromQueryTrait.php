@@ -8,15 +8,11 @@ trait FromQueryTrait
 
     protected $from = [];
 
-    public function from($table = null)
+    public function from($table)
     {
-        if (func_num_args()) {
-            $this->from[] = $table;
+        $this->from[] = $table;
 
-            return $this;
-        }
-
-        return $this->from;
+        return $this;
     }
 
     public function fromToString()
@@ -26,11 +22,11 @@ trait FromQueryTrait
         foreach($this->from as $name) {
             $expr = $this->quoteAliasExpr($name);
 
-            list($alias, $table) = $this->fetchAlias($name);
+            list($alias, $table) = $this->parseAlias($name);
 
             unset($alias);
 
-            if ($table instanceof QueryInterface) {
+            if ($table instanceof QueryTraitInterface) {
                 $this->bindParams($table->getBoundParams());
             }
 

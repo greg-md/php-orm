@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class ConditionsQuery
+class ConditionsQuery implements ConditionsQueryInterface
 {
     use QueryTrait, ConditionsQueryTrait;
 

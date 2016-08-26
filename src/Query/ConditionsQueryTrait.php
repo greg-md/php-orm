@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Storage\StorageInterface;
+use Greg\Support\Arr;
 
 trait ConditionsQueryTrait
 {
@@ -22,64 +22,61 @@ trait ConditionsQueryTrait
 
     public function isNull($column)
     {
-        $expr = $this->quoteExpr($column) . ' IS NULL';
+        $expr = $this->quoteNameExpr($column) . ' IS NULL';
 
         return $this->addLogic('AND', $expr);
     }
 
     public function orIsNull($column)
     {
-        $expr = $this->quoteExpr($column) . ' IS NULL';
+        $expr = $this->quoteNameExpr($column) . ' IS NULL';
 
         return $this->addLogic('OR', $expr);
     }
 
     public function isNotNull($column)
     {
-        $expr = $this->quoteExpr($column) . ' IS NOT NULL';
+        $expr = $this->quoteNameExpr($column) . ' IS NOT NULL';
 
         return $this->addLogic('AND', $expr);
     }
 
     public function orIsNotNull($column)
     {
-        $expr = $this->quoteExpr($column) . ' IS NOT NULL';
+        $expr = $this->quoteNameExpr($column) . ' IS NOT NULL';
 
         return $this->addLogic('OR', $expr);
     }
 
-    public function condition($expr = null, $value = null, $_ = null)
+    public function conditionRaw($expr, $value = null, $_ = null)
     {
-        if ($args = func_get_args()) {
-            return $this->addLogic('AND', ...$args);
-        }
+        $args = func_get_args();
 
-        return $this->conditions;
+        $args[0] = $this->quoteExpr($expr);
+
+        return $this->addLogic('AND', ...$args);
     }
 
-    public function orCondition($expr, $value = null, $_ = null)
+    public function orConditionRaw($expr, $value = null, $_ = null)
     {
+        $args = func_get_args();
+
+        $args[0] = $this->quoteExpr($expr);
+
         return $this->addLogic('OR', ...func_get_args());
     }
 
     public function conditionRel($column1, $operator, $column2 = null)
     {
-        return $this->addRelLogic('AND', ...func_get_args());
+        return $this->addRelationLogic('AND', ...func_get_args());
     }
 
     public function orConditionRel($column1, $operator, $column2 = null)
     {
-        return $this->addRelLogic('OR', ...func_get_args());
+        return $this->addRelationLogic('OR', ...func_get_args());
     }
 
-    /**
-     * @param $type
-     * @param $column1
-     * @param $operator
-     * @param null $column2
-     * @return array|ConditionsQueryTrait
-     */
-    protected function addRelLogic($type, $column1, $operator, $column2 = null)
+    protected function addRelationLogic($type, $column1, $operator, $column2 = null)
     {
         $args = func_get_args();
 
@@ -93,57 +90,54 @@ trait ConditionsQueryTrait
             $operator = null;
         }
 
-        if (is_array($column1)) {
-            if (sizeof($column1) > 1) {
-                $column1 = array_map([$this, 'quoteExpr'], $column1);
+        $column1 = $this->packColumns((array)$column1);
 
-                $column1 = '(' . implode(', ', $column1) . ')';
-            } else {
-                $column1 = current($column1);
-            }
-        }
+        $column2 = $this->packColumns((array)$column2);
 
-        if (is_array($column2)) {
-            if (sizeof($column2) > 1) {
-                $column2 = array_map([$this, 'quoteExpr'], $column2);
-
-                $column2 = '(' . implode(', ', $column2) . ')';
-            } else {
-                $column2 = current($column2);
-            }
-        }
-
-        $expr = $this->quoteExpr($column1) . ' ' . ($operator ?: '=') . ' ' . $this->quoteExpr($column2);
+        $expr = $column1 . ' ' . ($operator ?: '=') . ' ' . $column2;
 
         return $this->addLogic($type, $expr);
     }
 
-    public function conditionCols(array $columns)
+    protected function packColumns(array $columns)
+    {
+        $columns = array_map([$this, 'quoteNameExpr'], $columns);
+
+        if (sizeof($columns) > 1) {
+            $columns = '(' . implode(', ', $columns) . ')';
+        } else {
+            $columns = Arr::first($columns);
+        }
+
+        return $columns;
+    }
+
+    public function conditions(array $columns)
     {
         foreach($columns as $column => $value) {
-            $this->conditionCol($column, $value);
+            $this->condition($column, $value);
         }
 
         return $this;
     }
 
-    public function conditionCol($column, $operator, $value = null)
+    public function condition($column, $operator, $value = null)
     {
-        return $this->addColLogic('AND', ...func_get_args());
+        return $this->addColumnLogic('AND', ...func_get_args());
     }
 
-    public function orConditionCols(array $columns)
+    public function orConditions(array $columns)
     {
         foreach($columns as $column => $value) {
-            $this->orConditionCol($column, $value);
+            $this->orCondition($column, $value);
         }
 
         return $this;
     }
 
-    public function orConditionCol($column, $operator, $value = null)
+    public function orCondition($column, $operator, $value = null)
     {
-        return $this->addColLogic('OR', ...func_get_args());
+        return $this->addColumnLogic('OR', ...func_get_args());
     }
 
     /**
@@ -159,9 +153,10 @@ trait ConditionsQueryTrait
      * @param $column
      * @param $operator
      * @param null $value
-     * @return static
+     * @return $this
+     * @throws \Exception
      */
-    protected function addColLogic($type, $column, $operator, $value = null)
+    protected function addColumnLogic($type, $column, $operator, $value = null)
     {
         $args = func_get_args();
 
@@ -175,45 +170,67 @@ trait ConditionsQueryTrait
             $operator = null;
         }
 
-        $isRow = false;
+        // Omg, don't change this! It just works! :))
+        $column = (array)$column;
 
-        if (is_array($column)) {
-            $value = (array)$value;
+        $value = (array)$value;
 
-            if (sizeof($column) > 1) {
-                $isRow = true;
+        foreach($value as &$val) {
+            $val = (array)$val;
+        }
+        unset($val);
 
-                $column = array_map([$this, 'quoteExpr'], $column);
+        if (($columnsCount = sizeof($column)) > 1) {
+            if (!$operator and sizeof(Arr::first($value)) > 1) {
+                $operator = 'IN';
+            }
 
-                $column = '(' . implode(', ', $column) . ')';
+            if (strtoupper($operator) == 'IN') {
+                foreach($value as &$val) {
+                    if (sizeof($val) !== $columnsCount) {
+                        throw new \Exception('Wrong row values count in condition.');
+                    }
+                }
+                unset($val);
+
+                $valueExpr = $this->prepareInForBind(sizeof($value), $columnsCount);
+
+                $value = array_merge(...$value);
             } else {
-                $column = current($column);
+                foreach($value as &$val) {
+                    $val = (string)Arr::first($val);
+                }
+                unset($val);
 
-                $value = is_array($val = current($value)) ? array_merge(...$value) : $val;
+                if (sizeof($value) !== $columnsCount) {
+                    throw new \Exception('Wrong row values count in condition.');
+                }
+
+                $valueExpr = $this->prepareForBind($value);
             }
-        }
-
-        if ($isRow) {
-            $valueExpr = $this->bindArrayExpr(array_map([$this, 'bindExpr'], $value));
-
-            if (!$operator and is_array(current($value))) {
-                $operator = 'IN';
-            }
-
-            $value = array_merge(...$value);
         } else {
-            $column = $this->quoteExpr($column);
-
-            $valueExpr = $this->bindExpr($value);
-
-            if (!$operator and is_array($value)) {
-                $operator = 'IN';
+            foreach($value as &$val) {
+                $val = (string)Arr::first($val);
             }
+            unset($val);
+
+            if (!$operator) {
+                if (sizeof($value) > 1) {
+                    $operator = 'IN';
+                } else {
+                    $value = Arr::first($value);
+                }
+            }
+
+            $valueExpr = $this->prepareForBind($value);
         }
+        // Omg end.
+
+        $column = $this->packColumns($column);
 
         $expr = $column . ' ' . ($operator ?: '=') . ' ' . $valueExpr;
 
-        return $this->addLogic($type, $expr, is_array($value) ? $value : [$value]);
+        return $this->addLogic($type, $expr, $value);
     }
 
     protected function addLogic($type, $expr, $param = null, $_ = null)
@@ -223,7 +240,7 @@ trait ConditionsQueryTrait
 
             call_user_func_array($expr, [$query]);
 
-            $expr = $query->toString();
+            $expr = '(' . $query->toString() . ')';
 
             $params = $query->getBoundParams();
         } else {
@@ -244,14 +261,20 @@ trait ConditionsQueryTrait
         return new ConditionsQuery($this->getStorage());
     }
 
-    protected function bindExpr($value)
+    protected function prepareForBind($value)
     {
-        return is_array($value) ? $this->bindArrayExpr($value) : '?';
+        return is_array($value) ? $this->prepareInForBind(sizeof($value)) : '?';
     }
 
-    protected function bindArrayExpr($value)
+    protected function prepareInForBind($length, $rowLength = null)
     {
-        return '(' . implode(', ', array_fill(0, sizeof((array)$value), '?')) . ')';
+        $result = '(' . implode(', ', array_fill(0, $length, '?')) . ')';
+
+        if ($rowLength !== null) {
+            $result = '(' . implode(', ', array_fill(0, $rowLength, $result)) . ')';
+        }
+
+        return $result;
     }
 
     public function conditionsToString()
@@ -260,7 +283,7 @@ trait ConditionsQueryTrait
 
         foreach($this->conditions as $info) {
             if ($info['expr']) {
-                $conditions[] = ($conditions ? ' ' . $info['logic'] . ' ' : '') . '(' . $this->quoteExpr($info['expr']) . ')';
+                $conditions[] = ($conditions ? ' ' . $info['logic'] . ' ' : '') . $info['expr'];
 
                 $this->bindParams($info['params']);
             }
@@ -268,13 +291,4 @@ trait ConditionsQueryTrait
 
         return implode('', $conditions);
     }
-
-    /**
-     * @return StorageInterface|null
-     */
-    abstract public function getStorage();
-
-    abstract protected function quoteExpr($expr);
-
-    abstract protected function bindParams(array $params);
 }

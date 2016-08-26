@@ -4,14 +4,15 @@ namespace Greg\Orm\Query;
 
 use Greg\Orm\Adapter\StmtInterface;
 use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
 use Greg\Support\Str;
 
 trait QueryTrait
 {
-    use BoundParamsTrait;
-
     protected $quoteNameWith = '`';
+
+    protected $nameRegex = '[a-z0-9_\.\*]+';
+
+    protected $boundParams = [];
 
     /**
      * @var StorageInterface|null
@@ -52,6 +53,18 @@ trait QueryTrait
         return $this->quoteNameWith;
     }
 
+    public function setNameRegex($regex)
+    {
+        $this->nameRegex = (string)$regex;
+
+        return $this;
+    }
+
+    public function getNameRegex()
+    {
+        return $this->nameRegex;
+    }
+
     public function setStorage(StorageInterface $storage)
     {
         $this->storage = $storage;
@@ -64,29 +77,22 @@ trait QueryTrait
         return $this->storage;
     }
 
-    protected function fetchAlias($name)
+    protected function parseAlias($name)
     {
         if (is_array($name)) {
             return [key($name), current($name)];
         }
 
-        if (Str::isScalar($name) and preg_match('#^(.+?)(?:\s+as\s+([a-z0-9_]+))?$#i', $name, $matches)) {
+        if (is_scalar($name) and preg_match('#^(.+?)(?:\s+(?:as\s+)?([a-z0-9_]+))?$#i', $name, $matches)) {
             return [isset($matches[2]) ? $matches[2] : null, $matches[1]];
-        }
-
-        if (($name instanceof TableInterface)) {
-            return [$name->getAlias(), $name->getName()];
         }
 
         return [null, $name];
     }
 
+    /*
     protected function isCleanColumn($expr, $includeAlias = true)
     {
-        if (($expr instanceof ExprQuery)) {
-            return false;
-        }
-
         if ($expr == '*') {
             return true;
         }
@@ -102,9 +108,9 @@ trait QueryTrait
 
     protected function quoteAliasExpr($expr)
     {
-        list($alias, $expr) = $this->fetchAlias($expr);
+        list($alias, $expr) = $this->parseAlias($expr);
 
-        if ($expr instanceof QueryInterface) {
+        if ($expr instanceof QueryTraitInterface) {
             $expr = '(' . $expr . ')';
         } else {
             $expr = $this->quoteExpr($expr);
@@ -116,26 +122,29 @@ trait QueryTrait
 
         return $expr;
     }
+    */
 
-    protected function quoteNamedExpr($expr)
+    protected function quoteTableExpr($expr)
     {
-        if (($expr instanceof ExprQuery)) {
-            return $expr;
+        if (preg_match('#^(' . $this->getNameRegex() . ')$#i', $expr)) {
+            return $this->quoteNameExpr($expr);
         }
 
-        $regex = '[a-z0-9_\.\*]+';
+        return $this->quoteExpr($expr);
+    }
 
-        $expr = preg_replace_callback([
-            '#\{(' . $regex . ')\}#i',
-            '#^(' . $regex . ')$#i',
-        ], function($matches) {
-            return $this->quoteColumnName($matches[1]);
+    protected function quoteExpr($expr)
+    {
+        $regex = $this->getNameRegex();
+
+        $expr = preg_replace_callback('#".*\!' . $regex .'.*"|\!(' . $regex .')#i', function($matches) {
+            return isset($matches[1]) ? $this->quoteNameExpr($matches[1]) : $matches[0];
         }, $expr);
 
         return $expr;
     }
 
-    protected function quoteColumnName($name)
+    protected function quoteNameExpr($name)
     {
         $expr = explode('.', $name);
 
@@ -144,21 +153,6 @@ trait QueryTrait
         }, $expr);
 
         $expr = implode('.', $expr);
-
-        return $expr;
-    }
-
-    protected function quoteExpr($expr)
-    {
-        if (($expr instanceof ExprQuery)) {
-            return $expr;
-        }
-
-        $expr = $this->quoteNamedExpr($expr);
-
-        $expr = preg_replace_callback('#".*\![a-z0-9_\.\*]+.*"|\!([a-z0-9_\.\*]+)#i', function($matches) {
-            return isset($matches[1]) ? $this->quoteNamedExpr($matches[1]) : $matches[0];
-        }, $expr);
 
         return $expr;
     }
@@ -179,6 +173,32 @@ trait QueryTrait
 
             $stmt->bindValue(...$param);
         }
+
+        return $this;
+    }
+
+    public function bindParam($param)
+    {
+        $this->boundParams[] = $param;
+
+        return $this;
+    }
+
+    public function bindParams(array $params)
+    {
+        $this->boundParams = array_merge($this->boundParams, $params);
+
+        return $this;
+    }
+
+    public function getBoundParams()
+    {
+        return $this->boundParams;
+    }
+
+    public function clearBoundParams()
+    {
+        $this->boundParams = [];
 
         return $this;
     }

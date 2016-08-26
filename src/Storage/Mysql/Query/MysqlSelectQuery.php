@@ -4,13 +4,9 @@ namespace Greg\Orm\Storage\Mysql\Query;
 
 use Greg\Orm\Query\SelectQuery;
 
-class MysqlSelectQuery extends SelectQuery
+class MysqlSelectQuery extends SelectQuery implements MysqlSelectQueryInterface
 {
     use MysqlQueryTrait, MysqlSelectQueryTrait;
-
-    const FOR_UPDATE = 'FOR UPDATE';
-
-    const LOCK_IN_SHARE_MODE = 'LOCK IN SHARE MODE';
 
     public function toString()
     {

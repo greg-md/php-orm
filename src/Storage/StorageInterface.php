@@ -53,6 +53,10 @@ interface StorageInterface
      */
     public function update($table = null);
 
+    static public function quoteLike($string, $escape = '\\');
+
+    static public function concat($array, $delimiter = '');
+
     public function getTableSchema($tableName);
 
     public function getTableInfo($tableName);

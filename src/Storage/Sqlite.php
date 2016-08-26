@@ -3,6 +3,7 @@
 namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\AdapterInterface;
+use Greg\Orm\Query\QueryTrait;
 use Greg\Orm\Storage\Sqlite\Query\SqliteDeleteQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteInsertQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteSelectQuery;
@@ -71,6 +72,16 @@ class Sqlite implements StorageInterface
         }
 
         return $query;
+    }
+
+    static public function quoteLike($string, $escape = '\\')
+    {
+        return QueryTrait::quoteLike($string, $escape);
+    }
+
+    static public function concat($array, $delimiter = '')
+    {
+        return QueryTrait::concat($array, $delimiter);
     }
 
     public function getTableSchema($tableName)

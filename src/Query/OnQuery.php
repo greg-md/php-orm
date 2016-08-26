@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class OnQuery
+class OnQuery implements OnQueryInterface
 {
     use QueryTrait, OnQueryTrait;
 

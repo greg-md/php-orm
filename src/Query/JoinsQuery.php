@@ -4,18 +4,18 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class WhereQuery implements WhereQueryInterface
+class JoinsQuery implements JoinsQueryInterface
 {
-    use QueryTrait, WhereQueryTrait;
+    use QueryTrait, JoinsQueryTrait;
 
-    public function toString()
+    public function toString($source)
     {
-        return $this->whereToString(false);
+        return $this->joinsToString($source);
     }
 
     public function __toString()
     {
-        return $this->toString();
+        return $this->toString(null);
     }
 
     public function __debugInfo()

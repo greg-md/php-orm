@@ -21,41 +21,25 @@ trait MysqlSelectQueryTrait
 
     public function forUpdate()
     {
-        $this->type(MysqlSelectQuery::FOR_UPDATE);
+        $this->type = MysqlSelectQueryInterface::FOR_UPDATE;
 
         return $this;
     }
 
     public function lockInShareMode()
     {
-        $this->type(MysqlSelectQuery::LOCK_IN_SHARE_MODE);
+        $this->type = MysqlSelectQueryInterface::LOCK_IN_SHARE_MODE;
 
         return $this;
     }
 
     public function addType($query)
     {
-        switch($type = $this->type()) {
-            case MysqlSelectQuery::FOR_UPDATE:
-                $query .= ' FOR UPDATE';
-                break;
-            case MysqlSelectQuery::LOCK_IN_SHARE_MODE:
-                $query .= ' LOCK IN SHARE MODE';
-                break;
+        if ($this->type) {
+            $query .= ' ' . $this->type;
         }
 
         return $query;
-    }
-
-    public function type($type = null)
-    {
-        if (func_num_args()) {
-            $this->type = (string)$type;
-
-            return $this;
-        }
-
-        return $this->type;
     }
 
     abstract public function limit($value = null);

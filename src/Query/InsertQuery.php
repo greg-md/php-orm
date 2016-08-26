@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class InsertQuery implements QueryInterface, InsertQueryInterface
+class InsertQuery implements InsertQueryInterface
 {
     use QueryTrait;
 
@@ -91,7 +91,7 @@ class InsertQuery implements QueryInterface, InsertQueryInterface
             throw new \Exception('Undefined insert table.');
         }
 
-        list($intoAlias, $intoName) = $this->fetchAlias($this->into);
+        list($intoAlias, $intoName) = $this->parseAlias($this->into);
 
         unset($intoAlias);
 

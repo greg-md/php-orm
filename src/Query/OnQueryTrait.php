@@ -16,12 +16,12 @@ trait OnQueryTrait
         return $this->clearConditions();
     }
 
-    public function on($expr = null, $value = null, $_ = null)
+    public function onRaw($expr, $value = null, $_ = null)
     {
         return $this->condition(...func_get_args());
     }
 
-    public function orOn($expr, $value = null, $_ = null)
+    public function orOnRaw($expr, $value = null, $_ = null)
     {
         return $this->orCondition(...func_get_args());
     }
@@ -36,24 +36,24 @@ trait OnQueryTrait
         return $this->orConditionRel(...func_get_args());
     }
 
-    public function onCols(array $columns)
+    public function onAre(array $columns)
     {
-        return $this->conditionCols(...func_get_args());
+        return $this->conditions(...func_get_args());
     }
 
-    public function onCol($column, $operator, $value = null)
+    public function on($column, $operator, $value = null)
     {
-        return $this->conditionCol(...func_get_args());
+        return $this->condition(...func_get_args());
     }
 
-    public function orOnCols(array $columns)
+    public function orOnAre(array $columns)
     {
-        return $this->orConditionCols(...func_get_args());
+        return $this->orConditions(...func_get_args());
     }
 
-    public function orOnCol($column, $operator, $value = null)
+    public function orOn($column, $operator, $value = null)
     {
-        return $this->orConditionCol(...func_get_args());
+        return $this->orCondition(...func_get_args());
     }
 
     protected function newConditions()

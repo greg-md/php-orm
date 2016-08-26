@@ -18,7 +18,7 @@ use Greg\Support\Debug;
  * @method SelectQuery orWhereCols(array $columns)
  * @method SelectQuery orWhereCol($column, $operator, $value = null)
  */
-class SelectQuery implements QueryInterface, SelectQueryInterface
+class SelectQuery implements SelectQueryInterface
 {
     use QueryTrait, FromQueryTrait, WhereQueryTrait;
 
@@ -75,7 +75,7 @@ class SelectQuery implements QueryInterface, SelectQueryInterface
             array_shift($column);
         }
 
-        list($alias, $name) = $this->fetchAlias($table);
+        list($alias, $name) = $this->parseAlias($table);
 
         if (!$alias) {
             $alias = $name;
@@ -93,25 +93,15 @@ class SelectQuery implements QueryInterface, SelectQueryInterface
         return $this;
     }
 
-    public function column($column, $alias = null)
+    public function columns($columns, $_ = null)
     {
-        $this->columns[] = $alias ? [$alias => $column] : $column;
-
-        return $this;
-    }
-
-    public function columnRaw($column, $alias = null)
-    {
-        return $this->column(new ExprQuery($column), $alias);
-    }
-
-    public function columns($column, $_ = null)
-    {
-        if (!is_array($column)) {
-            $column = func_get_args();
+        if (!is_array($columns)) {
+            $columns = func_get_args();
         }
 
-        array_map([$this, 'column'], $column);
+        foreach($columns as $alias => $column) {
+            $this->column($column, !is_int($alias) ? $alias : null);
+        }
 
         return $this;
     }
@@ -123,6 +113,46 @@ class SelectQuery implements QueryInterface, SelectQueryInterface
         }
 
         array_map([$this, 'columnRaw'], $column);
+
+        return $this;
+    }
+
+    public function column($column, $alias = null)
+    {
+        if ($column instanceof QueryTraitInterface) {
+            $params = $column->getBoundParams();
+
+            $column = '(' . $column . ')';
+        } else {
+            list($columnAlias, $column) = $this->parseAlias($column);
+
+            if (!$alias) {
+                $alias = $columnAlias;
+            }
+
+            $column = $this->quoteExpr($column);
+
+            $params = null;
+        }
+
+        return $this->columnRaw($column, $alias ? $this->quoteName($alias) : null, $params);
+    }
+
+    public function columnRaw($column, $alias = null, $params = null, $_ = null)
+    {
+        if (!is_array($params)) {
+            $params = func_get_args();
+
+            array_shift($params);
+
+            array_shift($params);
+        }
+
+        $this->columns[] = [
+            'column' => (string)$column,
+            'alias' => (string)$alias,
+            'params' => $params,
+        ];
 
         return $this;
     }
@@ -227,14 +257,16 @@ class SelectQuery implements QueryInterface, SelectQueryInterface
             $cols = [];
 
             foreach($this->columns as $column) {
-                $cols[] = $this->quoteAliasExpr($column);
+                $expr = $column['name'];
 
-                list($alias, $expr) = $this->fetchAlias($column);
+                if ($column['alias']) {
+                    $expr .= ' AS ' . $column['alias'];
+                }
 
-                unset($alias);
+                $cols[] = $expr;
 
-                if ($expr instanceof QueryInterface) {
-                    $this->bindParams($expr->getBoundParams());
+                if ($column['params']) {
+                    $this->bindParams($column['params']);
                 }
             }
 

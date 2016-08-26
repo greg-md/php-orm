@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 use Greg\Support\Debug;
 
-class UpdateQuery implements QueryInterface, UpdateQueryInterface
+class UpdateQuery implements UpdateQueryInterface
 {
     use QueryTrait, WhereQueryTrait;
 
@@ -23,9 +23,33 @@ class UpdateQuery implements QueryInterface, UpdateQueryInterface
         return $this;
     }
 
-    public function set(array $values)
+    public function set($key, $value = null)
     {
-        $this->set = array_merge($this->set, $values);
+        if (is_array($key)) {
+            foreach($key as $k => $v) {
+                $this->setRaw($k, '?', $v);
+            }
+        } else {
+            $this->setRaw($key, '?', $value);
+        }
+
+        return $this;
+    }
+
+    public function setRaw($key, $raw, $params = null, $_ = null)
+    {
+        if (!is_array($params)) {
+            $params = func_get_args();
+
+            array_shift($params);
+
+            array_shift($params);
+        }
+
+        $this->set[$key] = [
+            'raw' => $raw,
+            'params' => $params,
+        ];
 
         return $this;
     }
@@ -65,17 +89,10 @@ class UpdateQuery implements QueryInterface, UpdateQueryInterface
 
         $set = [];
 
-        /* @var $value ExprQuery|string */
         foreach($this->set as $key => $value) {
-            $isExpr = ($value instanceof ExprQuery);
+            $expr = $this->quoteName($key) . ' = ' . $this->quoteExpr($value['raw']);
 
-            $expr = $this->quoteName($key) . ' = ' . ($isExpr ? $this->quoteExpr($value->toString()) : '?');
-
-            if ($isExpr) {
-                $this->bindParams($value->getBoundParams());
-            } else {
-                $this->bindParam($value);
-            }
+            $this->bindParams($value['params']);
 
             $set[] = $expr;
         }

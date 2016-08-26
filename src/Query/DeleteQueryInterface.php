@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface DeleteQueryInterface
+interface DeleteQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface
 {
     public function deleteFrom($table);
 

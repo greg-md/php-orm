@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface SelectQueryInterface
+interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface
 {
     /**
      * @param bool $value

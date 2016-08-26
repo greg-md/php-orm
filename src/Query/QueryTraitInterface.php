@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface QueryInterface
+interface QueryTraitInterface
 {
     public function bindParam($param);
 

@@ -2,6 +2,7 @@
 
 namespace Greg\Orm;
 
+use Greg\Orm\Query\QueryTraitInterface;
 use Greg\Orm\Storage\StorageInterface;
 use Greg\Support\Arr;
 
@@ -203,6 +204,28 @@ trait TableTrait
         }
 
         return array_combine($keys, $values);
+    }
+
+    public function concat($array, $delimiter = '')
+    {
+        return $this->getStorage()->concat($array, $delimiter);
+    }
+
+    public function quoteLike($string, $escape = '\\')
+    {
+        return $this->getStorage()->quoteLike($string, $escape);
+    }
+
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    public function setQuery(QueryTraitInterface $query)
+    {
+        $this->query = $query;
+
+        return $this;
     }
 
     public function setStorage(StorageInterface $storage)
