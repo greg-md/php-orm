@@ -8,41 +8,113 @@ trait FromQueryTrait
 
     protected $from = [];
 
-    public function from($table)
+    public function from($table, $_ = null)
     {
-        $this->from[] = $table;
+        $this->fromTable(...func_get_args());
+    }
+
+    protected function fromTable($table, $_ = null)
+    {
+        foreach (func_get_args() as $table) {
+            list($tableAlias, $tableName) = $this->parseAlias($table);
+
+            if ($tableName instanceof QueryTraitInterface) {
+                if (!$tableAlias) {
+                    throw new \Exception('FROM Derived table should have an alias name.');
+                }
+
+                list($tableSql, $tableParams) = $tableName->toSql();
+
+                $tableName = '(' . $tableSql . ')';
+
+                $tableKey = $tableAlias;
+
+                $params = $tableParams;
+            } else {
+                $tableKey = $tableAlias ?: $tableName;
+
+                $tableName = $this->quoteTableExpr($tableName);
+
+                $params = [];
+            }
+
+            if ($tableAlias) {
+                $tableAlias = $this->quoteName($tableAlias);
+            }
+
+            $this->from[$tableKey] = [
+                'name' => $tableName,
+                'alias' => $tableAlias,
+                'params' => $params,
+            ];
+        }
 
         return $this;
     }
 
+    public function fromStmtToSql()
+    {
+        $params = [];
+
+        $sql = [];
+
+        foreach($this->from as $source => $table) {
+            $expr = $table['name'];
+
+            if ($table['alias']) {
+                $expr .= ' AS ' . $table['alias'];
+            }
+
+            $table['params'] && $params = array_merge($params, $table['params']);
+
+            list($joinsSql, $joinsParams) = $this->joinsToSql($source);
+
+            if ($joinsSql) {
+                $expr .= ' ' . $joinsSql;
+
+                $params = array_merge($params, $joinsParams);
+            }
+
+            $sql[] = $expr;
+        }
+
+        if ($sql) {
+            $sql = 'FROM ' . implode(', ', $sql);
+        }
+
+        return [$sql, $params];
+    }
+
+    public function fromStmtToString()
+    {
+        return $this->fromStmtToSql()[0];
+    }
+
+    public function fromToSql()
+    {
+        list($sql, $params) = $this->fromStmtToSql();
+
+        $sql = $sql ? [$sql] : [];
+
+        list($joinsSql, $joinsParams) = $this->joinsToSql();
+
+        if ($joinsSql) {
+            if (!$sql) {
+                throw new \Exception('FROM table is required when using joins.');
+            }
+
+            $sql[] = $joinsSql;
+
+            $params = array_merge($params, $joinsParams);
+        }
+
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
+    }
+
     public function fromToString()
     {
-        $from = [];
-
-        foreach($this->from as $name) {
-            $expr = $this->quoteAliasExpr($name);
-
-            list($alias, $table) = $this->parseAlias($name);
-
-            unset($alias);
-
-            if ($table instanceof QueryTraitInterface) {
-                $this->bindParams($table->getBoundParams());
-            }
-
-            if ($joins = $this->joinsToString($name)) {
-                $expr .= ' ' . $joins;
-            }
-
-            $from[] = $expr;
-        }
-
-        $query = $from ? 'FROM ' . implode(', ', $from) : '';
-
-        if ($joins = $this->joinsToString(null)) {
-            $query .= ' ' . $joins;
-        }
-
-        return $query;
+        return $this->fromToSql()[0];
     }
 }

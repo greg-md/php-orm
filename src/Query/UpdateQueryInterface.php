@@ -8,5 +8,19 @@ interface UpdateQueryInterface extends QueryTraitInterface, WhereQueryTraitInter
 
     public function set($key, $value = null);
 
+    public function setRaw($raw, $param = null, $_ = null);
+
     public function exec();
+
+    public function updateStmtToSql();
+
+    public function updateStmtToString();
+
+    public function setStmtToSql();
+
+    public function setStmtToString();
+
+    public function updateToSql();
+
+    public function updateToString();
 }

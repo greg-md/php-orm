@@ -3,21 +3,7 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\TableInterface;
-use Greg\Support\Debug;
 
-/**
- * Class Select
- * @package Greg\Orm\Query
- *
- * @method SelectQuery where($expr = null, $value = null, $_ = null)
- * @method SelectQuery orWhere($expr, $value = null, $_ = null)
- * @method SelectQuery whereRel($column1, $operator, $column2 = null)
- * @method SelectQuery orWhereRel($column1, $operator, $column2 = null)
- * @method SelectQuery whereCols(array $columns)
- * @method SelectQuery whereCol($column, $operator, $value = null)
- * @method SelectQuery orWhereCols(array $columns)
- * @method SelectQuery orWhereCol($column, $operator, $value = null)
- */
 class SelectQuery implements SelectQueryInterface
 {
     use QueryTrait, FromQueryTrait, WhereQueryTrait;
@@ -52,67 +38,38 @@ class SelectQuery implements SelectQueryInterface
 
     public function from($table, $column = null, $_ = null)
     {
-        $this->from[] = $table;
-
-        if (!is_array($column)) {
-            $column = func_get_args();
-
-            array_shift($column);
-        }
-
-        if ($column) {
-            $this->columnsFrom($table, $column);
-        }
-
-        return $this;
+        return $this->fromTable($table)->columnsFrom(...func_get_args());
     }
 
     public function columnsFrom($table, $column, $_ = null)
     {
-        if (!is_array($column)) {
-            $column = func_get_args();
+        $columns = is_array($column) ? $column : array_slice(func_get_args(), 1);
 
-            array_shift($column);
+        list($tableAlias, $tableName) = $this->parseAlias($table);
+
+        if (!$tableAlias) {
+            $tableAlias = $tableName;
         }
 
-        list($alias, $name) = $this->parseAlias($table);
-
-        if (!$alias) {
-            $alias = $name;
-        }
-
-        foreach($column as &$col) {
-            if ($this->isCleanColumn($col)) {
-                $col = $alias . '.' . $col;
-            }
+        foreach($columns as &$col) {
+            $col = $tableAlias . '.' . $col;
         }
         unset($col);
 
-        $this->columns($column);
+        $this->columns($columns);
 
         return $this;
     }
 
-    public function columns($columns, $_ = null)
-    {
-        if (!is_array($columns)) {
-            $columns = func_get_args();
-        }
-
-        foreach($columns as $alias => $column) {
-            $this->column($column, !is_int($alias) ? $alias : null);
-        }
-
-        return $this;
-    }
-
-    public function columnsRaw($column, $_ = null)
+    public function columns($column, $_ = null)
     {
         if (!is_array($column)) {
             $column = func_get_args();
         }
 
-        array_map([$this, 'columnRaw'], $column);
+        foreach($column as $alias => $col) {
+            $this->column($col, !is_int($alias) ? $alias : null);
+        }
 
         return $this;
     }
@@ -120,9 +77,11 @@ class SelectQuery implements SelectQueryInterface
     public function column($column, $alias = null)
     {
         if ($column instanceof QueryTraitInterface) {
-            $params = $column->getBoundParams();
+            list($columnSql, $columnParams) = $column->toSql();
 
-            $column = '(' . $column . ')';
+            $column = '(' . $columnSql . ')';
+
+            $params = $columnParams;
         } else {
             list($columnAlias, $column) = $this->parseAlias($column);
 
@@ -132,25 +91,26 @@ class SelectQuery implements SelectQueryInterface
 
             $column = $this->quoteExpr($column);
 
-            $params = null;
+            $params = [];
         }
 
-        return $this->columnRaw($column, $alias ? $this->quoteName($alias) : null, $params);
+        if ($alias) {
+            $alias = $this->quoteNameExpr($alias);
+        }
+
+        return $this->addColumn($column, $alias, $params);
     }
 
-    public function columnRaw($column, $alias = null, $params = null, $_ = null)
+    public function columnRaw($expr, $param = null, $_ = null)
     {
-        if (!is_array($params)) {
-            $params = func_get_args();
+        return $this->addColumn($this->quoteExpr($expr), null, is_array($param) ? $param : array_slice(func_get_args(), 1));
+    }
 
-            array_shift($params);
-
-            array_shift($params);
-        }
-
+    protected function addColumn($expr, $alias = null, array $params = [])
+    {
         $this->columns[] = [
-            'column' => (string)$column,
-            'alias' => (string)$alias,
+            'expr' => $expr,
+            'alias' => $alias,
             'params' => $params,
         ];
 
@@ -164,9 +124,22 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function group($expr)
+    public function group($column)
     {
-        $this->group[] = $expr;
+        return $this->addGroup($this->quoteNameExpr($column));
+    }
+
+    public function groupRaw($expr, $param = null, $_ = null)
+    {
+        return $this->addGroup($this->quoteExpr($expr), is_array($param) ? $param : array_slice(func_get_args(), 1));
+    }
+
+    protected function addGroup($expr, array $params = [])
+    {
+        $this->group[] = [
+            'expr' => $expr,
+            'params' => $params,
+        ];
 
         return $this;
     }
@@ -183,15 +156,48 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function order($expr, $type = null)
+    public function groupToSql()
     {
-        if ($type and !in_array($type, [static::ORDER_ASC, static::ORDER_DESC])) {
-            throw new \Exception('Wrong select order type.');
+        $params = [];
+
+        $group = [];
+
+        foreach($this->group as $group) {
+            $group[] = $group['expr'];
+
+            $group['params'] && $params = array_merge($params, $group['params']);
         }
 
-        $this->order[] = [
+        $sql = $group ? 'GROUP BY ' . implode(', ', $group) : '';
+
+        return [$sql, $params];
+    }
+
+    public function groupToString()
+    {
+        return $this->groupToSql()[0];
+    }
+
+    public function order($column, $type = null)
+    {
+        if ($type and !in_array($type, [static::ORDER_ASC, static::ORDER_DESC])) {
+            throw new \Exception('Wrong ORDER type for SELECT statement.');
+        }
+
+        return $this->addOrder($this->quoteNameExpr($column), $type);
+    }
+
+    public function orderRaw($expr, $param = null, $_ = null)
+    {
+        return $this->addOrder($this->quoteExpr($expr), null, is_array($param) ? $param : array_slice(func_get_args(), 1));
+    }
+
+    protected function addOrder($expr, $type = null, array $params = [])
+    {
+        $this->group[] = [
             'expr' => $expr,
             'type' => $type,
+            'params' => $params,
         ];
 
         return $this;
@@ -209,6 +215,28 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
+    public function orderToSql()
+    {
+        $params = [];
+
+        $order = [];
+
+        foreach($this->order as $order) {
+            $order[] = $order['expr'] . ($order['type'] ? ' ' . $order['type'] : '');
+
+            $order['params'] && $params = array_merge($params, $order['params']);
+        }
+
+        $sql = $order ? 'ORDER BY ' . implode(', ', $order) : '';
+
+        return [$sql, $params];
+    }
+
+    public function orderToString()
+    {
+        return $this->orderToSql()[0];
+    }
+
     public function limit($number)
     {
         $this->limit = (int)$number;
@@ -223,103 +251,117 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function groupToString()
+    protected function addSqlLimit(&$sql)
     {
-        $group = [];
-
-        foreach($this->group as $expr) {
-            $group[] = $this->quoteExpr($expr);
+        if ($this->limit) {
+            $query[] = 'LIMIT ' . $sql;
         }
 
-        return $group ? 'GROUP BY ' . implode(', ', $group) : '';
-    }
-
-    public function orderToString()
-    {
-        $order = [];
-
-        foreach($this->order as $info) {
-            $order[] = $this->quoteExpr($info['expr']) . ($info['type'] ? ' ' . $info['type'] : '');
+        if ($this->offset) {
+            $query[] = 'OFFSET ' . $this->offset;
         }
 
-        return $order ? 'ORDER BY ' . implode(', ', $order) : '';
+        return $this;
     }
 
-    public function selectToString()
+    public function selectStmtToSql()
     {
-        $query = ['SELECT'];
+        $params = [];
+
+        $sql = ['SELECT'];
 
         if ($this->distinct()) {
-            $query[] = 'DISTINCT';
+            $sql[] = 'DISTINCT';
         }
 
         if ($this->columns) {
-            $cols = [];
+            $sqlColumns = [];
 
             foreach($this->columns as $column) {
-                $expr = $column['name'];
+                $expr = $column['expr'];
 
                 if ($column['alias']) {
                     $expr .= ' AS ' . $column['alias'];
                 }
 
-                $cols[] = $expr;
+                $sqlColumns[] = $expr;
 
-                if ($column['params']) {
-                    $this->bindParams($column['params']);
-                }
+                $column['params'] && $params = array_merge($params, $column['params']);
             }
 
-            $query[] = implode(', ', $cols);
+            $sql[] = implode(', ', $sqlColumns);
         } else {
-            $query[] = '*';
+            $sql[] = '*';
         }
 
-        return implode(' ', $query);
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
     }
 
-    public function toString()
+    public function selectStmtToString()
     {
-        $this->clearBoundParams();
-
-        $query = [];
-
-        if ($select = $this->selectToString()) {
-            $query[] = $select;
-        }
-
-        if ($from = $this->fromToString()) {
-            $query[] = $from;
-        }
-
-        if ($where = $this->whereToString()) {
-            $query[] = $where;
-        }
-
-        if ($group = $this->groupToString()) {
-            $query[] = $group;
-        }
-
-        if ($order = $this->orderToString()) {
-            $query[] = $order;
-        }
-
-        if (method_exists($this, 'parseLimit')) {
-            $this->parseLimit($query);
-        }
-
-        return implode(' ', $query);
+        return $this->selectStmtToSql()[0];
     }
 
-    public function stmt($execute = true)
+    public function selectToSql()
     {
-        $stmt = $this->getStorage()->prepare($this->toString());
+        list($sql, $params) = $this->selectStmtToSql();
 
-        $this->bindParamsToStmt($stmt);
+        $sql = [$sql];
 
-        $execute && $stmt->execute();
+        list($fromSql, $fromParams) = $this->fromToSql();
 
-        return $stmt;
+        if ($fromSql) {
+            $sql[] = $fromSql;
+
+            $params = array_merge($params, $fromParams);
+        }
+
+        list($whereSql, $whereParams) = $this->whereToSql();
+
+        if ($whereSql) {
+            $sql[] = $whereSql;
+
+            $params = array_merge($params, $whereParams);
+        }
+
+        list($groupSql, $groupParams) = $this->groupToSql();
+
+        if ($groupSql) {
+            $query[] = $groupSql;
+
+            $params = array_merge($params, $groupParams);
+        }
+
+        list($orderSql, $orderParams) = $this->orderToSql();
+
+        if ($orderSql) {
+            $query[] = $orderSql;
+
+            $params = array_merge($params, $orderParams);
+        }
+
+        $this->addSqlLimit($sql);
+
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
+    }
+
+    public function selectToString()
+    {
+        return $this->selectToSql()[0];
+    }
+
+    public function assoc()
+    {
+        return $this->stmt()->fetchAssoc();
+    }
+
+    public function assocAll()
+    {
+        return $this->stmt()->fetchAssocAll();
     }
 
     public function col($column = 0)
@@ -332,19 +374,24 @@ class SelectQuery implements SelectQueryInterface
         return $this->stmt()->fetchOne($column);
     }
 
-    public function exists()
-    {
-        return (bool)$this->one();
-    }
-
     public function pairs($key = 0, $value = 1)
     {
         return $this->stmt()->fetchPairs($key, $value);
     }
 
-    public function assoc()
+    public function exists()
     {
-        return $this->stmt()->fetchAssoc();
+        return (bool)$this->one();
+    }
+
+    public function toSql()
+    {
+        return $this->selectToSql();
+    }
+
+    public function toString()
+    {
+        return $this->selectToString();
     }
 
     /*
@@ -385,11 +432,6 @@ class SelectQuery implements SelectQueryInterface
         return $rows[0];
     }
     */
-
-    public function assocAll()
-    {
-        return $this->stmt()->fetchAssocAll();
-    }
 
     /*
     public function assocAllFull($references = null, $relationships = null, $dependencies = '*')
@@ -668,14 +710,4 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
     */
-
-    public function __toString()
-    {
-        return $this->toString();
-    }
-
-    public function __debugInfo()
-    {
-        return Debug::fixInfo($this, get_object_vars($this), false);
-    }
 }

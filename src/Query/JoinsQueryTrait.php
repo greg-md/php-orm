@@ -2,8 +2,6 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Storage\StorageInterface;
-
 trait JoinsQueryTrait
 {
     protected $joins = [];
@@ -45,27 +43,25 @@ trait JoinsQueryTrait
 
             call_user_func_array($on, [$query]);
 
-            $on = $query->toString();
+            list($querySql, $queryParams) = $query->toSql();
 
-            $params = $query->getBoundParams();
+            $on = '(' . $querySql . ')';
+
+            $params = $queryParams;
         } else {
             $on = $this->quoteExpr($on);
 
             $params = is_array($param) ? $param : array_slice(func_get_args(), 4);
         }
 
-        list($sourceAlias, $sourceName) = $this->parseAlias($source);
+        if ($source) {
+            list($sourceAlias, $sourceName) = $this->parseAlias($source);
 
-        if ($sourceName) {
-            if ($sourceName instanceof QueryTraitInterface) {
-                if (!$sourceAlias) {
-                    throw new \Exception('Join source table should have an alias name.');
-                }
-
-                $sourceName = '(' . $sourceName . ')';
-            } else {
-                $sourceName = $this->quoteTableExpr($sourceName);
+            if (($sourceName instanceof QueryTraitInterface) and !$sourceAlias) {
+                throw new \Exception('Join source table should have an alias name.');
             }
+
+            $source = $sourceAlias ?: $sourceName;
         }
 
         list($tableAlias, $tableName) = $this->parseAlias($table);
@@ -75,24 +71,31 @@ trait JoinsQueryTrait
                 throw new \Exception('Join table should have an alias name.');
             }
 
-            $params = array_merge($tableName->getBoundParams(), $params);
+            list($tableSql, $tableParams) = $tableName->toSql();
 
-            $tableName = '(' . $tableName . ')';
+            $tableName = '(' . $tableSql . ')';
+
+            $tableKey = $tableAlias;
+
+            $params = array_merge($tableParams, $params);
         } else {
+            $tableKey = $tableAlias ?: $tableName;
+
             $tableName = $this->quoteTableExpr($tableName);
         }
 
-        $this->joins[] = [
+        if ($tableAlias) {
+            $tableAlias = $this->quoteName($tableAlias);
+        }
+
+        $this->joins[$tableKey] = [
             'type' => $type,
+            'source' => $source,
 
-            'sourceAlias' => $sourceAlias ? $this->quoteName($sourceAlias) : null,
-            'sourceName' => $sourceName,
-
-            'tableAlias' => $tableAlias ? $this->quoteName($tableAlias) : null,
-            'tableName' => $tableName,
+            'table' => $tableName,
+            'alias' => $tableAlias,
 
             'on' => $on,
-
             'params' => $params,
         ];
 
@@ -104,51 +107,33 @@ trait JoinsQueryTrait
         return new OnQuery($this->getStorage());
     }
 
-    public function joinsToString($source)
+    public function joinsToSql($source = null)
     {
-        if (!$this->joins) {
-            return '';
-        }
-
-        list($sourceAlias, $sourceName) = $this->parseAlias($source);
-
-        $source = $sourceAlias ?: $sourceName;
-
-        $joins = [];
+        $sql = $params = [];
 
         foreach($this->joins as $join) {
-            if ($source != ($join['sourceAlias'] ?: $join['sourceName'])) {
+            if ($source != $join['source']) {
                 continue;
             }
 
-            $expr = ($join['type'] ? $join['type'] . ' ' : '') . 'JOIN ' . $join['tableName'];
+            $expr = ($join['type'] ? $join['type'] . ' ' : '') . 'JOIN ' . $join['table'];
 
-            $join['tableAlias'] && $expr .= ' AS ' . $join['tableAlias'];
+            $join['alias'] && $expr .= ' AS ' . $join['alias'];
 
             $join['on'] && $expr .= ' ON ' . $join['on'];
 
-            $join['params'] && $this->bindParams($join['params']);
+            $join['params'] && $params = array_merge($params, $join['params']);
 
-            $joins[] = $expr;
+            $sql[] = $expr;
         }
 
-        return implode(' ', $joins);
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
     }
 
-    /**
-     * @return StorageInterface
-     */
-    abstract public function getStorage();
-
-    abstract protected function parseAlias($name);
-
-    abstract protected function quoteName($name);
-
-    abstract protected function quoteExpr($expr);
-
-    abstract protected function quoteNameExpr($name);
-
-    abstract protected function quoteTableExpr($name);
-
-    abstract protected function bindParams(array $params);
+    public function joinsToString($source = null)
+    {
+        return $this->joinsToSql($source)[0];
+    }
 }

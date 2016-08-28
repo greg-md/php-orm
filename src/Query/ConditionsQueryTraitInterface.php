@@ -32,5 +32,7 @@ interface ConditionsQueryTraitInterface
 
     public function orCondition($column, $operator, $value = null);
 
+    public function conditionsToSql();
+
     public function conditionsToString();
 }

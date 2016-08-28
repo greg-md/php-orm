@@ -61,10 +61,19 @@ trait WhereQueryTrait
         return new WhereQuery($this->getStorage());
     }
 
-    public function whereToString($useTag = true)
+    public function whereToSql()
     {
-        $condition = $this->conditionsToString();
+        list($sql, $params) = $this->conditionsToSql();
 
-        return $condition ? ($useTag ? 'WHERE ' : '') . $condition : '';
+        if ($sql) {
+            $sql = 'WHERE ' . $sql;
+        }
+
+        return [$sql, $params];
+    }
+
+    public function whereToString()
+    {
+        return $this->whereToSql()[0];
     }
 }

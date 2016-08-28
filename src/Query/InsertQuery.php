@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Support\Debug;
+use Greg\Support\Arr;
 
 class InsertQuery implements InsertQueryInterface
 {
@@ -16,16 +16,26 @@ class InsertQuery implements InsertQueryInterface
 
     protected $select = null;
 
-    public function into($name)
+    public function into($table)
     {
-        $this->into = $name;
+        list($tableAlias, $tableName) = $this->parseAlias($table);
+
+        unset($tableAlias);
+
+        if ($tableName instanceof QueryTraitInterface) {
+            throw new \Exception('Derived tables are not supported in INSERT statement.');
+        }
+
+        $tableName = $this->quoteTableExpr($tableName);
+
+        $this->into = $tableName;
 
         return $this;
     }
 
     public function columns(array $columns)
     {
-        $this->columns = array_merge($this->columns, $columns);
+        $this->columns = array_map([$this, 'quoteNameExpr'], $columns);
 
         return $this;
     }
@@ -58,79 +68,91 @@ class InsertQuery implements InsertQueryInterface
         return $this;
     }
 
-    public function select($select)
+    public function clearData()
     {
-        $this->select = (string)$select;
+        return $this->clearColumns()->clearValues();
+    }
+
+    public function select($expr, $param = null, $_ = null)
+    {
+        $params = is_array($param) ? $param : array_slice(func_get_args(), 1);
+
+        if ($expr instanceof SelectQueryInterface) {
+            list($sql, $params) = $expr->toSql();
+
+            $this->select = [
+                'sql' => $sql,
+                'params' => $params,
+            ];
+        } else {
+            $this->select = [
+                'sql' => $this->quoteExpr($expr),
+                'params' => $params,
+            ];
+        }
 
         return $this;
     }
 
     public function clearSelect()
     {
-        $this->select = null;
+        $this->select = [];
 
         return $this;
     }
 
     public function exec()
     {
-        $stmt = $this->getStorage()->prepare($this->toString());
+        return $this->stmt()->execute();
+    }
 
-        $this->bindParamsToStmt($stmt);
+    public function insertToSql()
+    {
+        if (!$this->into) {
+            throw new \Exception('Undefined INSERT table.');
+        }
 
-        return $stmt->execute();
+        if (!$this->columns) {
+            throw new \Exception('Undefined INSERT columns.');
+        }
+
+        $params = [];
+
+        $sql = ['INSERT INTO', $this->into, '(' . implode(', ', $this->columns) . ')'];
+
+        if ($this->select) {
+            $sql[] = $this->select['sql'];
+
+            $params = array_merge($params, $this->select['params']);
+        } else {
+            $values = [];
+
+            foreach($this->columns as $column) {
+                $values[] = Arr::getRef($this->values, $column);
+            }
+
+            $sql[] = 'VALUES ' . $this->prepareForBind($values);
+
+            $params = array_merge($params, $values);
+        }
+
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
+    }
+
+    public function insertToString()
+    {
+        return $this->insertToSql()[0];
+    }
+
+    public function toSql()
+    {
+        return $this->insertToSql();
     }
 
     public function toString()
     {
-        $query = [
-            'INSERT INTO',
-        ];
-
-        if (!$this->into) {
-            throw new \Exception('Undefined insert table.');
-        }
-
-        list($intoAlias, $intoName) = $this->parseAlias($this->into);
-
-        unset($intoAlias);
-
-        $query[] = $this->quoteNamedExpr($intoName);
-
-        $quoteColumns = array_map(function($column) {
-            return $this->quoteNamedExpr($column);
-        }, $this->columns);
-
-        if (!$quoteColumns) {
-            throw new \Exception('Undefined insert columns.');
-        }
-
-        $query[] = '(' . implode(', ', $quoteColumns) . ')';
-
-        if ($this->select) {
-            $query[] = $this->select;
-        } else {
-            $values = [];
-            foreach($this->columns as $column) {
-                $values[] = $this->values($column);
-            }
-            $this->bindParams($values);
-
-            $query[] = 'VALUES';
-
-            $query[] = '(' . implode(', ', str_split(str_repeat('?', sizeof($this->columns)))) . ')';
-        }
-
-        return implode(' ', $query);
-    }
-
-    public function __toString()
-    {
-        return $this->toString();
-    }
-
-    public function __debugInfo()
-    {
-        return Debug::fixInfo($this, get_object_vars($this), false);
+        return $this->insertToString();
     }
 }

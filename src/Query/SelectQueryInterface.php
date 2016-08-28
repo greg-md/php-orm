@@ -28,6 +28,13 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
 
     /**
      * @param $column
+     * @param null $_
+     * @return $this
+     */
+    public function columns($column, $_ = null);
+
+    /**
+     * @param $column
      * @param null $alias
      * @return $this
      */
@@ -41,20 +48,6 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
     public function columnRaw($column, $alias = null);
 
     /**
-     * @param $column
-     * @param null $_
-     * @return $this
-     */
-    public function columns($column, $_ = null);
-
-    /**
-     * @param $column
-     * @param null $_
-     * @return $this
-     */
-    public function columnsRaw($column, $_ = null);
-
-    /**
      * @return $this
      */
     public function clearColumns();
@@ -66,6 +59,14 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
     public function group($expr);
 
     /**
+     * @param $expr
+     * @param null $param
+     * @param null $_
+     * @return $this
+     */
+    public function groupRaw($expr, $param = null, $_ = null);
+
+    /**
      * @return bool
      */
     public function hasGroup();
@@ -75,12 +76,38 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function clearGroup();
 
+    public function groupToSql();
+
+    public function groupToString();
+
     /**
-     * @param $expr
+     * @param $column
      * @param null $type
      * @return $this
      */
-    public function order($expr, $type = null);
+    public function order($column, $type = null);
+
+    /**
+     * @param $expr
+     * @param null $param
+     * @param null $_
+     * @return $this
+     */
+    public function orderRaw($expr, $param = null, $_ = null);
+
+    /**
+     * @return bool
+     */
+    public function hasOrder();
+
+    /**
+     * @return $this
+     */
+    public function clearOrder();
+
+    public function orderToSql();
+
+    public function orderToString();
 
     /**
      * @param $number
@@ -94,28 +121,31 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function offset($number);
 
-    public function groupToString();
+    public function selectStmtToSql();
 
-    public function orderToString();
+    public function selectStmtToString();
+
+    public function selectToSql();
 
     public function selectToString();
 
     /**
-     * @return bool
+     * @return array|null
      */
-    public function hasOrder();
-
-    /**
-     * @return $this
-     */
-    public function clearOrder();
+    public function assoc();
 
     /**
      * @return array
      */
     public function assocAll();
 
-    public function assoc();
+    /**
+     * @param int $column
+     * @return array
+     */
+    public function col($column = 0);
+
+    public function one($column = 0);
 
     /**
      * @param int $key
@@ -128,14 +158,4 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @return bool
      */
     public function exists();
-
-    public function one($column = 0);
-
-    /**
-     * @param int $column
-     * @return array
-     */
-    public function col($column = 0);
-
-    public function stmt($execute = true);
 }

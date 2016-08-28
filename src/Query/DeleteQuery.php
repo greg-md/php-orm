@@ -2,83 +2,99 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Support\Debug;
-
-/**
- * Class Delete
- * @package Greg\Orm\Query
- *
- * @method DeleteQuery where($expr = null, $value = null, $_ = null)
- * @method DeleteQuery orWhere($expr, $value = null, $_ = null)
- * @method DeleteQuery whereRel($column1, $operator, $column2 = null)
- * @method DeleteQuery orWhereRel($column1, $operator, $column2 = null)
- * @method DeleteQuery whereCols(array $columns)
- * @method DeleteQuery whereCol($column, $operator, $value = null)
- * @method DeleteQuery orWhereCols(array $columns)
- * @method DeleteQuery orWhereCol($column, $operator, $value = null)
- */
 class DeleteQuery implements DeleteQueryInterface
 {
     use QueryTrait, FromQueryTrait, WhereQueryTrait;
 
-    protected $delete = [];
+    protected $tables = [];
 
-    public function deleteFrom($table)
+    public function table($table, $_ = null)
     {
-        $this->delete[] = $table;
+        foreach (func_get_args() as $table) {
+            list($tableAlias, $tableName) = $this->parseAlias($table);
+
+            if ($tableName instanceof QueryTraitInterface) {
+                throw new \Exception('Derived tables are not supported in UPDATE statement.');
+            }
+
+            $source = $tableAlias ?: $tableName;
+
+            $tableName = $this->quoteTableExpr($tableName);
+
+            if ($tableAlias) {
+                $tableAlias = $this->quoteName($tableAlias);
+            }
+
+            $this->tables[$source] = $tableAlias ?: $tableName;
+        }
 
         return $this;
     }
 
     public function exec()
     {
-        $stmt = $this->getStorage()->prepare($this->toString());
+        return $this->stmt()->execute();
+    }
 
-        $this->bindParamsToStmt($stmt);
+    public function deleteStmtToSql()
+    {
+        $params = [];
 
-        return $stmt->execute();
+        $sql = ['DELETE'];
+
+        if ($this->tables) {
+            $sql[] = implode(', ', $this->tables);
+        }
+
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
+    }
+
+    public function deleteStmtToString()
+    {
+        return $this->deleteStmtToSql()[0];
+    }
+
+    public function deleteToSql()
+    {
+        list($sql, $params) = $this->deleteStmtToSql();
+
+        $sql = [$sql];
+
+        list($fromSql, $fromParams) = $this->fromToSql();
+
+        if ($fromSql) {
+            $sql[] = $fromSql;
+
+            $params = array_merge($params, $fromParams);
+        }
+
+        list($whereSql, $whereParams) = $this->whereToSql();
+
+        if ($whereSql) {
+            $sql[] = $whereSql;
+
+            $params = array_merge($params, $whereParams);
+        }
+
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
+    }
+
+    public function deleteToString()
+    {
+        return $this->deleteToSql()[0];
+    }
+
+    public function toSql()
+    {
+        return $this->deleteToSql();
     }
 
     public function toString()
     {
-        $query = [
-            'DELETE',
-        ];
-
-        if ($this->delete) {
-            $data = [];
-
-            foreach($this->delete as $table) {
-                list($alias, $expr) = $this->parseAlias($table);
-
-                $data[] = $alias ? $this->quoteName($alias) : $this->quoteNamedExpr($expr);
-            }
-
-            $query[] = implode(', ', $data);
-        }
-
-        $from = $this->fromToString();
-
-        if ($from) {
-            $query[] = $from;
-        }
-
-        $where = $this->whereToString();
-
-        if ($where) {
-            $query[] = $where;
-        }
-
-        return implode(' ', $query);
-    }
-
-    public function __toString()
-    {
-        return $this->toString();
-    }
-
-    public function __debugInfo()
-    {
-        return Debug::fixInfo($this, get_object_vars($this), false);
+        return $this->deleteToString();
     }
 }

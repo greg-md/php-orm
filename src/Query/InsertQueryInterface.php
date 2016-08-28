@@ -16,6 +16,8 @@ interface InsertQueryInterface extends QueryTraitInterface
 
     public function data($data);
 
+    public function clearData();
+
     public function select($select);
 
     public function clearSelect();

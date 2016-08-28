@@ -24,5 +24,7 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orOn($column, $operator, $value = null);
 
-    public function onToString($useTag = true);
+    public function onToSql();
+
+    public function onToString();
 }

@@ -17,6 +17,21 @@ class PdoStmt extends \PDOStatement implements StmtInterface
      */
     protected $adapter = null;
 
+    public function bindParams(array $params)
+    {
+        $k = 1;
+
+        foreach($params as $key => $param) {
+            $param = $param !== null ? (array)$param : [$param];
+
+            array_unshift($param, is_int($key) ? $k++ : $key);
+
+            $this->bindValue(...$param);
+        }
+
+        return $this;
+    }
+
     public function fetchOne($column = 0)
     {
         if (Str::isNaturalNumber($column)) {

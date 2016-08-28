@@ -2,11 +2,9 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Support\Debug;
-
 class UpdateQuery implements UpdateQueryInterface
 {
-    use QueryTrait, WhereQueryTrait;
+    use QueryTrait, JoinsQueryTrait, WhereQueryTrait;
 
     protected $tables = [];
 
@@ -14,11 +12,26 @@ class UpdateQuery implements UpdateQueryInterface
 
     public function table($table, $_ = null)
     {
-        if (!is_array($table)) {
-            $table = func_get_args();
-        }
+        foreach (func_get_args() as $table) {
+            list($tableAlias, $tableName) = $this->parseAlias($table);
 
-        $this->tables = array_merge($this->tables, $table);
+            if ($tableName instanceof QueryTraitInterface) {
+                throw new \Exception('Derived tables are not supported in UPDATE statement.');
+            }
+
+            $tableKey = $tableAlias ?: $tableName;
+
+            $tableName = $this->quoteTableExpr($tableName);
+
+            if ($tableAlias) {
+                $tableAlias = $this->quoteName($tableAlias);
+            }
+
+            $this->tables[$tableKey] = [
+                'name' => $tableName,
+                'alias' => $tableAlias,
+            ];
+        }
 
         return $this;
     }
@@ -27,27 +40,24 @@ class UpdateQuery implements UpdateQueryInterface
     {
         if (is_array($key)) {
             foreach($key as $k => $v) {
-                $this->setRaw($k, '?', $v);
+                $this->set($k, $v);
             }
         } else {
-            $this->setRaw($key, '?', $value);
+            $this->addSet($this->quoteNameExpr($key) . ' = ?', [$value]);
         }
 
         return $this;
     }
 
-    public function setRaw($key, $raw, $params = null, $_ = null)
+    public function setRaw($raw, $param = null, $_ = null)
     {
-        if (!is_array($params)) {
-            $params = func_get_args();
+        $this->addSet($this->quoteExpr($raw), is_array($param) ? $param : array_slice(func_get_args(), 1));
+    }
 
-            array_shift($params);
-
-            array_shift($params);
-        }
-
-        $this->set[$key] = [
-            'raw' => $raw,
+    protected function addSet($expr, array $params)
+    {
+        $this->set[] = [
+            'raw' => $expr,
             'params' => $params,
         ];
 
@@ -56,65 +66,116 @@ class UpdateQuery implements UpdateQueryInterface
 
     public function exec()
     {
-        $stmt = $this->getStorage()->prepare($this->toString());
+        return $this->stmt()->execute();
+    }
 
-        $this->bindParamsToStmt($stmt);
+    public function updateStmtToSql()
+    {
+        if (!$this->tables) {
+            throw new \Exception('Undefined UPDATE statement tables.');
+        }
 
-        return $stmt->execute();
+        $sql = $params = [];
+
+        foreach($this->tables as $source => $table) {
+            $expr = $table['name'];
+
+            if ($table['alias']) {
+                $expr .= ' AS ' . $table['alias'];
+            }
+
+            list($joinsSql, $joinsParams) = $this->joinsToSql($source);
+
+            if ($joinsSql) {
+                $expr .= ' ' . $joinsSql;
+
+                $params = array_merge($params, $joinsParams);
+            }
+
+            $sql[] = $expr;
+        }
+
+        $sql = 'UPDATE ' . implode(', ', $sql);
+
+        return [$sql, $params];
+    }
+
+    public function updateStmtToString()
+    {
+        return $this->updateStmtToSql()[0];
+    }
+
+    public function setStmtToSql()
+    {
+        if (!$this->set) {
+            throw new \Exception('Undefined SET statement in UPDATE statement.');
+        }
+
+        $sql = $params = [];
+
+        foreach($this->set as $item) {
+            $expr = $item['raw'];
+
+            $item['params'] && $params = array_merge($params, $item['params']);
+
+            $sql[] = $expr;
+        }
+
+        $sql = 'SET ' . implode(', ', $sql);
+
+        return [$sql, $params];
+    }
+
+    public function setStmtToString()
+    {
+        return $this->setStmtToSql()[0];
+    }
+
+    public function updateToSql()
+    {
+        list($sql, $params) = $this->updateStmtToSql();
+
+        $sql = [$sql];
+
+        list($joinsSql, $joinsParams) = $this->joinsToSql();
+
+        if ($joinsSql) {
+            $sql[] = $joinsSql;
+
+            $params = array_merge($params, $joinsParams);
+        }
+
+        list($setSql, $setParams) = $this->setStmtToSql();
+
+        $sql[] = $setSql;
+
+        $params = array_merge($params, $setParams);
+
+        list($whereSql, $whereParams) = $this->whereToSql();
+
+        if ($whereSql) {
+            $sql[] = $whereSql;
+
+            $params = array_merge($params, $whereParams);
+        }
+
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
+    }
+
+    public function updateToString()
+    {
+        return $this->updateToSql()[0];
+    }
+
+    public function toSql()
+    {
+        return $this->updateToSql();
     }
 
     public function toString()
     {
-        $query = [
-            'UPDATE',
-        ];
-
-        if (!$this->tables) {
-            throw new \Exception('Undefined update tables.');
-        }
-
-        $tables = [];
-
-        foreach($this->tables as $name) {
-            $tables[] = $this->quoteAliasExpr($name);
-        }
-
-        $query[] = implode(', ', $tables);
-
-        if (!$this->set) {
-            throw new \Exception('Undefined update set.');
-        }
-
-        $query[] = 'SET';
-
-        $set = [];
-
-        foreach($this->set as $key => $value) {
-            $expr = $this->quoteName($key) . ' = ' . $this->quoteExpr($value['raw']);
-
-            $this->bindParams($value['params']);
-
-            $set[] = $expr;
-        }
-
-        $query[] = implode(', ', $set);
-
-        $where = $this->whereToString();
-
-        if ($where) {
-            $query[] = $where;
-        }
-
-        return implode(' ', $query);
-    }
-
-    public function __toString()
-    {
-        return $this->toString();
-    }
-
-    public function __debugInfo()
-    {
-        return Debug::fixInfo($this, get_object_vars($this), false);
+        return $this->updateToString();
     }
 }

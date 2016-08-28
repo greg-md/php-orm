@@ -16,5 +16,7 @@ interface JoinsQueryTraitInterface
 
     public function innerTo($source, $table, $on = null, $param = null, $_ = null);
 
+    public function joinsToSql($source);
+
     public function joinsToString($source);
 }

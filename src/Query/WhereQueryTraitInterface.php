@@ -24,5 +24,7 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orWhere($column, $operator, $value = null);
 
-    public function whereToString($useTag = true);
+    public function whereToSql();
+
+    public function whereToString();
 }

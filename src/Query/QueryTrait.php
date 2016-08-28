@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Adapter\StmtInterface;
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Support\Debug;
 use Greg\Support\Str;
 
 trait QueryTrait
@@ -11,8 +11,6 @@ trait QueryTrait
     protected $quoteNameWith = '`';
 
     protected $nameRegex = '[a-z0-9_\.\*]+';
-
-    protected $boundParams = [];
 
     /**
      * @var StorageInterface|null
@@ -90,40 +88,6 @@ trait QueryTrait
         return [null, $name];
     }
 
-    /*
-    protected function isCleanColumn($expr, $includeAlias = true)
-    {
-        if ($expr == '*') {
-            return true;
-        }
-
-        $regex = '([a-z0-9_]+)';
-
-        if ($includeAlias) {
-            $regex .= '(?:\s+as\s+([a-z0-9_]+))?';
-        }
-
-        return preg_match('#^' . $regex . '$#i', $expr);
-    }
-
-    protected function quoteAliasExpr($expr)
-    {
-        list($alias, $expr) = $this->parseAlias($expr);
-
-        if ($expr instanceof QueryTraitInterface) {
-            $expr = '(' . $expr . ')';
-        } else {
-            $expr = $this->quoteExpr($expr);
-        }
-
-        if ($alias) {
-            $expr .= ' AS ' . $this->quoteName($alias);
-        }
-
-        return $expr;
-    }
-    */
-
     protected function quoteTableExpr($expr)
     {
         if (preg_match('#^(' . $this->getNameRegex() . ')$#i', $expr)) {
@@ -162,44 +126,40 @@ trait QueryTrait
         return Str::quote($name, $this->getQuoteNameWith());
     }
 
-    protected function bindParamsToStmt(StmtInterface $stmt)
+    protected function prepareForBind($value)
     {
-        $k = 1;
+        return is_array($value) ? $this->prepareInForBind(sizeof($value)) : '?';
+    }
 
-        foreach($this->getBoundParams() as $key => $param) {
-            $param = $param !== null ? (array)$param : [$param];
+    protected function prepareInForBind($length, $rowLength = null)
+    {
+        $result = '(' . implode(', ', array_fill(0, $length, '?')) . ')';
 
-            array_unshift($param, is_int($key) ? $k++ : $key);
-
-            $stmt->bindValue(...$param);
+        if ($rowLength !== null) {
+            $result = '(' . implode(', ', array_fill(0, $rowLength, $result)) . ')';
         }
 
-        return $this;
+        return $result;
     }
 
-    public function bindParam($param)
+    public function stmt()
     {
-        $this->boundParams[] = $param;
+        list($sql, $params) = $this->toSql();
 
-        return $this;
+        $stmt = $this->getStorage()->prepare($sql);
+
+        $stmt->bindParams($params);
+
+        return $stmt;
     }
 
-    public function bindParams(array $params)
+    public function __toString()
     {
-        $this->boundParams = array_merge($this->boundParams, $params);
-
-        return $this;
+        return (string)$this->toString();
     }
 
-    public function getBoundParams()
+    public function __debugInfo()
     {
-        return $this->boundParams;
-    }
-
-    public function clearBoundParams()
-    {
-        $this->boundParams = [];
-
-        return $this;
+        return Debug::fixInfo($this, get_object_vars($this), false);
     }
 }

@@ -240,9 +240,11 @@ trait ConditionsQueryTrait
 
             call_user_func_array($expr, [$query]);
 
-            $expr = '(' . $query->toString() . ')';
+            list($querySql, $queryParams) = $query->toSql();
 
-            $params = $query->getBoundParams();
+            $expr = '(' . $querySql . ')';
+
+            $params = $queryParams;
         } else {
             $params = is_array($param) ? $param : array_slice(func_get_args(), 2);
         }
@@ -261,34 +263,25 @@ trait ConditionsQueryTrait
         return new ConditionsQuery($this->getStorage());
     }
 
-    protected function prepareForBind($value)
+    public function conditionsToSql()
     {
-        return is_array($value) ? $this->prepareInForBind(sizeof($value)) : '?';
-    }
+        $params = [];
 
-    protected function prepareInForBind($length, $rowLength = null)
-    {
-        $result = '(' . implode(', ', array_fill(0, $length, '?')) . ')';
+        $sql = [];
 
-        if ($rowLength !== null) {
-            $result = '(' . implode(', ', array_fill(0, $rowLength, $result)) . ')';
+        foreach($this->conditions as $condition) {
+            $sql[] = ($sql ? $condition['logic'] . ' ' : '') . $condition['expr'];
+
+            $condition['params'] && $params = array_merge($params, $condition['params']);
         }
 
-        return $result;
+        $sql = implode(' ', $sql);
+
+        return [$sql, $params];
     }
 
     public function conditionsToString()
     {
-        $conditions = [];
-
-        foreach($this->conditions as $info) {
-            if ($info['expr']) {
-                $conditions[] = ($conditions ? ' ' . $info['logic'] . ' ' : '') . $info['expr'];
-
-                $this->bindParams($info['params']);
-            }
-        }
-
-        return implode('', $conditions);
+        return $this->conditionsToSql()[0];
     }
 }

@@ -61,10 +61,19 @@ trait OnQueryTrait
         return new OnQuery($this->getStorage());
     }
 
-    public function onToString($useTag = true)
+    public function onToSql()
     {
-        $condition = $this->conditionsToString();
+        list($sql, $params) = $this->conditionsToSql();
 
-        return $condition ? ($useTag ? 'ON ' : '') . $condition : '';
+        if ($sql) {
+            $sql = 'ON ' . $sql;
+        }
+
+        return [$sql, $params];
+    }
+
+    public function onToString()
+    {
+        return $this->onToSql()[0];
     }
 }

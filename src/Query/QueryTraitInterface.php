@@ -4,13 +4,11 @@ namespace Greg\Orm\Query;
 
 interface QueryTraitInterface
 {
-    public function bindParam($param);
+    public function stmt();
 
-    public function bindParams(array $params);
+    public function toSql();
 
-    public function getBoundParams();
-
-    public function clearBoundParams();
+    public function toString();
 
     public function __toString();
 }

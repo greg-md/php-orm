@@ -6,6 +6,8 @@ use Greg\Orm\Storage\StorageInterface;
 
 interface StmtInterface
 {
+    public function bindParams(array $params);
+
     public function bindColumn($column, &$param, $type = null, $length = null, $options = null);
 
     public function bindParam($param, &$var, $type = StorageInterface::PARAM_STR, $length = null, $options = null);
