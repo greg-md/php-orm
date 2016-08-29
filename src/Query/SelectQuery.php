@@ -38,7 +38,15 @@ class SelectQuery implements SelectQueryInterface
 
     public function from($table, $column = null, $_ = null)
     {
-        return $this->fromTable($table)->columnsFrom(...func_get_args());
+        $columns = is_array($column) ? $column : array_slice(func_get_args(), 1);
+
+        $this->fromTable($table);
+
+        if ($columns) {
+            $this->columnsFrom($table, $columns);
+        }
+
+        return $this;
     }
 
     public function columnsFrom($table, $column, $_ = null)
@@ -115,6 +123,11 @@ class SelectQuery implements SelectQueryInterface
         ];
 
         return $this;
+    }
+
+    public function hasColumns()
+    {
+        return $this->columns ? true : false;
     }
 
     public function clearColumns()
@@ -270,7 +283,7 @@ class SelectQuery implements SelectQueryInterface
 
         $sql = ['SELECT'];
 
-        if ($this->distinct()) {
+        if ($this->distinct) {
             $sql[] = 'DISTINCT';
         }
 
@@ -356,27 +369,32 @@ class SelectQuery implements SelectQueryInterface
 
     public function assoc()
     {
-        return $this->stmt()->fetchAssoc();
+        return $this->execStmt()->fetchAssoc();
     }
 
     public function assocAll()
     {
-        return $this->stmt()->fetchAssocAll();
+        return $this->execStmt()->fetchAssocAll();
+    }
+
+    public function assocAllGenerator()
+    {
+        return $this->execStmt()->fetchAssocAllGenerator();
     }
 
     public function col($column = 0)
     {
-        return $this->stmt()->fetchColumn($column);
+        return $this->execStmt()->fetchColumn($column);
     }
 
     public function one($column = 0)
     {
-        return $this->stmt()->fetchOne($column);
+        return $this->execStmt()->fetchOne($column);
     }
 
     public function pairs($key = 0, $value = 1)
     {
-        return $this->stmt()->fetchPairs($key, $value);
+        return $this->execStmt()->fetchPairs($key, $value);
     }
 
     public function exists()
@@ -461,11 +479,6 @@ class SelectQuery implements SelectQueryInterface
         return $rows;
     }
 
-    public function row()
-    {
-        return ($row = $this->assoc()) ? $this->getTable()->createRow($row) : null;
-    }
-
     public function rowFull($references = null, $relationships = null, $dependencies = '*')
     {
         $item = $this->assoc();
@@ -481,15 +494,6 @@ class SelectQuery implements SelectQueryInterface
         return $item;
     }
 
-    public function rowable()
-    {
-        if (!$row = $this->assocRowable()) {
-            return null;
-        }
-
-        return $this->getTable()->createRowable([$row], false);
-    }
-
     public function rowableFull($references = null, $relationships = null, $dependencies = '*')
     {
         if (!$row = $this->assocRowableFull($references, $relationships, $dependencies)) {
@@ -497,24 +501,6 @@ class SelectQuery implements SelectQueryInterface
         }
 
         return $this->getTable()->createRowable([$row], false);
-    }
-
-    public function rows($rows = true)
-    {
-        $table = $this->getTable();
-
-        $items = $this->assocAll();
-
-        foreach($items as &$item) {
-            $item = $table->createRow($item);
-        }
-        unset($item);
-
-        if ($rows) {
-            $items = $table->createRows($items);
-        }
-
-        return $items;
     }
 
     public function rowsFull($references = null, $relationships = null, $dependencies = '*', $rows = true)
@@ -530,13 +516,6 @@ class SelectQuery implements SelectQueryInterface
         }
 
         return $items;
-    }
-
-    public function rowableAll()
-    {
-        $rows = $this->assocAllRowable();
-
-        return $this->getTable()->createRowable($rows, false);
     }
 
     public function rowableAllFull($references = null, $relationships = null, $dependencies = '*')
@@ -685,29 +664,6 @@ class SelectQuery implements SelectQueryInterface
         $rowable->total($pagination['total'])->page($pagination['page'])->limit($pagination['limit']);
 
         return $rowable;
-    }
-    */
-
-    /*
-    public function hasTable()
-    {
-        return $this->table ? true : false;
-    }
-
-    public function getTable()
-    {
-        if (!$this->table) {
-            throw new \Exception('Undefined table in select query.');
-        }
-
-        return $this->table;
-    }
-
-    public function setTable(TableInterface $table)
-    {
-        $this->table = $table;
-
-        return $this;
     }
     */
 }

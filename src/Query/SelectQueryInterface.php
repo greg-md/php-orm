@@ -47,6 +47,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function columnRaw($column, $alias = null);
 
+    public function hasColumns();
     /**
      * @return $this
      */
@@ -138,6 +139,11 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @return array
      */
     public function assocAll();
+
+    /**
+     * @return array
+     */
+    public function assocAllGenerator();
 
     /**
      * @param int $column

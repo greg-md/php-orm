@@ -26,6 +26,11 @@ class Sqlite implements StorageInterface
         }
     }
 
+    public function dbName()
+    {
+        return $this->getAdapter()->dbName();
+    }
+
     public function select($columns = null, $_ = null)
     {
         if (!is_array($columns)) {

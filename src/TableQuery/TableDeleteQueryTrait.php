@@ -1,11 +1,11 @@
 <?php
 
-namespace Greg\Orm;
+namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\DeleteQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
-trait TableDeleteTrait
+trait TableDeleteQueryTrait
 {
     /**
      * @return DeleteQueryInterface
@@ -22,27 +22,27 @@ trait TableDeleteTrait
         return $this->query;
     }
 
-    public function deleteQuery(array $whereIs = [])
+    public function deleteQuery(array $whereAre = [])
     {
-        $query = $this->getStorage()->delete($this, true);
+        $query = $this->getStorage()->delete($this);
 
-        if ($whereIs) {
-            $query->whereCols($whereIs);
+        if ($whereAre) {
+            $query->whereAre($whereAre);
         }
 
         return $query;
     }
 
-    public function delete(array $whereIs = [])
+    public function delete(array $whereAre = [])
     {
         $this->query = $this->deleteQuery(...func_get_args());
 
         return $this;
     }
 
-    public function deleteFrom($table)
+    public function fromTable($table)
     {
-        $this->needDeleteQuery()->deleteFrom($table);
+        $this->needDeleteQuery()->fromTable($table);
 
         return $this;
     }
@@ -50,6 +50,26 @@ trait TableDeleteTrait
     public function execDelete()
     {
         return $this->needDeleteQuery()->exec();
+    }
+
+    public function deleteStmtToSql()
+    {
+        return $this->needDeleteQuery()->deleteStmtToSql();
+    }
+
+    public function deleteStmtToString()
+    {
+        return $this->needDeleteQuery()->deleteStmtToString();
+    }
+
+    public function deleteToSql()
+    {
+        return $this->needDeleteQuery()->deleteToSql();
+    }
+
+    public function deleteToString()
+    {
+        return $this->needDeleteQuery()->deleteToString();
     }
 
     /**

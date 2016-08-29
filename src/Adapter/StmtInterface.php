@@ -55,4 +55,6 @@ interface StmtInterface
     public function fetchAssoc();
 
     public function fetchAssocAll();
+
+    public function fetchAssocAllGenerator();
 }

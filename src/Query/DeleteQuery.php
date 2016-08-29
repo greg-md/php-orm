@@ -6,9 +6,9 @@ class DeleteQuery implements DeleteQueryInterface
 {
     use QueryTrait, FromQueryTrait, WhereQueryTrait;
 
-    protected $tables = [];
+    protected $fromTables = [];
 
-    public function table($table, $_ = null)
+    public function fromTable($table, $_ = null)
     {
         foreach (func_get_args() as $table) {
             list($tableAlias, $tableName) = $this->parseAlias($table);
@@ -25,7 +25,7 @@ class DeleteQuery implements DeleteQueryInterface
                 $tableAlias = $this->quoteName($tableAlias);
             }
 
-            $this->tables[$source] = $tableAlias ?: $tableName;
+            $this->fromTables[$source] = $tableAlias ?: $tableName;
         }
 
         return $this;
@@ -42,8 +42,8 @@ class DeleteQuery implements DeleteQueryInterface
 
         $sql = ['DELETE'];
 
-        if ($this->tables) {
-            $sql[] = implode(', ', $this->tables);
+        if ($this->fromTables) {
+            $sql[] = implode(', ', $this->fromTables);
         }
 
         $sql = implode(' ', $sql);

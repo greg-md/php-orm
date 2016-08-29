@@ -4,19 +4,6 @@ namespace Greg\Orm\Storage\Mysql\Query;
 
 trait MysqlSelectQueryTrait
 {
-    protected function parseLimit(&$query)
-    {
-        if ($this->limit()) {
-            $query[] = 'LIMIT ' . $this->limit();
-        }
-
-        if ($this->offset()) {
-            $query[] = 'OFFSET ' . $this->offset();
-        }
-
-        return $this;
-    }
-
     protected $type = null;
 
     public function forUpdate()
@@ -33,7 +20,7 @@ trait MysqlSelectQueryTrait
         return $this;
     }
 
-    public function addType($query)
+    public function addSqlType(&$query)
     {
         if ($this->type) {
             $query .= ' ' . $this->type;
@@ -41,8 +28,4 @@ trait MysqlSelectQueryTrait
 
         return $query;
     }
-
-    abstract public function limit($value = null);
-
-    abstract public function offset($value = null);
 }

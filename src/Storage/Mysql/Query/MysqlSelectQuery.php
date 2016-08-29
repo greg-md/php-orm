@@ -12,7 +12,7 @@ class MysqlSelectQuery extends SelectQuery implements MysqlSelectQueryInterface
     {
         $query = parent::toString();
 
-        $this->addType($query);
+        $this->addSqlType($query);
 
         return $query;
     }

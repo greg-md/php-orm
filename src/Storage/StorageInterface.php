@@ -25,12 +25,12 @@ interface StorageInterface
     const FETCH_ORI_NEXT = 0;
 
     /**
-     * @param null $columns
+     * @param null $column
      * @param null $_
      * @return SelectQuery
      * @throws \Exception
      */
-    public function select($columns = null, $_ = null);
+    public function select($column = null, $_ = null);
 
     /**
      * @param null $into
@@ -87,6 +87,12 @@ interface StorageInterface
      */
     public function prepare($query);
 
+    /**
+     * @param $query
+     * @param null $mode
+     * @param null $_
+     * @return StmtInterface
+     */
     public function query($query, $mode = null, $_ = null);
 
     public function quote($string, $type = StorageInterface::PARAM_STR);

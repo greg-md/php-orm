@@ -23,4 +23,8 @@ interface InsertQueryInterface extends QueryTraitInterface
     public function clearSelect();
 
     public function exec();
+
+    public function insertToSql();
+
+    public function insertToString();
 }

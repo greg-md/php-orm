@@ -1,11 +1,11 @@
 <?php
 
-namespace Greg\Orm;
+namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\UpdateQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
-trait TableUpdateTrait
+trait TableUpdateQueryTrait
 {
     /**
      * @return UpdateQueryInterface
@@ -47,9 +47,16 @@ trait TableUpdateTrait
         return $this;
     }
 
-    public function set(array $values)
+    public function updateSet($key, $value = null)
     {
-        $this->needUpdateQuery()->set($values);
+        $this->needUpdateQuery()->set(...func_get_args());
+
+        return $this;
+    }
+
+    public function updateSetRaw($raw, $param = null, $_ = null)
+    {
+        $this->needUpdateQuery()->set(...func_get_args());
 
         return $this;
     }
@@ -57,6 +64,36 @@ trait TableUpdateTrait
     public function execUpdate()
     {
         return $this->needUpdateQuery()->exec();
+    }
+
+    public function updateStmtToSql()
+    {
+        return $this->needUpdateQuery()->updateStmtToSql();
+    }
+
+    public function updateStmtToString()
+    {
+        return $this->needUpdateQuery()->updateStmtToSql();
+    }
+
+    public function setStmtToSql()
+    {
+        return $this->needUpdateQuery()->setStmtToSql();
+    }
+
+    public function setStmtToString()
+    {
+        return $this->needUpdateQuery()->setStmtToString();
+    }
+
+    public function updateToSql()
+    {
+        return $this->needUpdateQuery()->updateToSql();
+    }
+
+    public function updateToString()
+    {
+        return $this->needUpdateQuery()->updateToString();
     }
 
     /**

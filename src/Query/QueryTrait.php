@@ -3,6 +3,8 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\TableInterface;
+use Greg\Orm\TableTraitInterface;
 use Greg\Support\Debug;
 use Greg\Support\Str;
 
@@ -77,6 +79,10 @@ trait QueryTrait
 
     protected function parseAlias($name)
     {
+        if ($name instanceof TableTraitInterface) {
+            return [$name->getAlias(), $name->fullName()];
+        }
+
         if (is_array($name)) {
             return [key($name), current($name)];
         }
@@ -148,7 +154,18 @@ trait QueryTrait
 
         $stmt = $this->getStorage()->prepare($sql);
 
-        $stmt->bindParams($params);
+        if ($params) {
+            $stmt->bindParams($params);
+        }
+
+        return $stmt;
+    }
+
+    public function execStmt()
+    {
+        $stmt = $this->stmt();
+
+        $stmt->execute();
 
         return $stmt;
     }

@@ -3,15 +3,23 @@
 namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\AdapterInterface;
+use Greg\Orm\Column;
 use Greg\Orm\Query\QueryTrait;
 use Greg\Orm\Storage\Mysql\Query\MysqlDeleteQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlInsertQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlQueryTrait;
 use Greg\Orm\Storage\Mysql\Query\MysqlSelectQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlUpdateQuery;
+use Greg\Orm\Constraint;
 use Greg\Support\Arr;
 use Greg\Support\Str;
 
+/**
+ * Class Mysql
+ * @package Greg\Orm\Storage
+ *
+ * @method Mysql\Adapter\MysqlAdapterInterface getAdapter();
+ */
 class Mysql implements StorageInterface
 {
     use StorageAdapterTrait;
@@ -27,6 +35,11 @@ class Mysql implements StorageInterface
                 throw new \Exception('Wrong Mysql adapter type.');
             }
         }
+    }
+
+    public function dbName()
+    {
+        return $this->getAdapter()->dbName();
     }
 
     public function getTableSchema($tableName)
@@ -50,16 +63,16 @@ class Mysql implements StorageInterface
 
         $columns = [];
 
-        foreach($columnsInfo as $columnInfo) {
-            if ($columnInfo['Key'] == 'PRI') {
-                $primaryKeys[] = $columnInfo['Field'];
+        foreach($columnsInfo as $info) {
+            if ($info['Key'] == 'PRI') {
+                $primaryKeys[] = $info['Field'];
             }
 
-            if ($columnInfo['Extra'] == 'auto_increment') {
-                $autoIncrement = $columnInfo['Field'];
+            if ($info['Extra'] == 'auto_increment') {
+                $autoIncrement = $info['Field'];
             }
 
-            $columns[] = $this->parseColumnInfo($columnInfo);
+            $columns[] = $this->newColumnInfo($info);
         }
 
         return [
@@ -69,34 +82,34 @@ class Mysql implements StorageInterface
         ];
     }
 
-    public function parseColumnInfo($columnInfo)
+    public function newColumnInfo(array $info)
     {
-        $info = $this->parseColumnInfoAsArray($columnInfo);
+        $info = $this->parseColumnInfo($info);
 
         $column = new Column();
 
-        $column->name($info['name']);
+        $column->setName($info['name']);
 
-        $column->type($info['type']);
+        $column->setType($info['type']);
 
-        $column->length($info['length']);
+        $column->setLength($info['length']);
 
         $column->unsigned($info['unsigned']);
 
         $column->null($info['null']);
 
-        $column->defaultValue($info['defaultValue']);
+        $column->setDefaultValue($info['defaultValue']);
 
-        $column->comment($info['comment']);
+        $column->setComment($info['comment']);
 
-        $column->values($info['values']);
+        $column->setValues($info['values']);
 
         return $column;
     }
 
-    protected function parseColumnInfoAsArray($columnInfo)
+    protected function parseColumnInfo($info)
     {
-        $name = $columnInfo['Field'];
+        $name = $info['Field'];
 
         $type = null;
 
@@ -112,7 +125,7 @@ class Mysql implements StorageInterface
 
         $values = [];
 
-        if (preg_match('#^([a-z]+)(?:\((.+?)\))?(?: (unsigned))?#i', $columnInfo['Type'], $matches)) {
+        if (preg_match('#^([a-z]+)(?:\((.+?)\))?(?: (unsigned))?#i', $info['Type'], $matches)) {
             $type = $matches[1];
 
             if (Arr::hasRef($matches, 2)) {
@@ -132,23 +145,23 @@ class Mysql implements StorageInterface
             }
         }
 
-        if ($columnInfo['Null'] == 'NO') {
+        if ($info['Null'] == 'NO') {
             $null = false;
         }
 
-        if ($columnInfo['Default'] === '') {
-            $columnInfo['Default'] = null;
+        if ($info['Default'] === '') {
+            $info['Default'] = null;
         }
 
         if (!$null) {
-            $columnInfo['Default'] = (string)$columnInfo['Default'];
+            $info['Default'] = (string)$info['Default'];
         }
 
-        if (Column::isNumericType($type) and (!$null or $columnInfo['Default'] !== null)) {
-            $columnInfo['Default'] = (int)$columnInfo['Default'];
+        if (Column::isNumericType($type) and (!$null or $info['Default'] !== null)) {
+            $info['Default'] = (int)$info['Default'];
         }
 
-        $defaultValue = $columnInfo['Default'];
+        $defaultValue = $info['Default'];
 
         return compact('name', 'type', 'length', 'unsigned', 'null', 'defaultValue', 'comment', 'values');
     }
@@ -159,15 +172,15 @@ class Mysql implements StorageInterface
 
         $sql = $stmt->fetchOne('Create Table');
 
-        return $this->parseTableReferences($sql);
+        return $this->newTableReferences($sql);
     }
 
-    public function parseTableReferences($sql)
+    public function newTableReferences($sql)
     {
         $references = [];
 
-        foreach($this->parseTableReferencesAsArray($sql) as $info) {
-            $reference = new TableConstraint();
+        foreach($this->parseTableReferences($sql) as $info) {
+            $reference = new Constraint();
 
             $reference->setName($info['ConstraintName'])
                 ->setReferencedTableName($info['ReferencedTableName'])
@@ -184,7 +197,7 @@ class Mysql implements StorageInterface
         return $references;
     }
 
-    public function parseTableReferencesAsArray($sql)
+    public function parseTableReferences($sql)
     {
         $tableName = $this->parseTableName($sql);
 
@@ -246,9 +259,9 @@ class Mysql implements StorageInterface
                 'REFERENCED_COLUMN_NAME',
             ])
             ->from(['TC' => 'information_schema.TABLE_CONSTRAINTS'], 'CONSTRAINT_TYPE')
-            ->where('KCU.TABLE_SCHEMA = TC.TABLE_SCHEMA')
-            ->where('KCU.TABLE_NAME = TC.TABLE_NAME')
-            ->where('KCU.CONSTRAINT_NAME = TC.CONSTRAINT_NAME')
+            ->whereRel('KCU.TABLE_SCHEMA', 'TC.TABLE_SCHEMA')
+            ->whereRel('KCU.TABLE_NAME', 'TC.TABLE_NAME')
+            ->whereRel('KCU.CONSTRAINT_NAME', 'TC.CONSTRAINT_NAME')
 
             ->order('KCU.TABLE_SCHEMA')
             ->order('KCU.TABLE_NAME')
@@ -261,15 +274,15 @@ class Mysql implements StorageInterface
                     'UPDATE_RULE',
                     'DELETE_RULE',
                 ])
-                ->where('KCU.CONSTRAINT_SCHEMA = RC.CONSTRAINT_SCHEMA')
-                ->where('KCU.CONSTRAINT_NAME = RC.CONSTRAINT_NAME');
+                ->whereRel('KCU.CONSTRAINT_SCHEMA', 'RC.CONSTRAINT_SCHEMA')
+                ->whereRel('KCU.CONSTRAINT_NAME', 'RC.CONSTRAINT_NAME');
         }
 
-        $query->where('TC.CONSTRAINT_TYPE = "FOREIGN KEY"');
+        $query->where('TC.CONSTRAINT_TYPE', 'FOREIGN KEY');
 
-        $query->whereCol('KCU.REFERENCED_TABLE_SCHEMA', $this->dbName());
+        $query->where('KCU.REFERENCED_TABLE_SCHEMA', $this->dbName());
 
-        $query->whereCol('KCU.REFERENCED_TABLE_NAME', $tableName);
+        $query->where('KCU.REFERENCED_TABLE_NAME', $tableName);
 
         $items = $query->assocAll();
 
@@ -281,7 +294,7 @@ class Mysql implements StorageInterface
         $relationships = [];
 
         foreach($this->parseTableRelationshipsAsArray($items, $rules) as $relationship) {
-            $constraint = new TableConstraint();
+            $constraint = new Constraint();
 
             $constraint->setName($relationship['ConstraintName']);
 
@@ -333,16 +346,16 @@ class Mysql implements StorageInterface
         return $relationships;
     }
 
-    public function select($columns = null, $_ = null)
+    public function select($column = null, $_ = null)
     {
-        if (!is_array($columns)) {
-            $columns = func_get_args();
+        if (!is_array($column)) {
+            $column = func_get_args();
         }
 
         $query = new MysqlSelectQuery($this);
 
-        if ($columns) {
-            $query->columns($columns);
+        if ($column) {
+            $query->columns($column);
         }
 
         return $query;

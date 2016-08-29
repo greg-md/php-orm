@@ -69,6 +69,13 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         return parent::fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function fetchAssocAllGenerator()
+    {
+        while ($row = parent::fetch(\PDO::FETCH_ASSOC)) {
+            yield $row;
+        }
+    }
+
     public function execute($params = null)
     {
         return $this->callParent(__FUNCTION__, func_get_args());

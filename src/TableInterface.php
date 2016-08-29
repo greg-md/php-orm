@@ -4,11 +4,9 @@ namespace Greg\Orm;
 
 use Greg\Orm\Storage\StorageInterface;
 
-interface TableInterface
+interface TableInterface extends TableTraitInterface, RowTraitInterface
 {
-    public function getName();
-
-    public function getAlias();
+    public function setStorage(StorageInterface $storage);
 
     /**
      * @return StorageInterface

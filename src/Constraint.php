@@ -2,7 +2,7 @@
 
 namespace Greg\Orm;
 
-class TableConstraint
+class Constraint
 {
     protected $name = null;
 

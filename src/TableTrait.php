@@ -2,13 +2,25 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Query\QueryTraitInterface;
-use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\TableQuery\TableConditionsQueryTrait;
+use Greg\Orm\TableQuery\TableDeleteQueryTrait;
+use Greg\Orm\TableQuery\TableFromQueryTrait;
+use Greg\Orm\TableQuery\TableInsertQueryTrait;
+use Greg\Orm\TableQuery\TableJoinsQueryTrait;
+use Greg\Orm\TableQuery\TableOnQueryTrait;
+use Greg\Orm\TableQuery\TableQueryTrait;
+use Greg\Orm\TableQuery\TableSelectQueryTrait;
+use Greg\Orm\TableQuery\TableUpdateQueryTrait;
+use Greg\Orm\TableQuery\TableWhereQueryTrait;
 use Greg\Support\Arr;
+use Greg\Support\DateTime;
+use Greg\Support\Url;
 
 trait TableTrait
 {
-    use TableSelectTrait, TableUpdateTrait, TableDeleteTrait, TableInsertTrait;
+    use TableQueryTrait, TableInsertQueryTrait, TableUpdateQueryTrait, TableDeleteQueryTrait, TableSelectQueryTrait;
+
+    use TableConditionsQueryTrait, TableFromQueryTrait, TableJoinsQueryTrait, TableOnQueryTrait, TableWhereQueryTrait;
 
     protected $prefix = null;
 
@@ -18,6 +30,9 @@ trait TableTrait
 
     protected $label = null;
 
+    /**
+     * @var Column[]
+     */
     protected $columns = [];
 
     protected $customColumnsTypes = [];
@@ -29,13 +44,6 @@ trait TableTrait
     protected $primaryKeys = [];
 
     protected $uniqueKeys = [];
-
-    protected $query = null;
-
-    /**
-     * @var StorageInterface|null
-     */
-    protected $storage = null;
 
     public function setPrefix($name)
     {
@@ -104,6 +112,33 @@ trait TableTrait
     public function getColumns()
     {
         return $this->columns;
+    }
+
+    public function hasColumn($name)
+    {
+        foreach($this->columns as $column) {
+            if ($column->getName() === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getColumn($name)
+    {
+        foreach($this->columns as $column) {
+            if ($column->getName() === $name) {
+                return $column;
+            }
+        }
+
+        throw new \Exception('Column `' . $name . '` not found in table `' . $this->getName() . '`');
+    }
+
+    public function getColumnType($name)
+    {
+        return $this->getCustomColumnType($name) ?: $this->getColumn($name)->getType();
     }
 
     public function setCustomColumnType($key, $value)
@@ -206,41 +241,71 @@ trait TableTrait
         return array_combine($keys, $values);
     }
 
-    public function concat($array, $delimiter = '')
+    public function fixRowValueType(array $row, $clean = false, $reverse = false)
     {
-        return $this->getStorage()->concat($array, $delimiter);
-    }
+        foreach($row as $columnName => &$value) {
+            if (!($column = $this->getColumn($columnName))) {
+                if ($clean) {
+                    unset($row[$columnName]);
+                }
 
-    public function quoteLike($string, $escape = '\\')
-    {
-        return $this->getStorage()->quoteLike($string, $escape);
-    }
+                continue;
+            }
 
-    public function getQuery()
-    {
-        return $this->query;
-    }
+            if ($value === '') {
+                $value = null;
+            }
 
-    public function setQuery(QueryTraitInterface $query)
-    {
-        $this->query = $query;
+            if (!$column->allowNull()) {
+                $value = (string)$value;
+            }
 
-        return $this;
-    }
+            if ($column->isInt() and (!$column->allowNull() or $value !== null)) {
+                $value = (int)$value;
+            }
 
-    public function setStorage(StorageInterface $storage)
-    {
-        $this->storage = $storage;
+            if ($column->isFloat() and (!$column->allowNull() or $value !== null)) {
+                $value = (double)$value;
+            }
 
-        return $this;
-    }
+            switch($this->getColumnType($columnName)) {
+                case Column::TYPE_DATETIME:
+                case Column::TYPE_TIMESTAMP:
+                    if ($value) {
+                        $value = DateTime::toStringDateTime(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+                    }
 
-    public function getStorage()
-    {
-        if (!$this->storage) {
-            throw new \Exception('Table storage is not defined.');
+                    break;
+                case Column::TYPE_DATE:
+                    if ($value) {
+                        $value = DateTime::toStringDate($value);
+                    }
+
+                    break;
+                case Column::TYPE_TIME:
+                    if ($value) {
+                        $value = DateTime::toStringTime($value);
+                    }
+
+                    break;
+                case 'sys_name':
+                    if ($reverse && $value) {
+                        $value = Url::transform($value);
+                    }
+
+                    break;
+                case 'boolean':
+                    $value = (bool)$value;
+
+                    break;
+                case 'json':
+                    $value = $reverse ? json_encode($value) : json_decode($value, true);
+
+                    break;
+            }
         }
+        unset($value);
 
-        return $this->storage;
+        return $row;
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Greg\Orm;
+namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
-trait TableInsertTrait
+trait TableInsertQueryTrait
 {
     /**
      * @return InsertQueryInterface
@@ -40,9 +40,9 @@ trait TableInsertTrait
         return $this;
     }
 
-    public function into($name)
+    public function into($table)
     {
-        $this->needInsertQuery()->into($name);
+        $this->needInsertQuery()->into($table);
 
         return $this;
     }
@@ -82,6 +82,13 @@ trait TableInsertTrait
         return $this;
     }
 
+    public function clearInsertData()
+    {
+        $this->needInsertQuery()->clearData();
+
+        return $this;
+    }
+
     public function insertSelect($select)
     {
         $this->needInsertQuery()->select($select);
@@ -99,6 +106,16 @@ trait TableInsertTrait
     public function execInsert()
     {
         return $this->needInsertQuery()->exec();
+    }
+
+    public function insertToSql()
+    {
+        return $this->needInsertQuery()->insertToSql();
+    }
+
+    public function insertToString()
+    {
+        return $this->needInsertQuery()->insertToString();
     }
 
     /**

@@ -8,9 +8,15 @@ class PdoAdapter extends \PDO implements AdapterInterface
 
     protected $constructorArgs = [];
 
+    protected $dsnProvider = null;
+
+    protected $dsnInfo = null;
+
     public function __construct($dsn, $username = null, $password = null, $options = null)
     {
         $this->constructorArgs = $args = func_get_args();
+
+        $this->parseDnsParams($dsn);
 
         parent::__construct(...$args);
 
@@ -30,6 +36,13 @@ class PdoAdapter extends \PDO implements AdapterInterface
         $this->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
 
         $this->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+
+        return $this;
+    }
+
+    protected function parseDnsParams($dsn)
+    {
+        list($this->dsnProvider, $this->dsnInfo) = explode(':', $dsn, 2);
 
         return $this;
     }
