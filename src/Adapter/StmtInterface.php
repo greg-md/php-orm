@@ -2,17 +2,15 @@
 
 namespace Greg\Orm\Adapter;
 
-use Greg\Orm\Storage\StorageInterface;
-
 interface StmtInterface
 {
     public function bindParams(array $params);
 
     public function bindColumn($column, &$param, $type = null, $length = null, $options = null);
 
-    public function bindParam($param, &$var, $type = StorageInterface::PARAM_STR, $length = null, $options = null);
+    public function bindParam($param, &$var, $type = AdapterInterface::PARAM_STR, $length = null, $options = null);
 
-    public function bindValue($param, $value, $type = StorageInterface::PARAM_STR);
+    public function bindValue($param, $value, $type = AdapterInterface::PARAM_STR);
 
     public function closeCursor();
 
@@ -26,7 +24,7 @@ interface StmtInterface
 
     public function execute($params = null);
 
-    public function fetch($style = null, $orientation = StorageInterface::FETCH_ORI_NEXT, $offset = 0);
+    public function fetch($style = null, $orientation = AdapterInterface::FETCH_ORI_NEXT, $offset = 0);
 
     public function fetchAll($style = null, $argument = null, $args = []);
 

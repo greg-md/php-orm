@@ -93,76 +93,76 @@ trait TableSelectQueryTrait
         return $this;
     }
 
-    public function group($column)
+    public function groupBy($column)
     {
-        $this->needSelectQuery()->group($column);
+        $this->needSelectQuery()->groupBy($column);
 
         return $this;
     }
 
-    public function groupRaw($expr, $param = null, $_ = null)
+    public function groupByRaw($expr, $param = null, $_ = null)
     {
-        $this->needSelectQuery()->groupRaw(...func_get_args());
+        $this->needSelectQuery()->groupByRaw(...func_get_args());
 
         return $this;
     }
 
-    public function hasGroup()
+    public function hasGroupBy()
     {
-        return $this->needSelectQuery()->hasGroup();
+        return $this->needSelectQuery()->hasGroupBy();
     }
 
-    public function clearGroup()
+    public function clearGroupBy()
     {
-        $this->needSelectQuery()->clearGroup();
+        $this->needSelectQuery()->clearGroupBy();
 
         return $this;
     }
 
-    public function groupToSql()
+    public function groupByToSql()
     {
-        return $this->needSelectQuery()->groupToSql();
+        return $this->needSelectQuery()->groupByToSql();
     }
 
-    public function groupToString()
+    public function groupByToString()
     {
-        return $this->needSelectQuery()->groupToString();
+        return $this->needSelectQuery()->groupByToString();
     }
 
-    public function order($column, $type = null)
+    public function orderBy($column, $type = null)
     {
-        $this->needSelectQuery()->order($column, $type);
+        $this->needSelectQuery()->orderBy($column, $type);
 
         return $this;
     }
 
-    public function orderRaw($expr, $param = null, $_ = null)
+    public function orderByRaw($expr, $param = null, $_ = null)
     {
-        $this->needSelectQuery()->orderRaw(...func_get_args());
+        $this->needSelectQuery()->orderByRaw(...func_get_args());
 
         return $this;
     }
 
-    public function hasOrder()
+    public function hasOrderBy()
     {
-        return $this->needSelectQuery()->hasOrder();
+        return $this->needSelectQuery()->hasOrderBy();
     }
 
-    public function clearOrder()
+    public function clearOrderBy()
     {
-        $this->needSelectQuery()->clearOrder();
+        $this->needSelectQuery()->clearOrderBy();
 
         return $this;
     }
 
-    public function orderToSql()
+    public function orderByToSql()
     {
-        return $this->needSelectQuery()->orderToSql();
+        return $this->needSelectQuery()->orderByToSql();
     }
 
-    public function orderToString()
+    public function orderByToString()
     {
-        return $this->needSelectQuery()->orderToString();
+        return $this->needSelectQuery()->orderByToString();
     }
 
     public function limit($number)
@@ -175,6 +175,27 @@ trait TableSelectQueryTrait
     public function offset($number)
     {
         $this->needSelectQuery()->offset($number);
+
+        return $this;
+    }
+
+    public function union($expr, $param = null, $_ = null)
+    {
+        $this->needSelectQuery()->union(...func_get_args());
+
+        return $this;
+    }
+
+    public function unionAll($expr, $param = null, $_ = null)
+    {
+        $this->needSelectQuery()->unionAll(...func_get_args());
+
+        return $this;
+    }
+
+    public function unionDistinct($expr, $param = null, $_ = null)
+    {
+        $this->needSelectQuery()->unionAll(...func_get_args());
 
         return $this;
     }
@@ -209,6 +230,11 @@ trait TableSelectQueryTrait
         return $this->needSelectQuery()->assocAll();
     }
 
+    public function assocAllGenerator()
+    {
+        return $this->needSelectQuery()->assocAllGenerator();
+    }
+
     public function col($column = 0)
     {
         return $this->needSelectQuery()->col($column);
@@ -227,6 +253,66 @@ trait TableSelectQueryTrait
     public function exists()
     {
         return $this->needSelectQuery()->exists();
+    }
+
+    public function selectCount($column = '*', $alias = null)
+    {
+        $this->needSelectQuery()->count($column, $alias);
+
+        return $this;
+    }
+
+    public function selectMax($column, $alias = null)
+    {
+        $this->needSelectQuery()->max($column, $alias);
+
+        return $this;
+    }
+
+    public function selectMin($column, $alias = null)
+    {
+        $this->needSelectQuery()->min($column, $alias);
+
+        return $this;
+    }
+
+    public function selectAvg($column, $alias = null)
+    {
+        $this->needSelectQuery()->avg($column, $alias);
+
+        return $this;
+    }
+
+    public function selectSum($column, $alias = null)
+    {
+        $this->needSelectQuery()->sum($column, $alias);
+
+        return $this;
+    }
+
+    public function fetchCount($column = '*', $alias = null)
+    {
+        return $this->clearColumns()->selectCount($column, $alias)->one();
+    }
+
+    public function fetchMax($column, $alias = null)
+    {
+        return $this->clearColumns()->selectMax($column, $alias)->one();
+    }
+
+    public function fetchMin($column, $alias = null)
+    {
+        return $this->clearColumns()->selectMin($column, $alias)->one();
+    }
+
+    public function fetchAvg($column, $alias = null)
+    {
+        return $this->clearColumns()->selectAvg($column, $alias)->one();
+    }
+
+    public function fetchSum($column, $alias = null)
+    {
+        return $this->clearColumns()->selectSum($column, $alias)->one();
     }
 
     public function selectKeyValue()
@@ -257,10 +343,10 @@ trait TableSelectQueryTrait
 
         $query->columnsFrom($this, '*');
 
-        return $this->newInstance()->___appendRefRowData($query->assoc());
+        return $this->newInstance()->___appendRowData($query->assoc());
     }
 
-    public function rows()
+    protected function rowsQuery()
     {
         $query = $this->needSelectQuery();
 
@@ -270,13 +356,48 @@ trait TableSelectQueryTrait
 
         $query->columnsFrom($this, '*');
 
+        return $query;
+    }
+
+    public function rows()
+    {
+        $query = $this->rowsQuery();
+
         $rows = $this->newInstance();
 
         foreach($query->assocAllGenerator() as $row) {
-            $rows->___appendRefRowData($row);
+            $rows->___appendRowData($row);
         }
 
         return $rows;
+    }
+
+    public function chunk($count, callable $callable, $callOneByOne = false)
+    {
+        return $this->needSelectQuery()->chunk($count, $callable, $callOneByOne);
+    }
+
+    public function chunkRows($count, callable $callable, $callOneByOne = false)
+    {
+        $query = $this->rowsQuery();
+
+        $newCallable = function ($data) use ($callable, $callOneByOne) {
+            if ($callOneByOne) {
+                $row = $this->newInstance()->___appendRowData($data);
+
+                return call_user_func_array($callable, [$row]);
+            }
+
+            $rows = $this->newInstance();
+
+            foreach($data as $item) {
+                $rows->___appendRowData($item);
+            }
+
+            return call_user_func_array($callable, [$rows]);
+        };
+
+        return $query->chunk($count, $newCallable, $callOneByOne);
     }
 
     /**

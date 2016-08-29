@@ -78,6 +78,8 @@ class PdoStmt extends \PDOStatement implements StmtInterface
 
     public function execute($params = null)
     {
+        $this->getAdapter()->fire($this->queryString);
+
         return $this->callParent(__FUNCTION__, func_get_args());
     }
 

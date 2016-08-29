@@ -3,49 +3,138 @@
 namespace Greg\Orm\Query;
 
 use Greg\Support\Arr;
+use Greg\Support\DateTime;
 
 trait ConditionsQueryTrait
 {
     protected $conditions = [];
 
-    public function hasConditions()
+    public function conditions(array $columns)
     {
-        return (bool)$this->conditions;
-    }
-
-    public function clearConditions()
-    {
-        $this->conditions = [];
+        foreach($columns as $column => $value) {
+            $this->condition($column, $value);
+        }
 
         return $this;
     }
 
-    public function isNull($column)
+    public function condition($column, $operator, $value = null)
     {
-        $expr = $this->quoteNameExpr($column) . ' IS NULL';
-
-        return $this->addLogic('AND', $expr);
+        return $this->addColumnLogic('AND', ...func_get_args());
     }
 
-    public function orIsNull($column)
+    public function orConditions(array $columns)
     {
-        $expr = $this->quoteNameExpr($column) . ' IS NULL';
+        foreach($columns as $column => $value) {
+            $this->orCondition($column, $value);
+        }
 
-        return $this->addLogic('OR', $expr);
+        return $this;
     }
 
-    public function isNotNull($column)
+    public function orCondition($column, $operator, $value = null)
     {
-        $expr = $this->quoteNameExpr($column) . ' IS NOT NULL';
-
-        return $this->addLogic('AND', $expr);
+        return $this->addColumnLogic('OR', ...func_get_args());
     }
 
-    public function orIsNotNull($column)
+    public function conditionRel($column1, $operator, $column2 = null)
     {
-        $expr = $this->quoteNameExpr($column) . ' IS NOT NULL';
+        return $this->addRelationLogic('AND', ...func_get_args());
+    }
 
-        return $this->addLogic('OR', $expr);
+    public function orConditionRel($column1, $operator, $column2 = null)
+    {
+        return $this->addRelationLogic('OR', ...func_get_args());
+    }
+
+    public function conditionIsNull($column)
+    {
+        return $this->addLogic('AND', $this->quoteNameExpr($column) . ' IS NULL');
+    }
+
+    public function orConditionIsNull($column)
+    {
+        return $this->addLogic('OR', $this->quoteNameExpr($column) . ' IS NULL');
+    }
+
+    public function conditionIsNotNull($column)
+    {
+        return $this->addLogic('AND', $this->quoteNameExpr($column) . ' IS NOT NULL');
+    }
+
+    public function orConditionIsNotNull($column)
+    {
+        return $this->addLogic('OR', $this->quoteNameExpr($column) . ' IS NOT NULL');
+    }
+
+    public function conditionBetween($column, $min, $max)
+    {
+        return $this->addLogic('AND', $this->quoteNameExpr($column) . ' BETWEEN ? AND ?', $min, $max);
+    }
+
+    public function orConditionBetween($column, $min, $max)
+    {
+        return $this->addLogic('OR', $this->quoteNameExpr($column) . ' BETWEEN ? AND ?', $min, $max);
+    }
+
+    public function conditionNotBetween($column, $min, $max)
+    {
+        return $this->addLogic('AND', $this->quoteNameExpr($column) . ' NOT BETWEEN ? AND ?', $min, $max);
+    }
+
+    public function orConditionNotBetween($column, $min, $max)
+    {
+        return $this->addLogic('OR', $this->quoteNameExpr($column) . ' NOT BETWEEN ? AND ?', $min, $max);
+    }
+
+    public function conditionDate($column, $date)
+    {
+        return $this->addLogic('AND', 'DATE(' . $this->quoteNameExpr($column) . ') = ?', DateTime::toDateString($date));
+    }
+
+    public function orConditionDate($column, $date)
+    {
+        return $this->addLogic('AND', 'DATE(' . $this->quoteNameExpr($column) . ') = ?', DateTime::toDateString($date));
+    }
+
+    public function conditionTime($column, $date)
+    {
+        return $this->addLogic('AND', 'TIME(' . $this->quoteNameExpr($column) . ') = ?', DateTime::toTimeString($date));
+    }
+
+    public function orConditionTime($column, $date)
+    {
+        return $this->addLogic('AND', 'TIME(' . $this->quoteNameExpr($column) . ') = ?', DateTime::toTimeString($date));
+    }
+
+    public function conditionYear($column, $year)
+    {
+        return $this->addLogic('AND', 'YEAR(' . $this->quoteNameExpr($column) . ') = ?', (int)$year);
+    }
+
+    public function orConditionYear($column, $year)
+    {
+        return $this->addLogic('OR', 'YEAR(' . $this->quoteNameExpr($column) . ') = ?', (int)$year);
+    }
+
+    public function conditionMonth($column, $month)
+    {
+        return $this->addLogic('AND', 'MONTH(' . $this->quoteNameExpr($column) . ') = ?', (int)$month);
+    }
+
+    public function orConditionMonth($column, $month)
+    {
+        return $this->addLogic('OR', 'MONTH(' . $this->quoteNameExpr($column) . ') = ?', (int)$month);
+    }
+
+    public function conditionDay($column, $day)
+    {
+        return $this->addLogic('AND', 'DAY(' . $this->quoteNameExpr($column) . ') = ?', (int)$day);
+    }
+
+    public function orConditionDay($column, $day)
+    {
+        return $this->addLogic('OR', 'DAY(' . $this->quoteNameExpr($column) . ') = ?', (int)$day);
     }
 
     public function conditionRaw($expr, $value = null, $_ = null)
@@ -66,14 +155,16 @@ trait ConditionsQueryTrait
         return $this->addLogic('OR', ...func_get_args());
     }
 
-    public function conditionRel($column1, $operator, $column2 = null)
+    public function hasConditions()
     {
-        return $this->addRelationLogic('AND', ...func_get_args());
+        return (bool)$this->conditions;
     }
 
-    public function orConditionRel($column1, $operator, $column2 = null)
+    public function clearConditions()
     {
-        return $this->addRelationLogic('OR', ...func_get_args());
+        $this->conditions = [];
+
+        return $this;
     }
 
     protected function addRelationLogic($type, $column1, $operator, $column2 = null)
@@ -110,34 +201,6 @@ trait ConditionsQueryTrait
         }
 
         return $columns;
-    }
-
-    public function conditions(array $columns)
-    {
-        foreach($columns as $column => $value) {
-            $this->condition($column, $value);
-        }
-
-        return $this;
-    }
-
-    public function condition($column, $operator, $value = null)
-    {
-        return $this->addColumnLogic('AND', ...func_get_args());
-    }
-
-    public function orConditions(array $columns)
-    {
-        foreach($columns as $column => $value) {
-            $this->orCondition($column, $value);
-        }
-
-        return $this;
-    }
-
-    public function orCondition($column, $operator, $value = null)
-    {
-        return $this->addColumnLogic('OR', ...func_get_args());
     }
 
     /**
@@ -265,9 +328,7 @@ trait ConditionsQueryTrait
 
     public function conditionsToSql()
     {
-        $params = [];
-
-        $sql = [];
+        $sql = $params = [];
 
         foreach($this->conditions as $condition) {
             $sql[] = ($sql ? $condition['logic'] . ' ' : '') . $condition['expr'];

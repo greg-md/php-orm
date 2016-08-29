@@ -40,6 +40,13 @@ trait TableJoinsQueryTrait
         return $this;
     }
 
+    public function cross($table)
+    {
+        $this->needJoinsQuery()->inner($table);
+
+        return $this;
+    }
+
     public function leftTo($source, $table, $on = null, $param = null, $_ = null)
     {
         $this->needJoinsQuery()->leftTo(...func_get_args());
@@ -57,6 +64,13 @@ trait TableJoinsQueryTrait
     public function innerTo($source, $table, $on = null, $param = null, $_ = null)
     {
         $this->needJoinsQuery()->innerTo(...func_get_args());
+
+        return $this;
+    }
+
+    public function crossTo($source, $table)
+    {
+        $this->needJoinsQuery()->innerTo($source, $table);
 
         return $this;
     }

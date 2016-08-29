@@ -57,7 +57,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @param $expr
      * @return $this
      */
-    public function group($expr);
+    public function groupBy($expr);
 
     /**
      * @param $expr
@@ -65,28 +65,28 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @param null $_
      * @return $this
      */
-    public function groupRaw($expr, $param = null, $_ = null);
+    public function groupByRaw($expr, $param = null, $_ = null);
 
     /**
      * @return bool
      */
-    public function hasGroup();
+    public function hasGroupBy();
 
     /**
      * @return $this
      */
-    public function clearGroup();
+    public function clearGroupBy();
 
-    public function groupToSql();
+    public function groupByToSql();
 
-    public function groupToString();
+    public function groupByToString();
 
     /**
      * @param $column
      * @param null $type
      * @return $this
      */
-    public function order($column, $type = null);
+    public function orderBy($column, $type = null);
 
     /**
      * @param $expr
@@ -94,21 +94,21 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @param null $_
      * @return $this
      */
-    public function orderRaw($expr, $param = null, $_ = null);
+    public function orderByRaw($expr, $param = null, $_ = null);
 
     /**
      * @return bool
      */
-    public function hasOrder();
+    public function hasOrderBy();
 
     /**
      * @return $this
      */
-    public function clearOrder();
+    public function clearOrderBy();
 
-    public function orderToSql();
+    public function orderByToSql();
 
-    public function orderToString();
+    public function orderByToString();
 
     /**
      * @param $number
@@ -121,6 +121,12 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @return $this
      */
     public function offset($number);
+
+    public function union($expr, $param = null, $_ = null);
+
+    public function unionAll($expr, $param = null, $_ = null);
+
+    public function unionDistinct($expr, $param = null, $_ = null);
 
     public function selectStmtToSql();
 
@@ -160,8 +166,20 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function pairs($key = 0, $value = 1);
 
+    public function chunk($count, callable $callable, $callOneByOne = false);
+
     /**
      * @return bool
      */
     public function exists();
+
+    public function count($column = '*', $alias = null);
+
+    public function max($column, $alias = null);
+
+    public function min($column, $alias = null);
+
+    public function avg($column, $alias = null);
+
+    public function sum($column, $alias = null);
 }

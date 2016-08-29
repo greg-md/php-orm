@@ -21,6 +21,11 @@ trait JoinsQueryTrait
         return $this->join('INNER', null, ...func_get_args());
     }
 
+    public function cross($table)
+    {
+        return $this->join('CROSS', null, $table);
+    }
+
     public function leftTo($source, $table, $on = null, $param = null, $_ = null)
     {
         return $this->join('LEFT', ...func_get_args());
@@ -34,6 +39,11 @@ trait JoinsQueryTrait
     public function innerTo($source, $table, $on = null, $param = null, $_ = null)
     {
         return $this->join('INNER', ...func_get_args());
+    }
+
+    public function crossTo($source, $table)
+    {
+        return $this->join('CROSS', $source, $table);
     }
 
     protected function join($type, $source, $table, $on = null, $param = null, $_ = null)

@@ -24,6 +24,8 @@ interface InsertQueryInterface extends QueryTraitInterface
 
     public function exec();
 
+    public function execGetId();
+
     public function insertToSql();
 
     public function insertToString();

@@ -12,6 +12,8 @@ class PdoAdapter extends \PDO implements AdapterInterface
 
     protected $dsnInfo = null;
 
+    protected $listeners = [];
+
     public function __construct($dsn, $username = null, $password = null, $options = null)
     {
         $this->constructorArgs = $args = func_get_args();
@@ -56,6 +58,8 @@ class PdoAdapter extends \PDO implements AdapterInterface
 
     public function exec($query)
     {
+        $this->fire($query);
+
         return $this->callParent(__FUNCTION__, func_get_args());
     }
 
@@ -111,6 +115,36 @@ class PdoAdapter extends \PDO implements AdapterInterface
         // Bind or column index out of range
         if ($errorInfo[1] and $errorInfo[1] != 25) {
             throw new \Exception($errorInfo[2]);
+        }
+
+        return $this;
+    }
+
+    public function transaction(callable $callable)
+    {
+        $this->beginTransaction();
+
+        call_user_func_array($callable, []);
+
+        $this->commit();
+    }
+
+    public function truncate($name)
+    {
+        return $this->exec('TRUNCATE ' . $name);
+    }
+
+    public function listen(callable $callable)
+    {
+        $this->listeners[] = $callable;
+
+        return $this;
+    }
+
+    public function fire($sql)
+    {
+        foreach ($this->listeners as $listener) {
+            call_user_func_array($listener, [$sql]);
         }
 
         return $this;

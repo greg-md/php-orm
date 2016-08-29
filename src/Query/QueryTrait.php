@@ -148,6 +148,15 @@ trait QueryTrait
         return $result;
     }
 
+    public function when($condition, callable $callable)
+    {
+        if ($condition) {
+            call_user_func_array($callable, [$this]);
+        }
+
+        return $this;
+    }
+
     public function stmt()
     {
         list($sql, $params) = $this->toSql();

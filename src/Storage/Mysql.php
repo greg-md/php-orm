@@ -454,7 +454,7 @@ class Mysql implements StorageInterface
         return call_user_func_array([$this->getAdapter(), 'query'], func_get_args());
     }
 
-    public function quote($string, $type = self::PARAM_STR)
+    public function quote($string, $type = AdapterInterface::PARAM_STR)
     {
         return $this->getAdapter()->quote($string, $type);
     }
@@ -467,5 +467,25 @@ class Mysql implements StorageInterface
     public function setAttribute($name, $value)
     {
         return $this->getAdapter()->setAttribute($name, $value);
+    }
+
+    public function transaction(callable $callable)
+    {
+        return $this->getAdapter()->transaction($callable);
+    }
+
+    public function truncate($name)
+    {
+        return $this->getAdapter()->truncate($name);
+    }
+
+    public function listen(callable $callable)
+    {
+        return $this->getAdapter()->listen($callable);
+    }
+
+    public function fire($sql)
+    {
+        return $this->getAdapter()->fire($sql);
     }
 }

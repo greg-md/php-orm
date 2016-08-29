@@ -106,6 +106,13 @@ class InsertQuery implements InsertQueryInterface
         return $this->stmt()->execute();
     }
 
+    public function execGetId()
+    {
+        $this->exec();
+
+        return $this->getStorage()->lastInsertId();
+    }
+
     public function insertToSql()
     {
         if (!$this->into) {

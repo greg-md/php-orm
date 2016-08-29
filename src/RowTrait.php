@@ -27,10 +27,10 @@ trait RowTrait
         return $this;
     }
 
-    public function ___appendRefRowData(array &$data)
+    public function ___appendRowData(array $data)
     {
         $row = [
-            'data' => &$data,
+            'data' => $data,
         ];
 
         return $this->___appendRefRow($row);

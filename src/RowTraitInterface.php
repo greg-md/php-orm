@@ -8,7 +8,7 @@ interface RowTraitInterface extends \ArrayAccess, \IteratorAggregate/*, \Seriali
 
     public function ___appendRefRow(array &$row);
 
-    public function ___appendRefRowData(array &$data);
+    public function ___appendRowData(array $data);
 
     public function first(callable $callable = null);
 

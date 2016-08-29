@@ -43,6 +43,11 @@ trait TableQueryTrait
         return $this->needQuery()->quoteLike($string, $escape);
     }
 
+    public function when($condition, callable $callable)
+    {
+        return $this->needQuery()->when($condition, $callable);
+    }
+
     public function stmt()
     {
         return $this->needQuery()->stmt();

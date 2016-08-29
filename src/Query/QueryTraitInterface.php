@@ -4,6 +4,8 @@ namespace Greg\Orm\Query;
 
 interface QueryTraitInterface
 {
+    public function when($condition, callable $callable);
+
     public function stmt();
 
     public function execStmt();

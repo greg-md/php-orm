@@ -5,6 +5,7 @@ namespace Greg\Orm;
 use Greg\Orm\TableQuery\TableConditionsQueryTrait;
 use Greg\Orm\TableQuery\TableDeleteQueryTrait;
 use Greg\Orm\TableQuery\TableFromQueryTrait;
+use Greg\Orm\TableQuery\TableHavingQueryTrait;
 use Greg\Orm\TableQuery\TableInsertQueryTrait;
 use Greg\Orm\TableQuery\TableJoinsQueryTrait;
 use Greg\Orm\TableQuery\TableOnQueryTrait;
@@ -20,7 +21,7 @@ trait TableTrait
 {
     use TableQueryTrait, TableInsertQueryTrait, TableUpdateQueryTrait, TableDeleteQueryTrait, TableSelectQueryTrait;
 
-    use TableConditionsQueryTrait, TableFromQueryTrait, TableJoinsQueryTrait, TableOnQueryTrait, TableWhereQueryTrait;
+    use TableFromQueryTrait, TableJoinsQueryTrait, TableConditionsQueryTrait, TableWhereQueryTrait, TableHavingQueryTrait;
 
     protected $prefix = null;
 
@@ -272,19 +273,19 @@ trait TableTrait
                 case Column::TYPE_DATETIME:
                 case Column::TYPE_TIMESTAMP:
                     if ($value) {
-                        $value = DateTime::toStringDateTime(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+                        $value = DateTime::toDateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
                     }
 
                     break;
                 case Column::TYPE_DATE:
                     if ($value) {
-                        $value = DateTime::toStringDate($value);
+                        $value = DateTime::toDateString($value);
                     }
 
                     break;
                 case Column::TYPE_TIME:
                     if ($value) {
-                        $value = DateTime::toStringTime($value);
+                        $value = DateTime::toTimeString($value);
                     }
 
                     break;
@@ -307,5 +308,10 @@ trait TableTrait
         unset($value);
 
         return $row;
+    }
+
+    public function truncate()
+    {
+        $this->getStorage()->truncate($this->fullName());
     }
 }

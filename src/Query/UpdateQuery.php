@@ -43,7 +43,7 @@ class UpdateQuery implements UpdateQueryInterface
                 $this->set($k, $v);
             }
         } else {
-            $this->addSet($this->quoteNameExpr($key) . ' = ?', [$value]);
+            $this->addSet($this->quoteNameExpr($key) . ' = ?', $value);
         }
 
         return $this;
@@ -54,8 +54,24 @@ class UpdateQuery implements UpdateQueryInterface
         $this->addSet($this->quoteExpr($raw), is_array($param) ? $param : array_slice(func_get_args(), 1));
     }
 
-    protected function addSet($expr, array $params)
+    public function increment($column, $value = 1)
     {
+        $column = $this->quoteNameExpr($column);
+
+        $this->addSet($column . ' = ' . $column . ' + ?', $value);
+    }
+
+    public function decrement($column, $value = 1)
+    {
+        $column = $this->quoteNameExpr($column);
+
+        $this->addSet($column . ' = ' . $column . ' - ?', $value);
+    }
+
+    protected function addSet($expr, $param = null, $_ = null)
+    {
+        $params = is_array($param) ? $param : array_slice(func_get_args(), 1);
+
         $this->set[] = [
             'raw' => $expr,
             'params' => $params,

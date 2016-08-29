@@ -61,6 +61,20 @@ trait TableUpdateQueryTrait
         return $this;
     }
 
+    public function increment($column, $value = 1)
+    {
+        $this->needUpdateQuery()->increment($column, $value);
+
+        return $this;
+    }
+
+    public function decrement($column, $value = 1)
+    {
+        $this->needUpdateQuery()->decrement($column, $value);
+
+        return $this;
+    }
+
     public function execUpdate()
     {
         return $this->needUpdateQuery()->exec();

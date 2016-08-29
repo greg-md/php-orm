@@ -108,6 +108,11 @@ trait TableInsertQueryTrait
         return $this->needInsertQuery()->exec();
     }
 
+    public function execGetId()
+    {
+        return $this->needInsertQuery()->execGetId();
+    }
+
     public function insertToSql()
     {
         return $this->needInsertQuery()->insertToSql();
