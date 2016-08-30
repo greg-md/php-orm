@@ -61,7 +61,7 @@ class InsertQuery implements InsertQueryInterface
         return $this;
     }
 
-    public function data($data)
+    public function data(array $data)
     {
         $this->columns(array_keys($data))->values($data);
 

@@ -75,7 +75,7 @@ trait TableInsertQueryTrait
         return $this;
     }
 
-    public function insertData($data)
+    public function insertData(array $data)
     {
         $this->needInsertQuery()->data($data);
 

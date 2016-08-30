@@ -4,6 +4,14 @@ namespace Greg\Orm;
 
 use Greg\Support\Arr;
 
+/**
+ * Class RowTrait
+ * @package Greg\Orm
+ *
+ * @method $this insertData(array $data);
+ * @method $this update(array $values = []);
+ * @method $this whereAre(array $columns);
+ */
 trait RowTrait
 {
     protected $rows = [];
@@ -13,6 +21,10 @@ trait RowTrait
     protected $offset = 0;
 
     protected $limit = 0;
+
+    protected $fillable = [];
+
+    protected $guarded = [];
 
     public function toArray()
     {
@@ -27,10 +39,12 @@ trait RowTrait
         return $this;
     }
 
-    public function ___appendRowData(array $data)
+    public function ___appendRowData(array $data, $isNew = false)
     {
         $row = [
             'data' => $data,
+            'isNew' => $isNew,
+            'modified' => [],
         ];
 
         return $this->___appendRefRow($row);
@@ -101,6 +115,50 @@ trait RowTrait
         return $keys;
     }
 
+    protected function defaultRowData()
+    {
+        $record = [];
+
+        foreach($this->getColumns() as $column) {
+            $record[$column->getName()] = $column->getDefaultValue();
+        }
+
+        return $record;
+    }
+
+    public function create(array $data = [])
+    {
+        $data = $this->fixRowValueType($data);
+
+        $record = array_merge($this->defaultRowData(), $data);
+
+        return $this->newInstance()->___appendRowData($record, true);
+    }
+
+    public function save(array $data = [])
+    {
+        $data && $this->set($data);
+
+        foreach($this->rows as &$row) {
+            if ($row['isNew']) {
+                $record = $this->fixRowValueType($row['data'], true, true);
+
+                $this->insertData($record)->exec();
+
+                $row['isNew'] = false;
+
+                if ($column = $this->autoIncrement()) {
+                    $row[$column] = (int)$this->lastInsertId();
+                }
+            } elseif ($record = $this->fixRowValueType($row['modified'], true, true)) {
+                $this->update($record)->whereAre($this->firstUniqueKeys())->exec();
+            }
+        }
+        unset($row);
+
+        return $this;
+    }
+
     public function getTotal()
     {
         return $this->total;
@@ -151,8 +209,14 @@ trait RowTrait
                 throw new \Exception('Column `' . $column . '` is not in the row.');
             }
 
+            $value = $this->fixColumnValueType($column, $value);
+
             foreach($this->rows as &$row) {
-                Arr::setRef($row['data'], $column, $value);
+                if ($row['data'][$column] !== $value) {
+                    Arr::setRef($row['modified'], $column, $value);
+                } else {
+                    Arr::del($row['modified'], $column);
+                }
             }
             unset($row);
         }
@@ -177,10 +241,14 @@ trait RowTrait
 
     public function get($column, $else = null)
     {
+        if (!$this->hasColumn($column)) {
+            throw new \Exception('Column `' . $column . '` is not in the row.');
+        }
+
         $values = [];
 
         foreach($this->rows as &$row) {
-            $values[] = Arr::get($row['data'], $column, $else);
+            $values[] = Arr::get($row['modified'], $column, Arr::get($row['data'], $column, $else));
         }
         unset($row);
 
@@ -234,4 +302,9 @@ trait RowTrait
      * @return $this
      */
     abstract protected function newInstance();
+
+    /**
+     * @return Column[]
+     */
+    abstract public function getColumns();
 }

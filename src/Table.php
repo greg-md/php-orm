@@ -19,6 +19,38 @@ abstract class Table implements TableInterface
             $this->setStorage($storage);
         }
 
+        $this->loadSchema();
+
+        return $this;
+    }
+
+    public function loadSchema()
+    {
+        return $this;
+    }
+
+    public function populateSchema($populateInfo = true, $populateReferences = true, $populateRelationships = false)
+    {
+        if ($populateInfo) {
+            $info = $this->getStorage()->getTableInfo($this->fullName());
+
+            foreach($info['columns'] as $column) {
+                $this->addColumn($column);
+            }
+
+            $info['primaryKeys'] && $this->setPrimaryKeys($info['primaryKeys']);
+
+            $info['autoIncrement'] && $this->setAutoIncrement($info['autoIncrement']);
+        }
+
+        if ($populateReferences) {
+            $references = $this->getStorage()->getTableReferences($this->getName());
+        }
+
+        if ($populateRelationships) {
+            $relationships = $this->getStorage()->getTableRelationships($this->getName());
+        }
+
         return $this;
     }
 
@@ -46,5 +78,10 @@ abstract class Table implements TableInterface
         }
 
         return $this->storage;
+    }
+
+    public function lastInsertId()
+    {
+        return $this->getStorage()->lastInsertId();
     }
 }

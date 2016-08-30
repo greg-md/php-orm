@@ -454,7 +454,7 @@ class Mysql implements StorageInterface
         return call_user_func_array([$this->getAdapter(), 'query'], func_get_args());
     }
 
-    public function quote($string, $type = AdapterInterface::PARAM_STR)
+    public function quote($string, $type = StorageInterface::PARAM_STR)
     {
         return $this->getAdapter()->quote($string, $type);
     }

@@ -8,7 +8,6 @@ use Greg\Orm\TableQuery\TableFromQueryTrait;
 use Greg\Orm\TableQuery\TableHavingQueryTrait;
 use Greg\Orm\TableQuery\TableInsertQueryTrait;
 use Greg\Orm\TableQuery\TableJoinsQueryTrait;
-use Greg\Orm\TableQuery\TableOnQueryTrait;
 use Greg\Orm\TableQuery\TableQueryTrait;
 use Greg\Orm\TableQuery\TableSelectQueryTrait;
 use Greg\Orm\TableQuery\TableUpdateQueryTrait;
@@ -115,26 +114,50 @@ trait TableTrait
         return $this->columns;
     }
 
-    public function hasColumn($name)
+    protected function searchColumn($name)
     {
-        foreach($this->columns as $column) {
-            if ($column->getName() === $name) {
-                return true;
-            }
-        }
-
-        return false;
+        return Arr::firstRef($this->columns, function(Column $column) use ($name) {
+            return $column->getName() === $name;
+        });
     }
 
-    public function getColumn($name)
+    public function searchUndefinedColumns(array $columns, $returnFirst = false)
     {
-        foreach($this->columns as $column) {
-            if ($column->getName() === $name) {
-                return $column;
+        $undefined = [];
+
+        foreach($columns as $columnName) {
+            if (!$this->searchColumn($columnName)) {
+                if ($returnFirst) {
+                    return $columnName;
+                }
+
+                $undefined[] = $columnName;
             }
         }
 
-        throw new \Exception('Column `' . $name . '` not found in table `' . $this->getName() . '`');
+        return $undefined;
+    }
+
+    public function hasColumn($column, $_ = null)
+    {
+        return !$this->searchUndefinedColumns(is_array($column) ? $column : func_get_args(), true);
+    }
+
+    public function getColumn($column, $_ = null)
+    {
+        $columns = is_array($column) ? $column : func_get_args();
+
+        if ($undefinedColumn = $this->searchUndefinedColumns($columns, true)) {
+            throw new \Exception('Column `' . $undefinedColumn . '` not found in table `' . $this->getName() . '`');
+        }
+
+        $return = [];
+
+        foreach($columns as $columnName) {
+            $return[$columnName] = $this->searchColumn($columnName);
+        }
+
+        return is_array($column) ? $return : Arr::first($return);
     }
 
     public function getColumnType($name)
@@ -240,6 +263,11 @@ trait TableTrait
         }
 
         return array_combine($keys, $values);
+    }
+
+    public function fixColumnValueType($column, $value, $clean = false, $reverse = false)
+    {
+        return Arr::first($this->fixRowValueType([$column => $value], $clean, $reverse));
     }
 
     public function fixRowValueType(array $row, $clean = false, $reverse = false)

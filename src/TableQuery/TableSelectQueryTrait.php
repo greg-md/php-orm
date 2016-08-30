@@ -6,6 +6,44 @@ use Greg\Orm\Query\SelectQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 use Greg\Orm\TableInterface;
 
+/**
+ * Class TableSelectQueryTrait
+ * @package Greg\Orm\TableQuery
+ *
+ * Ide Helper methods
+ * @method $this whereAre(array $columns);
+ * @method $this where($column, $operator, $value = null);
+ * @method $this orWhereAre(array $columns);
+ * @method $this orWhere($column, $operator, $value = null);
+ * @method $this whereRel($column1, $operator, $column2 = null);
+ * @method $this orWhereRel($column1, $operator, $column2 = null);
+ * @method $this whereIsNull($column);
+ * @method $this orWhereIsNull($column);
+ * @method $this whereIsNotNull($column);
+ * @method $this orWhereIsNotNull($column);
+ * @method $this whereBetween($column, $min, $max);
+ * @method $this orWhereBetween($column, $min, $max);
+ * @method $this whereNotBetween($column, $min, $max);
+ * @method $this orWhereNotBetween($column, $min, $max);
+ * @method $this whereDate($column, $date);
+ * @method $this orWhereDate($column, $date);
+ * @method $this whereTime($column, $date);
+ * @method $this orWhereTime($column, $date);
+ * @method $this whereYear($column, $year);
+ * @method $this orWhereYear($column, $year);
+ * @method $this whereMonth($column, $month);
+ * @method $this orWhereMonth($column, $month);
+ * @method $this whereDay($column, $day);
+ * @method $this orWhereDay($column, $day);
+ * @method $this whereRaw($expr, $value = null, $_ = null);
+ * @method $this orWhereRaw($expr, $value = null, $_ = null);
+ * @method $this hasWhere();
+ * @method $this clearWhere();
+ * @method $this whereExists($expr, $param = null, $_ = null);
+ * @method $this whereNotExists($expr, $param = null, $_ = null);
+ * @method $this whereToSql();
+ * @method $this whereToString();
+ */
 trait TableSelectQueryTrait
 {
     /**
@@ -225,6 +263,15 @@ trait TableSelectQueryTrait
         return $this->needSelectQuery()->assoc();
     }
 
+    public function assocOrFail()
+    {
+        if (!$record = $this->assoc()) {
+            throw new \Exception('Row was not found.');
+        }
+
+        return $record;
+    }
+
     public function assocAll()
     {
         return $this->needSelectQuery()->assocAll();
@@ -333,19 +380,6 @@ trait TableSelectQueryTrait
         return $this->selectQuery()->columnRaw(1)->where($column, $value)->exists();
     }
 
-    public function row()
-    {
-        $query = $this->needSelectQuery();
-
-        if ($query->hasColumns()) {
-            throw new \Exception('You can not fetch as rows while you have custom SELECT columns.');
-        }
-
-        $query->columnsFrom($this, '*');
-
-        return $this->newInstance()->___appendRowData($query->assoc());
-    }
-
     protected function rowsQuery()
     {
         $query = $this->needSelectQuery();
@@ -357,6 +391,22 @@ trait TableSelectQueryTrait
         $query->columnsFrom($this, '*');
 
         return $query;
+    }
+
+    public function row()
+    {
+        $query = $this->rowsQuery();
+
+        return $this->newInstance()->___appendRowData($query->assoc());
+    }
+
+    public function rowOrFail()
+    {
+        if (!$row = $this->rows()) {
+            throw new \Exception('Row was not found.');
+        }
+
+        return $row;
     }
 
     public function rows()
@@ -398,6 +448,33 @@ trait TableSelectQueryTrait
         };
 
         return $query->chunk($count, $newCallable, $callOneByOne);
+    }
+
+    public function rowsGenerator()
+    {
+        $query = $this->rowsQuery();
+
+        foreach($query->assocAllGenerator() as $record) {
+            yield $this->newInstance()->___appendRowData($record);
+        }
+    }
+
+    public function find($keys)
+    {
+        if (!is_array($keys)) {
+            $keys = $this->combineFirstUniqueIndex($keys);
+        }
+
+        return $this->select()->whereAre($keys)->rows();
+    }
+
+    public function findOrFail($keys)
+    {
+        if (!$row = $this->find($keys)) {
+            throw new \Exception('Row was not found.');
+        }
+
+        return $row;
     }
 
     /**

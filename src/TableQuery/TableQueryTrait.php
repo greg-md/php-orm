@@ -2,7 +2,10 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Query\DeleteQueryInterface;
+use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Query\QueryTraitInterface;
+use Greg\Orm\Query\UpdateQueryInterface;
 
 trait TableQueryTrait
 {
@@ -46,6 +49,25 @@ trait TableQueryTrait
     public function when($condition, callable $callable)
     {
         return $this->needQuery()->when($condition, $callable);
+    }
+
+    public function exec()
+    {
+        $query = $this->needQuery();
+
+        if ($query instanceof InsertQueryInterface) {
+            return $this->execInsert();
+        }
+
+        if ($query instanceof UpdateQueryInterface) {
+            return $this->execUpdate();
+        }
+
+        if ($query instanceof DeleteQueryInterface) {
+            return $this->execDelete();
+        }
+
+        throw new \Exception('Current query does not support exec method.');
     }
 
     public function stmt()

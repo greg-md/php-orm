@@ -14,7 +14,7 @@ interface InsertQueryInterface extends QueryTraitInterface
 
     public function clearValues();
 
-    public function data($data);
+    public function data(array $data);
 
     public function clearData();
 
