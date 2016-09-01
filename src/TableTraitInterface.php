@@ -60,5 +60,5 @@ interface TableTraitInterface extends TableQueryTraitInterface
 
     public function combineFirstUniqueIndex($values);
 
-    public function fixRowValueType(array $row, $clean = false, $reverse = false);
+    public function fixValuesTypes(array $row, $clean = false, $reverse = false);
 }

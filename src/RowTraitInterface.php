@@ -18,7 +18,7 @@ interface RowTraitInterface extends \ArrayAccess, \IteratorAggregate/*, \Seriali
 
     public function uniqueKeys();
 
-    public function firstUniqueKeys();
+    public function firstUniqueValues();
 
     public function getTotal();
 

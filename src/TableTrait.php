@@ -267,15 +267,15 @@ trait TableTrait
 
     public function fixColumnValueType($column, $value, $clean = false, $reverse = false)
     {
-        return Arr::first($this->fixRowValueType([$column => $value], $clean, $reverse));
+        return Arr::first($this->fixValuesTypes([$column => $value], $clean, $reverse));
     }
 
-    public function fixRowValueType(array $row, $clean = false, $reverse = false)
+    public function fixValuesTypes(array $data, $clean = false, $reverse = false)
     {
-        foreach($row as $columnName => &$value) {
+        foreach($data as $columnName => &$value) {
             if (!($column = $this->getColumn($columnName))) {
                 if ($clean) {
-                    unset($row[$columnName]);
+                    unset($data[$columnName]);
                 }
 
                 continue;
@@ -335,7 +335,7 @@ trait TableTrait
         }
         unset($value);
 
-        return $row;
+        return $data;
     }
 
     public function truncate()

@@ -8,9 +8,45 @@ use Greg\Support\Arr;
  * Class RowTrait
  * @package Greg\Orm
  *
- * @method $this insertData(array $data);
- * @method $this update(array $values = []);
+ * Ide Helper methods
  * @method $this whereAre(array $columns);
+ * @method $this where($column, $operator, $value = null);
+ * @method $this orWhereAre(array $columns);
+ * @method $this orWhere($column, $operator, $value = null);
+ * @method $this whereRel($column1, $operator, $column2 = null);
+ * @method $this orWhereRel($column1, $operator, $column2 = null);
+ * @method $this whereIsNull($column);
+ * @method $this orWhereIsNull($column);
+ * @method $this whereIsNotNull($column);
+ * @method $this orWhereIsNotNull($column);
+ * @method $this whereBetween($column, $min, $max);
+ * @method $this orWhereBetween($column, $min, $max);
+ * @method $this whereNotBetween($column, $min, $max);
+ * @method $this orWhereNotBetween($column, $min, $max);
+ * @method $this whereDate($column, $date);
+ * @method $this orWhereDate($column, $date);
+ * @method $this whereTime($column, $date);
+ * @method $this orWhereTime($column, $date);
+ * @method $this whereYear($column, $year);
+ * @method $this orWhereYear($column, $year);
+ * @method $this whereMonth($column, $month);
+ * @method $this orWhereMonth($column, $month);
+ * @method $this whereDay($column, $day);
+ * @method $this orWhereDay($column, $day);
+ * @method $this whereRaw($expr, $value = null, $_ = null);
+ * @method $this orWhereRaw($expr, $value = null, $_ = null);
+ * @method $this hasWhere();
+ * @method $this clearWhere();
+ * @method $this whereExists($expr, $param = null, $_ = null);
+ * @method $this whereNotExists($expr, $param = null, $_ = null);
+ * @method $this whereToSql();
+ * @method $this whereToString();
+ *
+ * @method $this insertData(array $data);
+ *
+ * @method $this update(array $values = []);
+ *
+ * @method $this delete(array $whereAre = []);
  */
 trait RowTrait
 {
@@ -22,7 +58,7 @@ trait RowTrait
 
     protected $limit = 0;
 
-    protected $fillable = [];
+    protected $fillable = '*';
 
     protected $guarded = [];
 
@@ -33,7 +69,10 @@ trait RowTrait
 
     public function ___appendRefRow(array &$row)
     {
-        // It's fucking ugly, but need to add validations!
+        $row['data'] = Arr::getArrayRef($row, 'data');
+        $row['isNew'] = (bool)Arr::getRef($row, 'isNew');
+        $row['modified'] = Arr::getArrayRef($row, 'modified');
+
         $this->rows[] = &$row;
 
         return $this;
@@ -65,6 +104,11 @@ trait RowTrait
         }
 
         return null;
+    }
+
+    protected function &firstRecord()
+    {
+        return Arr::firstRef($this->rows);
     }
 
     public function autoIncrement()
@@ -104,11 +148,11 @@ trait RowTrait
         return $all;
     }
 
-    public function firstUniqueKeys()
+    public function firstUniqueValues()
     {
         $keys = [];
 
-        foreach($this->getFirstUniqueKeys() as $key) {
+        foreach($this->firstUniqueIndex() as $key) {
             $keys[$key] = $this[$key];
         }
 
@@ -128,7 +172,7 @@ trait RowTrait
 
     public function create(array $data = [])
     {
-        $data = $this->fixRowValueType($data);
+        $data = $this->fixValuesTypes($data);
 
         $record = array_merge($this->defaultRowData(), $data);
 
@@ -139,24 +183,73 @@ trait RowTrait
     {
         $data && $this->set($data);
 
-        foreach($this->rows as &$row) {
-            if ($row['isNew']) {
-                $record = $this->fixRowValueType($row['data'], true, true);
+        foreach($this->getIterator() as $row) {
+            if ($row->isNew()) {
+                $this->insertData($row->cleanData())->exec();
 
-                $this->insertData($record)->exec();
-
-                $row['isNew'] = false;
+                $row->markAsNew(false);
 
                 if ($column = $this->autoIncrement()) {
                     $row[$column] = (int)$this->lastInsertId();
                 }
-            } elseif ($record = $this->fixRowValueType($row['modified'], true, true)) {
-                $this->update($record)->whereAre($this->firstUniqueKeys())->exec();
+            } elseif ($record = $row->cleanModifiedData()) {
+                $this->update($record)->whereAre($this->firstUniqueValues())->exec();
             }
+        }
+
+        return $this;
+    }
+    
+    public function destroy()
+    {
+        $keys = [];
+
+        foreach($this->getIterator() as $row) {
+            $keys[] = $row->firstUniqueValues();
+
+            $row->markAsNew(true);
+        }
+
+        $this->delete()->where($this->firstUniqueIndex(), $keys)->exec();
+
+        return $this;
+    }
+
+    public function isNew()
+    {
+        if ($record = &$this->firstRecord()) {
+            return $record['isNew'];
+        }
+
+        return false;
+    }
+
+    public function markAsNew($value = true)
+    {
+        foreach($this->rows as &$row) {
+            $row['isNew'] = $value;
         }
         unset($row);
 
         return $this;
+    }
+
+    public function cleanData($reverse = true)
+    {
+        if ($record = $this->firstRecord()) {
+            return $this->fixValuesTypes($record['data'], true, $reverse);
+        }
+
+        return [];
+    }
+
+    public function cleanModifiedData($reverse = true)
+    {
+        if ($record = $this->firstRecord()) {
+            return $this->fixValuesTypes($record['modified'], true, $reverse);
+        }
+
+        return [];
     }
 
     public function getTotal()
@@ -207,6 +300,11 @@ trait RowTrait
         } else {
             if (!$this->hasColumn($column)) {
                 throw new \Exception('Column `' . $column . '` is not in the row.');
+            }
+
+            if (($this->fillable != '*' and !in_array($column, (array)$this->fillable))
+                or ($this->guarded == '*' or in_array($column, (array)$this->guarded))) {
+                throw new \Exception('Column `' . $column . '` is not fillable in the row.');
             }
 
             $value = $this->fixColumnValueType($column, $value);
@@ -286,6 +384,9 @@ trait RowTrait
         throw new \Exception('You can not unset column `' . $offset . '` from the row.');
     }
 
+    /**
+     * @return \Generator|$this[]
+     */
     public function getIterator()
     {
         foreach($this->rows as $key => &$row) {

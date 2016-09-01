@@ -43,6 +43,9 @@ use Greg\Orm\TableInterface;
  * @method $this whereNotExists($expr, $param = null, $_ = null);
  * @method $this whereToSql();
  * @method $this whereToString();
+ *
+ * @method $this create(array $data = []);
+ * @method $this save(array $data = []);
  */
 trait TableSelectQueryTrait
 {
@@ -397,12 +400,16 @@ trait TableSelectQueryTrait
     {
         $query = $this->rowsQuery();
 
-        return $this->newInstance()->___appendRowData($query->assoc());
+        $row = $this->newInstance();
+
+        $row->___appendRowData($query->assoc());
+
+        return $row;
     }
 
     public function rowOrFail()
     {
-        if (!$row = $this->rows()) {
+        if (!$row = $this->row()) {
             throw new \Exception('Row was not found.');
         }
 
@@ -459,13 +466,9 @@ trait TableSelectQueryTrait
         }
     }
 
-    public function find($keys)
+    public function find($key)
     {
-        if (!is_array($keys)) {
-            $keys = $this->combineFirstUniqueIndex($keys);
-        }
-
-        return $this->select()->whereAre($keys)->rows();
+        return $this->select()->whereAre($this->combineFirstUniqueIndex($key))->rows();
     }
 
     public function findOrFail($keys)
@@ -475,6 +478,20 @@ trait TableSelectQueryTrait
         }
 
         return $row;
+    }
+
+    public function firstOrNew(array $data)
+    {
+        if (!$row = $this->whereAre($data)->row()) {
+            $row = $this->create($data);
+        }
+
+        return $row;
+    }
+
+    public function firstOrCreate(array $data)
+    {
+        return $this->firstOrNew($data)->save();
     }
 
     /**

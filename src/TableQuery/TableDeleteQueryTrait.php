@@ -40,6 +40,11 @@ trait TableDeleteQueryTrait
         return $this;
     }
 
+    public function erase($key)
+    {
+        $this->delete($this->combineFirstUniqueIndex($key))->exec();
+    }
+
     public function fromTable($table)
     {
         $this->needDeleteQuery()->fromTable($table);

@@ -13,18 +13,22 @@ abstract class Table implements TableInterface
      */
     protected $storage = null;
 
-    public function __construct(StorageInterface $storage = null)
+    public function __construct(array $data = [], StorageInterface $storage = null)
     {
         if ($storage) {
             $this->setStorage($storage);
         }
 
-        $this->loadSchema();
+        $this->boot();
+
+        if ($data) {
+            $this->___appendRowData($data, true);
+        }
 
         return $this;
     }
 
-    public function loadSchema()
+    public function boot()
     {
         return $this;
     }
