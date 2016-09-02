@@ -30,6 +30,8 @@ trait TableUpdateQueryTrait
             $query->set($values);
         }
 
+        $this->applyWhere($query);
+
         return $query;
     }
 

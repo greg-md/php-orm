@@ -32,7 +32,7 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         return $this;
     }
 
-    public function fetchOne($column = 0)
+    public function fetchColumn($column = 0)
     {
         if (Str::isNaturalNumber($column)) {
             return parent::fetchColumn($column);
@@ -43,7 +43,7 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         return $row ? Arr::get($row, $column) : null;
     }
 
-    public function fetchColumn($column = 0)
+    public function fetchAllColumn($column = 0)
     {
         return array_column($this->fetchAll(), $column);
     }
@@ -52,7 +52,7 @@ class PdoStmt extends \PDOStatement implements StmtInterface
     {
         $pairs = [];
 
-        foreach(parent::fetchAll() as $row) {
+        foreach($this->fetchAll() as $row) {
             $pairs[$row[$key]] = $row[$value];
         }
 
@@ -61,17 +61,17 @@ class PdoStmt extends \PDOStatement implements StmtInterface
 
     public function fetchAssoc()
     {
-        return parent::fetch(\PDO::FETCH_ASSOC);
+        return $this->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function fetchAssocAll()
     {
-        return parent::fetchAll(\PDO::FETCH_ASSOC);
+        return $this->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function fetchAssocAllGenerator()
     {
-        while ($record = parent::fetch(\PDO::FETCH_ASSOC)) {
+        while ($record = $this->fetch(\PDO::FETCH_ASSOC)) {
             yield $record;
         }
     }
@@ -122,7 +122,7 @@ class PdoStmt extends \PDOStatement implements StmtInterface
 
     public function nextRows()
     {
-        return parent::nextRowset();
+        return $this->nextRowset();
     }
 
     public function setAdapter(PdoAdapter $adapter)

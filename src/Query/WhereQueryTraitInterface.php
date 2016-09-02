@@ -102,13 +102,16 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function hasWhere();
 
+    /**
+     * @return $this
+     */
     public function clearWhere();
 
     public function whereExists($expr, $param = null, $_ = null);
 
     public function whereNotExists($expr, $param = null, $_ = null);
 
-    public function whereToSql();
+    public function whereToSql($useClause = true);
 
-    public function whereToString();
+    public function whereToString($useClause = true);
 }

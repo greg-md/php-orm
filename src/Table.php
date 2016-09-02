@@ -3,6 +3,7 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Support\Obj;
 
 abstract class Table implements TableInterface
 {
@@ -21,6 +22,8 @@ abstract class Table implements TableInterface
 
         $this->boot();
 
+        $this->bootTraits();
+
         if ($data) {
             $this->___appendRowData($data, true);
         }
@@ -28,44 +31,27 @@ abstract class Table implements TableInterface
         return $this;
     }
 
-    public function boot()
+    protected function boot()
     {
         return $this;
     }
 
-    public function populateSchema($populateInfo = true, $populateReferences = true, $populateRelationships = false)
+    protected function bootTraits()
     {
-        if ($populateInfo) {
-            $info = $this->getStorage()->getTableInfo($this->fullName());
-
-            foreach($info['columns'] as $column) {
-                $this->addColumn($column);
+        foreach (Obj::usesRecursive(static::class, Table::class) as $trait) {
+            if (method_exists($this, $method = 'boot' . Obj::baseName($trait))) {
+                call_user_func_array([$this, $method], []);
             }
-
-            $info['primaryKeys'] && $this->setPrimaryKeys($info['primaryKeys']);
-
-            $info['autoIncrement'] && $this->setAutoIncrement($info['autoIncrement']);
-        }
-
-        if ($populateReferences) {
-            $references = $this->getStorage()->getTableReferences($this->getName());
-        }
-
-        if ($populateRelationships) {
-            $relationships = $this->getStorage()->getTableRelationships($this->getName());
         }
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    protected function newInstance()
+    protected function newInstance(array $data = [])
     {
         $class = get_called_class();
 
-        return new $class($this->getStorage());
+        return new $class($data, $this->getStorage());
     }
 
     public function setStorage(StorageInterface $storage)

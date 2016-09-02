@@ -99,7 +99,7 @@ class SelectQuery implements SelectQueryInterface
                 $alias = $columnAlias;
             }
 
-            $column = $this->quoteExpr($column);
+            $column = $this->quoteNameExpr($column);
 
             $params = [];
         }
@@ -429,9 +429,9 @@ class SelectQuery implements SelectQueryInterface
         return $this->execStmt()->fetchColumn($column);
     }
 
-    public function one($column = 0)
+    public function allCol($column = 0)
     {
-        return $this->execStmt()->fetchOne($column);
+        return $this->execStmt()->fetchAllColumn($column);
     }
 
     public function pairs($key = 0, $value = 1)
@@ -441,7 +441,7 @@ class SelectQuery implements SelectQueryInterface
 
     public function exists()
     {
-        return (bool)$this->one();
+        return (bool)$this->col();
     }
 
     public function chunk($count, callable $callable, $callOneByOne = false)
@@ -671,7 +671,7 @@ class SelectQuery implements SelectQueryInterface
 
         $maxPage = 1;
 
-        $total = $countQ->one();
+        $total = $countQ->col();
 
         if ($total > 0) {
             $maxPage = ceil($total / $limit);

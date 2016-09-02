@@ -6,6 +6,8 @@ use Greg\Orm\Query\WhereQueryTraitInterface;
 
 trait TableWhereQueryTrait
 {
+    protected $whereApplicators = [];
+
     /**
      * @return WhereQueryTraitInterface
      * @throws \Exception
@@ -17,6 +19,20 @@ trait TableWhereQueryTrait
         }
 
         return $query;
+    }
+
+    public function applyWhere(WhereQueryTraitInterface $query)
+    {
+        foreach ($this->whereApplicators as $applicator) {
+            $query->whereRaw($applicator);
+        }
+
+        return $this;
+    }
+
+    public function applyOnWhere(callable $callable)
+    {
+        $this->whereApplicators[] = $callable;
     }
 
     public function whereAre(array $columns)

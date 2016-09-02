@@ -57,8 +57,6 @@ interface StorageInterface
 
     static public function concat($array, $delimiter = '');
 
-    public function getTableSchema($tableName);
-
     public function getTableInfo($tableName);
 
     public function getTableReferences($tableName);

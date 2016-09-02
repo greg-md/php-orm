@@ -24,6 +24,8 @@ class Mysql implements StorageInterface
 {
     use StorageAdapterTrait;
 
+    protected $tablesInfo = [];
+
     public function __construct($adapter = null)
     {
         if ($adapter) {
@@ -42,16 +44,20 @@ class Mysql implements StorageInterface
         return $this->getAdapter()->dbName();
     }
 
-    public function getTableSchema($tableName)
+    public function getTableInfo($tableName, $save = true)
     {
-        return [
-            $this->getTableInfo($tableName),
-            $this->getTableReferences($tableName),
-            $this->getTableRelationships($tableName)
-        ];
+        if (!$save) {
+            return $this->fetchTableInfo($tableName);
+        }
+
+        if (!array_key_exists($tableName, $this->tablesInfo)) {
+            $this->tablesInfo[$tableName] = $this->fetchTableInfo($tableName);
+        }
+
+        return $this->tablesInfo[$tableName];
     }
 
-    public function getTableInfo($tableName)
+    protected function fetchTableInfo($tableName)
     {
         $stmt = $this->query('Describe `' . $tableName . '`');
 
@@ -170,7 +176,7 @@ class Mysql implements StorageInterface
     {
         $stmt = $this->query('SHOW CREATE TABLE `' . $tableName . '`');
 
-        $sql = $stmt->fetchOne('Create Table');
+        $sql = $stmt->fetchColumn('Create Table');
 
         return $this->newTableReferences($sql);
     }

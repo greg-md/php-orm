@@ -141,7 +141,9 @@ trait ConditionsQueryTrait
     {
         $args = func_get_args();
 
-        $args[0] = $this->quoteExpr($expr);
+        if (!is_callable($expr)) {
+            $args[0] = $this->quoteExpr($expr);
+        }
 
         return $this->addLogic('AND', ...$args);
     }
@@ -150,7 +152,9 @@ trait ConditionsQueryTrait
     {
         $args = func_get_args();
 
-        $args[0] = $this->quoteExpr($expr);
+        if (!is_callable($expr)) {
+            $args[0] = $this->quoteExpr($expr);
+        }
 
         return $this->addLogic('OR', ...func_get_args());
     }
@@ -303,11 +307,9 @@ trait ConditionsQueryTrait
 
             call_user_func_array($expr, [$query]);
 
-            list($querySql, $queryParams) = $query->toSql();
+            $expr = $query;
 
-            $expr = '(' . $querySql . ')';
-
-            $params = $queryParams;
+            $params = [];
         } else {
             $params = is_array($param) ? $param : array_slice(func_get_args(), 2);
         }
@@ -321,6 +323,11 @@ trait ConditionsQueryTrait
         return $this;
     }
 
+    protected function subQueryToSql(ConditionsQueryInterface $query)
+    {
+        return $query->toSql();
+    }
+
     protected function newConditions()
     {
         return new ConditionsQuery($this->getStorage());
@@ -331,6 +338,14 @@ trait ConditionsQueryTrait
         $sql = $params = [];
 
         foreach($this->conditions as $condition) {
+            if ($condition['expr'] instanceof ConditionsQueryTraitInterface) {
+                list($exprSql, $exprParams) = $this->subQueryToSql($condition['expr']);
+
+                $condition['expr'] = $exprSql ? '(' . $exprSql . ')' : null;
+
+                $condition['params'] = $exprParams;
+            }
+
             $sql[] = ($sql ? $condition['logic'] . ' ' : '') . $condition['expr'];
 
             $condition['params'] && $params = array_merge($params, $condition['params']);

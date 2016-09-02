@@ -70,6 +70,8 @@ trait TableSelectQueryTrait
 
         $query->from($this);
 
+        $this->applyWhere($query);
+
         return $query;
     }
 
@@ -290,9 +292,9 @@ trait TableSelectQueryTrait
         return $this->needSelectQuery()->col($column);
     }
 
-    public function one($column = 0)
+    public function allCol($column = 0)
     {
-        return $this->needSelectQuery()->one($column);
+        return $this->needSelectQuery()->allCol($column);
     }
 
     public function pairs($key = 0, $value = 1)
@@ -342,27 +344,27 @@ trait TableSelectQueryTrait
 
     public function fetchCount($column = '*', $alias = null)
     {
-        return $this->clearColumns()->selectCount($column, $alias)->one();
+        return $this->clearColumns()->selectCount($column, $alias)->col();
     }
 
     public function fetchMax($column, $alias = null)
     {
-        return $this->clearColumns()->selectMax($column, $alias)->one();
+        return $this->clearColumns()->selectMax($column, $alias)->col();
     }
 
     public function fetchMin($column, $alias = null)
     {
-        return $this->clearColumns()->selectMin($column, $alias)->one();
+        return $this->clearColumns()->selectMin($column, $alias)->col();
     }
 
     public function fetchAvg($column, $alias = null)
     {
-        return $this->clearColumns()->selectAvg($column, $alias)->one();
+        return $this->clearColumns()->selectAvg($column, $alias)->col();
     }
 
     public function fetchSum($column, $alias = null)
     {
-        return $this->clearColumns()->selectSum($column, $alias)->one();
+        return $this->clearColumns()->selectSum($column, $alias)->col();
     }
 
     public function selectKeyValue()
@@ -416,6 +418,9 @@ trait TableSelectQueryTrait
         return $row;
     }
 
+    /**
+     * @return TableInterface|TableInterface[]
+     */
     public function rows()
     {
         $query = $this->rowsQuery();

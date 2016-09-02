@@ -6,13 +6,13 @@ class WhereQuery implements WhereQueryInterface
 {
     use QueryTrait, WhereQueryTrait;
 
-    public function toSql()
+    public function toSql($useClause = true)
     {
-        return $this->whereToSql();
+        return $this->whereToSql($useClause);
     }
 
-    public function toString()
+    public function toString($useClause = true)
     {
-        return $this->whereToString();
+        return $this->whereToString($useClause);
     }
 }

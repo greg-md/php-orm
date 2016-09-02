@@ -89,11 +89,6 @@ class Sqlite implements StorageInterface
         return QueryTrait::concat($array, $delimiter);
     }
 
-    public function getTableSchema($tableName)
-    {
-
-    }
-
     public function getTableInfo($tableName)
     {
 

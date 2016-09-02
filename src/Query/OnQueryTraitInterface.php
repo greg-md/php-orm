@@ -104,11 +104,7 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function clearOn();
 
-    public function onExists($expr, $param = null, $_ = null);
+    public function onToSql($useClause = true);
 
-    public function onNotExists($expr, $param = null, $_ = null);
-
-    public function onToSql();
-
-    public function onToString();
+    public function onToString($useClause = true);
 }

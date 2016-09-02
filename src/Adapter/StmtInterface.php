@@ -32,7 +32,7 @@ interface StmtInterface
 
     public function fetchColumn($column = 0);
 
-    public function fetchOne($column = 0);
+    public function fetchAllColumn($column = 0);
 
     public function fetchObject($class = 'stdClass', $args = []);
 

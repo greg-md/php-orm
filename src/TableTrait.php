@@ -114,6 +114,11 @@ trait TableTrait
         return $this->columns;
     }
 
+    public function thisColumn($columnName)
+    {
+        return $this->fullName() . '.' . $columnName;
+    }
+
     protected function searchColumn($name)
     {
         return Arr::firstRef($this->columns, function(Column $column) use ($name) {

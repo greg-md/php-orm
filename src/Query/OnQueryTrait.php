@@ -151,19 +151,24 @@ trait OnQueryTrait
         return new OnQuery($this->getStorage());
     }
 
-    public function onToSql()
+    protected function subQueryToSql(OnQueryInterface $query)
+    {
+        return $query->onToSql(false);
+    }
+
+    public function onToSql($useClause = true)
     {
         list($sql, $params) = $this->conditionsToSql();
 
-        if ($sql) {
+        if ($sql and $useClause) {
             $sql = 'ON ' . $sql;
         }
 
         return [$sql, $params];
     }
 
-    public function onToString()
+    public function onToString($useClause = true)
     {
-        return $this->onToSql()[0];
+        return $this->onToSql($useClause)[0];
     }
 }

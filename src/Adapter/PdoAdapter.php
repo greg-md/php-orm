@@ -56,9 +56,9 @@ class PdoAdapter extends \PDO implements AdapterInterface
         return $this;
     }
 
-    public function exec($query)
+    public function exec($sql)
     {
-        $this->fire($query);
+        $this->fire($sql);
 
         return $this->callParent(__FUNCTION__, func_get_args());
     }
@@ -68,8 +68,10 @@ class PdoAdapter extends \PDO implements AdapterInterface
         return $this->callParentStmt(__FUNCTION__, func_get_args());
     }
 
-    public function query()
+    public function query($sql, $mode = null, $_ = null)
     {
+        $this->fire($sql);
+
         return $this->callParentStmt(__FUNCTION__, func_get_args());
     }
 

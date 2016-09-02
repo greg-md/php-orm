@@ -30,6 +30,8 @@ trait TableDeleteQueryTrait
             $query->whereAre($whereAre);
         }
 
+        $this->applyWhere($query);
+
         return $query;
     }
 

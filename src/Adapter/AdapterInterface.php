@@ -29,7 +29,7 @@ interface AdapterInterface
      */
     public function prepare($query, $options = null);
 
-    public function query();
+    public function query($query, $mode = null, $_ = null);
 
     public function quote($string, $type = StorageInterface::PARAM_STR);
 

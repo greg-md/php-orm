@@ -157,7 +157,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function col($column = 0);
 
-    public function one($column = 0);
+    public function allCol($column = 0);
 
     /**
      * @param int $key
