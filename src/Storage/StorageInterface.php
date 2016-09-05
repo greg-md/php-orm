@@ -3,10 +3,12 @@
 namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\StmtInterface;
-use Greg\Orm\Query\DeleteQuery;
-use Greg\Orm\Query\InsertQuery;
-use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Query\UpdateQuery;
+use Greg\Orm\Query\DeleteQueryInterface;
+use Greg\Orm\Query\InsertQueryInterface;
+use Greg\Orm\Query\JoinsQueryInterface;
+use Greg\Orm\Query\SelectQueryInterface;
+use Greg\Orm\Query\UpdateQueryInterface;
+use Greg\Orm\Query\WhereQueryInterface;
 
 interface StorageInterface
 {
@@ -27,31 +29,43 @@ interface StorageInterface
     /**
      * @param null $column
      * @param null $_
-     * @return SelectQuery
+     * @return SelectQueryInterface
      * @throws \Exception
      */
     public function select($column = null, $_ = null);
 
     /**
      * @param null $into
-     * @return InsertQuery
+     * @return InsertQueryInterface
      * @throws \Exception
      */
     public function insert($into = null);
 
     /**
      * @param null $from
-     * @return DeleteQuery
+     * @return DeleteQueryInterface
      * @throws \Exception
      */
     public function delete($from = null);
 
     /**
      * @param null $table
-     * @return UpdateQuery
+     * @return UpdateQueryInterface
      * @throws \Exception
      */
     public function update($table = null);
+
+    /**
+     * @return WhereQueryInterface
+     * @throws \Exception
+     */
+    public function where();
+
+    /**
+     * @return JoinsQueryInterface
+     * @throws \Exception
+     */
+    public function joins();
 
     static public function quoteLike($string, $escape = '\\');
 

@@ -3,6 +3,7 @@
 namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\SelectQueryInterface;
+use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 use Greg\Orm\TableInterface;
 
@@ -57,7 +58,21 @@ trait TableSelectQueryTrait
     {
         if (!$this->query) {
             $this->select();
-        } elseif (!($this->query instanceof SelectQueryInterface)) {
+        }
+
+        foreach($this->clauses as $clause) {
+            if ($clause instanceof WhereQueryInterface) {
+                list($sql, $params) = $clause->toSql(false);
+
+                $this->whereRaw($sql, ...$params);
+
+                continue;
+            }
+
+            throw new \Exception('Current query is not a SELECT statement.');
+        }
+
+        if (!($this->query instanceof SelectQueryInterface)) {
             throw new \Exception('Current query is not a SELECT statement.');
         }
 

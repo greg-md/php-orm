@@ -3,6 +3,7 @@
 namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\DeleteQueryInterface;
+use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
 trait TableDeleteQueryTrait
@@ -14,8 +15,18 @@ trait TableDeleteQueryTrait
     public function needDeleteQuery()
     {
         if (!$this->query) {
-            $this->deleteQuery();
-        } elseif (!($this->query instanceof DeleteQueryInterface)) {
+            $this->delete();
+        }
+
+        /*
+        if ($this->query instanceof WhereQueryInterface) {
+            list($sql, $params) = $this->query->conditionsToSql();
+
+            $this->delete()->whereRaw($sql, ...$params);
+        }
+        */
+
+        if (!($this->query instanceof DeleteQueryInterface)) {
             throw new \Exception('Current query is not a DELETE statement.');
         }
 

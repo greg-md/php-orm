@@ -3,6 +3,7 @@
 namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\UpdateQueryInterface;
+use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
 trait TableUpdateQueryTrait
@@ -15,7 +16,17 @@ trait TableUpdateQueryTrait
     {
         if (!$this->query) {
             $this->update();
-        } elseif (!($this->query instanceof UpdateQueryInterface)) {
+        }
+
+        /*
+        if ($this->query instanceof WhereQueryInterface) {
+            list($sql, $params) = $this->query->conditionsToSql();
+
+            $this->update()->whereRaw($sql, ...$params);
+        }
+        */
+
+        if (!($this->query instanceof UpdateQueryInterface)) {
             throw new \Exception('Current query is not a UPDATE statement.');
         }
 

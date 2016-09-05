@@ -3,7 +3,9 @@
 namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\AdapterInterface;
+use Greg\Orm\Query\JoinsQuery;
 use Greg\Orm\Query\QueryTrait;
+use Greg\Orm\Query\WhereQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteDeleteQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteInsertQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteSelectQuery;
@@ -75,6 +77,20 @@ class Sqlite implements StorageInterface
         if ($table !== null) {
             $query->table($table);
         }
+
+        return $query;
+    }
+
+    public function where()
+    {
+        $query = new WhereQuery($this);
+
+        return $query;
+    }
+
+    public function joins()
+    {
+        $query = new JoinsQuery($this);
 
         return $query;
     }
@@ -167,5 +183,25 @@ class Sqlite implements StorageInterface
     public function setAttribute($name, $value)
     {
         return $this->getAdapter()->setAttribute($name, $value);
+    }
+
+    public function transaction(callable $callable)
+    {
+        return $this->getAdapter()->transaction($callable);
+    }
+
+    public function truncate($name)
+    {
+        return $this->getAdapter()->truncate($name);
+    }
+
+    public function listen(callable $callable)
+    {
+        return $this->getAdapter()->listen($callable);
+    }
+
+    public function fire($sql)
+    {
+        return $this->getAdapter()->fire($sql);
     }
 }

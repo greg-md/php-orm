@@ -14,8 +14,10 @@ trait TableInsertQueryTrait
     public function needInsertQuery()
     {
         if (!$this->query) {
-            $this->insertQuery();
-        } elseif (!($this->query instanceof InsertQueryInterface)) {
+            $this->insert();
+        }
+
+        if (!($this->query instanceof InsertQueryInterface)) {
             throw new \Exception('Current query is not a INSERT statement.');
         }
 

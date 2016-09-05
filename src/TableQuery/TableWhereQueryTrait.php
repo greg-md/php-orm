@@ -2,11 +2,35 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Query\FromQueryInterface;
+use Greg\Orm\Query\HavingQueryInterface;
+use Greg\Orm\Query\JoinsQueryInterface;
+use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Query\WhereQueryTraitInterface;
+use Greg\Orm\Storage\StorageInterface;
 
 trait TableWhereQueryTrait
 {
     protected $whereApplicators = [];
+
+    public function needWhereClause()
+    {
+        foreach($this->clauses as $clause) {
+            if (    !($clause instanceof WhereQueryInterface)
+                or  !($clause instanceof FromQueryInterface)
+                or  !($clause instanceof HavingQueryInterface)
+                or  !($clause instanceof JoinsQueryInterface)
+            ) {
+                throw new \Exception('Current query could not have a WHERE clause.');
+            }
+        }
+
+        if (!isset($this->clauses['where'])) {
+            $this->clauses['where'] = $this->getStorage()->where();
+        }
+
+        return $this->clauses['where'];
+    }
 
     /**
      * @return WhereQueryTraitInterface
@@ -14,11 +38,15 @@ trait TableWhereQueryTrait
      */
     public function needWhereQuery()
     {
-        if (!(($query = $this->getQuery()) instanceof WhereQueryTraitInterface)) {
-            throw new \Exception('Current query is not a WHERE statement.');
+        if (!$this->query) {
+            return $this->needWhereClause();
         }
 
-        return $query;
+        if (!($this->query instanceof WhereQueryTraitInterface)) {
+            throw new \Exception('Current query is not a WHERE clause.');
+        }
+
+        return $this->query;
     }
 
     public function applyWhere(WhereQueryTraitInterface $query)
@@ -251,5 +279,8 @@ trait TableWhereQueryTrait
         return $this->needWhereQuery()->whereToString();
     }
 
-    abstract public function getQuery();
+    /**
+     * @return StorageInterface
+     */
+    abstract public function getStorage();
 }

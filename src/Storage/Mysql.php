@@ -4,7 +4,9 @@ namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\AdapterInterface;
 use Greg\Orm\Column;
+use Greg\Orm\Query\JoinsQuery;
 use Greg\Orm\Query\QueryTrait;
+use Greg\Orm\Query\WhereQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlDeleteQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlInsertQuery;
 use Greg\Orm\Storage\Mysql\Query\MysqlQueryTrait;
@@ -396,6 +398,20 @@ class Mysql implements StorageInterface
         if ($table !== null) {
             $query->table($table);
         }
+
+        return $query;
+    }
+
+    public function where()
+    {
+        $query = new WhereQuery($this);
+
+        return $query;
+    }
+
+    public function joins()
+    {
+        $query = new JoinsQuery($this);
 
         return $query;
     }

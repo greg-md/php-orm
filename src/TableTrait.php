@@ -2,7 +2,6 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\TableQuery\TableConditionsQueryTrait;
 use Greg\Orm\TableQuery\TableDeleteQueryTrait;
 use Greg\Orm\TableQuery\TableFromQueryTrait;
 use Greg\Orm\TableQuery\TableHavingQueryTrait;
@@ -20,7 +19,7 @@ trait TableTrait
 {
     use TableQueryTrait, TableInsertQueryTrait, TableUpdateQueryTrait, TableDeleteQueryTrait, TableSelectQueryTrait;
 
-    use TableFromQueryTrait, TableJoinsQueryTrait, TableConditionsQueryTrait, TableWhereQueryTrait, TableHavingQueryTrait;
+    use TableFromQueryTrait, TableJoinsQueryTrait, TableWhereQueryTrait, TableHavingQueryTrait;
 
     protected $prefix = null;
 

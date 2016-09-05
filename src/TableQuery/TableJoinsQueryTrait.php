@@ -3,6 +3,8 @@
 namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\JoinsQueryTraitInterface;
+use Greg\Orm\Query\WhereQueryInterface;
+use Greg\Orm\Storage\StorageInterface;
 
 trait TableJoinsQueryTrait
 {
@@ -12,11 +14,15 @@ trait TableJoinsQueryTrait
      */
     public function needJoinsQuery()
     {
-        if (!(($query = $this->getQuery()) instanceof JoinsQueryTraitInterface)) {
-            throw new \Exception('Current query is not a FROM statement.');
+        if (!$this->query) {
+            $this->query = $this->getStorage()->joins();
         }
 
-        return $query;
+        if (!($this->query instanceof JoinsQueryTraitInterface)) {
+            throw new \Exception('Current query is not a JOIN clause.');
+        }
+
+        return $this->query;
     }
 
     public function left($table, $on = null, $param = null, $_ = null)
@@ -85,5 +91,8 @@ trait TableJoinsQueryTrait
         return $this->needJoinsQuery()->joinsToString($source);
     }
 
-    abstract public function getQuery();
+    /**
+     * @return StorageInterface
+     */
+    abstract public function getStorage();
 }

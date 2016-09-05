@@ -11,6 +11,8 @@ trait TableQueryTrait
 {
     protected $query = null;
 
+    protected $clauses = [];
+
     public function getQuery()
     {
         return $this->query;
@@ -29,11 +31,11 @@ trait TableQueryTrait
      */
     public function needQuery()
     {
-        if (!(($query = $this->getQuery()) instanceof QueryTraitInterface)) {
+        if (!($this->query instanceof QueryTraitInterface)) {
             throw new \Exception('Current query is not a query.');
         }
 
-        return $query;
+        return $this->query;
     }
 
     public function concat($array, $delimiter = '')
