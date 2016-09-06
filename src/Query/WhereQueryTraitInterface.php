@@ -32,6 +32,7 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orWhere($column, $operator, $value = null);
 
+
     /**
      * @param $column1
      * @param $operator
@@ -48,6 +49,7 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orWhereRel($column1, $operator, $column2 = null);
 
+
     public function whereIsNull($column);
 
     public function orWhereIsNull($column);
@@ -56,6 +58,7 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orWhereIsNotNull($column);
 
+
     public function whereBetween($column, $min, $max);
 
     public function orWhereBetween($column, $min, $max);
@@ -63,6 +66,7 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
     public function whereNotBetween($column, $min, $max);
 
     public function orWhereNotBetween($column, $min, $max);
+
 
     public function whereDate($column, $date);
 
@@ -84,6 +88,12 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orWhereDay($column, $day);
 
+
+    public function whereExists($expr, $param = null, $_ = null);
+
+    public function whereNotExists($expr, $param = null, $_ = null);
+
+
     /**
      * @param $expr
      * @param null $value
@@ -100,16 +110,20 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orWhereRaw($expr, $value = null, $_ = null);
 
+
     public function hasWhere();
+
+    public function getWhere();
+
+    public function addWhere(array $conditions);
+
+    public function setWhere(array $conditions);
 
     /**
      * @return $this
      */
     public function clearWhere();
 
-    public function whereExists($expr, $param = null, $_ = null);
-
-    public function whereNotExists($expr, $param = null, $_ = null);
 
     public function whereToSql($useClause = true);
 

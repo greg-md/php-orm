@@ -11,6 +11,19 @@ trait StorageAdapterTrait
      */
     protected $adapter = null;
 
+    public function __construct($adapter = null)
+    {
+        if ($adapter) {
+            if ($adapter instanceof AdapterInterface) {
+                $this->setAdapter($adapter);
+            } elseif (is_callable($adapter)) {
+                $this->setCallableAdapter($adapter);
+            } else {
+                throw new \Exception('Wrong Mysql adapter type.');
+            }
+        }
+    }
+
     public function setAdapter(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
@@ -32,7 +45,7 @@ trait StorageAdapterTrait
         }
 
         if (!$this->adapter) {
-            throw new \Exception('Undefined Mysql adapter.');
+            throw new \Exception('Undefined storage adapter.');
         }
 
         return $this->adapter;

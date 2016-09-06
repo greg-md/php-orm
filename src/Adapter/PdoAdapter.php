@@ -14,13 +14,39 @@ class PdoAdapter extends \PDO implements AdapterInterface
 
     protected $listeners = [];
 
-    public function __construct($dsn, $username = null, $password = null, $options = null)
+    public function __construct($dsn, $username = null, $password = null, array $options = [])
     {
         $this->constructorArgs = $args = func_get_args();
 
         $this->parseDnsParams($dsn);
 
-        parent::__construct(...$args);
+        $this->reconnect();
+
+        return $this;
+    }
+
+    protected function parseDnsParams($dsn)
+    {
+        list($this->dsnProvider, $this->dsnInfo) = explode(':', $dsn, 2);
+
+        return $this;
+    }
+
+    public function getStmtClass()
+    {
+        return $this->stmtClass;
+    }
+
+    public function setStmtClass($className)
+    {
+        $this->stmtClass = (string)$className;
+
+        return $this;
+    }
+
+    public function reconnect()
+    {
+        parent::__construct(...$this->constructorArgs);
 
         $this->setDefaultAttributes();
 
@@ -42,64 +68,59 @@ class PdoAdapter extends \PDO implements AdapterInterface
         return $this;
     }
 
-    protected function parseDnsParams($dsn)
+    public function transaction(callable $callable)
     {
-        list($this->dsnProvider, $this->dsnInfo) = explode(':', $dsn, 2);
+        $this->beginTransaction();
 
-        return $this;
+        call_user_func_array($callable, []);
+
+        $this->commit();
     }
 
-    public function reconnect()
+    public function prepare($sql)
     {
-        parent::__construct(...$this->constructorArgs);
+        return $this->callStmt(__FUNCTION__, func_get_args());
+    }
 
-        return $this;
+    public function query($sql)
+    {
+        $this->fire($sql);
+
+        return $this->callStmt(__FUNCTION__, func_get_args());
     }
 
     public function exec($sql)
     {
         $this->fire($sql);
 
-        return $this->callParent(__FUNCTION__, func_get_args());
+        return $this->tryParent(__FUNCTION__, func_get_args());
     }
 
-    public function prepare($query, $options = null)
-    {
-        return $this->callParentStmt(__FUNCTION__, func_get_args());
-    }
-
-    public function query($sql, $mode = null, $_ = null)
-    {
-        $this->fire($sql);
-
-        return $this->callParentStmt(__FUNCTION__, func_get_args());
-    }
-
-    protected function callParentStmt($method, array $args = [])
+    protected function callStmt($method, array $args = [])
     {
         /** @var PdoStmt $stmt */
-        $stmt = $this->callParent($method, $args);
+        $stmt = $this->tryParent($method, $args);
 
         $stmt->setAdapter($this);
 
         return $stmt;
     }
 
-    protected function callParent($method, array $args = [])
+    protected function tryParent($method, array $args = [])
     {
         try {
-            return $this->_callParent($method, $args);
+            return $this->callParent($method, $args);
         } catch (\PDOException $e) {
             if ($e->errorInfo[1] == 2006) {
                 $this->reconnect();
 
-                return $this->_callParent($method, $args);
+                return $this->callParent($method, $args);
             }
             throw $e;
         }
     }
 
-    protected function _callParent($method, array $args = [])
+    protected function callParent($method, array $args = [])
     {
         $result = call_user_func_array(['parent', $method], $args);
 
@@ -110,7 +131,7 @@ class PdoAdapter extends \PDO implements AdapterInterface
         return $result;
     }
 
-    public function errorCheck()
+    protected function errorCheck()
     {
         $errorInfo = $this->errorInfo();
 
@@ -120,20 +141,6 @@ class PdoAdapter extends \PDO implements AdapterInterface
         }
 
         return $this;
-    }
-
-    public function transaction(callable $callable)
-    {
-        $this->beginTransaction();
-
-        call_user_func_array($callable, []);
-
-        $this->commit();
-    }
-
-    public function truncate($name)
-    {
-        return $this->exec('TRUNCATE ' . $name);
     }
 
     public function listen(callable $callable)
@@ -150,17 +157,5 @@ class PdoAdapter extends \PDO implements AdapterInterface
         }
 
         return $this;
-    }
-
-    public function setStmtClass($name)
-    {
-        $this->stmtClass = (string)$name;
-
-        return $this;
-    }
-
-    public function getStmtClass()
-    {
-        return $this->stmtClass;
     }
 }

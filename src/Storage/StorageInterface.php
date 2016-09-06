@@ -4,6 +4,8 @@ namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\StmtInterface;
 use Greg\Orm\Query\DeleteQueryInterface;
+use Greg\Orm\Query\FromQueryInterface;
+use Greg\Orm\Query\HavingQueryInterface;
 use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\SelectQueryInterface;
@@ -12,20 +14,6 @@ use Greg\Orm\Query\WhereQueryInterface;
 
 interface StorageInterface
 {
-    const PARAM_BOOL = 5;
-
-    const PARAM_NULL = 0;
-
-    const PARAM_INT = 1;
-
-    const PARAM_STR = 2;
-
-    const PARAM_LOB = 3;
-
-    const PARAM_STMT = 4;
-
-    const FETCH_ORI_NEXT = 0;
-
     /**
      * @param null $column
      * @param null $_
@@ -56,10 +44,10 @@ interface StorageInterface
     public function update($table = null);
 
     /**
-     * @return WhereQueryInterface
+     * @return FromQueryInterface
      * @throws \Exception
      */
-    public function where();
+    public function from();
 
     /**
      * @return JoinsQueryInterface
@@ -67,55 +55,55 @@ interface StorageInterface
      */
     public function joins();
 
-    static public function quoteLike($string, $escape = '\\');
+    /**
+     * @return WhereQueryInterface
+     * @throws \Exception
+     */
+    public function where();
 
-    static public function concat($array, $delimiter = '');
+    /**
+     * @return HavingQueryInterface
+     * @throws \Exception
+     */
+    public function having();
 
-    public function getTableInfo($tableName);
 
-    public function getTableReferences($tableName);
+    static public function quoteLike($value, $escape = '\\');
 
-    public function getTableRelationships($tableName);
+    static public function concat(array $values, $delimiter = '');
+
+
+    public function transaction(callable $callable);
+
+    public function inTransaction();
 
     public function beginTransaction();
 
     public function commit();
 
-    public function errorCode();
-
-    public function errorInfo();
-
-    public function exec($query);
-
-    public function getAttribute($name);
-
-    public function inTransaction();
-
-    public function lastInsertId($name = null);
-
-    /**
-     * @param $query
-     * @return StmtInterface
-     */
-    public function prepare($query);
-
-    /**
-     * @param $query
-     * @param null $mode
-     * @param null $_
-     * @return StmtInterface
-     */
-    public function query($query, $mode = null, $_ = null);
-
-    public function quote($string, $type = self::PARAM_STR);
-
     public function rollBack();
 
-    public function setAttribute($name, $value);
 
-    public function transaction(callable $callable);
+    /**
+     * @param $sql
+     * @return StmtInterface
+     */
+    public function prepare($sql);
 
-    public function truncate($name);
+    /**
+     * @param $sql
+     * @return StmtInterface
+     */
+    public function query($sql);
+
+    public function exec($sql);
+
+    public function truncate($tableName);
+
+    public function lastInsertId($sequenceId = null);
+
+    public function quote($value);
+
 
     public function listen(callable $callable);
 

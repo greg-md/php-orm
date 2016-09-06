@@ -3,7 +3,6 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
 use Greg\Orm\TableTraitInterface;
 use Greg\Support\Debug;
 use Greg\Support\Str;
@@ -28,17 +27,9 @@ trait QueryTrait
         return $this;
     }
 
-    static public function quoteLike($string, $escape = '\\')
+    public function getQuoteNameWith()
     {
-        return strtr($string, [
-            '_' => $escape . '_',
-            '%' => $escape . '%',
-        ]);
-    }
-
-    static public function concat($array, $delimiter = '')
-    {
-        return implode(' + ' . $delimiter . ' + ', $array);
+        return $this->quoteNameWith;
     }
 
     public function setQuoteNameWith($value)
@@ -48,9 +39,9 @@ trait QueryTrait
         return $this;
     }
 
-    public function getQuoteNameWith()
+    public function getNameRegex()
     {
-        return $this->quoteNameWith;
+        return $this->nameRegex;
     }
 
     public function setNameRegex($regex)
@@ -60,9 +51,9 @@ trait QueryTrait
         return $this;
     }
 
-    public function getNameRegex()
+    public function getStorage()
     {
-        return $this->nameRegex;
+        return $this->storage;
     }
 
     public function setStorage(StorageInterface $storage)
@@ -72,9 +63,48 @@ trait QueryTrait
         return $this;
     }
 
-    public function getStorage()
+    static public function quoteLike($value, $escape = '\\')
     {
-        return $this->storage;
+        return strtr($value, [
+            '_' => $escape . '_',
+            '%' => $escape . '%',
+        ]);
+    }
+
+    static public function concat(array $values, $delimiter = '')
+    {
+        return implode(' + ' . $delimiter . ' + ', $values);
+    }
+
+    public function when($condition, callable $callable)
+    {
+        if ($condition) {
+            call_user_func_array($callable, [$this]);
+        }
+
+        return $this;
+    }
+
+    public function stmt()
+    {
+        list($sql, $params) = $this->toSql();
+
+        $stmt = $this->getStorage()->prepare($sql);
+
+        if ($params) {
+            $stmt->bindParams($params);
+        }
+
+        return $stmt;
+    }
+
+    public function execStmt()
+    {
+        $stmt = $this->stmt();
+
+        $stmt->execute();
+
+        return $stmt;
     }
 
     protected function parseAlias($name)
@@ -146,37 +176,6 @@ trait QueryTrait
         }
 
         return $result;
-    }
-
-    public function when($condition, callable $callable)
-    {
-        if ($condition) {
-            call_user_func_array($callable, [$this]);
-        }
-
-        return $this;
-    }
-
-    public function stmt()
-    {
-        list($sql, $params) = $this->toSql();
-
-        $stmt = $this->getStorage()->prepare($sql);
-
-        if ($params) {
-            $stmt->bindParams($params);
-        }
-
-        return $stmt;
-    }
-
-    public function execStmt()
-    {
-        $stmt = $this->stmt();
-
-        $stmt->execute();
-
-        return $stmt;
     }
 
     public function __toString()

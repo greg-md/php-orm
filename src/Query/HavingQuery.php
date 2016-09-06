@@ -6,13 +6,13 @@ class HavingQuery implements HavingQueryInterface
 {
     use QueryTrait, HavingQueryTrait;
 
-    public function toSql()
+    public function toSql($useClause = true)
     {
-        return $this->havingToSql();
+        return $this->havingToSql($useClause);
     }
 
-    public function toString()
+    public function toString($useClause = true)
     {
-        return $this->havingToString();
+        return $this->havingToString($useClause);
     }
 }

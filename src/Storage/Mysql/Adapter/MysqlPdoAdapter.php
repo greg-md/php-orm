@@ -8,8 +8,10 @@ class MysqlPdoAdapter extends PdoAdapter implements MysqlAdapterInterface
 {
     protected $dsnParams = [];
 
-    public function __construct($dsn, $username = null, $password = null, $options = [])
+    public function __construct($dsn, $username = null, $password = null, array $options = [])
     {
+        $args = func_get_args();
+
         if (is_array($dsn)) {
             foreach($dsn as $key => &$value) {
                 $value = $key . '=' . $value;
@@ -19,7 +21,9 @@ class MysqlPdoAdapter extends PdoAdapter implements MysqlAdapterInterface
             $dsn = implode(';', $dsn);
         }
 
-        parent::__construct('mysql:' . $dsn, $username, $password, $options);
+        $args[0] = 'mysql:' . $dsn;
+
+        parent::__construct(...$args);
 
         return $this;
     }

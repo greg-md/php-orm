@@ -3,6 +3,8 @@
 namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Query\DeleteQueryInterface;
+use Greg\Orm\Query\FromQueryInterface;
+use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
@@ -16,15 +18,40 @@ trait TableDeleteQueryTrait
     {
         if (!$this->query) {
             $this->delete();
-        }
 
-        /*
-        if ($this->query instanceof WhereQueryInterface) {
-            list($sql, $params) = $this->query->conditionsToSql();
+            foreach($this->clauses as $clause) {
+                if (    !($clause instanceof WhereQueryInterface)
+                    or  !($clause instanceof FromQueryInterface)
+                    or  !($clause instanceof JoinsQueryInterface)
+                ) {
+                    throw new \Exception('Current query is not a DELETE statement.');
+                }
+            }
 
-            $this->delete()->whereRaw($sql, ...$params);
+            foreach($this->clauses as $clause) {
+                if ($clause instanceof FromQueryInterface) {
+                    $this->addFrom($clause->getFrom());
+
+                    continue;
+                }
+
+                if ($clause instanceof JoinsQueryInterface) {
+                    $this->addJoins($clause->getJoins());
+
+                    continue;
+                }
+
+                if ($clause instanceof WhereQueryInterface) {
+                    $this->addWhere($clause->getWhere());
+
+                    continue;
+                }
+            }
+
+            $this->cleanClauses();
+
+            return $this->query;
         }
-        */
 
         if (!($this->query instanceof DeleteQueryInterface)) {
             throw new \Exception('Current query is not a DELETE statement.');

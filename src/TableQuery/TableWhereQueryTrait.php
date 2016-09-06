@@ -250,9 +250,30 @@ trait TableWhereQueryTrait
         return $this->needWhereQuery()->hasWhere();
     }
 
+    public function getWhere()
+    {
+        return $this->needWhereQuery()->getWhere();
+    }
+
+    public function addWhere(array $conditions)
+    {
+        $this->needWhereQuery()->addWhere($conditions);
+
+        return $this;
+    }
+
+    public function setWhere(array $conditions)
+    {
+        $this->needWhereQuery()->setWhere($conditions);
+
+        return $this;
+    }
+
     public function clearWhere()
     {
-        return $this->needWhereQuery()->clearWhere();
+        $this->needWhereQuery()->clearWhere();
+
+        return $this;
     }
 
     public function whereExists($expr, $param = null, $_ = null)

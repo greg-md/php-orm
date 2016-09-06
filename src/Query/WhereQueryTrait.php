@@ -128,26 +128,6 @@ trait WhereQueryTrait
         return $this->orConditionDay($column, $day);
     }
 
-    public function whereRaw($expr, $value = null, $_ = null)
-    {
-        return $this->conditionRaw(...func_get_args());
-    }
-
-    public function orWhereRaw($expr, $value = null, $_ = null)
-    {
-        return $this->orConditionRaw(...func_get_args());
-    }
-
-    public function hasWhere()
-    {
-        return $this->hasConditions();
-    }
-
-    public function clearWhere()
-    {
-        return $this->clearConditions();
-    }
-
     public function whereExists($expr, $param = null, $_ = null)
     {
         $this->addExists(null, ...func_get_args());
@@ -171,6 +151,41 @@ trait WhereQueryTrait
             'expr' => $expr,
             'params' => $params,
         ];
+    }
+
+    public function whereRaw($expr, $value = null, $_ = null)
+    {
+        return $this->conditionRaw(...func_get_args());
+    }
+
+    public function orWhereRaw($expr, $value = null, $_ = null)
+    {
+        return $this->orConditionRaw(...func_get_args());
+    }
+
+    public function hasWhere()
+    {
+        return $this->hasConditions();
+    }
+
+    public function getWhere()
+    {
+        return $this->getConditions();
+    }
+
+    public function addWhere(array $conditions)
+    {
+        return $this->addConditions($conditions);
+    }
+
+    public function setWhere(array $conditions)
+    {
+        return $this->setConditions($conditions);
+    }
+
+    public function clearWhere()
+    {
+        return $this->clearConditions();
     }
 
     protected function newConditions()

@@ -6,13 +6,13 @@ class OnQuery implements OnQueryInterface
 {
     use QueryTrait, OnQueryTrait;
 
-    public function toSql()
+    public function toSql($useClause = true)
     {
-        return $this->onToSql();
+        return $this->onToSql($useClause);
     }
 
-    public function toString()
+    public function toString($useClause = true)
     {
-        return $this->onToString();
+        return $this->onToString($useClause);
     }
 }

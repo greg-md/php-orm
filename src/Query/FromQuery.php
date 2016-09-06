@@ -6,13 +6,13 @@ class FromQuery implements FromQueryInterface
 {
     use QueryTrait, FromQueryTrait;
 
-    public function toSql()
+    public function toSql($useClause = true)
     {
-        return $this->fromToSql();
+        return $this->fromToSql($useClause);
     }
 
-    public function toString()
+    public function toString($useClause = true)
     {
-        return $this->fromToString();
+        return $this->fromToString($useClause);
     }
 }

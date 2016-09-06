@@ -32,6 +32,7 @@ interface HavingQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orHaving($column, $operator, $value = null);
 
+
     /**
      * @param $column1
      * @param $operator
@@ -48,6 +49,7 @@ interface HavingQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orHavingRel($column1, $operator, $column2 = null);
 
+
     public function havingIsNull($column);
 
     public function orHavingIsNull($column);
@@ -56,6 +58,7 @@ interface HavingQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orHavingIsNotNull($column);
 
+
     public function havingBetween($column, $min, $max);
 
     public function orHavingBetween($column, $min, $max);
@@ -63,6 +66,7 @@ interface HavingQueryTraitInterface extends ConditionsQueryTraitInterface
     public function havingNotBetween($column, $min, $max);
 
     public function orHavingNotBetween($column, $min, $max);
+
 
     public function havingDate($column, $date);
 
@@ -84,6 +88,7 @@ interface HavingQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orHavingDay($column, $day);
 
+
     /**
      * @param $expr
      * @param null $value
@@ -100,11 +105,19 @@ interface HavingQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orHavingRaw($expr, $value = null, $_ = null);
 
+
     public function hasHaving();
+
+    public function getHaving();
+
+    public function addHaving(array $conditions);
+
+    public function setHaving(array $conditions);
 
     public function clearHaving();
 
-    public function havingToSql();
 
-    public function havingToString();
+    public function havingToSql($useClause = true);
+
+    public function havingToString($useClause = true);
 }

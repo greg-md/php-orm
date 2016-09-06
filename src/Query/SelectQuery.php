@@ -139,6 +139,31 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
+    public function count($column = '*', $alias = null)
+    {
+        return $this->columnRaw('COUNT(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+    }
+
+    public function max($column, $alias = null)
+    {
+        return $this->columnRaw('MAX(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+    }
+
+    public function min($column, $alias = null)
+    {
+        return $this->columnRaw('MIN(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+    }
+
+    public function avg($column, $alias = null)
+    {
+        return $this->columnRaw('AVG(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+    }
+
+    public function sum($column, $alias = null)
+    {
+        return $this->columnRaw('SUM(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+    }
+
     public function groupBy($column)
     {
         return $this->addGroupBy($this->quoteNameExpr($column));
@@ -485,31 +510,6 @@ class SelectQuery implements SelectQueryInterface
         }
 
         return $this;
-    }
-
-    public function count($column = '*', $alias = null)
-    {
-        return $this->columnRaw('COUNT(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
-    }
-
-    public function max($column, $alias = null)
-    {
-        return $this->columnRaw('MAX(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
-    }
-
-    public function min($column, $alias = null)
-    {
-        return $this->columnRaw('MIN(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
-    }
-
-    public function avg($column, $alias = null)
-    {
-        return $this->columnRaw('AVG(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
-    }
-
-    public function sum($column, $alias = null)
-    {
-        return $this->columnRaw('SUM(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
     }
 
     public function toSql()

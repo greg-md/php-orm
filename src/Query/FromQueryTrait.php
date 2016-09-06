@@ -25,7 +25,7 @@ trait FromQueryTrait
 
                 list($tableSql, $tableParams) = $tableName->toSql();
 
-                $tableName = '(' . $tableSql . ')';
+                $expr = '(' . $tableSql . ')';
 
                 $tableKey = $tableAlias;
 
@@ -33,18 +33,17 @@ trait FromQueryTrait
             } else {
                 $tableKey = $tableAlias ?: $tableName;
 
-                $tableName = $this->quoteTableExpr($tableName);
+                $expr = $this->quoteTableExpr($tableName);
 
                 $params = [];
             }
 
             if ($tableAlias) {
-                $tableAlias = $this->quoteName($tableAlias);
+                $expr .= ' AS ' . $this->quoteName($tableAlias);
             }
 
             $this->from[$tableKey] = [
-                'name' => $tableName,
-                'alias' => $tableAlias,
+                'expr' => $expr,
                 'params' => $params,
             ];
         }
@@ -52,47 +51,88 @@ trait FromQueryTrait
         return $this;
     }
 
-    public function fromStmtToSql()
+    public function fromRaw($expr, $param = null, $_ = null)
+    {
+        $this->from[] = [
+            'expr' => $expr,
+            'params' => is_array($param) ? $param : array_slice(func_get_args(), 1),
+        ];
+
+        return $this;
+    }
+
+    public function hasFrom()
+    {
+        return (bool)$this->from;
+    }
+
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    public function addFrom(array $from)
+    {
+        $this->from = array_merge($this->from, $from);
+
+        return $this;
+    }
+
+    public function setFrom(array $from)
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    public function cleanFrom()
+    {
+        $this->from = [];
+
+        return $this;
+    }
+
+    public function fromStmtToSql($useClause = true)
     {
         $params = [];
 
         $sql = [];
 
         foreach($this->from as $source => $table) {
-            $expr = $table['name'];
-
-            if ($table['alias']) {
-                $expr .= ' AS ' . $table['alias'];
-            }
+            $expr = $table['expr'];
 
             $table['params'] && $params = array_merge($params, $table['params']);
 
-            list($joinsSql, $joinsParams) = $this->joinsToSql($source);
+            if (!is_int($source)) {
+                list($joinsSql, $joinsParams) = $this->joinsToSql($source);
 
-            if ($joinsSql) {
-                $expr .= ' ' . $joinsSql;
+                if ($joinsSql) {
+                    $expr .= ' ' . $joinsSql;
 
-                $params = array_merge($params, $joinsParams);
+                    $params = array_merge($params, $joinsParams);
+                }
             }
 
             $sql[] = $expr;
         }
 
-        if ($sql) {
-            $sql = 'FROM ' . implode(', ', $sql);
+        $sql = implode(', ', $sql);
+
+        if ($sql and $useClause) {
+            $sql = 'FROM ' . $sql;
         }
 
         return [$sql, $params];
     }
 
-    public function fromStmtToString()
+    public function fromStmtToString($useClause = true)
     {
-        return $this->fromStmtToSql()[0];
+        return $this->fromStmtToSql($useClause)[0];
     }
 
-    public function fromToSql()
+    public function fromToSql($useClause = true)
     {
-        list($sql, $params) = $this->fromStmtToSql();
+        list($sql, $params) = $this->fromStmtToSql($useClause);
 
         $sql = $sql ? [$sql] : [];
 
@@ -113,8 +153,8 @@ trait FromQueryTrait
         return [$sql, $params];
     }
 
-    public function fromToString()
+    public function fromToString($useClause = true)
     {
-        return $this->fromToSql()[0];
+        return $this->fromToSql($useClause)[0];
     }
 }

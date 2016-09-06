@@ -12,6 +12,7 @@ interface JoinsQueryTraitInterface
 
     public function cross($table);
 
+
     public function leftTo($source, $table, $on = null, $param = null, $_ = null);
 
     public function rightTo($source, $table, $on = null, $param = null, $_ = null);
@@ -20,7 +21,19 @@ interface JoinsQueryTraitInterface
 
     public function crossTo($source, $table);
 
-    public function joinsToSql($source);
 
-    public function joinsToString($source);
+    public function hasJoins();
+
+    public function getJoins();
+
+    public function addJoins(array $joins);
+
+    public function setJoins(array $joins);
+
+    public function clearJoins();
+
+
+    public function joinsToSql($source = null);
+
+    public function joinsToString($source = null);
 }

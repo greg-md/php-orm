@@ -10,6 +10,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function distinct($value = true);
 
+
     /**
      * @param $table
      * @param null $column
@@ -17,6 +18,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @return $this
      */
     public function from($table, $column = null, $_ = null);
+
 
     /**
      * @param $table
@@ -53,11 +55,23 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function clearColumns();
 
+
+    public function count($column = '*', $alias = null);
+
+    public function max($column, $alias = null);
+
+    public function min($column, $alias = null);
+
+    public function avg($column, $alias = null);
+
+    public function sum($column, $alias = null);
+
+
     /**
      * @param $expr
      * @return $this
      */
-    public function groupBy($expr);
+    public function groupBy($column);
 
     /**
      * @param $expr
@@ -80,6 +94,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
     public function groupByToSql();
 
     public function groupByToString();
+
 
     /**
      * @param $column
@@ -110,6 +125,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
 
     public function orderByToString();
 
+
     /**
      * @param $number
      * @return $this
@@ -122,11 +138,13 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function offset($number);
 
+
     public function union($expr, $param = null, $_ = null);
 
     public function unionAll($expr, $param = null, $_ = null);
 
     public function unionDistinct($expr, $param = null, $_ = null);
+
 
     public function selectStmtToSql();
 
@@ -135,6 +153,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
     public function selectToSql();
 
     public function selectToString();
+
 
     /**
      * @return array|null
@@ -172,14 +191,4 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @return bool
      */
     public function exists();
-
-    public function count($column = '*', $alias = null);
-
-    public function max($column, $alias = null);
-
-    public function min($column, $alias = null);
-
-    public function avg($column, $alias = null);
-
-    public function sum($column, $alias = null);
 }

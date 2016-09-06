@@ -117,6 +117,37 @@ trait JoinsQueryTrait
         return new OnQuery($this->getStorage());
     }
 
+    public function hasJoins()
+    {
+        return (bool)$this->joins;
+    }
+
+    public function getJoins()
+    {
+        return $this->joins;
+    }
+
+    public function addJoins(array $joins)
+    {
+        $this->joins = array_merge($this->joins, $joins);
+
+        return $this;
+    }
+
+    public function setJoins(array $joins)
+    {
+        $this->joins = $joins;
+
+        return $this;
+    }
+
+    public function clearJoins()
+    {
+        $this->joins = [];
+
+        return $this;
+    }
+
     public function joinsToSql($source = null)
     {
         $sql = $params = [];

@@ -2,7 +2,8 @@
 
 namespace Greg\Orm\Storage;
 
-use Greg\Orm\Adapter\AdapterInterface;
+use Greg\Orm\Query\FromQuery;
+use Greg\Orm\Query\HavingQuery;
 use Greg\Orm\Query\JoinsQuery;
 use Greg\Orm\Query\QueryTrait;
 use Greg\Orm\Query\WhereQuery;
@@ -11,37 +12,15 @@ use Greg\Orm\Storage\Sqlite\Query\SqliteInsertQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteSelectQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteUpdateQuery;
 
-class Sqlite implements StorageInterface
+class Sqlite implements SqliteInterface
 {
     use StorageAdapterTrait;
 
-    public function __construct($adapter = null)
+    public function select($column = null, $_ = null)
     {
-        if ($adapter) {
-            if ($adapter instanceof AdapterInterface) {
-                $this->setAdapter($adapter);
-            } elseif (is_callable($adapter)) {
-                $this->setCallableAdapter($adapter);
-            } else {
-                throw new \Exception('Wrong Mysql adapter type.');
-            }
-        }
-    }
-
-    public function dbName()
-    {
-        return $this->getAdapter()->dbName();
-    }
-
-    public function select($columns = null, $_ = null)
-    {
-        if (!is_array($columns)) {
-            $columns = func_get_args();
-        }
-
         $query = new SqliteSelectQuery($this);
 
-        if ($columns) {
+        if ($columns = is_array($column) ? $column : func_get_args()) {
             $query->columns($columns);
         }
 
@@ -59,7 +38,7 @@ class Sqlite implements StorageInterface
         return $query;
     }
 
-    public function delete($from = null, $delete = false)
+    public function delete($from = null)
     {
         $query = new SqliteDeleteQuery($this);
 
@@ -81,43 +60,44 @@ class Sqlite implements StorageInterface
         return $query;
     }
 
-    public function where()
+    public function from()
     {
-        $query = new WhereQuery($this);
-
-        return $query;
+        return new FromQuery($this);
     }
 
     public function joins()
     {
-        $query = new JoinsQuery($this);
-
-        return $query;
+        return new JoinsQuery($this);
     }
 
-    static public function quoteLike($string, $escape = '\\')
+    public function where()
     {
-        return QueryTrait::quoteLike($string, $escape);
+        return new WhereQuery($this);
     }
 
-    static public function concat($array, $delimiter = '')
+    public function having()
     {
-        return QueryTrait::concat($array, $delimiter);
+        return new HavingQuery($this);
     }
 
-    public function getTableInfo($tableName)
+    static public function quoteLike($value, $escape = '\\')
     {
-
+        return QueryTrait::quoteLike($value, $escape);
     }
 
-    public function getTableReferences($tableName)
+    static public function concat(array $values, $delimiter = '')
     {
-        throw new \Exception('Table reference not implemented yet.');
+        return QueryTrait::concat($values, $delimiter);
     }
 
-    public function getTableRelationships($tableName)
+    public function transaction(callable $callable)
     {
-        throw new \Exception('Table relationships not implemented yet.');
+        return $this->getAdapter()->transaction($callable);
+    }
+
+    public function inTransaction()
+    {
+        return $this->getAdapter()->inTransaction();
     }
 
     public function beginTransaction()
@@ -130,69 +110,39 @@ class Sqlite implements StorageInterface
         return $this->getAdapter()->commit();
     }
 
-    public function errorCode()
-    {
-        return $this->getAdapter()->errorCode();
-    }
-
-    public function errorInfo()
-    {
-        return $this->getAdapter()->errorInfo();
-    }
-
-    public function exec($query)
-    {
-        return $this->getAdapter()->exec($query);
-    }
-
-    public function getAttribute($name)
-    {
-        return $this->getAdapter()->getAttribute($name);
-    }
-
-    public function inTransaction()
-    {
-        return $this->getAdapter()->inTransaction();
-    }
-
-    public function lastInsertId($name = null)
-    {
-        return $this->getAdapter()->lastInsertId($name);
-    }
-
-    public function prepare($query, $options = [])
-    {
-        return $this->getAdapter()->prepare($query, $options = []);
-    }
-
-    public function query($query, $mode = null, $_ = null)
-    {
-        return call_user_func_array([$this->getAdapter(), 'query'], func_get_args());
-    }
-
-    public function quote($string, $type = self::PARAM_STR)
-    {
-        return $this->getAdapter()->quote($string, $type);
-    }
-
     public function rollBack()
     {
         return $this->getAdapter()->rollBack();
     }
 
-    public function setAttribute($name, $value)
+    public function prepare($sql)
     {
-        return $this->getAdapter()->setAttribute($name, $value);
+        return $this->getAdapter()->prepare($sql);
     }
 
-    public function transaction(callable $callable)
+    public function query($sql)
     {
-        return $this->getAdapter()->transaction($callable);
+        return $this->getAdapter()->query($sql);
+    }
+
+    public function exec($sql)
+    {
+        return $this->getAdapter()->exec($sql);
     }
 
     public function truncate($name)
     {
-        return $this->getAdapter()->truncate($name);
+        return $this->exec('TRUNCATE ' . $name);
+    }
+
+    public function lastInsertId($sequenceId = null)
+    {
+        return $this->getAdapter()->lastInsertId($sequenceId);
+    }
+
+    public function quote($value)
+    {
+        return $this->getAdapter()->quote($value);
     }
 
     public function listen(callable $callable)

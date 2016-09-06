@@ -4,6 +4,8 @@ namespace Greg\Orm\Storage;
 
 use Greg\Orm\Adapter\AdapterInterface;
 use Greg\Orm\Column;
+use Greg\Orm\Query\FromQuery;
+use Greg\Orm\Query\HavingQuery;
 use Greg\Orm\Query\JoinsQuery;
 use Greg\Orm\Query\QueryTrait;
 use Greg\Orm\Query\WhereQuery;
@@ -22,31 +24,92 @@ use Greg\Support\Str;
  *
  * @method Mysql\Adapter\MysqlAdapterInterface getAdapter();
  */
-class Mysql implements StorageInterface
+class Mysql implements MysqlInterface
 {
     use StorageAdapterTrait;
 
     protected $tablesInfo = [];
-
-    public function __construct($adapter = null)
-    {
-        if ($adapter) {
-            if ($adapter instanceof AdapterInterface) {
-                $this->setAdapter($adapter);
-            } elseif (is_callable($adapter)) {
-                $this->setCallableAdapter($adapter);
-            } else {
-                throw new \Exception('Wrong Mysql adapter type.');
-            }
-        }
-    }
 
     public function dbName()
     {
         return $this->getAdapter()->dbName();
     }
 
-    public function getTableInfo($tableName, $save = true)
+    public function select($column = null, $_ = null)
+    {
+        $query = new MysqlSelectQuery($this);
+
+        if ($columns = is_array($column) ? $column : func_get_args()) {
+            $query->columns($columns);
+        }
+
+        return $query;
+    }
+
+    public function insert($into = null)
+    {
+        $query = new MysqlInsertQuery($this);
+
+        if ($into !== null) {
+            $query->into($into);
+        }
+
+        return $query;
+    }
+
+    public function delete($from = null)
+    {
+        $query = new MysqlDeleteQuery($this);
+
+        if ($from !== null) {
+            $query->from($from);
+        }
+
+        return $query;
+    }
+
+    public function update($table = null)
+    {
+        $query = new MysqlUpdateQuery($this);
+
+        if ($table !== null) {
+            $query->table($table);
+        }
+
+        return $query;
+    }
+
+    public function from()
+    {
+        return new FromQuery($this);
+    }
+
+    public function joins()
+    {
+        return new JoinsQuery($this);
+    }
+
+    public function where()
+    {
+        return new WhereQuery($this);
+    }
+
+    public function having()
+    {
+        return new HavingQuery($this);
+    }
+
+    static public function quoteLike($value, $escape = '\\')
+    {
+        return QueryTrait::quoteLike($value, $escape);
+    }
+
+    static public function concat(array $values, $delimiter = '')
+    {
+        return MysqlQueryTrait::concat($values, $delimiter);
+    }
+
+    public function tableInfo($tableName, $save = true)
     {
         if (!$save) {
             return $this->fetchTableInfo($tableName);
@@ -90,7 +153,7 @@ class Mysql implements StorageInterface
         ];
     }
 
-    public function newColumnInfo(array $info)
+    protected function newColumnInfo(array $info)
     {
         $info = $this->parseColumnInfo($info);
 
@@ -174,7 +237,7 @@ class Mysql implements StorageInterface
         return compact('name', 'type', 'length', 'unsigned', 'null', 'defaultValue', 'comment', 'values');
     }
 
-    public function getTableReferences($tableName)
+    public function tableReferences($tableName)
     {
         $stmt = $this->query('SHOW CREATE TABLE `' . $tableName . '`');
 
@@ -183,7 +246,7 @@ class Mysql implements StorageInterface
         return $this->newTableReferences($sql);
     }
 
-    public function newTableReferences($sql)
+    protected function newTableReferences($sql)
     {
         $references = [];
 
@@ -205,7 +268,7 @@ class Mysql implements StorageInterface
         return $references;
     }
 
-    public function parseTableReferences($sql)
+    protected function parseTableReferences($sql)
     {
         $tableName = $this->parseTableName($sql);
 
@@ -243,7 +306,7 @@ class Mysql implements StorageInterface
         return $references;
     }
 
-    public function parseTableName($sql)
+    protected function parseTableName($sql)
     {
         if (!preg_match('#^CREATE TABLE `(.+)`#', $sql, $tableMatches)) {
             throw new \Exception('Wrong create table sql.');
@@ -252,7 +315,7 @@ class Mysql implements StorageInterface
         return $tableMatches[1];
     }
 
-    public function getTableRelationships($tableName, $rules = false)
+    public function tableRelationships($tableName, $withRules = false)
     {
         $query = $this->select()
             ->from(['KCU' => 'information_schema.KEY_COLUMN_USAGE'], [
@@ -277,7 +340,7 @@ class Mysql implements StorageInterface
             ->order('KCU.ORDINAL_POSITION')
             ->order('KCU.POSITION_IN_UNIQUE_CONSTRAINT');
 
-        if ($rules) {
+        if ($withRules) {
             $query->from(['RC' => 'information_schema.REFERENTIAL_CONSTRAINTS'], [
                     'UPDATE_RULE',
                     'DELETE_RULE',
@@ -294,21 +357,21 @@ class Mysql implements StorageInterface
 
         $items = $query->assocAll();
 
-        return $this->parseTableRelationshipsAsArray($items, $rules);
+        return $this->parseTableRelationshipsAsArray($items, $withRules);
     }
 
-    protected function parseTableRelationships(array $items, $rules = false)
+    protected function parseTableRelationships(array $items, $withRules = false)
     {
         $relationships = [];
 
-        foreach($this->parseTableRelationshipsAsArray($items, $rules) as $relationship) {
+        foreach($this->parseTableRelationshipsAsArray($items, $withRules) as $relationship) {
             $constraint = new Constraint();
 
             $constraint->setName($relationship['ConstraintName']);
 
             $constraint->setReferencedTableName($relationship['RelationshipTableName']);
 
-            if ($rules) {
+            if ($withRules) {
                 $constraint->setOnUpdate($relationship['OnUpdate']);
 
                 $constraint->setOnDelete($relationship['OnDelete']);
@@ -324,7 +387,7 @@ class Mysql implements StorageInterface
         return $relationships;
     }
 
-    protected function parseTableRelationshipsAsArray(array $items, $rules = false)
+    protected function parseTableRelationshipsAsArray(array $items, $withRules = false)
     {
         $relationships = [];
 
@@ -338,7 +401,7 @@ class Mysql implements StorageInterface
                     'RelationshipTableName' => $item['TABLE_NAME'],
                 ];
 
-                if ($rules) {
+                if ($withRules) {
                     $relationships[$item['CONSTRAINT_NAME']]['OnUpdate'] = $item['UPDATE_RULE'];
                     $relationships[$item['CONSTRAINT_NAME']]['OnDelete'] = $item['DELETE_RULE'];
                 }
@@ -354,76 +417,14 @@ class Mysql implements StorageInterface
         return $relationships;
     }
 
-    public function select($column = null, $_ = null)
+    public function transaction(callable $callable)
     {
-        if (!is_array($column)) {
-            $column = func_get_args();
-        }
-
-        $query = new MysqlSelectQuery($this);
-
-        if ($column) {
-            $query->columns($column);
-        }
-
-        return $query;
+        return $this->getAdapter()->transaction($callable);
     }
 
-    public function insert($into = null)
+    public function inTransaction()
     {
-        $query = new MysqlInsertQuery($this);
-
-        if ($into !== null) {
-            $query->into($into);
-        }
-
-        return $query;
-    }
-
-    public function delete($from = null)
-    {
-        $query = new MysqlDeleteQuery($this);
-
-        if ($from !== null) {
-            $query->from($from);
-        }
-
-        return $query;
-    }
-
-    public function update($table = null)
-    {
-        $query = new MysqlUpdateQuery($this);
-
-        if ($table !== null) {
-            $query->table($table);
-        }
-
-        return $query;
-    }
-
-    public function where()
-    {
-        $query = new WhereQuery($this);
-
-        return $query;
-    }
-
-    public function joins()
-    {
-        $query = new JoinsQuery($this);
-
-        return $query;
-    }
-
-    static public function quoteLike($string, $escape = '\\')
-    {
-        return QueryTrait::quoteLike($string, $escape);
-    }
-
-    static public function concat($array, $delimiter = '')
-    {
-        return MysqlQueryTrait::concat($array, $delimiter);
+        return $this->getAdapter()->inTransaction();
     }
 
     public function beginTransaction()
@@ -436,69 +437,39 @@ class Mysql implements StorageInterface
         return $this->getAdapter()->commit();
     }
 
-    public function errorCode()
-    {
-        return $this->getAdapter()->errorCode();
-    }
-
-    public function errorInfo()
-    {
-        return $this->getAdapter()->errorInfo();
-    }
-
-    public function exec($query)
-    {
-        return $this->getAdapter()->exec($query);
-    }
-
-    public function getAttribute($name)
-    {
-        return $this->getAdapter()->getAttribute($name);
-    }
-
-    public function inTransaction()
-    {
-        return $this->getAdapter()->inTransaction();
-    }
-
-    public function lastInsertId($name = null)
-    {
-        return $this->getAdapter()->lastInsertId($name);
-    }
-
-    public function prepare($query, $options = [])
-    {
-        return $this->getAdapter()->prepare($query, $options = []);
-    }
-
-    public function query($query, $mode = null, $_ = null)
-    {
-        return call_user_func_array([$this->getAdapter(), 'query'], func_get_args());
-    }
-
-    public function quote($string, $type = StorageInterface::PARAM_STR)
-    {
-        return $this->getAdapter()->quote($string, $type);
-    }
-
     public function rollBack()
     {
         return $this->getAdapter()->rollBack();
     }
 
-    public function setAttribute($name, $value)
+    public function prepare($sql)
     {
-        return $this->getAdapter()->setAttribute($name, $value);
+        return $this->getAdapter()->prepare($sql);
     }
 
-    public function transaction(callable $callable)
+    public function query($sql)
     {
-        return $this->getAdapter()->transaction($callable);
+        return $this->getAdapter()->query($sql);
+    }
+
+    public function exec($sql)
+    {
+        return $this->getAdapter()->exec($sql);
     }
 
     public function truncate($name)
     {
-        return $this->getAdapter()->truncate($name);
+        return $this->exec('TRUNCATE ' . $name);
+    }
+
+    public function lastInsertId($sequenceId = null)
+    {
+        return $this->getAdapter()->lastInsertId($sequenceId);
+    }
+
+    public function quote($value)
+    {
+        return $this->getAdapter()->quote($value);
     }
 
     public function listen(callable $callable)

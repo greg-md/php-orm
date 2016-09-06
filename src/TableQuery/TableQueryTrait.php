@@ -25,6 +25,13 @@ trait TableQueryTrait
         return $this;
     }
 
+    public function cleanClauses()
+    {
+        $this->clauses = [];
+
+        return $this;
+    }
+
     /**
      * @return QueryTraitInterface
      * @throws \Exception

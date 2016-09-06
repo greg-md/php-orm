@@ -2,6 +2,9 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Query\FromQueryInterface;
+use Greg\Orm\Query\HavingQueryInterface;
+use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\SelectQueryInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
@@ -58,18 +61,46 @@ trait TableSelectQueryTrait
     {
         if (!$this->query) {
             $this->select();
-        }
 
-        foreach($this->clauses as $clause) {
-            if ($clause instanceof WhereQueryInterface) {
-                list($sql, $params) = $clause->toSql(false);
-
-                $this->whereRaw($sql, ...$params);
-
-                continue;
+            foreach($this->clauses as $clause) {
+                if (    !($clause instanceof WhereQueryInterface)
+                    or  !($clause instanceof FromQueryInterface)
+                    or  !($clause instanceof HavingQueryInterface)
+                    or  !($clause instanceof JoinsQueryInterface)
+                ) {
+                    throw new \Exception('Current query is not a SELECT statement.');
+                }
             }
 
-            throw new \Exception('Current query is not a SELECT statement.');
+            foreach($this->clauses as $clause) {
+                if ($clause instanceof FromQueryInterface) {
+                    $this->addFrom($clause->getFrom());
+
+                    continue;
+                }
+
+                if ($clause instanceof JoinsQueryInterface) {
+                    $this->addJoins($clause->getJoins());
+
+                    continue;
+                }
+
+                if ($clause instanceof WhereQueryInterface) {
+                    $this->addWhere($clause->getWhere());
+
+                    continue;
+                }
+
+                if ($clause instanceof HavingQueryInterface) {
+                    $this->addHaving($clause->getHaving());
+
+                    continue;
+                }
+            }
+
+            $this->cleanClauses();
+
+            return $this->query;
         }
 
         if (!($this->query instanceof SelectQueryInterface)) {

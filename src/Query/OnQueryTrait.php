@@ -141,6 +141,21 @@ trait OnQueryTrait
         return $this->hasConditions();
     }
 
+    public function getOn()
+    {
+        return $this->getConditions();
+    }
+
+    public function addOn(array $conditions)
+    {
+        return $this->addConditions($conditions);
+    }
+
+    public function setOn(array $conditions)
+    {
+        return $this->setConditions($conditions);
+    }
+
     public function clearOn()
     {
         return $this->clearConditions();

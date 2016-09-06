@@ -12,9 +12,11 @@ interface ConditionsQueryTraitInterface
 
     public function orCondition($column, $operator, $value = null);
 
+
     public function conditionRel($column1, $operator, $column2 = null);
 
     public function orConditionRel($column1, $operator, $column2 = null);
+
 
     public function conditionIsNull($column);
 
@@ -24,6 +26,7 @@ interface ConditionsQueryTraitInterface
 
     public function orConditionIsNotNull($column);
 
+
     public function conditionBetween($column, $min, $max);
 
     public function orConditionBetween($column, $min, $max);
@@ -31,6 +34,7 @@ interface ConditionsQueryTraitInterface
     public function conditionNotBetween($column, $min, $max);
 
     public function orConditionNotBetween($column, $min, $max);
+
 
     public function conditionDate($column, $date);
 
@@ -52,11 +56,19 @@ interface ConditionsQueryTraitInterface
 
     public function orConditionDay($column, $day);
 
+
     public function conditionRaw($expr, $value = null, $_ = null);
 
     public function orConditionRaw($expr, $value = null, $_ = null);
 
+
     public function hasConditions();
+
+    public function getConditions();
+
+    public function addConditions(array $conditions);
+
+    public function setConditions(array $conditions);
 
     public function clearConditions();
 

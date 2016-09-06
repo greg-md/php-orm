@@ -6,8 +6,8 @@ use Greg\Support\Arr;
 
 trait MysqlQueryTrait
 {
-    static public function concat($array, $delimiter = '')
+    static public function concat(array $values, $delimiter = '')
     {
-        return sizeof($array) > 1 ? 'concat_ws("' . $delimiter . '", ' . implode(', ', $array) . ')' : Arr::first($array);
+        return sizeof($values) > 1 ? 'concat_ws("' . $delimiter . '", ' . implode(', ', $values) . ')' : Arr::first($values);
     }
 }

@@ -164,6 +164,25 @@ trait ConditionsQueryTrait
         return (bool)$this->conditions;
     }
 
+    public function getConditions()
+    {
+        return $this->conditions;
+    }
+
+    public function addConditions(array $conditions)
+    {
+        $this->conditions = array_merge($this->conditions, $conditions);
+
+        return $this;
+    }
+
+    public function setConditions(array $conditions)
+    {
+        $this->conditions = $conditions;
+
+        return $this;
+    }
+
     public function clearConditions()
     {
         $this->conditions = [];

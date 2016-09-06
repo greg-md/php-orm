@@ -32,6 +32,7 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orOn($column, $operator, $value = null);
 
+
     /**
      * @param $column1
      * @param $operator
@@ -48,6 +49,7 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orOnRel($column1, $operator, $column2 = null);
 
+
     public function onIsNull($column);
 
     public function orOnIsNull($column);
@@ -56,6 +58,7 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orOnIsNotNull($column);
 
+
     public function onBetween($column, $min, $max);
 
     public function orOnBetween($column, $min, $max);
@@ -63,6 +66,7 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
     public function onNotBetween($column, $min, $max);
 
     public function orOnNotBetween($column, $min, $max);
+
 
     public function onDate($column, $date);
 
@@ -84,6 +88,7 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
 
     public function orOnDay($column, $day);
 
+
     /**
      * @param $expr
      * @param null $value
@@ -100,9 +105,20 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
      */
     public function orOnRaw($expr, $value = null, $_ = null);
 
+
     public function hasOn();
 
+    public function getOn();
+
+    public function addOn(array $conditions);
+
+    public function setOn(array $conditions);
+
+    /**
+     * @return $this
+     */
     public function clearOn();
+
 
     public function onToSql($useClause = true);
 

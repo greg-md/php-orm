@@ -2,12 +2,34 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Query\FromQueryInterface;
+use Greg\Orm\Query\HavingQueryInterface;
+use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\JoinsQueryTraitInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
 trait TableJoinsQueryTrait
 {
+    public function needJoinsClause()
+    {
+        foreach($this->clauses as $clause) {
+            if (    !($clause instanceof WhereQueryInterface)
+                or  !($clause instanceof FromQueryInterface)
+                or  !($clause instanceof HavingQueryInterface)
+                or  !($clause instanceof JoinsQueryInterface)
+            ) {
+                throw new \Exception('Current query could not have a JOIN clause.');
+            }
+        }
+
+        if (!isset($this->clauses['joins'])) {
+            $this->clauses['joins'] = $this->getStorage()->joins();
+        }
+
+        return $this->clauses['joins'];
+    }
+
     /**
      * @return JoinsQueryTraitInterface
      * @throws \Exception
@@ -15,7 +37,7 @@ trait TableJoinsQueryTrait
     public function needJoinsQuery()
     {
         if (!$this->query) {
-            $this->query = $this->getStorage()->joins();
+            return $this->needJoinsClause();
         }
 
         if (!($this->query instanceof JoinsQueryTraitInterface)) {
@@ -77,6 +99,32 @@ trait TableJoinsQueryTrait
     public function crossTo($source, $table)
     {
         $this->needJoinsQuery()->innerTo($source, $table);
+
+        return $this;
+    }
+
+    public function getJoins()
+    {
+        return $this->needJoinsQuery()->getJoins();
+    }
+
+    public function addJoins(array $joins)
+    {
+        $this->needJoinsQuery()->addJoins($joins);
+
+        return $this;
+    }
+
+    public function setJoins(array $joins)
+    {
+        $this->needJoinsQuery()->setJoins($joins);
+
+        return $this;
+    }
+
+    public function clearJoins()
+    {
+        $this->needJoinsQuery()->clearJoins();
 
         return $this;
     }

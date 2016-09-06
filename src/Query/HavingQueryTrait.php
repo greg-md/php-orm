@@ -141,6 +141,21 @@ trait HavingQueryTrait
         return $this->hasConditions();
     }
 
+    public function getHaving()
+    {
+        return $this->hasConditions();
+    }
+
+    public function addHaving(array $conditions)
+    {
+        return $this->addConditions($conditions);
+    }
+
+    public function setHaving(array $conditions)
+    {
+        return $this->setConditions($conditions);
+    }
+
     public function clearHaving()
     {
         return $this->clearConditions();
@@ -151,19 +166,19 @@ trait HavingQueryTrait
         return new HavingQuery($this->getStorage());
     }
 
-    public function havingToSql()
+    public function havingToSql($useClause = true)
     {
         list($sql, $params) = $this->conditionsToSql();
 
-        if ($sql) {
+        if ($sql and $useClause) {
             $sql = 'WHERE ' . $sql;
         }
 
         return [$sql, $params];
     }
 
-    public function havingToString()
+    public function havingToString($useClause = true)
     {
-        return $this->havingToSql()[0];
+        return $this->havingToSql($useClause)[0];
     }
 }

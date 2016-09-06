@@ -22,14 +22,76 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         $k = 1;
 
         foreach($params as $key => $param) {
-            $param = $param !== null ? (array)$param : [$param];
-
-            array_unshift($param, is_int($key) ? $k++ : $key);
-
-            $this->bindValue(...$param);
+            $this->bindParam(is_int($key) ? $k++ : $key, $param);
         }
 
         return $this;
+    }
+
+    public function bindParam($key, $value)
+    {
+        return parent::bindValue($key, $value);
+    }
+
+    public function execute(array $params = [])
+    {
+        $this->getAdapter()->fire($this->queryString);
+
+        return $this->tryParent(__FUNCTION__, func_get_args());
+    }
+
+    protected function tryParent($method, array $args = [])
+    {
+        try {
+            return $this->callParent($method, $args);
+        } catch (\PDOException $e) {
+            if ($e->errorInfo[1] == 2006) {
+                $this->getAdapter()->reconnect();
+
+                return $this->callParent($method, $args);
+            }
+            throw $e;
+        }
+    }
+
+    protected function callParent($method, array $args = [])
+    {
+        $result = call_user_func_array(['parent', $method], $args);
+
+        if ($result === false) {
+            $this->errorCheck();
+        }
+
+        return $result;
+    }
+
+    protected function errorCheck()
+    {
+        $errorInfo = $this->errorInfo();
+
+        // Bind or column index out of range
+        if ($errorInfo[1] and $errorInfo[1] != 25) {
+            throw new \Exception($errorInfo[2]);
+        }
+
+        return $this;
+    }
+
+    public function fetchAssoc()
+    {
+        return $this->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function fetchAssocAll()
+    {
+        return $this->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function fetchAssocAllGenerator()
+    {
+        while ($record = $this->fetch(\PDO::FETCH_ASSOC)) {
+            yield $record;
+        }
     }
 
     public function fetchColumn($column = 0)
@@ -59,81 +121,15 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         return $pairs;
     }
 
-    public function fetchAssoc()
+    public function getAdapter()
     {
-        return $this->fetch(\PDO::FETCH_ASSOC);
+        return $this->adapter;
     }
 
-    public function fetchAssocAll()
-    {
-        return $this->fetchAll(\PDO::FETCH_ASSOC);
-    }
-
-    public function fetchAssocAllGenerator()
-    {
-        while ($record = $this->fetch(\PDO::FETCH_ASSOC)) {
-            yield $record;
-        }
-    }
-
-    public function execute($params = null)
-    {
-        $this->getAdapter()->fire($this->queryString);
-
-        return $this->callParent(__FUNCTION__, func_get_args());
-    }
-
-    protected function callParent($method, array $args = [])
-    {
-        try {
-            return $this->_callParent($method, $args);
-        } catch (\PDOException $e) {
-            if ($e->errorInfo[1] == 2006) {
-                $this->getAdapter()->reconnect();
-
-                return $this->_callParent($method, $args);
-            }
-            throw $e;
-        }
-    }
-
-    protected function _callParent($method, array $args = [])
-    {
-        $result = call_user_func_array(['parent', $method], $args);
-
-        if ($result === false) {
-            $this->errorCheck();
-        }
-
-        return $result;
-    }
-
-    public function errorCheck()
-    {
-        $errorInfo = $this->errorInfo();
-
-        // Bind or column index out of range
-        if ($errorInfo[1] and $errorInfo[1] != 25) {
-            throw new \Exception($errorInfo[2]);
-        }
-
-        return $this;
-    }
-
-    public function nextRows()
-    {
-        return $this->nextRowset();
-    }
-
-    public function setAdapter(PdoAdapter $adapter)
+    public function setAdapter(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
 
         return $this;
-    }
-
-    public function getAdapter()
-    {
-        return $this->adapter;
     }
 }

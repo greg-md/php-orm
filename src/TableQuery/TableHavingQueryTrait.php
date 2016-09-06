@@ -2,21 +2,49 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Query\FromQueryInterface;
+use Greg\Orm\Query\HavingQueryInterface;
 use Greg\Orm\Query\HavingQueryTraitInterface;
+use Greg\Orm\Query\JoinsQueryInterface;
+use Greg\Orm\Query\WhereQueryInterface;
+use Greg\Orm\Storage\StorageInterface;
 
 trait TableHavingQueryTrait
 {
+    public function needHavingClause()
+    {
+        foreach($this->clauses as $clause) {
+            if (    !($clause instanceof WhereQueryInterface)
+                or  !($clause instanceof FromQueryInterface)
+                or  !($clause instanceof HavingQueryInterface)
+                or  !($clause instanceof JoinsQueryInterface)
+            ) {
+                throw new \Exception('Current query could not have a HAVING clause.');
+            }
+        }
+
+        if (!isset($this->clauses['having'])) {
+            $this->clauses['having'] = $this->getStorage()->having();
+        }
+
+        return $this->clauses['having'];
+    }
+
     /**
      * @return HavingQueryTraitInterface
      * @throws \Exception
      */
     public function needHavingQuery()
     {
-        if (!(($query = $this->getQuery()) instanceof HavingQueryTraitInterface)) {
-            throw new \Exception('Current query is not a WHERE statement.');
+        if (!$this->query) {
+            return $this->needHavingClause();
         }
 
-        return $query;
+        if (!($this->query instanceof HavingQueryTraitInterface)) {
+            throw new \Exception('Current query is not a HAVING clause.');
+        }
+
+        return $this->query;
     }
 
     public function havingAre(array $columns)
@@ -206,9 +234,26 @@ trait TableHavingQueryTrait
         return $this->needHavingQuery()->hasHaving();
     }
 
+    public function getHaving()
+    {
+        return $this->needHavingQuery()->getHaving();
+    }
+
+    public function addHaving(array $conditions)
+    {
+        return $this->needHavingQuery()->addHaving($conditions);
+    }
+
+    public function setHaving(array $conditions)
+    {
+        return $this->needHavingQuery()->setHaving($conditions);
+    }
+
     public function clearHaving()
     {
-        return $this->needHavingQuery()->clearHaving();
+        $this->needHavingQuery()->clearHaving();
+
+        return $this;
     }
 
     public function havingToSql()
@@ -221,5 +266,8 @@ trait TableHavingQueryTrait
         return $this->needHavingQuery()->havingToString();
     }
 
-    abstract public function getQuery();
+    /**
+     * @return StorageInterface
+     */
+    abstract public function getStorage();
 }
