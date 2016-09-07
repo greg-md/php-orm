@@ -6,6 +6,7 @@ use Greg\Orm\Query\DeleteQueryInterface;
 use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Query\QueryTraitInterface;
 use Greg\Orm\Query\UpdateQueryInterface;
+use Greg\Orm\Storage\StorageInterface;
 
 trait TableQueryTrait
 {
@@ -13,19 +14,7 @@ trait TableQueryTrait
 
     protected $clauses = [];
 
-    public function getQuery()
-    {
-        return $this->query;
-    }
-
-    public function setQuery(QueryTraitInterface $query)
-    {
-        $this->query = $query;
-
-        return $this;
-    }
-
-    public function cleanClauses()
+    protected function cleanClauses()
     {
         $this->clauses = [];
 
@@ -36,7 +25,7 @@ trait TableQueryTrait
      * @return QueryTraitInterface
      * @throws \Exception
      */
-    public function needQuery()
+    protected function needQuery()
     {
         if (!($this->query instanceof QueryTraitInterface)) {
             throw new \Exception('Current query is not a query.');
@@ -45,19 +34,42 @@ trait TableQueryTrait
         return $this->query;
     }
 
-    public function concat($array, $delimiter = '')
+    public function concat(array $values, $delimiter = '')
     {
-        return $this->needQuery()->concat($array, $delimiter);
+        return $this->getStorage()->concat($values, $delimiter);
     }
 
-    public function quoteLike($string, $escape = '\\')
+    public function quoteLike($value, $escape = '\\')
     {
-        return $this->needQuery()->quoteLike($string, $escape);
+        return $this->getStorage()->quoteLike($value, $escape);
     }
 
     public function when($condition, callable $callable)
     {
         return $this->needQuery()->when($condition, $callable);
+    }
+
+    public function toSql()
+    {
+        return $this->needQuery()->toSql();
+    }
+
+    public function toString()
+    {
+        return $this->needQuery()->toString();
+    }
+
+    public function prepare()
+    {
+        list($sql, $params) = $this->toSql();
+
+        $stmt = $this->getStorage()->prepare($sql);
+
+        if ($params) {
+            $stmt->bindParams($params);
+        }
+
+        return $stmt;
     }
 
     public function exec()
@@ -79,18 +91,8 @@ trait TableQueryTrait
         throw new \Exception('Current query does not support exec method.');
     }
 
-    public function stmt()
-    {
-        return $this->needQuery()->stmt();
-    }
-
-    public function toSql()
-    {
-        return $this->needQuery()->toSql();
-    }
-
-    public function toString()
-    {
-        return $this->needQuery()->toString();
-    }
+    /**
+     * @return StorageInterface
+     */
+    abstract public function getStorage();
 }

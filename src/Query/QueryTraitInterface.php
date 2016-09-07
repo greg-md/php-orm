@@ -2,8 +2,6 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Storage\StorageInterface;
-
 interface QueryTraitInterface
 {
     public function getQuoteNameWith();
@@ -14,10 +12,6 @@ interface QueryTraitInterface
 
     public function setNameRegex($regex);
 
-    public function getStorage();
-
-    public function setStorage(StorageInterface $storage);
-
 
     static public function quoteLike($value, $escape = '\\');
 
@@ -25,11 +19,6 @@ interface QueryTraitInterface
 
 
     public function when($condition, callable $callable);
-
-
-    public function stmt();
-
-    public function execStmt();
 
 
     public function toSql();

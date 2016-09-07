@@ -11,7 +11,7 @@ use Greg\Orm\Storage\StorageInterface;
 
 trait TableFromQueryTrait
 {
-    public function needFromClause()
+    protected function needFromClause()
     {
         foreach($this->clauses as $clause) {
             if (    !($clause instanceof WhereQueryInterface)
@@ -34,7 +34,7 @@ trait TableFromQueryTrait
      * @return FromQueryTraitInterface
      * @throws \Exception
      */
-    public function needFromQuery()
+    protected function needFromQuery()
     {
         if (!$this->query) {
             return $this->needFromClause();
@@ -61,6 +61,11 @@ trait TableFromQueryTrait
         return $this;
     }
 
+    public function hasFrom()
+    {
+        return $this->needFromQuery()->hasFrom();
+    }
+
     public function getFrom()
     {
         return $this->needFromQuery()->getFrom();
@@ -85,26 +90,6 @@ trait TableFromQueryTrait
         $this->needFromQuery()->cleanFrom();
 
         return $this;
-    }
-
-    public function fromStmtToSql()
-    {
-        return $this->needFromQuery()->fromStmtToSql();
-    }
-
-    public function fromStmtToString()
-    {
-        return $this->needFromQuery()->fromStmtToString();
-    }
-
-    public function fromToSql()
-    {
-        return $this->needFromQuery()->fromToSql();
-    }
-
-    public function fromToString()
-    {
-        return $this->needFromQuery()->fromToString();
     }
 
     /**

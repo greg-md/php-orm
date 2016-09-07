@@ -18,13 +18,4 @@ interface FromQueryTraitInterface extends JoinsQueryTraitInterface
     public function setFrom(array $from);
 
     public function cleanFrom();
-
-
-    public function fromStmtToSql($useClause = true);
-
-    public function fromStmtToString($useClause = true);
-
-    public function fromToSql($useClause = true);
-
-    public function fromToString($useClause = true);
 }

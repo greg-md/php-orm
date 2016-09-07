@@ -114,7 +114,7 @@ trait JoinsQueryTrait
 
     protected function newOn()
     {
-        return new OnQuery($this->getStorage());
+        return new OnQuery();
     }
 
     public function hasJoins()
@@ -148,7 +148,7 @@ trait JoinsQueryTrait
         return $this;
     }
 
-    public function joinsToSql($source = null)
+    protected function joinsToSql($source = null)
     {
         $sql = $params = [];
 
@@ -173,7 +173,7 @@ trait JoinsQueryTrait
         return [$sql, $params];
     }
 
-    public function joinsToString($source = null)
+    protected function joinsToString($source = null)
     {
         return $this->joinsToSql($source)[0];
     }

@@ -80,12 +80,7 @@ class UpdateQuery implements UpdateQueryInterface
         return $this;
     }
 
-    public function exec()
-    {
-        return $this->stmt()->execute();
-    }
-
-    public function updateStmtToSql()
+    protected function updateClauseToSql()
     {
         if (!$this->tables) {
             throw new \Exception('Undefined UPDATE statement tables.');
@@ -116,12 +111,12 @@ class UpdateQuery implements UpdateQueryInterface
         return [$sql, $params];
     }
 
-    public function updateStmtToString()
+    protected function updateClauseToString()
     {
-        return $this->updateStmtToSql()[0];
+        return $this->updateClauseToSql()[0];
     }
 
-    public function setStmtToSql()
+    protected function setClauseToSql()
     {
         if (!$this->set) {
             throw new \Exception('Undefined SET statement in UPDATE statement.');
@@ -142,14 +137,14 @@ class UpdateQuery implements UpdateQueryInterface
         return [$sql, $params];
     }
 
-    public function setStmtToString()
+    protected function setClauseToString()
     {
-        return $this->setStmtToSql()[0];
+        return $this->setClauseToSql()[0];
     }
 
-    public function updateToSql()
+    protected function updateToSql()
     {
-        list($sql, $params) = $this->updateStmtToSql();
+        list($sql, $params) = $this->updateClauseToSql();
 
         $sql = [$sql];
 
@@ -161,7 +156,7 @@ class UpdateQuery implements UpdateQueryInterface
             $params = array_merge($params, $joinsParams);
         }
 
-        list($setSql, $setParams) = $this->setStmtToSql();
+        list($setSql, $setParams) = $this->setClauseToSql();
 
         $sql[] = $setSql;
 
@@ -180,7 +175,7 @@ class UpdateQuery implements UpdateQueryInterface
         return [$sql, $params];
     }
 
-    public function updateToString()
+    protected function updateToString()
     {
         return $this->updateToSql()[0];
     }

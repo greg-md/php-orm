@@ -2,7 +2,6 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Storage\StorageInterface;
 use Greg\Orm\TableTraitInterface;
 use Greg\Support\Debug;
 use Greg\Support\Str;
@@ -12,20 +11,6 @@ trait QueryTrait
     protected $quoteNameWith = '`';
 
     protected $nameRegex = '[a-z0-9_\.\*]+';
-
-    /**
-     * @var StorageInterface|null
-     */
-    protected $storage = null;
-
-    public function __construct(StorageInterface $storage = null)
-    {
-        if ($storage) {
-            $this->setStorage($storage);
-        }
-
-        return $this;
-    }
 
     public function getQuoteNameWith()
     {
@@ -51,18 +36,6 @@ trait QueryTrait
         return $this;
     }
 
-    public function getStorage()
-    {
-        return $this->storage;
-    }
-
-    public function setStorage(StorageInterface $storage)
-    {
-        $this->storage = $storage;
-
-        return $this;
-    }
-
     static public function quoteLike($value, $escape = '\\')
     {
         return strtr($value, [
@@ -83,28 +56,6 @@ trait QueryTrait
         }
 
         return $this;
-    }
-
-    public function stmt()
-    {
-        list($sql, $params) = $this->toSql();
-
-        $stmt = $this->getStorage()->prepare($sql);
-
-        if ($params) {
-            $stmt->bindParams($params);
-        }
-
-        return $stmt;
-    }
-
-    public function execStmt()
-    {
-        $stmt = $this->stmt();
-
-        $stmt->execute();
-
-        return $stmt;
     }
 
     protected function parseAlias($name)

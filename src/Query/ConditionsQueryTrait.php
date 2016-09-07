@@ -349,10 +349,10 @@ trait ConditionsQueryTrait
 
     protected function newConditions()
     {
-        return new ConditionsQuery($this->getStorage());
+        return new ConditionsQuery();
     }
 
-    public function conditionsToSql()
+    protected function conditionsToSql()
     {
         $sql = $params = [];
 
@@ -375,7 +375,7 @@ trait ConditionsQueryTrait
         return [$sql, $params];
     }
 
-    public function conditionsToString()
+    protected function conditionsToString()
     {
         return $this->conditionsToSql()[0];
     }

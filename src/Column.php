@@ -161,21 +161,14 @@ class Column
         return $this;
     }
 
-    public function setName($name)
-    {
-        $this->name = (string)$name;
-
-        return $this;
-    }
-
     public function getName()
     {
         return $this->name;
     }
 
-    public function setType($length)
+    public function setName($name)
     {
-        $this->type = (string)$length;
+        $this->name = (string)$name;
 
         return $this;
     }
@@ -185,9 +178,9 @@ class Column
         return $this->type;
     }
 
-    public function setLength($length)
+    public function setType($length)
     {
-        $this->length = (int)$length;
+        $this->type = (string)$length;
 
         return $this;
     }
@@ -195,6 +188,13 @@ class Column
     public function getLength()
     {
         return $this->length;
+    }
+
+    public function setLength($length)
+    {
+        $this->length = (int)$length;
+
+        return $this;
     }
 
     public function isUnsigned($value = null)
@@ -219,21 +219,14 @@ class Column
         return $this->allowNull;
     }
 
-    public function setDefaultValue($value)
-    {
-        $this->defaultValue = $value;
-
-        return $this;
-    }
-
     public function getDefaultValue()
     {
         return $this->defaultValue;
     }
 
-    public function setComment($comments)
+    public function setDefaultValue($value)
     {
-        $this->comment = (string)$comments;
+        $this->defaultValue = $value;
 
         return $this;
     }
@@ -243,9 +236,9 @@ class Column
         return $this->comment;
     }
 
-    public function setValues(array $values)
+    public function setComment($comments)
     {
-        $this->values = $values;
+        $this->comment = (string)$comments;
 
         return $this;
     }
@@ -253,5 +246,12 @@ class Column
     public function getValues()
     {
         return $this->values;
+    }
+
+    public function setValues(array $values)
+    {
+        $this->values = $values;
+
+        return $this;
     }
 }

@@ -11,7 +11,7 @@ use Greg\Orm\Storage\StorageInterface;
 
 trait TableHavingQueryTrait
 {
-    public function needHavingClause()
+    protected function needHavingClause()
     {
         foreach($this->clauses as $clause) {
             if (    !($clause instanceof WhereQueryInterface)
@@ -34,7 +34,7 @@ trait TableHavingQueryTrait
      * @return HavingQueryTraitInterface
      * @throws \Exception
      */
-    public function needHavingQuery()
+    protected function needHavingQuery()
     {
         if (!$this->query) {
             return $this->needHavingClause();
@@ -254,16 +254,6 @@ trait TableHavingQueryTrait
         $this->needHavingQuery()->clearHaving();
 
         return $this;
-    }
-
-    public function havingToSql()
-    {
-        return $this->needHavingQuery()->havingToSql();
-    }
-
-    public function havingToString()
-    {
-        return $this->needHavingQuery()->havingToString();
     }
 
     /**

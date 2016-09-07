@@ -91,10 +91,6 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function clearGroupBy();
 
-    public function groupByToSql();
-
-    public function groupByToString();
-
 
     /**
      * @param $column
@@ -121,10 +117,6 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      */
     public function clearOrderBy();
 
-    public function orderByToSql();
-
-    public function orderByToString();
-
 
     /**
      * @param $number
@@ -144,51 +136,4 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
     public function unionAll($expr, $param = null, $_ = null);
 
     public function unionDistinct($expr, $param = null, $_ = null);
-
-
-    public function selectStmtToSql();
-
-    public function selectStmtToString();
-
-    public function selectToSql();
-
-    public function selectToString();
-
-
-    /**
-     * @return array|null
-     */
-    public function assoc();
-
-    /**
-     * @return array
-     */
-    public function assocAll();
-
-    /**
-     * @return array
-     */
-    public function assocAllGenerator();
-
-    /**
-     * @param int $column
-     * @return array
-     */
-    public function col($column = 0);
-
-    public function allCol($column = 0);
-
-    /**
-     * @param int $key
-     * @param int $value
-     * @return array
-     */
-    public function pairs($key = 0, $value = 1);
-
-    public function chunk($count, callable $callable, $callOneByOne = false);
-
-    /**
-     * @return bool
-     */
-    public function exists();
 }

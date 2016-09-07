@@ -14,21 +14,14 @@ class Constraint
     
     protected $relations = null;
 
-    public function setName($name)
-    {
-        $this->name = (string)$name;
-
-        return $this;
-    }
-
     public function getName()
     {
         return $this->name;
     }
 
-    public function setReferencedTableName($name)
+    public function setName($name)
     {
-        $this->referencedTableName = (string)$name;
+        $this->name = (string)$name;
 
         return $this;
     }
@@ -38,38 +31,38 @@ class Constraint
         return $this->referencedTableName;
     }
 
-    public function setOnUpdate($type)
+    public function setReferencedTableName($name)
     {
-        $this->onUpdate = (string)$type;
+        $this->referencedTableName = (string)$name;
 
         return $this;
     }
 
-    public function getOnUpdate()
+    public function onUpdate($type = null)
     {
+        if (func_num_args()) {
+            $this->onUpdate = (string)$type;
+
+            return $this;
+        }
+
         return $this->onUpdate;
     }
 
-    public function setOnDelete($type)
+    public function onDelete($type = null)
     {
-        $this->onDelete = (string)$type;
+        if (func_num_args()) {
+            $this->onDelete = (string)$type;
 
-        return $this;
-    }
+            return $this;
+        }
 
-    public function getOnDelete()
-    {
         return $this->onDelete;
     }
 
-    public function setRelation($position, $columnName, $referencedColumnName)
+    public function getRelations()
     {
-        $this->relations[$position] = [
-            'columnName' => $columnName,
-            'referencedColumnName' => $referencedColumnName,
-        ];
-
-        return $this;
+        return $this->relations;
     }
 
     public function getRelation($position)
@@ -81,8 +74,13 @@ class Constraint
         return $this->relations[$position];
     }
 
-    public function getRelations()
+    public function setRelation($position, $columnName, $referencedColumnName)
     {
-        return $this->relations;
+        $this->relations[$position] = [
+            'columnName' => $columnName,
+            'referencedColumnName' => $referencedColumnName,
+        ];
+
+        return $this;
     }
 }

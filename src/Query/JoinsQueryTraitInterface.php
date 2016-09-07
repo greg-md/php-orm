@@ -31,9 +31,4 @@ interface JoinsQueryTraitInterface
     public function setJoins(array $joins);
 
     public function clearJoins();
-
-
-    public function joinsToSql($source = null);
-
-    public function joinsToString($source = null);
 }

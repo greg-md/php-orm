@@ -17,6 +17,10 @@ interface ConditionsQueryTraitInterface
 
     public function orConditionRel($column1, $operator, $column2 = null);
 
+    public function conditionLike($column, $value);
+
+    public function orConditionLike($column);
+
 
     public function conditionIsNull($column);
 
@@ -71,8 +75,4 @@ interface ConditionsQueryTraitInterface
     public function setConditions(array $conditions);
 
     public function clearConditions();
-
-    public function conditionsToSql();
-
-    public function conditionsToString();
 }

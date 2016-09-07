@@ -190,7 +190,7 @@ trait WhereQueryTrait
 
     protected function newConditions()
     {
-        return new WhereQuery($this->getStorage());
+        return new WhereQuery();
     }
 
     protected function subQueryToSql(WhereQueryInterface $query)
@@ -198,7 +198,7 @@ trait WhereQueryTrait
         return $query->whereToSql(false);
     }
 
-    public function whereToSql($useClause = true)
+    protected function whereToSql($useClause = true)
     {
         if ($this->exists) {
             $sql = ($this->exists['type'] ? $this->exists['type'] . ' ' : '') . $this->exists['expr'];
@@ -215,7 +215,7 @@ trait WhereQueryTrait
         return [$sql, $params];
     }
 
-    public function whereToString($useClause = true)
+    protected function whereToString($useClause = true)
     {
         return $this->whereToSql($useClause)[0];
     }

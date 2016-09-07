@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Adapter\StmtInterface;
 use Greg\Orm\Query\DeleteQueryInterface;
 use Greg\Orm\Query\FromQueryInterface;
 use Greg\Orm\Query\JoinsQueryInterface;
@@ -14,7 +15,7 @@ trait TableDeleteQueryTrait
      * @return DeleteQueryInterface
      * @throws \Exception
      */
-    public function needDeleteQuery()
+    protected function needDeleteQuery()
     {
         if (!$this->query) {
             $this->delete();
@@ -80,11 +81,6 @@ trait TableDeleteQueryTrait
         return $this;
     }
 
-    public function erase($key)
-    {
-        $this->delete($this->combineFirstUniqueIndex($key))->exec();
-    }
-
     public function fromTable($table)
     {
         $this->needDeleteQuery()->fromTable($table);
@@ -94,31 +90,21 @@ trait TableDeleteQueryTrait
 
     public function execDelete()
     {
-        return $this->needDeleteQuery()->exec();
+        return $this->prepare()->execute();
     }
 
-    public function deleteStmtToSql()
+    public function erase($key)
     {
-        return $this->needDeleteQuery()->deleteStmtToSql();
-    }
-
-    public function deleteStmtToString()
-    {
-        return $this->needDeleteQuery()->deleteStmtToString();
-    }
-
-    public function deleteToSql()
-    {
-        return $this->needDeleteQuery()->deleteToSql();
-    }
-
-    public function deleteToString()
-    {
-        return $this->needDeleteQuery()->deleteToString();
+        $this->delete($this->combineFirstUniqueIndex($key))->execDelete();
     }
 
     /**
      * @return StorageInterface
      */
     abstract public function getStorage();
+
+    /**
+     * @return StmtInterface
+     */
+    abstract public function prepare();
 }

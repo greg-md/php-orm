@@ -6,10 +6,6 @@ use Greg\Orm\Query\QueryTraitInterface;
 
 interface TableQueryTraitInterface
 {
-    public function getQuery();
-
-    public function setQuery(QueryTraitInterface $query);
-
     /**
      * @return QueryTraitInterface
      * @throws \Exception

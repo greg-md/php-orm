@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Adapter\StmtInterface;
 use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
@@ -11,7 +12,7 @@ trait TableInsertQueryTrait
      * @return InsertQueryInterface
      * @throws \Exception
      */
-    public function needInsertQuery()
+    protected function needInsertQuery()
     {
         if (!$this->query) {
             $this->insert();
@@ -107,26 +108,23 @@ trait TableInsertQueryTrait
 
     public function execInsert()
     {
-        return $this->needInsertQuery()->exec();
+        return $this->prepare()->execute();
     }
 
-    public function execGetId()
+    public function execAndGetId()
     {
-        return $this->needInsertQuery()->execGetId();
-    }
+        $this->execInsert();
 
-    public function insertToSql()
-    {
-        return $this->needInsertQuery()->insertToSql();
-    }
-
-    public function insertToString()
-    {
-        return $this->needInsertQuery()->insertToString();
+        return $this->getStorage()->lastInsertId();
     }
 
     /**
      * @return StorageInterface
      */
     abstract public function getStorage();
+
+    /**
+     * @return StmtInterface
+     */
+    abstract public function prepare();
 }

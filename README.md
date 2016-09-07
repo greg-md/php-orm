@@ -105,16 +105,11 @@ PHP Object-Relational Mapping
 - `setQuoteNameWith($value)`
 - `getNameRegex()`
 - `setNameRegex($regex)`
-- `getStorage()`
-- `setStorage(StorageInterface $storage)`
 
 - `static quoteLike($value, $escape = '\\')`
 - `static concat(array $values, $delimiter = '')`
 
 - `when($condition, callable $callable)`
-
-- `stmt()`
-- `execStmt()`
 
 - `toSql()`
 - `toString()`
@@ -158,9 +153,6 @@ PHP Object-Relational Mapping
 - `addConditions(array $conditions)`
 - `setConditions(array $conditions)`
 - `clearConditions()`
-
-- `conditionsToSql()`
-- `conditionsToString()`
 
 ## `ConditionsQueryInterface extends QueryTraitInterface, ConditionsQueryTraitInterface`
 
@@ -207,9 +199,6 @@ PHP Object-Relational Mapping
 - `setWhere` alias of `setConditions(array $conditions)`
 - `clearWhere` alias of `clearConditions()`
 
-- `whereToSql($useClause = true)`
-- `whereToString($useClause = true)`
-
 ## `WhereQueryInterface extends QueryTraitInterface, WhereQueryTraitInterface`
 
 - `toSql($useClause = true)`
@@ -254,9 +243,6 @@ PHP Object-Relational Mapping
 - `addHaving` alias of `addConditions(array $conditions)`
 - `setHaving` alias of `setConditions(array $conditions)`
 - `clearHaving` alias of `clearConditions()`
-
-- `havingToSql($useClause = true)`
-- `havingToString($useClause = true)`
 
 ## `HavingQueryInterface extends QueryTraitInterface, HavingQueryTraitInterface`
 
@@ -303,9 +289,6 @@ PHP Object-Relational Mapping
 - `setOn` alias of `setConditions(array $conditions)`
 - `clearOn` alias of `clearConditions()`
 
-- `onToSql` alias of `conditionsToSql()`
-- `onToString` alias of `conditionsToString()`
-
 ## `OnQueryInterface extends QueryTraitInterface, OnQueryTraitInterface`
 
 - `toSql($useClause = true)`
@@ -329,9 +312,6 @@ PHP Object-Relational Mapping
 - `setJoins(array $joins)`
 - `clearJoins()`
 
-- `joinsToSql($source)`
-- `joinsToString($source)`
-
 ## `JoinsQueryInterface extends QueryTraitInterface, JoinsQueryTraitInterface`
 
 ## `FromQueryTraitInterface`
@@ -344,11 +324,6 @@ PHP Object-Relational Mapping
 - `addFrom(array $from)`
 - `setFrom(array $from)`
 - `cleanFrom()`
-
-- `fromStmtToSql($useClause = true)`
-- `fromStmtToString($useClause = true)`
-- `fromToSql($useClause = true)`
-- `fromToString($useClause = true)`
 
 ## `FromQueryInterface extends QueryTraitInterface, FromQueryTraitInterface`
 
@@ -378,15 +353,11 @@ PHP Object-Relational Mapping
 - `groupByRaw($expr, $param = null, $_ = null)`
 - `hasGroupBy()`
 - `clearGroupBy()`
-- `groupByToSql()`
-- `groupByToString()`
 
 - `orderBy($column, $type = null)`
 - `orderByRaw($expr, $param = null, $_ = null)`
 - `hasOrderBy()`
 - `clearOrderBy()`
-- `orderByToSql()`
-- `orderByToString()`
 
 - `limit($number)`
 - `offset($number)`
@@ -394,23 +365,167 @@ PHP Object-Relational Mapping
 - `union($expr, $param = null, $_ = null)`
 - `unionAll($expr, $param = null, $_ = null)`
 - `unionDistinct($expr, $param = null, $_ = null)`
-- `selectStmtToSql()`
-- `selectStmtToString()`
-- `selectToSql()`
-- `selectToString()`
 
-- `assoc()`
-- `assocAll()`
-- `assocAllGenerator()`
-- `col($column = 0)`
-- `allCol($column = 0)`
-- `pairs($key = 0, $value = 1)`
-- `chunk($count, callable $callable, $callOneByOne = false)`
-- `exists()`
+## `InsertQueryInterface extends QueryTraitInterface`
+
+- `into($table)`
+- `columns(array $columns)`
+- `clearColumns()`
+- `values(array $values)`
+- `clearValues()`
+- `data(array $data)`
+- `clearData()`
+
+- `select($sql)`
+- `clearSelect()`
+
+## `DeleteQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface`
+
+- `fromTable($table)`
+
+## `UpdateQueryInterface extends QueryTraitInterface, WhereQueryTraitInterface`
+
+- `table($table, $_ = null)`
+- `set($key, $value = null)`
+- `setRaw($raw, $param = null, $_ = null)`
+- `increment($column, $value = 1)`
+- `decrement($column, $value = 1)`
+
+## `Column`
+
+- `static getIntLength($type)`
+- `static getFloatLength($type)`
+- `static isIntType($type)`
+- `static isFloatType($type)`
+- `static isNumericType($type)`
+
+- `isInt()`
+- `isFloat()`
+- `isNumeric()`
+- `minValue()`
+- `maxValue()`
+- `null($type = true)`
+- `notNull($type = true)`
+- `unsigned($type = true)`
+- `getName()`
+- `setName($name)`
+- `getType()`
+- `setType($length)`
+- `getLength()`
+- `setLength($length)`
+- `isUnsigned($value = null)`
+- `allowNull($value = null)`
+- `getDefaultValue()`
+- `setDefaultValue($value)`
+- `getComment()`
+- `setComment($comments)`
+- `getValues()`
+- `setValues(array $values)`
+
+## `Constraint`
+
+- `getName()`
+- `setName($name)`
+- `getReferencedTableName()`
+- `setReferencedTableName($name)`
+- `onUpdate($type = null)`
+- `onDelete($type = null)`
+- `getRelations()`
+- `getRelation($position)`
+- `setRelation($position, $columnName, $referencedColumnName)`
+
+## `TableQueryTrait`
+
+- `quoteLike($value, $escape = '\\')`
+- `concat(array $values, $delimiter = '')`
+- `when($condition, callable $callable)`
+- `toSql()`
+- `toString()`
+- `prepare()`
+- `exec()`
+
+## `TableFromQueryTrait`
+
+- `from($table, $_ = null)`
+- `fromRaw($expr, $param = null, $_ = null)`
+- `hasFrom()`
+- `getFrom()`
+- `addFrom(array $from)`
+- `setFrom(array $from)`
+- `cleanFrom()`
+
+## `TableHavingQueryTrait`
+
+- `havingAre(array $columns)`
+- `having($column, $operator, $value = null)`
+- `orHavingAre(array $columns)`
+- `orHaving($column, $operator, $value = null)`
+- `havingRel($column1, $operator, $column2 = null)`
+- `orHavingRel($column1, $operator, $column2 = null)`
+- `havingIsNull($column)`
+- `orHavingIsNull($column)`
+- `havingIsNotNull($column)`
+- `orHavingIsNotNull($column)`
+- `havingBetween($column, $min, $max)`
+- `orHavingBetween($column, $min, $max)`
+- `havingNotBetween($column, $min, $max)`
+- `orHavingNotBetween($column, $min, $max)`
+- `havingDate($column, $date)`
+- `orHavingDate($column, $date)`
+- `havingTime($column, $date)`
+- `orHavingTime($column, $date)`
+- `havingYear($column, $year)`
+- `orHavingYear($column, $year)`
+- `havingMonth($column, $month)`
+- `orHavingMonth($column, $month)`
+- `havingDay($column, $day)`
+- `orHavingDay($column, $day)`
+- `havingRaw($expr, $value = null, $_ = null)`
+- `orHavingRaw($expr, $value = null, $_ = null)`
+- `hasHaving()`
+- `getHaving()`
+- `addHaving(array $conditions)`
+- `setHaving(array $conditions)`
+- `clearHaving()`
+
+## `TableDeleteQueryTrait`
+
+- `deleteQuery(array $whereAre = [])`
+- `delete(array $whereAre = [])`
+- `fromTable($table)`
+
+- `execDelete()`
+- `erase($key)`
+
+## `TableInsertQueryTrait`
+
+- `insertQuery(array $data = [])`
+- `insert(array $data = [])`
+- `into($table)`
+- `insertColumns(array $columns)`
+- `clearInsertColumns()`
+- `insertValues(array $values)`
+- `clearInsertValues()`
+- `insertData(array $data)`
+- `clearInsertData()`
+- `insertSelect($select)`
+- `clearInsertSelect()`
+- `execInsert()`
+- `execAndGetId()`
+
+## `SoftDeleteTrait`
+
+- `setSoftDeleteColumn($name)`
+- `getSoftDeleteColumn()`
+- `withDeleted()`
+- `onlyDeleted()`
+- `isDeleted()`
+- `getDeleted()`
+- `setDeleted($timestamp)`
 
 # @todo
 
-- Remove StorageInterface from query statements, it's useless. All fetch methods will be in the table.
 - Change `extends \PDO` to `getConnector` and start using PdoAdapterTrait instead of extending classes.
 - Rename all Queries to SqlStatement.
 - Add ORDER BY and LIMIT clauses to UPDATE and DELETE statements.
+- Check sql documentation and add needed sql clauses in statements.

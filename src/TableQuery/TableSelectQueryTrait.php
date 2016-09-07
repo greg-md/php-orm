@@ -311,7 +311,7 @@ trait TableSelectQueryTrait
 
     public function assoc()
     {
-        return $this->needSelectQuery()->assoc();
+        return $this->execStmt()->fetchAssoc();
     }
 
     public function assocOrFail()
@@ -325,32 +325,32 @@ trait TableSelectQueryTrait
 
     public function assocAll()
     {
-        return $this->needSelectQuery()->assocAll();
+        return $this->execStmt()->fetchAssocAll();
     }
 
     public function assocAllGenerator()
     {
-        return $this->needSelectQuery()->assocAllGenerator();
+        return $this->execStmt()->fetchAssocAllGenerator();
     }
 
     public function col($column = 0)
     {
-        return $this->needSelectQuery()->col($column);
+        return $this->execStmt()->fetchColumn($column);
     }
 
     public function allCol($column = 0)
     {
-        return $this->needSelectQuery()->allCol($column);
+        return $this->execStmt()->fetchAllColumn($column);
     }
 
     public function pairs($key = 0, $value = 1)
     {
-        return $this->needSelectQuery()->pairs($key, $value);
+        return $this->execStmt()->fetchPairs($key, $value);
     }
 
     public function exists()
     {
-        return $this->needSelectQuery()->exists();
+        return (bool)$this->col();
     }
 
     public function selectCount($column = '*', $alias = null)
@@ -482,7 +482,45 @@ trait TableSelectQueryTrait
 
     public function chunk($count, callable $callable, $callOneByOne = false)
     {
-        return $this->needSelectQuery()->chunk($count, $callable, $callOneByOne);
+        if ($count < 1) {
+            throw new \Exception('Chunk count should be greater than 0.');
+        }
+
+        $offset = 0;
+
+        while (true) {
+            $this->limit($count)->offset($offset);
+
+            if ($callOneByOne) {
+                $k = 0;
+
+                foreach ($this->assocAllGenerator() as $item) {
+                    if (call_user_func_array($callable, [$item]) === false) {
+                        $k = 0;
+
+                        break;
+                    }
+
+                    ++$k;
+                }
+            } else {
+                $items = $this->assocAll();
+
+                $k = sizeof($items);
+
+                if (call_user_func_array($callable, [$items]) === false) {
+                    $k = 0;
+                }
+            }
+
+            if ($k < $count) {
+                break;
+            }
+
+            $offset += $count;
+        }
+
+        return $this;
     }
 
     public function chunkRows($count, callable $callable, $callOneByOne = false)

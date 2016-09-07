@@ -123,9 +123,4 @@ interface WhereQueryTraitInterface extends ConditionsQueryTraitInterface
      * @return $this
      */
     public function clearWhere();
-
-
-    public function whereToSql($useClause = true);
-
-    public function whereToString($useClause = true);
 }

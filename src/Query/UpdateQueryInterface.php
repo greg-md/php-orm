@@ -13,18 +13,4 @@ interface UpdateQueryInterface extends QueryTraitInterface, WhereQueryTraitInter
     public function increment($column, $value = 1);
 
     public function decrement($column, $value = 1);
-
-    public function exec();
-
-    public function updateStmtToSql();
-
-    public function updateStmtToString();
-
-    public function setStmtToSql();
-
-    public function setStmtToString();
-
-    public function updateToSql();
-
-    public function updateToString();
 }

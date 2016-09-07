@@ -86,7 +86,7 @@ class SelectQuery implements SelectQueryInterface
 
     public function column($column, $alias = null)
     {
-        if ($column instanceof QueryTraitInterface) {
+        if ($column instanceof SelectQueryInterface) {
             list($columnSql, $columnParams) = $column->toSql();
 
             $column = '(' . $columnSql . ')';
@@ -196,7 +196,7 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function groupByToSql()
+    protected function groupByToSql()
     {
         $sql = $params = [];
 
@@ -211,7 +211,7 @@ class SelectQuery implements SelectQueryInterface
         return [$sql, $params];
     }
 
-    public function groupByToString()
+    protected function groupByToString()
     {
         return $this->groupByToSql()[0];
     }
@@ -253,7 +253,7 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function orderByToSql()
+    protected function orderByToSql()
     {
         $sql = $params = [];
 
@@ -268,7 +268,7 @@ class SelectQuery implements SelectQueryInterface
         return [$sql, $params];
     }
 
-    public function orderByToString()
+    protected function orderByToString()
     {
         return $this->orderByToSql()[0];
     }
@@ -304,7 +304,7 @@ class SelectQuery implements SelectQueryInterface
 
     protected function unionType($type, $expr, $param = null, $_ = null)
     {
-        if ($expr instanceof QueryTraitInterface) {
+        if ($expr instanceof SelectQueryInterface) {
             list($expr, $params) = $expr->toSql();
         } else {
             $params = is_array($param) ? $param : array_slice(func_get_args(), 1);
@@ -332,7 +332,7 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function selectStmtToSql()
+    protected function selectClauseToSql()
     {
         $params = [];
 
@@ -367,14 +367,14 @@ class SelectQuery implements SelectQueryInterface
         return [$sql, $params];
     }
 
-    public function selectStmtToString()
+    protected function selectClauseToString()
     {
-        return $this->selectStmtToSql()[0];
+        return $this->selectClauseToSql()[0];
     }
 
-    public function selectToSql()
+    protected function selectToSql()
     {
-        list($sql, $params) = $this->selectStmtToSql();
+        list($sql, $params) = $this->selectClauseToSql();
 
         $sql = [$sql];
 
@@ -429,87 +429,9 @@ class SelectQuery implements SelectQueryInterface
         return [$sql, $params];
     }
 
-    public function selectToString()
+    protected function selectToString()
     {
         return $this->selectToSql()[0];
-    }
-
-    public function assoc()
-    {
-        return $this->execStmt()->fetchAssoc();
-    }
-
-    public function assocAll()
-    {
-        return $this->execStmt()->fetchAssocAll();
-    }
-
-    public function assocAllGenerator()
-    {
-        return $this->execStmt()->fetchAssocAllGenerator();
-    }
-
-    public function col($column = 0)
-    {
-        return $this->execStmt()->fetchColumn($column);
-    }
-
-    public function allCol($column = 0)
-    {
-        return $this->execStmt()->fetchAllColumn($column);
-    }
-
-    public function pairs($key = 0, $value = 1)
-    {
-        return $this->execStmt()->fetchPairs($key, $value);
-    }
-
-    public function exists()
-    {
-        return (bool)$this->col();
-    }
-
-    public function chunk($count, callable $callable, $callOneByOne = false)
-    {
-        if ($count < 1) {
-            throw new \Exception('Chunk count should be greater than 0.');
-        }
-
-        $offset = 0;
-
-        while (true) {
-            $this->limit($count)->offset($offset);
-
-            if ($callOneByOne) {
-                $k = 0;
-
-                foreach ($this->assocAllGenerator() as $item) {
-                    if (call_user_func_array($callable, [$item]) === false) {
-                        $k = 0;
-
-                        break;
-                    }
-
-                    ++$k;
-                }
-            } else {
-                $items = $this->assocAll();
-
-                $k = sizeof($items);
-
-                if (call_user_func_array($callable, [$items]) === false) {
-                    $k = 0;
-                }
-            }
-
-            if ($k < $count) {
-                break;
-            }
-
-            $offset += $count;
-        }
-
-        return $this;
     }
 
     public function toSql()

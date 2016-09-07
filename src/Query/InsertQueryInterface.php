@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 interface InsertQueryInterface extends QueryTraitInterface
 {
-    public function into($name);
+    public function into($table);
 
     public function columns(array $columns);
 
@@ -18,15 +18,8 @@ interface InsertQueryInterface extends QueryTraitInterface
 
     public function clearData();
 
-    public function select($select);
+
+    public function select($sql);
 
     public function clearSelect();
-
-    public function exec();
-
-    public function execGetId();
-
-    public function insertToSql();
-
-    public function insertToString();
 }

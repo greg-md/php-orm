@@ -118,9 +118,4 @@ interface OnQueryTraitInterface extends ConditionsQueryTraitInterface
      * @return $this
      */
     public function clearOn();
-
-
-    public function onToSql($useClause = true);
-
-    public function onToString($useClause = true);
 }

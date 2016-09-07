@@ -92,7 +92,7 @@ trait FromQueryTrait
         return $this;
     }
 
-    public function fromStmtToSql($useClause = true)
+    protected function fromClauseToSql($useClause = true)
     {
         $params = [];
 
@@ -125,14 +125,14 @@ trait FromQueryTrait
         return [$sql, $params];
     }
 
-    public function fromStmtToString($useClause = true)
+    protected function fromClauseToString($useClause = true)
     {
-        return $this->fromStmtToSql($useClause)[0];
+        return $this->fromClauseToSql($useClause)[0];
     }
 
-    public function fromToSql($useClause = true)
+    protected function fromToSql($useClause = true)
     {
-        list($sql, $params) = $this->fromStmtToSql($useClause);
+        list($sql, $params) = $this->fromClauseToSql($useClause);
 
         $sql = $sql ? [$sql] : [];
 
@@ -153,7 +153,7 @@ trait FromQueryTrait
         return [$sql, $params];
     }
 
-    public function fromToString($useClause = true)
+    protected function fromToString($useClause = true)
     {
         return $this->fromToSql($useClause)[0];
     }

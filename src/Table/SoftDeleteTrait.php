@@ -16,7 +16,7 @@ trait SoftDeleteTrait
     protected function bootSoftDeleteTrait()
     {
         $this->applyOnWhere(function(WhereQueryTraitInterface $query) {
-            $this->setSoftDeleteClause($query);
+            $this->softDeleteClause = $query;
 
             $this->loadSoftDeleted();
         });
@@ -24,8 +24,8 @@ trait SoftDeleteTrait
 
     protected function loadSoftDeleted()
     {
-        if ($query = $this->getSoftDeleteClause()) {
-            $query->clearWhere()->whereIsNull($this->softDeletedColumn());
+        if ($this->softDeleteClause) {
+            $this->softDeleteClause->clearWhere()->whereIsNull($this->softDeletedColumn());
         }
 
         return $this;
@@ -33,8 +33,8 @@ trait SoftDeleteTrait
 
     protected function unloadSoftDeleted()
     {
-        if ($query = $this->getSoftDeleteClause()) {
-            $query->clearWhere();
+        if ($this->softDeleteClause) {
+            $this->softDeleteClause->clearWhere();
         }
 
         return $this;
@@ -42,21 +42,9 @@ trait SoftDeleteTrait
 
     protected function onlySoftDeleted()
     {
-        if ($query = $this->getSoftDeleteClause()) {
-            $query->clearWhere()->whereIsNotNull($this->softDeletedColumn());
+        if ($this->softDeleteClause) {
+            $this->softDeleteClause->clearWhere()->whereIsNotNull($this->softDeletedColumn());
         }
-
-        return $this;
-    }
-
-    protected function softDeletedColumn()
-    {
-        return $this->thisColumn($this->getSoftDeleteColumn());
-    }
-
-    public function setSoftDeleteColumn($name)
-    {
-        $this->softDeleteColumn = (string)$name;
 
         return $this;
     }
@@ -66,21 +54,16 @@ trait SoftDeleteTrait
         return $this->softDeleteColumn;
     }
 
-    public function setSoftDeleteClause(WhereQueryTraitInterface $query)
+    public function setSoftDeleteColumn($name)
     {
-        $this->softDeleteClause = $query;
+        $this->softDeleteColumn = (string)$name;
 
         return $this;
     }
 
-    public function getSoftDeleteClause()
+    protected function softDeletedColumn()
     {
-        return $this->softDeleteClause;
-    }
-
-    public function deleted()
-    {
-        return $this[$this->getSoftDeleteColumn()];
+        return $this->thisColumn($this->getSoftDeleteColumn());
     }
 
     public function withDeleted()
@@ -91,5 +74,22 @@ trait SoftDeleteTrait
     public function onlyDeleted()
     {
         return $this->onlySoftDeleted();
+    }
+
+    public function isDeleted()
+    {
+        return (bool)$this->getDeleted();
+    }
+
+    public function getDeleted()
+    {
+        return $this[$this->getSoftDeleteColumn()];
+    }
+
+    public function setDeleted($timestamp)
+    {
+        $this->set($this->getSoftDeleteColumn(), $timestamp);
+
+        return $this;
     }
 }

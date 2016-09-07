@@ -163,10 +163,10 @@ trait HavingQueryTrait
 
     protected function newConditions()
     {
-        return new HavingQuery($this->getStorage());
+        return new HavingQuery();
     }
 
-    public function havingToSql($useClause = true)
+    protected function havingToSql($useClause = true)
     {
         list($sql, $params) = $this->conditionsToSql();
 
@@ -177,7 +177,7 @@ trait HavingQueryTrait
         return [$sql, $params];
     }
 
-    public function havingToString($useClause = true)
+    protected function havingToString($useClause = true)
     {
         return $this->havingToSql($useClause)[0];
     }

@@ -101,19 +101,7 @@ class InsertQuery implements InsertQueryInterface
         return $this;
     }
 
-    public function exec()
-    {
-        return $this->stmt()->execute();
-    }
-
-    public function execGetId()
-    {
-        $this->exec();
-
-        return $this->getStorage()->lastInsertId();
-    }
-
-    public function insertToSql()
+    protected function insertToSql()
     {
         if (!$this->into) {
             throw new \Exception('Undefined INSERT table.');
@@ -148,7 +136,7 @@ class InsertQuery implements InsertQueryInterface
         return [$sql, $params];
     }
 
-    public function insertToString()
+    protected function insertToString()
     {
         return $this->insertToSql()[0];
     }

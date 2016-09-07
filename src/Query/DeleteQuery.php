@@ -31,12 +31,7 @@ class DeleteQuery implements DeleteQueryInterface
         return $this;
     }
 
-    public function exec()
-    {
-        return $this->stmt()->execute();
-    }
-
-    public function deleteStmtToSql()
+    protected function deleteClauseToSql()
     {
         $params = [];
 
@@ -51,14 +46,14 @@ class DeleteQuery implements DeleteQueryInterface
         return [$sql, $params];
     }
 
-    public function deleteStmtToString()
+    protected function deleteClauseToString()
     {
-        return $this->deleteStmtToSql()[0];
+        return $this->deleteClauseToSql()[0];
     }
 
-    public function deleteToSql()
+    protected function deleteToSql()
     {
-        list($sql, $params) = $this->deleteStmtToSql();
+        list($sql, $params) = $this->deleteClauseToSql();
 
         $sql = [$sql];
 
@@ -83,7 +78,7 @@ class DeleteQuery implements DeleteQueryInterface
         return [$sql, $params];
     }
 
-    public function deleteToString()
+    protected function deleteToString()
     {
         return $this->deleteToSql()[0];
     }
