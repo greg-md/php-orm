@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface
+interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface, HavingQueryTraitInterface
 {
     /**
      * @param bool $value
@@ -17,7 +17,7 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
      * @param null $_
      * @return $this
      */
-    public function from($table, $column = null, $_ = null);
+    public function selectFrom($table, $column = null, $_ = null);
 
 
     /**

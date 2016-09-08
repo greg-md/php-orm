@@ -77,7 +77,13 @@ class PdoAdapter extends \PDO implements AdapterInterface
         $this->commit();
     }
 
-    public function prepare($sql)
+    /**
+     * @todo $options is temporary, until we use PDO as connector.
+     * @param string $sql
+     * @param null $options
+     * @return PdoStmt
+     */
+    public function prepare($sql, $options = null)
     {
         return $this->callStmt(__FUNCTION__, func_get_args());
     }

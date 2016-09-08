@@ -90,7 +90,7 @@ trait TableDeleteQueryTrait
 
     public function execDelete()
     {
-        return $this->prepare()->execute();
+        return $this->executeQuery($this->needInsertQuery());
     }
 
     public function erase($key)
@@ -106,5 +106,5 @@ trait TableDeleteQueryTrait
     /**
      * @return StmtInterface
      */
-    abstract public function prepare();
+    abstract public function execute();
 }

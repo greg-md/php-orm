@@ -195,7 +195,7 @@ trait WhereQueryTrait
 
     protected function subQueryToSql(WhereQueryInterface $query)
     {
-        return $query->whereToSql(false);
+        return $query->toSql(false);
     }
 
     protected function whereToSql($useClause = true)

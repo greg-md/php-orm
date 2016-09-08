@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Adapter\StmtInterface;
 use Greg\Orm\Query\DeleteQueryInterface;
 use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Query\QueryTraitInterface;
@@ -10,28 +11,58 @@ use Greg\Orm\Storage\StorageInterface;
 
 trait TableQueryTrait
 {
+    /**
+     * @var QueryTraitInterface
+     */
     protected $query = null;
 
     protected $clauses = [];
 
-    protected function cleanClauses()
+    public function getQuery()
     {
-        $this->clauses = [];
+        if (!$this->query) {
+            throw new \Exception('Query was not defined.');
+        }
+
+        return $this->query;
+    }
+
+    public function setQuery(QueryTraitInterface $query)
+    {
+        $this->query = $query;
 
         return $this;
     }
 
-    /**
-     * @return QueryTraitInterface
-     * @throws \Exception
-     */
-    protected function needQuery()
+    public function hasClauses()
     {
-        if (!($this->query instanceof QueryTraitInterface)) {
-            throw new \Exception('Current query is not a query.');
-        }
+        return (bool)$this->clauses;
+    }
 
-        return $this->query;
+    public function getClauses()
+    {
+        return $this->clauses;
+    }
+
+    public function addClauses(array $clauses)
+    {
+        $this->clauses = array_merge($this->clauses, $clauses);
+
+        return $this;
+    }
+
+    public function setClauses(array $clauses)
+    {
+        $this->clauses = $clauses;
+
+        return $this;
+    }
+
+    public function clearClauses()
+    {
+        $this->clauses = [];
+
+        return $this;
     }
 
     public function concat(array $values, $delimiter = '')
@@ -46,22 +77,22 @@ trait TableQueryTrait
 
     public function when($condition, callable $callable)
     {
-        return $this->needQuery()->when($condition, $callable);
+        return $this->getQuery()->when($condition, $callable);
     }
 
     public function toSql()
     {
-        return $this->needQuery()->toSql();
+        return $this->getQuery()->toSql();
     }
 
     public function toString()
     {
-        return $this->needQuery()->toString();
+        return $this->getQuery()->toString();
     }
 
-    public function prepare()
+    protected function prepareQuery(QueryTraitInterface $query)
     {
-        list($sql, $params) = $this->toSql();
+        list($sql, $params) = $query->toSql();
 
         $stmt = $this->getStorage()->prepare($sql);
 
@@ -72,9 +103,28 @@ trait TableQueryTrait
         return $stmt;
     }
 
+    /**
+     * @param QueryTraitInterface $query
+     * @return StmtInterface
+     */
+    protected function executeQuery(QueryTraitInterface $query)
+    {
+        return $this->prepareQuery($query)->execute();
+    }
+
+    public function prepare()
+    {
+        return $this->prepareQuery($this->getQuery());
+    }
+
+    public function execute()
+    {
+        return $this->executeQuery($this->getQuery());
+    }
+
     public function exec()
     {
-        $query = $this->needQuery();
+        $query = $this->getQuery();
 
         if ($query instanceof InsertQueryInterface) {
             return $this->execInsert();

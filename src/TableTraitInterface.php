@@ -3,8 +3,9 @@
 namespace Greg\Orm;
 
 use Greg\Orm\TableQuery\TableQueryTraitInterface;
+use Greg\Orm\TableQuery\TableSelectQueryTraitInterface;
 
-interface TableTraitInterface extends TableQueryTraitInterface
+interface TableTraitInterface extends TableQueryTraitInterface, TableSelectQueryTraitInterface
 {
     public function setPrefix($name);
 

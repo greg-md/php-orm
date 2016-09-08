@@ -28,12 +28,17 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         return $this;
     }
 
-    public function bindParam($key, $value)
+    public function bindParam($key, &$value, $_ = null, $_ = null, $_ = null)
     {
         return parent::bindValue($key, $value);
     }
 
-    public function execute(array $params = [])
+    /**
+     * @todo disable "array" type for $params, until we use PDO as connector.
+     * @param array $params
+     * @return mixed
+     */
+    public function execute($params = [])
     {
         $this->getAdapter()->fire($this->queryString);
 

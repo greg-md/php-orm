@@ -6,7 +6,7 @@ use Greg\Orm\TableInterface;
 
 class SelectQuery implements SelectQueryInterface
 {
-    use QueryTrait, FromQueryTrait, WhereQueryTrait;
+    use QueryTrait, FromQueryTrait, WhereQueryTrait, HavingQueryTrait;
 
     const ORDER_ASC = 'ASC';
 
@@ -38,7 +38,7 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function from($table, $column = null, $_ = null)
+    public function selectFrom($table, $column = null, $_ = null)
     {
         $columns = is_array($column) ? $column : array_slice(func_get_args(), 1);
 
@@ -400,6 +400,14 @@ class SelectQuery implements SelectQueryInterface
             $query[] = $groupBySql;
 
             $params = array_merge($params, $groupByParams);
+        }
+
+        list($havingSql, $havingParams) = $this->havingToSql();
+
+        if ($havingSql) {
+            $sql[] = $havingSql;
+
+            $params = array_merge($params, $havingParams);
         }
 
         list($orderBySql, $orderByParams) = $this->orderByToSql();

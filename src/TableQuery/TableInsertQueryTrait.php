@@ -108,7 +108,7 @@ trait TableInsertQueryTrait
 
     public function execInsert()
     {
-        return $this->prepare()->execute();
+        return $this->executeQuery($this->needInsertQuery());
     }
 
     public function execAndGetId()
@@ -126,5 +126,5 @@ trait TableInsertQueryTrait
     /**
      * @return StmtInterface
      */
-    abstract public function prepare();
+    abstract public function execute();
 }

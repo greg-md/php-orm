@@ -2,14 +2,14 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\Storage\MysqlInterface;
 
 trait TableSchemaTrait
 {
     protected function populateSchema($populateInfo = true, $populateReferences = true, $populateRelationships = false)
     {
         if ($populateInfo) {
-            $info = $this->getStorage()->getTableInfo($this->fullName());
+            $info = $this->getStorage()->tableInfo($this->fullName());
 
             foreach($info['columns'] as $column) {
                 $this->addColumn($column);
@@ -37,7 +37,7 @@ trait TableSchemaTrait
     }
 
     /**
-     * @return StorageInterface
+     * @return MysqlInterface
      */
     abstract public function getStorage();
 }

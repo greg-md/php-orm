@@ -330,11 +330,11 @@ PHP Object-Relational Mapping
 - `toSql($useClause = true)`
 - `toString($useClause = true)`
 
-## `SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface`
+## `SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface, HavingQueryTraitInterface`
 
 - `distinct($value = true)`
 
-- `from($table, $column = null, $_ = null)`
+- `selectFrom($table, $column = null, $_ = null)`
 
 - `columnsFrom($table, $column, $_ = null)`
 - `columns($column, $_ = null)`
@@ -454,6 +454,22 @@ PHP Object-Relational Mapping
 - `setFrom(array $from)`
 - `cleanFrom()`
 
+## `TableJoinsQueryTrait`
+
+- `left($table, $on = null, $param = null, $_ = null)`
+- `right($table, $on = null, $param = null, $_ = null)`
+- `inner($table, $on = null, $param = null, $_ = null)`
+- `cross($table)`
+- `leftTo($source, $table, $on = null, $param = null, $_ = null)`
+- `rightTo($source, $table, $on = null, $param = null, $_ = null)`
+- `innerTo($source, $table, $on = null, $param = null, $_ = null)`
+- `crossTo($source, $table)`
+- `hasJoins()`
+- `getJoins()`
+- `addJoins(array $joins)`
+- `setJoins(array $joins)`
+- `clearJoins()`
+
 ## `TableHavingQueryTrait`
 
 - `havingAre(array $columns)`
@@ -512,6 +528,74 @@ PHP Object-Relational Mapping
 - `clearInsertSelect()`
 - `execInsert()`
 - `execAndGetId()`
+
+## `TableSelectQueryTrait`
+
+- `getSelectQuery()`
+- `intoSelect($column = null, $_ = null)`
+- `select($column = null, $_ = null)`
+- `distinct($value = true)`
+- `only($column, $_ = null)`
+- `selectFrom($table, $column = null, $_ = null)`
+- `columnsFrom($table, $column, $_ = null)`
+- `columns($column, $_ = null)`
+- `column($column, $alias = null)`
+- `columnRaw($expr, $param = null, $_ = null)`
+- `hasColumns()`
+- `clearColumns()`
+
+- `selectCount($column = '*', $alias = null)`
+- `selectMax($column, $alias = null)`
+- `selectMin($column, $alias = null)`
+- `selectAvg($column, $alias = null)`
+- `selectSum($column, $alias = null)`
+- `selectKeyValue()`
+
+- `groupBy($column)`
+- `groupByRaw($expr, $param = null, $_ = null)`
+- `hasGroupBy()`
+- `clearGroupBy()`
+
+- `orderBy($column, $type = null)`
+- `orderByRaw($expr, $param = null, $_ = null)`
+- `hasOrderBy()`
+- `clearOrderBy()`
+
+- `limit($number)`
+- `offset($number)`
+
+- `union($expr, $param = null, $_ = null)`
+- `unionAll($expr, $param = null, $_ = null)`
+- `unionDistinct($expr, $param = null, $_ = null)`
+
+- `assoc()`
+- `assocOrFail()`
+- `assocAll()`
+- `assocAllGenerator()`
+
+- `fetchColumn($column = 0)`
+- `fetchAllColumn($column = 0)`
+- `fetchPairs($key = 0, $value = 1)`
+- `fetchCount($column = '*', $alias = null)`
+- `fetchMax($column, $alias = null)`
+- `fetchMin($column, $alias = null)`
+- `fetchAvg($column, $alias = null)`
+- `fetchSum($column, $alias = null)`
+
+- `exists()`
+
+- `row()`
+- `rowOrFail()`
+- `rows()`
+- `chunk($count, callable $callable, $callOneByOne = false)`
+- `chunkRows($count, callable $callable, $callOneByOne = false)`
+- `rowsGenerator()`
+
+- `find($key)`
+- `findOrFail($keys)`
+
+- `firstOrNew(array $data)`
+- `firstOrCreate(array $data)`
 
 ## `SoftDeleteTrait`
 

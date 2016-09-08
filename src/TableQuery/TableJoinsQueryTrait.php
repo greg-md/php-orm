@@ -11,7 +11,7 @@ use Greg\Orm\Storage\StorageInterface;
 
 trait TableJoinsQueryTrait
 {
-    public function needJoinsClause()
+    protected function needJoinsClause()
     {
         foreach($this->clauses as $clause) {
             if (    !($clause instanceof WhereQueryInterface)
@@ -34,7 +34,7 @@ trait TableJoinsQueryTrait
      * @return JoinsQueryTraitInterface
      * @throws \Exception
      */
-    public function needJoinsQuery()
+    protected function needJoinsQuery()
     {
         if (!$this->query) {
             return $this->needJoinsClause();
@@ -103,6 +103,11 @@ trait TableJoinsQueryTrait
         return $this;
     }
 
+    public function hasJoins()
+    {
+        return $this->needJoinsQuery()->hasJoins();
+    }
+
     public function getJoins()
     {
         return $this->needJoinsQuery()->getJoins();
@@ -127,16 +132,6 @@ trait TableJoinsQueryTrait
         $this->needJoinsQuery()->clearJoins();
 
         return $this;
-    }
-
-    public function joinsToSql($source = null)
-    {
-        return $this->needJoinsQuery()->joinsToSql($source);
-    }
-
-    public function joinsToString($source = null)
-    {
-        return $this->needJoinsQuery()->joinsToString($source);
     }
 
     /**

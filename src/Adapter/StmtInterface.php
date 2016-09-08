@@ -6,10 +6,21 @@ interface StmtInterface
 {
     public function bindParams(array $params);
 
-    public function bindParam($key, $value);
+    /**
+     * @todo add reference for $value, until we use PDO as connector.
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function bindParam($key, &$value);
 
 
-    public function execute(array $params = []);
+    /**
+     * @todo disable "array" type for $params, until we use PDO as connector.
+     * @param array $params
+     * @return mixed
+     */
+    public function execute($params = []);
 
 
     public function fetch();
