@@ -2,30 +2,11 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Adapter\StmtInterface;
-use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
 trait TableInsertQueryTrait
 {
-    /**
-     * @return InsertQueryInterface
-     * @throws \Exception
-     */
-    protected function needInsertQuery()
-    {
-        if (!$this->query) {
-            $this->insert();
-        }
-
-        if (!($this->query instanceof InsertQueryInterface)) {
-            throw new \Exception('Current query is not a INSERT statement.');
-        }
-
-        return $this->query;
-    }
-
-    public function insertQuery(array $data = [])
+    protected function insertQuery(array $data = [])
     {
         $query = $this->getStorage()->insert($this);
 
@@ -36,95 +17,25 @@ trait TableInsertQueryTrait
         return $query;
     }
 
-    public function insert(array $data = [])
+    public function insert(array $data)
     {
-        $this->query = $this->insertQuery(...func_get_args());
-
-        return $this;
+        return $this->execQuery($this->insertQuery($data));
     }
 
-    public function into($table)
+    public function insertAndGetId(array $data)
     {
-        $this->needInsertQuery()->into($table);
-
-        return $this;
-    }
-
-    public function insertColumns(array $columns)
-    {
-        $this->needInsertQuery()->columns($columns);
-
-        return $this;
-    }
-
-    public function clearInsertColumns()
-    {
-        $this->needInsertQuery()->clearColumns();
-
-        return $this;
-    }
-
-    public function insertValues(array $values)
-    {
-        $this->needInsertQuery()->values($values);
-
-        return $this;
-    }
-
-    public function clearInsertValues()
-    {
-        $this->needInsertQuery()->clearValues();
-
-        return $this;
-    }
-
-    public function insertData(array $data)
-    {
-        $this->needInsertQuery()->data($data);
-
-        return $this;
-    }
-
-    public function clearInsertData()
-    {
-        $this->needInsertQuery()->clearData();
-
-        return $this;
-    }
-
-    public function insertSelect($select)
-    {
-        $this->needInsertQuery()->select($select);
-
-        return $this;
-    }
-
-    public function clearInsertSelect()
-    {
-        $this->needInsertQuery()->clearSelect();
-
-        return $this;
-    }
-
-    public function execInsert()
-    {
-        return $this->execQuery($this->needInsertQuery());
-    }
-
-    public function execAndGetId()
-    {
-        $this->execInsert();
+        $this->insert($data);
 
         return $this->getStorage()->lastInsertId();
+    }
+
+    public function insertSelect($sql)
+    {
+        return $this->execQuery($this->insertQuery()->select($sql));
     }
 
     /**
      * @return StorageInterface
      */
     abstract public function getStorage();
-
-    /**
-     * @return StmtInterface
-     */
-    abstract public function execute();
 }

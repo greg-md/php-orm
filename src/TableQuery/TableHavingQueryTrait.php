@@ -8,10 +8,52 @@ use Greg\Orm\Query\HavingQueryTraitInterface;
 use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\TableInterface;
 
 trait TableHavingQueryTrait
 {
-    protected function needHavingClause()
+    /**
+     * @return $this
+     */
+    protected function newHavingClauseInstance()
+    {
+        return $this->newInstance()->intoHaving();
+    }
+
+    protected function checkHavingClauseQuery()
+    {
+        if (!($this->query instanceof HavingQueryTraitInterface)) {
+            throw new \Exception('Current query is not a HAVING clause.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return HavingQueryTraitInterface
+     * @throws \Exception
+     */
+    protected function getHavingClauseQuery()
+    {
+        $this->checkHavingClauseQuery();
+
+        return $this->query;
+    }
+
+    protected function needHavingClauseInstance()
+    {
+        if (!$this->query) {
+            if ($this->clauses) {
+                return $this->intoHaving();
+            }
+
+            return $this->newHavingClauseInstance();
+        }
+
+        return $this->checkHavingClauseQuery();
+    }
+
+    protected function intoHavingClause()
     {
         foreach($this->clauses as $clause) {
             if (    !($clause instanceof WhereQueryInterface)
@@ -23,238 +65,274 @@ trait TableHavingQueryTrait
             }
         }
 
-        if (!isset($this->clauses['having'])) {
-            $this->clauses['having'] = $this->getStorage()->having();
-        }
+        return $this->getStorage()->having();
+    }
 
-        return $this->clauses['having'];
+    public function intoHaving()
+    {
+        $this->setClause('HAVING', $this->intoHavingClause());
+
+        return $this;
     }
 
     /**
-     * @return HavingQueryTraitInterface
-     * @throws \Exception
+     * @return HavingQueryInterface
      */
-    protected function needHavingQuery()
+    public function getHavingClause()
     {
-        if (!$this->query) {
-            return $this->needHavingClause();
-        }
-
-        if (!($this->query instanceof HavingQueryTraitInterface)) {
-            throw new \Exception('Current query is not a HAVING clause.');
-        }
-
-        return $this->query;
+        return $this->getClause('HAVING');
     }
 
     public function havingAre(array $columns)
     {
-        $this->needHavingQuery()->havingAre($columns);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingAre($columns);
+
+        return $instance;
     }
 
     public function having($column, $operator, $value = null)
     {
-        $this->needHavingQuery()->having(...func_get_args());
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->having(...func_get_args());
+
+        return $instance;
     }
 
     public function orHavingAre(array $columns)
     {
-        $this->needHavingQuery()->orHavingAre($columns);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingAre($columns);
+
+        return $instance;
     }
 
     public function orHaving($column, $operator, $value = null)
     {
-        $this->needHavingQuery()->orHaving(...func_get_args());
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHaving(...func_get_args());
+
+        return $instance;
     }
 
     public function havingRel($column1, $operator, $column2 = null)
     {
-        $this->needHavingQuery()->havingRel(...func_get_args());
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingRel(...func_get_args());
+
+        return $instance;
     }
 
     public function orHavingRel($column1, $operator, $column2 = null)
     {
-        $this->needHavingQuery()->orHavingRel(...func_get_args());
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingRel(...func_get_args());
+
+        return $instance;
     }
 
     public function havingIsNull($column)
     {
-        $this->needHavingQuery()->havingIsNull($column);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingIsNull($column);
+
+        return $instance;
     }
 
     public function orHavingIsNull($column)
     {
-        $this->needHavingQuery()->orHavingIsNull($column);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingIsNull($column);
+
+        return $instance;
     }
 
     public function havingIsNotNull($column)
     {
-        $this->needHavingQuery()->havingIsNotNull($column);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingIsNotNull($column);
+
+        return $instance;
     }
 
     public function orHavingIsNotNull($column)
     {
-        $this->needHavingQuery()->orHavingIsNotNull($column);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingIsNotNull($column);
+
+        return $instance;
     }
 
     public function havingBetween($column, $min, $max)
     {
-        $this->needHavingQuery()->havingBetween($column, $min, $max);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function orHavingBetween($column, $min, $max)
     {
-        $this->needHavingQuery()->orHavingBetween($column, $min, $max);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function havingNotBetween($column, $min, $max)
     {
-        $this->needHavingQuery()->havingNotBetween($column, $min, $max);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingNotBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function orHavingNotBetween($column, $min, $max)
     {
-        $this->needHavingQuery()->orHavingNotBetween($column, $min, $max);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingNotBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function havingDate($column, $date)
     {
-        $this->needHavingQuery()->havingDate($column, $date);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingDate($column, $date);
+
+        return $instance;
     }
 
     public function orHavingDate($column, $date)
     {
-        $this->needHavingQuery()->orHavingDate($column, $date);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingDate($column, $date);
+
+        return $instance;
     }
 
     public function havingTime($column, $date)
     {
-        $this->needHavingQuery()->havingTime($column, $date);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingTime($column, $date);
+
+        return $instance;
     }
 
     public function orHavingTime($column, $date)
     {
-        $this->needHavingQuery()->orHavingTime($column, $date);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingTime($column, $date);
+
+        return $instance;
     }
 
     public function havingYear($column, $year)
     {
-        $this->needHavingQuery()->havingYear($column, $year);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingYear($column, $year);
+
+        return $instance;
     }
 
     public function orHavingYear($column, $year)
     {
-        $this->needHavingQuery()->orHavingYear($column, $year);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingYear($column, $year);
+
+        return $instance;
     }
 
     public function havingMonth($column, $month)
     {
-        $this->needHavingQuery()->havingMonth($column, $month);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingMonth($column, $month);
+
+        return $instance;
     }
 
     public function orHavingMonth($column, $month)
     {
-        $this->needHavingQuery()->orHavingMonth($column, $month);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingMonth($column, $month);
+
+        return $instance;
     }
 
     public function havingDay($column, $day)
     {
-        $this->needHavingQuery()->havingDay($column, $day);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingDay($column, $day);
+
+        return $instance;
     }
 
     public function orHavingDay($column, $day)
     {
-        $this->needHavingQuery()->orHavingDay($column, $day);
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingDay($column, $day);
+
+        return $instance;
     }
 
     public function havingRaw($expr, $value = null, $_ = null)
     {
-        $this->needHavingQuery()->havingRaw(...func_get_args());
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->havingRaw(...func_get_args());
+
+        return $instance;
     }
 
     public function orHavingRaw($expr, $value = null, $_ = null)
     {
-        $this->needHavingQuery()->orHavingRaw(...func_get_args());
+        $instance = $this->needHavingClauseInstance();
 
-        return $this;
+        $instance->getHavingClause()->orHavingRaw(...func_get_args());
+
+        return $instance;
     }
 
     public function hasHaving()
     {
-        return $this->needHavingQuery()->hasHaving();
-    }
-
-    public function getHaving()
-    {
-        return $this->needHavingQuery()->getHaving();
-    }
-
-    public function addHaving(array $conditions)
-    {
-        return $this->needHavingQuery()->addHaving($conditions);
-    }
-
-    public function setHaving(array $conditions)
-    {
-        return $this->needHavingQuery()->setHaving($conditions);
+        return $this->getHavingClauseQuery()->hasHaving();
     }
 
     public function clearHaving()
     {
-        $this->needHavingQuery()->clearHaving();
+        $this->getHavingClauseQuery()->clearHaving();
 
         return $this;
     }
+
+    /**
+     * @return TableInterface
+     */
+    abstract protected function newInstance();
 
     /**
      * @return StorageInterface

@@ -130,9 +130,9 @@ trait TableDeleteQueryTrait
         return $query;
     }
 
-    public function intoDelete($column = null, $_ = null)
+    public function intoDelete(array $whereAre = [])
     {
-        $this->query = $this->intoDeleteQuery(...func_get_args());
+        $this->query = $this->intoDeleteQuery($whereAre);
 
         $this->clearClauses();
 

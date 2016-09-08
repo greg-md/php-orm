@@ -4,12 +4,14 @@ namespace Greg\Orm;
 
 use Greg\Orm\TableQuery\TableDeleteQueryTraitInterface;
 use Greg\Orm\TableQuery\TableFromQueryTraitInterface;
+use Greg\Orm\TableQuery\TableHavingQueryTraitInterface;
 use Greg\Orm\TableQuery\TableQueryTraitInterface;
 use Greg\Orm\TableQuery\TableSelectQueryTraitInterface;
 
 interface TableTraitInterface extends
     TableQueryTraitInterface,
     TableFromQueryTraitInterface,
+    TableHavingQueryTraitInterface,
     TableSelectQueryTraitInterface,
     TableDeleteQueryTraitInterface
 {
