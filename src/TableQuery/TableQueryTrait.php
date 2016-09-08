@@ -3,10 +3,7 @@
 namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Adapter\StmtInterface;
-use Greg\Orm\Query\DeleteQueryInterface;
-use Greg\Orm\Query\InsertQueryInterface;
 use Greg\Orm\Query\QueryTraitInterface;
-use Greg\Orm\Query\UpdateQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
 
 trait TableQueryTrait
@@ -44,6 +41,15 @@ trait TableQueryTrait
         return $this->clauses;
     }
 
+    public function getClause($clause)
+    {
+        if (!isset($this->clauses[$clause])) {
+            throw new \Exception('Clause ' . $clause . ' was not defined.');
+        }
+
+        return $this->clauses[$clause];
+    }
+
     public function addClauses(array $clauses)
     {
         $this->clauses = array_merge($this->clauses, $clauses);
@@ -54,6 +60,13 @@ trait TableQueryTrait
     public function setClauses(array $clauses)
     {
         $this->clauses = $clauses;
+
+        return $this;
+    }
+
+    public function setClause($clause, QueryTraitInterface $query)
+    {
+        $this->clauses[$clause] = $query;
 
         return $this;
     }
@@ -109,36 +122,25 @@ trait TableQueryTrait
      */
     protected function executeQuery(QueryTraitInterface $query)
     {
+        $stmt = $this->prepareQuery($query);
+
+        $stmt->execute();
+
+        return $stmt;
+    }
+
+    /**
+     * @param QueryTraitInterface $query
+     * @return StmtInterface
+     */
+    protected function execQuery(QueryTraitInterface $query)
+    {
         return $this->prepareQuery($query)->execute();
     }
 
     public function prepare()
     {
         return $this->prepareQuery($this->getQuery());
-    }
-
-    public function execute()
-    {
-        return $this->executeQuery($this->getQuery());
-    }
-
-    public function exec()
-    {
-        $query = $this->getQuery();
-
-        if ($query instanceof InsertQueryInterface) {
-            return $this->execInsert();
-        }
-
-        if ($query instanceof UpdateQueryInterface) {
-            return $this->execUpdate();
-        }
-
-        if ($query instanceof DeleteQueryInterface) {
-            return $this->execDelete();
-        }
-
-        throw new \Exception('Current query does not support exec method.');
     }
 
     /**

@@ -8,10 +8,52 @@ use Greg\Orm\Query\HavingQueryInterface;
 use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\TableInterface;
 
 trait TableFromQueryTrait
 {
-    protected function needFromClause()
+    /**
+     * @return $this
+     */
+    protected function newFromClauseInstance()
+    {
+        return $this->newInstance()->intoFrom();
+    }
+
+    protected function checkFromClauseQuery()
+    {
+        if (!($this->query instanceof FromQueryTraitInterface)) {
+            throw new \Exception('Current query is not a FROM clause.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return FromQueryTraitInterface
+     * @throws \Exception
+     */
+    protected function getFromClauseQuery()
+    {
+        $this->checkFromClauseQuery();
+
+        return $this->query;
+    }
+
+    protected function needFromClauseInstance()
+    {
+        if (!$this->query) {
+            if ($this->clauses) {
+                return $this->intoFrom();
+            }
+
+            return $this->newFromClauseInstance();
+        }
+
+        return $this->checkFromClauseQuery();
+    }
+
+    protected function intoFromClause()
     {
         foreach($this->clauses as $clause) {
             if (    !($clause instanceof WhereQueryInterface)
@@ -23,74 +65,58 @@ trait TableFromQueryTrait
             }
         }
 
-        if (!isset($this->clauses['from'])) {
-            $this->clauses['from'] = $this->getStorage()->from();
-        }
+        return $this->getStorage()->from();
+    }
 
-        return $this->clauses['from'];
+    public function intoFrom()
+    {
+        $this->setClause('FROM', $this->intoFromClause());
+
+        return $this;
     }
 
     /**
-     * @return FromQueryTraitInterface
-     * @throws \Exception
+     * @return FromQueryInterface
      */
-    protected function needFromQuery()
+    public function getFromClause()
     {
-        if (!$this->query) {
-            return $this->needFromClause();
-        }
-
-        if (!($this->query instanceof FromQueryTraitInterface)) {
-            throw new \Exception('Current query is not a FROM statement.');
-        }
-
-        return $this->query;
+        return $this->getClause('FROM');
     }
 
     public function from($table, $_ = null)
     {
-        $this->needFromQuery()->from(...func_get_args());
+        $instance = $this->needFromClauseInstance();
 
-        return $this;
+        $instance->getFromClause()->from(...func_get_args());
+
+        return $instance;
     }
 
     public function fromRaw($expr, $param = null, $_ = null)
     {
-        $this->needFromQuery()->fromRaw(...func_get_args());
+        $instance = $this->needFromClauseInstance();
 
-        return $this;
+        $instance->getFromClause()->fromRaw(...func_get_args());
+
+        return $instance;
     }
 
     public function hasFrom()
     {
-        return $this->needFromQuery()->hasFrom();
+        return $this->getFromClauseQuery()->hasFrom();
     }
 
-    public function getFrom()
+    public function clearFrom()
     {
-        return $this->needFromQuery()->getFrom();
-    }
-
-    public function addFrom(array $from)
-    {
-        $this->needFromQuery()->addFrom($from);
+        $this->getFromClauseQuery()->clearFrom();
 
         return $this;
     }
 
-    public function setFrom(array $from)
-    {
-        $this->needFromQuery()->setFrom($from);
-
-        return $this;
-    }
-
-    public function cleanFrom()
-    {
-        $this->needFromQuery()->cleanFrom();
-
-        return $this;
-    }
+    /**
+     * @return TableInterface
+     */
+    abstract protected function newInstance();
 
     /**
      * @return StorageInterface

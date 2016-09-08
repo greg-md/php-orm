@@ -85,7 +85,7 @@ trait FromQueryTrait
         return $this;
     }
 
-    public function cleanFrom()
+    public function clearFrom()
     {
         $this->from = [];
 

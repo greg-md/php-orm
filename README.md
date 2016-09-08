@@ -323,7 +323,7 @@ PHP Object-Relational Mapping
 - `getFrom()`
 - `addFrom(array $from)`
 - `setFrom(array $from)`
-- `cleanFrom()`
+- `clearFrom()`
 
 ## `FromQueryInterface extends QueryTraitInterface, FromQueryTraitInterface`
 
@@ -434,17 +434,32 @@ PHP Object-Relational Mapping
 - `getRelation($position)`
 - `setRelation($position, $columnName, $referencedColumnName)`
 
-## `TableQueryTrait`
+## `TableQueryTraitInterface`
+
+- `getQuery()`
+- `setQuery(QueryTraitInterface $query)`
+
+- `hasClauses()`
+- `getClauses()`
+- `getClause($clause);`
+- `addClauses(array $clauses)`
+- `setClauses(array $clauses)`
+- `setClause($clause, QueryTraitInterface $query)`
+- `clearClauses()`
 
 - `quoteLike($value, $escape = '\\')`
 - `concat(array $values, $delimiter = '')`
+
 - `when($condition, callable $callable)`
+
 - `toSql()`
 - `toString()`
+
 - `prepare()`
+- `execute()`
 - `exec()`
 
-## `TableFromQueryTrait`
+## `TableFromQueryTraitInterface`
 
 - `from($table, $_ = null)`
 - `fromRaw($expr, $param = null, $_ = null)`
@@ -452,7 +467,7 @@ PHP Object-Relational Mapping
 - `getFrom()`
 - `addFrom(array $from)`
 - `setFrom(array $from)`
-- `cleanFrom()`
+- `clearFrom()`
 
 ## `TableJoinsQueryTrait`
 
@@ -531,25 +546,24 @@ PHP Object-Relational Mapping
 
 ## `TableSelectQueryTrait`
 
-- `getSelectQuery()`
 - `intoSelect($column = null, $_ = null)`
-- `select($column = null, $_ = null)`
+
 - `distinct($value = true)`
-- `only($column, $_ = null)`
+
+- `select($column = null, $_ = null)`
 - `selectFrom($table, $column = null, $_ = null)`
 - `columnsFrom($table, $column, $_ = null)`
-- `columns($column, $_ = null)`
-- `column($column, $alias = null)`
-- `columnRaw($expr, $param = null, $_ = null)`
-- `hasColumns()`
-- `clearColumns()`
-
+- `selectOnly($column, $_ = null)`
+- `selectAlias($column, $alias)`
+- `selectKeyValue()`
 - `selectCount($column = '*', $alias = null)`
 - `selectMax($column, $alias = null)`
 - `selectMin($column, $alias = null)`
 - `selectAvg($column, $alias = null)`
 - `selectSum($column, $alias = null)`
-- `selectKeyValue()`
+- `selectRaw($expr, $param = null, $_ = null)`
+- `hasSelect()`
+- `clearSelect()`
 
 - `groupBy($column)`
 - `groupByRaw($expr, $param = null, $_ = null)`
@@ -581,15 +595,14 @@ PHP Object-Relational Mapping
 - `fetchMin($column, $alias = null)`
 - `fetchAvg($column, $alias = null)`
 - `fetchSum($column, $alias = null)`
-
 - `exists()`
 
 - `row()`
 - `rowOrFail()`
 - `rows()`
+- `rowsGenerator()`
 - `chunk($count, callable $callable, $callOneByOne = false)`
 - `chunkRows($count, callable $callable, $callOneByOne = false)`
-- `rowsGenerator()`
 
 - `find($key)`
 - `findOrFail($keys)`
@@ -610,6 +623,5 @@ PHP Object-Relational Mapping
 # @todo
 
 - Change `extends \PDO` to `getConnector` and start using PdoAdapterTrait instead of extending classes.
-- Rename all Queries to SqlStatement.
 - Add ORDER BY and LIMIT clauses to UPDATE and DELETE statements.
 - Check sql documentation and add needed sql clauses in statements.

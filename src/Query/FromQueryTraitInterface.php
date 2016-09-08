@@ -17,5 +17,5 @@ interface FromQueryTraitInterface extends JoinsQueryTraitInterface
 
     public function setFrom(array $from);
 
-    public function cleanFrom();
+    public function clearFrom();
 }

@@ -48,7 +48,7 @@ trait TableUpdateQueryTrait
                 }
             }
 
-            $this->cleanClauses();
+            $this->clearClauses();
 
             return $this->query;
         }

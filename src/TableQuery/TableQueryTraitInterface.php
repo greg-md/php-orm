@@ -15,9 +15,13 @@ interface TableQueryTraitInterface
 
     public function getClauses();
 
+    public function getClause($clause);
+
     public function addClauses(array $clauses);
 
     public function setClauses(array $clauses);
+
+    public function setClause($clause, QueryTraitInterface $query);
 
     public function clearClauses();
 
@@ -26,13 +30,14 @@ interface TableQueryTraitInterface
 
     public function quoteLike($value, $escape = '\\');
 
+
+    public function when($condition, callable $callable);
+
+
     public function toSql();
 
     public function toString();
 
+
     public function prepare();
-
-    public function execute();
-
-    public function exec();
 }

@@ -1654,11 +1654,11 @@ class TableOld implements TableInterface
 
 
 
-    public function parseData(array $data, $clean = false, $reverse = false)
+    public function parseData(array $data, $clear = false, $reverse = false)
     {
         foreach($data as $columnName => &$value) {
             if (!($column = $this->columns($columnName))) {
-                if ($clean) {
+                if ($clear) {
                     unset($data[$columnName]);
                 }
 

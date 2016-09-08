@@ -57,16 +57,23 @@ use Greg\Orm\TableInterface;
  */
 trait TableSelectQueryTrait
 {
+    protected function selectQuery($column = null, $_ = null)
+    {
+        $query = $this->getStorage()->select(...func_get_args());
+
+        $query->from($this);
+
+        $this->applyWhere($query);
+
+        return $query;
+    }
+
     /**
      * @return $this
      */
     protected function newSelectInstance()
     {
-        $query = $this->newInstance();
-
-        $query->setClauses($this->getClauses());
-
-        return $query->intoSelect();
+        return $this->newInstance()->intoSelect();
     }
 
     protected function checkSelectQuery()
@@ -81,21 +88,14 @@ trait TableSelectQueryTrait
     protected function needSelectInstance()
     {
         if (!$this->query) {
+            if ($this->clauses) {
+                return $this->intoSelect();
+            }
+
             return $this->newSelectInstance();
         }
 
         return $this->checkSelectQuery();
-    }
-
-    protected function selectQuery($column = null, $_ = null)
-    {
-        $query = $this->getStorage()->select(...func_get_args());
-
-        $query->from($this);
-
-        $this->applyWhere($query);
-
-        return $query;
     }
 
     protected function intoSelectQuery($column = null, $_ = null)
@@ -141,6 +141,15 @@ trait TableSelectQueryTrait
         return $query;
     }
 
+    public function intoSelect($column = null, $_ = null)
+    {
+        $this->query = $this->intoSelectQuery(...func_get_args());
+
+        $this->clearClauses();
+
+        return $this;
+    }
+
     /**
      * @return SelectQueryInterface
      */
@@ -149,15 +158,6 @@ trait TableSelectQueryTrait
         $this->checkSelectQuery();
 
         return $this->query;
-    }
-
-    public function intoSelect($column = null, $_ = null)
-    {
-        $this->query = $this->intoSelectQuery(...func_get_args());
-
-        $this->clearClauses();
-
-        return $this;
     }
 
     public function distinct($value = true)
@@ -196,21 +196,12 @@ trait TableSelectQueryTrait
         return $instance;
     }
 
-    public function only($column, $_ = null)
+    public function selectOnly($column, $_ = null)
     {
         return $this->columnsFrom($this, ...func_get_args());
     }
 
-    public function columns($column, $_ = null)
-    {
-        $instance = $this->needSelectInstance();
-
-        $instance->getQuery()->columns(...func_get_args());
-
-        return $instance;
-    }
-
-    public function column($column, $alias = null)
+    public function selectAlias($column, $alias)
     {
         $instance = $this->needSelectInstance();
 
@@ -232,25 +223,6 @@ trait TableSelectQueryTrait
             ->column($columnName, 'value');
 
         return $instance;
-    }
-
-    public function columnRaw($expr, $param = null, $_ = null)
-    {
-        $instance = $this->needSelectInstance();
-
-        $instance->getQuery()->columnRaw(...func_get_args());
-
-        return $instance;
-    }
-
-    public function hasColumns()
-    {
-        return $this->getSelectQuery()->hasColumns();
-    }
-
-    public function clearColumns()
-    {
-        return $this->getSelectQuery()->clearColumns();
     }
 
     public function selectCount($column = '*', $alias = null)
@@ -298,6 +270,27 @@ trait TableSelectQueryTrait
         return $instance;
     }
 
+    public function selectRaw($expr, $param = null, $_ = null)
+    {
+        $instance = $this->needSelectInstance();
+
+        $instance->getQuery()->columnRaw(...func_get_args());
+
+        return $instance;
+    }
+
+    public function hasSelect()
+    {
+        return $this->getSelectQuery()->hasColumns();
+    }
+
+    public function clearSelect()
+    {
+        $this->getSelectQuery()->clearColumns();
+
+        return $this;
+    }
+
     public function groupBy($column)
     {
         $instance = $this->needSelectInstance();
@@ -323,7 +316,9 @@ trait TableSelectQueryTrait
 
     public function clearGroupBy()
     {
-        return $this->getSelectQuery()->clearGroupBy();
+        $this->getSelectQuery()->clearGroupBy();
+
+        return $this;
     }
 
     public function orderBy($column, $type = null)
@@ -351,7 +346,9 @@ trait TableSelectQueryTrait
 
     public function clearOrderBy()
     {
-        return $this->getSelectQuery()->clearOrderBy();
+        $this->getSelectQuery()->clearOrderBy();
+
+        return $this;
     }
 
     public function limit($number)
@@ -404,7 +401,7 @@ trait TableSelectQueryTrait
      */
     protected function executeSelectInstance()
     {
-        return $this->needSelectInstance()->execute();
+        return $this->executeQuery($this->needSelectInstance()->getQuery());
     }
 
     public function assoc()
@@ -448,32 +445,32 @@ trait TableSelectQueryTrait
 
     public function fetchCount($column = '*', $alias = null)
     {
-        return $this->clearColumns()->selectCount($column, $alias)->fetchColumn();
+        return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
     }
 
     public function fetchMax($column, $alias = null)
     {
-        return $this->clearColumns()->selectMax($column, $alias)->fetchColumn();
+        return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
     }
 
     public function fetchMin($column, $alias = null)
     {
-        return $this->clearColumns()->selectMin($column, $alias)->fetchColumn();
+        return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
     }
 
     public function fetchAvg($column, $alias = null)
     {
-        return $this->clearColumns()->selectAvg($column, $alias)->fetchColumn();
+        return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
     }
 
     public function fetchSum($column, $alias = null)
     {
-        return $this->clearColumns()->selectSum($column, $alias)->fetchColumn();
+        return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
     }
 
     public function exists()
     {
-        return (bool)$this->clearColumns()->columnRaw(1)->fetchColumn();
+        return (bool)$this->clearSelect()->selectRaw(1)->fetchColumn();
     }
 
     protected function selectRowQuery()
@@ -495,9 +492,7 @@ trait TableSelectQueryTrait
      */
     protected function executeSelectRowInstance()
     {
-        $this->selectRowQuery();
-
-        return $this->needSelectInstance()->execute();
+        return $this->executeQuery($this->selectRowQuery());
     }
 
     public function row()
@@ -534,6 +529,15 @@ trait TableSelectQueryTrait
         }
 
         return $rows;
+    }
+
+    public function rowsGenerator()
+    {
+        $stmt = $this->executeSelectRowInstance();
+
+        foreach($stmt->fetchAssocAllGenerator() as $record) {
+            yield $this->newInstance()->___appendRowData($record);
+        }
     }
 
     protected function chunkQuery(SelectQueryInterface $query, $count, callable $callable, $callOneByOne = false)
@@ -603,15 +607,6 @@ trait TableSelectQueryTrait
         };
 
         return $this->chunkQuery($this->selectRowQuery(), $count, $newCallable, $callOneByOne);
-    }
-
-    public function rowsGenerator()
-    {
-        $stmt = $this->executeSelectRowInstance();
-
-        foreach($stmt->fetchAssocAllGenerator() as $record) {
-            yield $this->newInstance()->___appendRowData($record);
-        }
     }
 
     public function find($key)

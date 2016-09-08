@@ -185,14 +185,14 @@ trait RowTrait
 
         foreach($this->getIterator() as $row) {
             if ($row->isNew()) {
-                $this->insertData($row->cleanData())->exec();
+                $this->insertData($row->clearData())->exec();
 
                 $row->markAsNew(false);
 
                 if ($column = $this->autoIncrement()) {
                     $row[$column] = (int)$this->lastInsertId();
                 }
-            } elseif ($record = $row->cleanModifiedData()) {
+            } elseif ($record = $row->clearModifiedData()) {
                 $this->update($record)->whereAre($this->firstUniqueValues())->exec();
             }
         }
@@ -234,7 +234,7 @@ trait RowTrait
         return $this;
     }
 
-    public function cleanData($reverse = true)
+    public function clearData($reverse = true)
     {
         if ($record = $this->firstRecord()) {
             return $this->fixValuesTypes($record['data'], true, $reverse);
@@ -243,7 +243,7 @@ trait RowTrait
         return [];
     }
 
-    public function cleanModifiedData($reverse = true)
+    public function clearModifiedData($reverse = true)
     {
         if ($record = $this->firstRecord()) {
             return $this->fixValuesTypes($record['modified'], true, $reverse);

@@ -269,16 +269,16 @@ trait TableTrait
         return array_combine($keys, $values);
     }
 
-    public function fixColumnValueType($column, $value, $clean = false, $reverse = false)
+    public function fixColumnValueType($column, $value, $clear = false, $reverse = false)
     {
-        return Arr::first($this->fixValuesTypes([$column => $value], $clean, $reverse));
+        return Arr::first($this->fixValuesTypes([$column => $value], $clear, $reverse));
     }
 
-    public function fixValuesTypes(array $data, $clean = false, $reverse = false)
+    public function fixValuesTypes(array $data, $clear = false, $reverse = false)
     {
         foreach($data as $columnName => &$value) {
             if (!($column = $this->getColumn($columnName))) {
-                if ($clean) {
+                if ($clear) {
                     unset($data[$columnName]);
                 }
 
@@ -340,10 +340,5 @@ trait TableTrait
         unset($value);
 
         return $data;
-    }
-
-    public function truncate()
-    {
-        $this->getStorage()->truncate($this->fullName());
     }
 }

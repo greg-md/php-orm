@@ -2,10 +2,16 @@
 
 namespace Greg\Orm;
 
+use Greg\Orm\TableQuery\TableDeleteQueryTraitInterface;
+use Greg\Orm\TableQuery\TableFromQueryTraitInterface;
 use Greg\Orm\TableQuery\TableQueryTraitInterface;
 use Greg\Orm\TableQuery\TableSelectQueryTraitInterface;
 
-interface TableTraitInterface extends TableQueryTraitInterface, TableSelectQueryTraitInterface
+interface TableTraitInterface extends
+    TableQueryTraitInterface,
+    TableFromQueryTraitInterface,
+    TableSelectQueryTraitInterface,
+    TableDeleteQueryTraitInterface
 {
     public function setPrefix($name);
 
@@ -61,5 +67,5 @@ interface TableTraitInterface extends TableQueryTraitInterface, TableSelectQuery
 
     public function combineFirstUniqueIndex($values);
 
-    public function fixValuesTypes(array $row, $clean = false, $reverse = false);
+    public function fixValuesTypes(array $row, $clear = false, $reverse = false);
 }
