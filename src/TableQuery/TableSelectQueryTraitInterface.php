@@ -77,7 +77,7 @@ interface TableSelectQueryTraitInterface
 
     public function assocAll();
 
-    public function assocAllGenerator();
+    public function assocGenerator();
 
 
     public function fetchColumn($column = 0);

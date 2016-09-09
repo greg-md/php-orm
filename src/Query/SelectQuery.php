@@ -4,6 +4,51 @@ namespace Greg\Orm\Query;
 
 use Greg\Orm\TableInterface;
 
+/**
+ * Class SelectQuery
+ * @package Greg\Orm\Query
+ *
+ * Ide Helper methods
+ *
+ * FROM
+ * @method $this from($table, $_ = null);
+ * @method $this fromRaw($expr, $param = null, $_ = null);
+ *
+ * WHERE
+ * @method $this whereAre(array $columns);
+ * @method $this where($column, $operator, $value = null);
+ * @method $this orWhereAre(array $columns);
+ * @method $this orWhere($column, $operator, $value = null);
+ * @method $this whereRel($column1, $operator, $column2 = null);
+ * @method $this orWhereRel($column1, $operator, $column2 = null);
+ * @method $this whereIsNull($column);
+ * @method $this orWhereIsNull($column);
+ * @method $this whereIsNotNull($column);
+ * @method $this orWhereIsNotNull($column);
+ * @method $this whereBetween($column, $min, $max);
+ * @method $this orWhereBetween($column, $min, $max);
+ * @method $this whereNotBetween($column, $min, $max);
+ * @method $this orWhereNotBetween($column, $min, $max);
+ * @method $this whereDate($column, $date);
+ * @method $this orWhereDate($column, $date);
+ * @method $this whereTime($column, $date);
+ * @method $this orWhereTime($column, $date);
+ * @method $this whereYear($column, $year);
+ * @method $this orWhereYear($column, $year);
+ * @method $this whereMonth($column, $month);
+ * @method $this orWhereMonth($column, $month);
+ * @method $this whereDay($column, $day);
+ * @method $this orWhereDay($column, $day);
+ * @method $this whereRaw($expr, $value = null, $_ = null);
+ * @method $this orWhereRaw($expr, $value = null, $_ = null);
+ * @method $this hasWhere();
+ * @method $this clearWhere();
+ * @method $this whereExists($expr, $param = null, $_ = null);
+ * @method $this whereNotExists($expr, $param = null, $_ = null);
+ * @method $this whereToSql();
+ * @method $this whereToString();
+ *
+ */
 class SelectQuery implements SelectQueryInterface
 {
     use QueryTrait, FromQueryTrait, WhereQueryTrait, HavingQueryTrait;

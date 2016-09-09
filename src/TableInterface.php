@@ -2,14 +2,14 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\Driver\DriverInterface;
 
 interface TableInterface extends TableTraitInterface, RowTraitInterface
 {
-    public function setStorage(StorageInterface $storage);
+    public function setStorage(DriverInterface $storage);
 
     /**
-     * @return StorageInterface
+     * @return DriverInterface
      */
     public function getStorage();
 }

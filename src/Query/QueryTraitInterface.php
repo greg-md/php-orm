@@ -8,6 +8,7 @@ interface QueryTraitInterface
 
     public function setQuoteNameWith($value);
 
+
     public function getNameRegex();
 
     public function setNameRegex($regex);

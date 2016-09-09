@@ -1,43 +1,129 @@
 <?php
 
-namespace Greg\Orm\Storage;
+namespace Greg\Orm\Driver;
 
-use Greg\Orm\Adapter\AdapterInterface;
 use Greg\Orm\Column;
+use Greg\Orm\Constraint;
+use Greg\Orm\Driver\Mysql\Query\MysqlDeleteQuery;
+use Greg\Orm\Driver\Mysql\Query\MysqlInsertQuery;
+use Greg\Orm\Driver\Mysql\Query\MysqlQueryTrait;
+use Greg\Orm\Driver\Mysql\Query\MysqlSelectQuery;
+use Greg\Orm\Driver\Mysql\Query\MysqlUpdateQuery;
 use Greg\Orm\Query\FromQuery;
 use Greg\Orm\Query\HavingQuery;
 use Greg\Orm\Query\JoinsQuery;
 use Greg\Orm\Query\QueryTrait;
 use Greg\Orm\Query\WhereQuery;
-use Greg\Orm\Storage\Mysql\Query\MysqlDeleteQuery;
-use Greg\Orm\Storage\Mysql\Query\MysqlInsertQuery;
-use Greg\Orm\Storage\Mysql\Query\MysqlQueryTrait;
-use Greg\Orm\Storage\Mysql\Query\MysqlSelectQuery;
-use Greg\Orm\Storage\Mysql\Query\MysqlUpdateQuery;
-use Greg\Orm\Constraint;
 use Greg\Support\Arr;
 use Greg\Support\Str;
 
-/**
- * Class Mysql
- * @package Greg\Orm\Storage
- *
- * @method Mysql\Adapter\MysqlAdapterInterface getAdapter();
- */
-class Mysql implements MysqlInterface
+class Mysql extends DriverAbstract implements MysqlInterface
 {
-    use StorageAdapterTrait;
+    use PdoDriverTrait;
 
-    protected $tablesInfo = [];
+    private $dsn = [];
+
+    private $username = null;
+
+    private $password = null;
+
+    private $options = [];
+
+    private $tablesInfo = [];
+
+    private $connector = null;
+
+    public function __construct($dsn, $username, $password = null, array $options = [])
+    {
+        if (!is_array($dsn)) {
+            $dsnString = $dsn;
+
+            $dsn = [];
+
+            foreach(explode(';', $dsnString) as $info) {
+                list($key, $value) = explode('=', $info, 2);
+
+                $dsn[$key] = $value;
+            }
+        }
+
+        $this->dsn = $dsn;
+
+        $this->username = $username;
+
+        $this->password = $password;
+
+        $this->options = $options;
+
+        return $this;
+    }
+
+    protected function dsnToString()
+    {
+        $dsn = $this->dsn;
+
+        foreach($dsn as $key => &$value) {
+            $value = $key . '=' . $value;
+        }
+        unset($value);
+
+        return implode(';', $dsn);
+    }
+
+    public function dsn($name = null)
+    {
+        if (func_num_args()) {
+            return Arr::getRef($this->dsn, $name);
+        }
+
+        return $this->dsn;
+    }
 
     public function dbName()
     {
-        return $this->getAdapter()->dbName();
+        return $this->dsn('dbname');
+    }
+
+    public function charset()
+    {
+        return $this->dsn('charset');
+    }
+
+    public function connector()
+    {
+        if (!$this->connector) {
+            $this->connector = new \PDO('mysql:' . $this->dsnToString(), $this->username, $this->password, $this->options);
+
+            $this->connector->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+            $this->connector->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+
+            $this->connector->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+        }
+
+        return $this->connector;
+    }
+
+    public function reconnect()
+    {
+        $this->connector = null;
+
+        return $this;
+    }
+
+    public function truncate($tableName)
+    {
+        return $this->exec('TRUNCATE ' . $tableName);
+    }
+
+    protected function newPdoStmt(\PDOStatement $stmt)
+    {
+        return new PdoStmt($stmt, $this);
     }
 
     public function select($column = null, $_ = null)
     {
-        $query = new MysqlSelectQuery($this);
+        $query = new MysqlSelectQuery();
 
         if ($columns = is_array($column) ? $column : func_get_args()) {
             $query->columns($columns);
@@ -48,7 +134,7 @@ class Mysql implements MysqlInterface
 
     public function insert($into = null)
     {
-        $query = new MysqlInsertQuery($this);
+        $query = new MysqlInsertQuery();
 
         if ($into !== null) {
             $query->into($into);
@@ -59,7 +145,7 @@ class Mysql implements MysqlInterface
 
     public function delete($from = null)
     {
-        $query = new MysqlDeleteQuery($this);
+        $query = new MysqlDeleteQuery();
 
         if ($from !== null) {
             $query->from($from);
@@ -70,7 +156,7 @@ class Mysql implements MysqlInterface
 
     public function update($table = null)
     {
-        $query = new MysqlUpdateQuery($this);
+        $query = new MysqlUpdateQuery();
 
         if ($table !== null) {
             $query->table($table);
@@ -81,22 +167,22 @@ class Mysql implements MysqlInterface
 
     public function from()
     {
-        return new FromQuery($this);
+        return new FromQuery();
     }
 
     public function joins()
     {
-        return new JoinsQuery($this);
+        return new JoinsQuery();
     }
 
     public function where()
     {
-        return new WhereQuery($this);
+        return new WhereQuery();
     }
 
     public function having()
     {
-        return new HavingQuery($this);
+        return new HavingQuery();
     }
 
     static public function quoteLike($value, $escape = '\\')
@@ -255,8 +341,8 @@ class Mysql implements MysqlInterface
 
             $reference->setName($info['ConstraintName'])
                 ->setReferencedTableName($info['ReferencedTableName'])
-                ->setOnUpdate($info['OnUpdate'])
-                ->setOnDelete($info['OnDelete']);
+                ->onUpdate($info['OnUpdate'])
+                ->onDelete($info['OnDelete']);
 
             foreach($info['Constraint'] as $constraintInfo) {
                 $reference->setRelation($constraintInfo['Position'], $constraintInfo['ColumnName'], $constraintInfo['ReferencedColumnName']);
@@ -334,11 +420,11 @@ class Mysql implements MysqlInterface
             ->whereRel('KCU.TABLE_NAME', 'TC.TABLE_NAME')
             ->whereRel('KCU.CONSTRAINT_NAME', 'TC.CONSTRAINT_NAME')
 
-            ->order('KCU.TABLE_SCHEMA')
-            ->order('KCU.TABLE_NAME')
-            ->order('KCU.CONSTRAINT_NAME')
-            ->order('KCU.ORDINAL_POSITION')
-            ->order('KCU.POSITION_IN_UNIQUE_CONSTRAINT');
+            ->orderBy('KCU.TABLE_SCHEMA')
+            ->orderBy('KCU.TABLE_NAME')
+            ->orderBy('KCU.CONSTRAINT_NAME')
+            ->orderBy('KCU.ORDINAL_POSITION')
+            ->orderBy('KCU.POSITION_IN_UNIQUE_CONSTRAINT');
 
         if ($withRules) {
             $query->from(['RC' => 'information_schema.REFERENTIAL_CONSTRAINTS'], [
@@ -355,9 +441,9 @@ class Mysql implements MysqlInterface
 
         $query->where('KCU.REFERENCED_TABLE_NAME', $tableName);
 
-        $items = $query->assocAll();
+        $recors = $this->prepare($query->toSql())->fetchAssocAll();
 
-        return $this->parseTableRelationshipsAsArray($items, $withRules);
+        return $this->parseTableRelationshipsAsArray($recors, $withRules);
     }
 
     protected function parseTableRelationships(array $items, $withRules = false)
@@ -372,9 +458,9 @@ class Mysql implements MysqlInterface
             $constraint->setReferencedTableName($relationship['RelationshipTableName']);
 
             if ($withRules) {
-                $constraint->setOnUpdate($relationship['OnUpdate']);
+                $constraint->onUpdate($relationship['OnUpdate']);
 
-                $constraint->setOnDelete($relationship['OnDelete']);
+                $constraint->onDelete($relationship['OnDelete']);
             }
 
             foreach($relationship['Constraint'] as $relation) {
@@ -415,70 +501,5 @@ class Mysql implements MysqlInterface
         }
 
         return $relationships;
-    }
-
-    public function transaction(callable $callable)
-    {
-        return $this->getAdapter()->transaction($callable);
-    }
-
-    public function inTransaction()
-    {
-        return $this->getAdapter()->inTransaction();
-    }
-
-    public function beginTransaction()
-    {
-        return $this->getAdapter()->beginTransaction();
-    }
-
-    public function commit()
-    {
-        return $this->getAdapter()->commit();
-    }
-
-    public function rollBack()
-    {
-        return $this->getAdapter()->rollBack();
-    }
-
-    public function prepare($sql)
-    {
-        return $this->getAdapter()->prepare($sql);
-    }
-
-    public function query($sql)
-    {
-        return $this->getAdapter()->query($sql);
-    }
-
-    public function exec($sql)
-    {
-        return $this->getAdapter()->exec($sql);
-    }
-
-    public function truncate($name)
-    {
-        return $this->exec('TRUNCATE ' . $name);
-    }
-
-    public function lastInsertId($sequenceId = null)
-    {
-        return $this->getAdapter()->lastInsertId($sequenceId);
-    }
-
-    public function quote($value)
-    {
-        return $this->getAdapter()->quote($value);
-    }
-
-    public function listen(callable $callable)
-    {
-        return $this->getAdapter()->listen($callable);
-    }
-
-    public function fire($sql)
-    {
-        return $this->getAdapter()->fire($sql);
     }
 }

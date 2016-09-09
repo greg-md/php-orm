@@ -1,10 +1,14 @@
 <?php
 
-namespace Greg\Orm\Storage;
+namespace Greg\Orm\Driver;
 
-interface MysqlInterface extends StorageInterface
+interface MysqlInterface extends DriverInterface
 {
+    public function dsn($name = null);
+
     public function dbName();
+
+    public function charset();
 
 
     public function tableInfo($tableName, $save = true);

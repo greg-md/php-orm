@@ -1,21 +1,22 @@
 <?php
 
-namespace Greg\Orm\Adapter;
+namespace Greg\Orm\Driver;
 
 use Greg\Support\Arr;
 use Greg\Support\Str;
 
-class PdoStmt extends \PDOStatement implements StmtInterface
+class PdoStmt implements StmtInterface
 {
-    /**
-     * \PDOStatement require it to be protected
-     */
-    protected function __construct() {}
+    protected $stmt = null;
 
-    /**
-     * @var PdoAdapter|null
-     */
     protected $adapter = null;
+
+    public function __construct(\PDOStatement $stmt, DriverInterface $adapter)
+    {
+        $this->stmt = $stmt;
+
+        $this->adapter = $adapter;
+    }
 
     public function bindParams(array $params)
     {
@@ -28,19 +29,18 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         return $this;
     }
 
-    public function bindParam($key, &$value, $_ = null, $_ = null, $_ = null)
+    public function bindParam($key, $value)
     {
-        return parent::bindValue($key, $value);
+        return $this->stmt->bindValue($key, $value);
     }
 
     /**
-     * @todo disable "array" type for $params, until we use PDO as connector.
      * @param array $params
      * @return mixed
      */
-    public function execute($params = [])
+    public function execute(array $params = [])
     {
-        $this->getAdapter()->fire($this->queryString);
+        $this->adapter->fire($this->stmt->queryString);
 
         return $this->tryParent(__FUNCTION__, func_get_args());
     }
@@ -51,7 +51,7 @@ class PdoStmt extends \PDOStatement implements StmtInterface
             return $this->callParent($method, $args);
         } catch (\PDOException $e) {
             if ($e->errorInfo[1] == 2006) {
-                $this->getAdapter()->reconnect();
+                $this->adapter->reconnect();
 
                 return $this->callParent($method, $args);
             }
@@ -61,7 +61,7 @@ class PdoStmt extends \PDOStatement implements StmtInterface
 
     protected function callParent($method, array $args = [])
     {
-        $result = call_user_func_array(['parent', $method], $args);
+        $result = call_user_func_array([$this->stmt, $method], $args);
 
         if ($result === false) {
             $this->errorCheck();
@@ -72,7 +72,7 @@ class PdoStmt extends \PDOStatement implements StmtInterface
 
     protected function errorCheck()
     {
-        $errorInfo = $this->errorInfo();
+        $errorInfo = $this->stmt->errorInfo();
 
         // Bind or column index out of range
         if ($errorInfo[1] and $errorInfo[1] != 25) {
@@ -82,19 +82,36 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         return $this;
     }
 
+    public function fetch()
+    {
+        return $this->stmt->fetch();
+    }
+
+    public function fetchAll()
+    {
+        return $this->stmt->fetchAll();
+    }
+
+    public function fetchGenerator()
+    {
+        while ($record = $this->stmt->fetch()) {
+            yield $record;
+        }
+    }
+
     public function fetchAssoc()
     {
-        return $this->fetch(\PDO::FETCH_ASSOC);
+        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function fetchAssocAll()
     {
-        return $this->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function fetchAssocAllGenerator()
+    public function fetchAssocGenerator()
     {
-        while ($record = $this->fetch(\PDO::FETCH_ASSOC)) {
+        while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
             yield $record;
         }
     }
@@ -102,12 +119,12 @@ class PdoStmt extends \PDOStatement implements StmtInterface
     public function fetchColumn($column = 0)
     {
         if (Str::isNaturalNumber($column)) {
-            return parent::fetchColumn($column);
+            return $this->stmt->fetchColumn($column);
         }
 
         $row = $this->fetchAssoc();
 
-        return $row ? Arr::get($row, $column) : null;
+        return $row ? Arr::getRef($row, $column) : null;
     }
 
     public function fetchAllColumn($column = 0)
@@ -120,21 +137,9 @@ class PdoStmt extends \PDOStatement implements StmtInterface
         $pairs = [];
 
         foreach($this->fetchAll() as $row) {
-            $pairs[$row[$key]] = $row[$value];
+            $pairs[Arr::getRef($row, $key)] = Arr::getRef($row, $value);
         }
 
         return $pairs;
-    }
-
-    public function getAdapter()
-    {
-        return $this->adapter;
-    }
-
-    public function setAdapter(AdapterInterface $adapter)
-    {
-        $this->adapter = $adapter;
-
-        return $this;
     }
 }

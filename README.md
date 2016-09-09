@@ -3,15 +3,14 @@ PHP Object-Relational Mapping
 
 # Documentation
 
-## Adapter
+## Drivers
 
-- **PDO**
+- **Mysql**
+- **Sqlite**
 
-## `AdapterInterface`
+## `DriverInterface`
 
-- `getStmtClass()`
-- `setStmtClass($className)`
-
+- `connector()`
 - `reconnect()`
 
 - `transaction(callable $callable)`
@@ -29,38 +28,6 @@ PHP Object-Relational Mapping
 - `listen(callable $callable)`
 - `fire($sql)`
 
-## `MysqlAdapterInterface extends AdapterInterface`
-
-- `dbName()`
-
-## `SqliteAdapterInterface extends AdapterInterface`
-
-## `StatementInterface`
-
-- `bindParams(array $params)`
-- `bindParam($key, $value)`
-
-- `execute(array $params = [])`
-
-- `fetch()`
-- `fetchAll()`
-- `fetchAssoc()`
-- `fetchAssocAll()`
-- `fetchAssocAllGenerator()`
-- `fetchColumn($column = 0)`
-- `fetchAllColumn($column = 0)`
-- `fetchObject($class = 'stdClass', $args = [])`
-- `fetchPairs($key = 0, $value = 1)`
-- `getAdapter()`
-- `setAdapter(AdapterInterface $adapter)`
-
-## Storage
-
-- **Mysql**
-- **Sqlite**
-
-## `StorageInterface`
-
 - `select($column = null, $_ = null)`
 - `insert($into = null)`
 - `delete($from = null)`
@@ -73,36 +40,46 @@ PHP Object-Relational Mapping
 - `static quoteLike($value, $escape = '\\')`
 - `static concat($values, $delimiter = '')`
 
-- `transaction(callable $callable)`
-- `inTransaction()`
-- `beginTransaction()`
-- `commit()`
-- `rollBack()`
 
-- `prepare($sql)`
-- `query($sql)`
-- `exec($sql)`
-- `truncate($tableName)`
-- `lastInsertId($sequenceId = null)`
-- `quote($value)`
+## `MysqlInterface extends DriverInterface`
 
-- `listen(callable $callable)`
-- `fire($sql)`
-
-## `MysqlInterface extends StorageInterface`
-
+- `dsn($name = null)`
 - `dbName()`
-
-- `tableInfo($tableName)`
+- `charset()`
+- `tableInfo($tableName, $save = true)`
 - `tableReferences($tableName)`
-- `tableRelationships($tableName)`
+- `tableRelationships($tableName, $withRules = false)`
 
-## `SqliteInterface extends StorageInterface`
+
+## `SqliteInterface extends DriverInterface`
+
+
+## `StmtInterface`
+
+- `bindParams(array $params)`
+- `bindParam($key, $value)`
+
+- `execute(array $params = [])`
+
+- `fetch()`
+- `fetchAll()`
+- `fetchGenerator()`
+
+- `fetchAssoc()`
+- `fetchAssocAll()`
+- `fetchAssocGenerator()`
+
+- `fetchColumn($column = 0)`
+- `fetchAllColumn($column = 0)`
+
+- `fetchPairs($key = 0, $value = 1)`
+
 
 ## `QueryTraitInterface`
 
 - `getQuoteNameWith()`
 - `setQuoteNameWith($value)`
+
 - `getNameRegex()`
 - `setNameRegex($regex)`
 
@@ -113,6 +90,33 @@ PHP Object-Relational Mapping
 
 - `toSql()`
 - `toString()`
+- `__toString()`
+
+
+## `JoinsQueryTraitInterface`
+
+- `left($table, $on = null, $param = null, $_ = null)`
+- `right($table, $on = null, $param = null, $_ = null)`
+- `inner($table, $on = null, $param = null, $_ = null)`
+- `cross($table)`
+
+- `leftTo($source, $table, $on = null, $param = null, $_ = null)`
+- `rightTo($source, $table, $on = null, $param = null, $_ = null)`
+- `innerTo($source, $table, $on = null, $param = null, $_ = null)`
+- `crossTo($source, $table)`
+
+- `hasJoins()`
+- `getJoins()`
+- `addJoins(array $joins)`
+- `setJoins(array $joins)`
+- `clearJoins()`
+
+
+## `JoinsQueryInterface extends QueryTraitInterface, JoinsQueryTraitInterface`
+
+- `toSql($source = null)`
+- `toString($source = null)`
+
 
 ## `ConditionsQueryTraitInterface`
 
@@ -154,167 +158,57 @@ PHP Object-Relational Mapping
 - `setConditions(array $conditions)`
 - `clearConditions()`
 
+
 ## `ConditionsQueryInterface extends QueryTraitInterface, ConditionsQueryTraitInterface`
 
-## `WhereQueryTraitInterface extends ConditionsQueryTraitInterface`
 
-- `whereAre` alias of `conditions(array $columns)`
-- `where` alias of `condition($column, $operator, $value = null)`
-- `orWhereAre` alias of `orConditions(array $columns)`
-- `orWhere` alias of `orCondition($column, $operator, $value = null)`
+## `OnQueryTraitInterface`
 
-- `whereRel` alias of `conditionRel($column1, $operator, $column2 = null)`
-- `orWhereRel` alias of `orConditionRel($column1, $operator, $column2 = null)`
+- `onAre(array $columns)`
+- `on($column, $operator, $value = null)`
+- `orOnAre(array $columns)`
+- `orOn($column, $operator, $value = null)`
 
-- `whereIsNull` alias of `conditionIsNull($column)`
-- `orWhereIsNull` alias of `orConditionIsNull($column)`
-- `whereIsNotNull` alias of `conditionIsNotNull($column)`
-- `orWhereIsNotNull` alias of `orConditionIsNotNull($column)`
+- `onRel($column1, $operator, $column2 = null)`
+- `orOnRel($column1, $operator, $column2 = null)`
 
-- `whereBetween` alias of `conditionBetween($column, $min, $max)`
-- `orWhereBetween` alias of `orConditionBetween($column, $min, $max)`
-- `whereNotBetween` alias of `conditionNotBetween($column, $min, $max)`
-- `orWhereNotBetween` alias of `orConditionNotBetween($column, $min, $max)`
+- `onIsNull($column)`
+- `orOnIsNull($column)`
+- `onIsNotNull($column)`
+- `orOnIsNotNull($column)`
 
-- `whereDate` alias of `conditionDate($column, $date)`
-- `orWhereDate` alias of `orConditionDate($column, $date)`
-- `whereTime` alias of `conditionTime($column, $date)`
-- `orWhereTime` alias of `orConditionTime($column, $date)`
-- `whereYear` alias of `conditionYear($column, $year)`
-- `orWhereYear` alias of `orConditionYear($column, $year)`
-- `whereMonth` alias of `conditionMonth($column, $month)`
-- `orWhereMonth` alias of `orConditionMonth($column, $month)`
-- `whereDay` alias of `conditionDay($column, $day)`
-- `orWhereDay` alias of `orConditionDay($column, $day)`
+- `onBetween($column, $min, $max)`
+- `orOnBetween($column, $min, $max)`
+- `onNotBetween($column, $min, $max)`
+- `orOnNotBetween($column, $min, $max)`
 
-- `whereExists($expr, $param = null, $_ = null)`
-- `whereNotExists($expr, $param = null, $_ = null)`
+- `onDate($column, $date)`
+- `orOnDate($column, $date)`
+- `onTime($column, $date)`
+- `orOnTime($column, $date)`
+- `onYear($column, $year)`
+- `orOnYear($column, $year)`
+- `onMonth($column, $month)`
+- `orOnMonth($column, $month)`
+- `onDay($column, $day)`
+- `orOnDay($column, $day)`
 
-- `whereRaw` alias of `conditionRaw($expr, $value = null, $_ = null)`
-- `orWhereRaw` alias of `orConditionRaw($expr, $value = null, $_ = null)`
+- `onRaw($expr, $value = null, $_ = null)`
+- `orOnRaw($expr, $value = null, $_ = null)`
 
-- `hasWhere` alias of `hasConditions()`
-- `getWhere` alias of `getConditions()`
-- `addWhere` alias of `addConditions(array $conditions)`
-- `setWhere` alias of `setConditions(array $conditions)`
-- `clearWhere` alias of `clearConditions()`
-
-## `WhereQueryInterface extends QueryTraitInterface, WhereQueryTraitInterface`
-
-- `toSql($useClause = true)`
-- `toString($useClause = true)`
-
-## `HavingQueryTraitInterface extends ConditionsQueryTraitInterface`
-
-- `havingAre` alias of `conditions(array $columns)`
-- `having` alias of `condition($column, $operator, $value = null)`
-- `orHavingAre` alias of `orConditions(array $columns)`
-- `orHaving` alias of `orCondition($column, $operator, $value = null)`
-
-- `havingRel` alias of `conditionRel($column1, $operator, $column2 = null)`
-- `orHavingRel` alias of `orConditionRel($column1, $operator, $column2 = null)`
-
-- `havingIsNull` alias of `conditionIsNull($column)`
-- `orHavingIsNull` alias of `orConditionIsNull($column)`
-- `havingIsNotNull` alias of `conditionIsNotNull($column)`
-- `orHavingIsNotNull` alias of `orConditionIsNotNull($column)`
-
-- `havingBetween` alias of `conditionBetween($column, $min, $max)`
-- `orHavingBetween` alias of `orConditionBetween($column, $min, $max)`
-- `havingNotBetween` alias of `conditionNotBetween($column, $min, $max)`
-- `orHavingNotBetween` alias of `orConditionNotBetween($column, $min, $max)`
-
-- `havingDate` alias of `conditionDate($column, $date)`
-- `orHavingDate` alias of `orConditionDate($column, $date)`
-- `havingTime` alias of `conditionTime($column, $date)`
-- `orHavingTime` alias of `orConditionTime($column, $date)`
-- `havingYear` alias of `conditionYear($column, $year)`
-- `orHavingYear` alias of `orConditionYear($column, $year)`
-- `havingMonth` alias of `conditionMonth($column, $month)`
-- `orHavingMonth` alias of `orConditionMonth($column, $month)`
-- `havingDay` alias of `conditionDay($column, $day)`
-- `orHavingDay` alias of `orConditionDay($column, $day)`
-
-- `havingRaw` alias of `conditionRaw($expr, $value = null, $_ = null)`
-- `orHavingRaw` alias of `orConditionRaw($expr, $value = null, $_ = null)`
-
-- `hasHaving` alias of `hasConditions()`
-- `getHaving` alias of `getConditions()`
-- `addHaving` alias of `addConditions(array $conditions)`
-- `setHaving` alias of `setConditions(array $conditions)`
-- `clearHaving` alias of `clearConditions()`
-
-## `HavingQueryInterface extends QueryTraitInterface, HavingQueryTraitInterface`
-
-- `toSql($useClause = true)`
-- `toString($useClause = true)`
-
-## `OnQueryTraitInterface extends ConditionsQueryTraitInterface`
-
-- `onAre` alias of `conditions(array $columns)`
-- `on` alias of `condition($column, $operator, $value = null)`
-- `orOnAre` alias of `orConditions(array $columns)`
-- `orOn` alias of `orCondition($column, $operator, $value = null)`
-
-- `onRel` alias of `conditionRel($column1, $operator, $column2 = null)`
-- `orOnRel` alias of `orConditionRel($column1, $operator, $column2 = null)`
-
-- `onIsNull` alias of `conditionIsNull($column)`
-- `orOnIsNull` alias of `orConditionIsNull($column)`
-- `onIsNotNull` alias of `conditionIsNotNull($column)`
-- `orOnIsNotNull` alias of `orConditionIsNotNull($column)`
-
-- `onBetween` alias of `conditionBetween($column, $min, $max)`
-- `orOnBetween` alias of `orConditionBetween($column, $min, $max)`
-- `onNotBetween` alias of `conditionNotBetween($column, $min, $max)`
-- `orOnNotBetween` alias of `orConditionNotBetween($column, $min, $max)`
-
-- `onDate` alias of `conditionDate($column, $date)`
-- `orOnDate` alias of `orConditionDate($column, $date)`
-- `onTime` alias of `conditionTime($column, $date)`
-- `orOnTime` alias of `orConditionTime($column, $date)`
-- `onYear` alias of `conditionYear($column, $year)`
-- `orOnYear` alias of `orConditionYear($column, $year)`
-- `onMonth` alias of `conditionMonth($column, $month)`
-- `orOnMonth` alias of `orConditionMonth($column, $month)`
-- `onDay` alias of `conditionDay($column, $day)`
-- `orOnDay` alias of `orConditionDay($column, $day)`
-
-- `onRaw` alias of `conditionRaw($expr, $value = null, $_ = null)`
-- `orOnRaw` alias of `orConditionRaw($expr, $value = null, $_ = null)`
-
-- `hasOn` alias of `hasConditions()`
-- `getOn` alias of `getConditions()`
-- `addOn` alias of `addConditions(array $conditions)`
-- `setOn` alias of `setConditions(array $conditions)`
-- `clearOn` alias of `clearConditions()`
+- `hasOn()`
+- `getOn()`
+- `addOn(array $conditions)`
+- `setOn(array $conditions)`
+- `clearOn()`
 
 ## `OnQueryInterface extends QueryTraitInterface, OnQueryTraitInterface`
 
 - `toSql($useClause = true)`
 - `toString($useClause = true)`
 
-## `JoinsQueryTraitInterface`
 
-- `left($table, $on = null, $param = null, $_ = null)`
-- `right($table, $on = null, $param = null, $_ = null)`
-- `inner($table, $on = null, $param = null, $_ = null)`
-- `cross($table)`
-
-- `leftTo($source, $table, $on = null, $param = null, $_ = null)`
-- `rightTo($source, $table, $on = null, $param = null, $_ = null)`
-- `innerTo($source, $table, $on = null, $param = null, $_ = null)`
-- `crossTo($source, $table)`
-
-- `hasJoins()`
-- `getJoins()`
-- `addJoins(array $joins)`
-- `setJoins(array $joins)`
-- `clearJoins()`
-
-## `JoinsQueryInterface extends QueryTraitInterface, JoinsQueryTraitInterface`
-
-## `FromQueryTraitInterface`
+## `FromQueryTraitInterface extends JoinsQueryTraitInterface`
 
 - `from($table, $_ = null)`
 - `fromRaw($expr, $param = null, $_ = null)`
@@ -325,10 +219,81 @@ PHP Object-Relational Mapping
 - `setFrom(array $from)`
 - `clearFrom()`
 
+
 ## `FromQueryInterface extends QueryTraitInterface, FromQueryTraitInterface`
 
 - `toSql($useClause = true)`
 - `toString($useClause = true)`
+
+
+## `HavingQueryTraitInterface`
+
+- `havingAre(array $columns)`
+- `having($column, $operator, $value = null)`
+- `orHavingAre(array $columns)`
+- `orHaving($column, $operator, $value = null)`
+
+- `havingRel($column1, $operator, $column2 = null)`
+- `orHavingRel($column1, $operator, $column2 = null)`
+
+- `havingIsNull($column)`
+- `orHavingIsNull($column)`
+- `havingIsNotNull($column)`
+- `orHavingIsNotNull($column)`
+
+- `havingBetween($column, $min, $max)`
+- `orHavingBetween($column, $min, $max)`
+- `havingNotBetween($column, $min, $max)`
+- `orHavingNotBetween($column, $min, $max)`
+
+- `havingDate($column, $date)`
+- `orHavingDate($column, $date)`
+- `havingTime($column, $date)`
+- `orHavingTime($column, $date)`
+- `havingYear($column, $year)`
+- `orHavingYear($column, $year)`
+- `havingMonth($column, $month)`
+- `orHavingMonth($column, $month)`
+- `havingDay($column, $day)`
+- `orHavingDay($column, $day)`
+
+- `havingRaw($expr, $value = null, $_ = null)`
+- `orHavingRaw($expr, $value = null, $_ = null)`
+
+- `hasHaving()`
+- `getHaving()`
+- `addHaving(array $conditions)`
+- `setHaving(array $conditions)`
+- `clearHaving()`
+
+
+## `HavingQueryInterface extends QueryTraitInterface, HavingQueryTraitInterface`
+
+- `toSql($useClause = true)`
+- `toString($useClause = true)`
+
+
+## `DeleteQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface`
+
+- `fromTable($table, $_ = null)`
+
+
+## `InsertQueryInterface extends QueryTraitInterface`
+
+- `into($table)`
+
+- `columns(array $columns)`
+- `clearColumns()`
+
+- `values(array $values)`
+- `clearValues()`
+
+- `data(array $data)`
+- `clearData()`
+
+- `select($sql)`
+- `clearSelect()`
+
 
 ## `SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface, HavingQueryTraitInterface`
 
@@ -366,30 +331,67 @@ PHP Object-Relational Mapping
 - `unionAll($expr, $param = null, $_ = null)`
 - `unionDistinct($expr, $param = null, $_ = null)`
 
-## `InsertQueryInterface extends QueryTraitInterface`
 
-- `into($table)`
-- `columns(array $columns)`
-- `clearColumns()`
-- `values(array $values)`
-- `clearValues()`
-- `data(array $data)`
-- `clearData()`
-
-- `select($sql)`
-- `clearSelect()`
-
-## `DeleteQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface`
-
-- `fromTable($table)`
-
-## `UpdateQueryInterface extends QueryTraitInterface, WhereQueryTraitInterface`
+## `UpdateQueryInterface extends QueryTraitInterface, JoinsQueryTraitInterface, WhereQueryTraitInterface`
 
 - `table($table, $_ = null)`
+
 - `set($key, $value = null)`
 - `setRaw($raw, $param = null, $_ = null)`
+
 - `increment($column, $value = 1)`
 - `decrement($column, $value = 1)`
+
+
+## `WhereQueryTraitInterface`
+
+- `whereAre(array $columns)`
+- `where($column, $operator, $value = null)`
+- `orWhereAre(array $columns)`
+- `orWhere($column, $operator, $value = null)`
+
+- `whereRel($column1, $operator, $column2 = null)`
+- `orWhereRel($column1, $operator, $column2 = null)`
+
+- `whereIsNull($column)`
+- `orWhereIsNull($column)`
+- `whereIsNotNull($column)`
+- `orWhereIsNotNull($column)`
+
+- `whereBetween($column, $min, $max)`
+- `orWhereBetween($column, $min, $max)`
+- `whereNotBetween($column, $min, $max)`
+- `orWhereNotBetween($column, $min, $max)`
+
+- `whereDate($column, $date)`
+- `orWhereDate($column, $date)`
+- `whereTime($column, $date)`
+- `orWhereTime($column, $date)`
+- `whereYear($column, $year)`
+- `orWhereYear($column, $year)`
+- `whereMonth($column, $month)`
+- `orWhereMonth($column, $month)`
+- `whereDay($column, $day)`
+- `orWhereDay($column, $day)`
+
+- `whereExists($expr, $param = null, $_ = null)`
+- `whereNotExists($expr, $param = null, $_ = null)`
+
+- `whereRaw($expr, $value = null, $_ = null)`
+- `orWhereRaw($expr, $value = null, $_ = null)`
+
+- `hasWhere` alias of `hasConditions()`
+- `getWhere` alias of `getConditions()`
+- `addWhere` alias of `addConditions(array $conditions)`
+- `setWhere` alias of `setConditions(array $conditions)`
+- `clearWhere` alias of `clearConditions()`
+
+
+## `WhereQueryInterface extends QueryTraitInterface, WhereQueryTraitInterface`
+
+- `toSql($useClause = true)`
+- `toString($useClause = true)`
+
 
 ## `Column`
 
@@ -418,7 +420,7 @@ PHP Object-Relational Mapping
 - `getDefaultValue()`
 - `setDefaultValue($value)`
 - `getComment()`
-- `setComment($comments)`
+- `setComment($comment)`
 - `getValues()`
 - `setValues(array $values)`
 
@@ -433,6 +435,16 @@ PHP Object-Relational Mapping
 - `getRelations()`
 - `getRelation($position)`
 - `setRelation($position, $columnName, $referencedColumnName)`
+
+
+
+
+
+
+
+
+
+
 
 ## `TableQueryTraitInterface`
 
@@ -622,6 +634,5 @@ PHP Object-Relational Mapping
 
 # @todo
 
-- Change `extends \PDO` to `getConnector` and start using PdoAdapterTrait instead of extending classes.
 - Add ORDER BY and LIMIT clauses to UPDATE and DELETE statements.
 - Check sql documentation and add needed sql clauses in statements.

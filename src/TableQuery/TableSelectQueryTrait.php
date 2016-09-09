@@ -423,9 +423,9 @@ trait TableSelectQueryTrait
         return $this->executeSelectInstance()->fetchAssocAll();
     }
 
-    public function assocAllGenerator()
+    public function assocGenerator()
     {
-        return $this->executeSelectInstance()->fetchAssocAllGenerator();
+        return $this->executeSelectInstance()->fetchAssocGenerator();
     }
 
     public function fetchColumn($column = 0)
@@ -524,7 +524,7 @@ trait TableSelectQueryTrait
 
         $rows = $this->newInstance();
 
-        foreach($stmt->fetchAssocAllGenerator() as $row) {
+        foreach($stmt->fetchAssocGenerator() as $row) {
             $rows->___appendRowData($row);
         }
 
@@ -535,7 +535,7 @@ trait TableSelectQueryTrait
     {
         $stmt = $this->executeSelectRowInstance();
 
-        foreach($stmt->fetchAssocAllGenerator() as $record) {
+        foreach($stmt->fetchAssocGenerator() as $record) {
             yield $this->newInstance()->___appendRowData($record);
         }
     }
@@ -554,7 +554,7 @@ trait TableSelectQueryTrait
             if ($callOneByOne) {
                 $k = 0;
 
-                foreach ($stmt->fetchAssocAllGenerator() as $record) {
+                foreach ($stmt->fetchAssocGenerator() as $record) {
                     if (call_user_func_array($callable, [$record]) === false) {
                         $k = 0;
 

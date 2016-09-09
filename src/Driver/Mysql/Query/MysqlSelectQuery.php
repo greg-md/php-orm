@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Orm\Storage\Mysql\Query;
+namespace Greg\Orm\Driver\Mysql\Query;
 
 use Greg\Orm\Query\SelectQuery;
 

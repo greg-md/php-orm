@@ -2,7 +2,7 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\Driver\DriverInterface;
 use Greg\Support\Obj;
 
 abstract class Table implements TableInterface
@@ -10,11 +10,11 @@ abstract class Table implements TableInterface
     use TableTrait, RowTrait;
 
     /**
-     * @var StorageInterface|null
+     * @var DriverInterface|null
      */
     protected $storage = null;
 
-    public function __construct(array $data = [], StorageInterface $storage = null)
+    public function __construct(array $data = [], DriverInterface $storage = null)
     {
         if ($storage) {
             $this->setStorage($storage);
@@ -54,7 +54,7 @@ abstract class Table implements TableInterface
         return new $class($data, $this->getStorage());
     }
 
-    public function setStorage(StorageInterface $storage)
+    public function setStorage(DriverInterface $storage)
     {
         $this->storage = $storage;
 

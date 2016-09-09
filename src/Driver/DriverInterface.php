@@ -1,8 +1,7 @@
 <?php
 
-namespace Greg\Orm\Storage;
+namespace Greg\Orm\Driver;
 
-use Greg\Orm\Adapter\StmtInterface;
 use Greg\Orm\Query\DeleteQueryInterface;
 use Greg\Orm\Query\FromQueryInterface;
 use Greg\Orm\Query\HavingQueryInterface;
@@ -12,8 +11,46 @@ use Greg\Orm\Query\SelectQueryInterface;
 use Greg\Orm\Query\UpdateQueryInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 
-interface StorageInterface
+interface DriverInterface
 {
+    public function connector();
+
+    public function reconnect();
+
+
+    public function transaction(callable $callable);
+
+    public function inTransaction();
+
+    public function beginTransaction();
+
+    public function commit();
+
+    public function rollBack();
+
+
+    /**
+     * @param $sql
+     * @return StmtInterface
+     */
+    public function prepare($sql);
+
+    public function query($sql);
+
+    public function exec($sql);
+
+    public function lastInsertId($sequenceId = null);
+
+    public function quote($value);
+
+    public function truncate($tableName);
+
+
+    public function listen(callable $callable);
+
+    public function fire($sql);
+
+
     /**
      * @param null $column
      * @param null $_
@@ -71,41 +108,4 @@ interface StorageInterface
     static public function quoteLike($value, $escape = '\\');
 
     static public function concat(array $values, $delimiter = '');
-
-
-    public function transaction(callable $callable);
-
-    public function inTransaction();
-
-    public function beginTransaction();
-
-    public function commit();
-
-    public function rollBack();
-
-
-    /**
-     * @param $sql
-     * @return StmtInterface
-     */
-    public function prepare($sql);
-
-    /**
-     * @param $sql
-     * @return StmtInterface
-     */
-    public function query($sql);
-
-    public function exec($sql);
-
-    public function truncate($tableName);
-
-    public function lastInsertId($sequenceId = null);
-
-    public function quote($value);
-
-
-    public function listen(callable $callable);
-
-    public function fire($sql);
 }

@@ -236,9 +236,9 @@ class Column
         return $this->comment;
     }
 
-    public function setComment($comments)
+    public function setComment($comment)
     {
-        $this->comment = (string)$comments;
+        $this->comment = (string)$comment;
 
         return $this;
     }
