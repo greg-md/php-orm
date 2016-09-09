@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface HavingQueryTraitInterface extends ConditionsQueryTraitInterface
+interface HavingQueryTraitInterface
 {
     /**
      * @param array $columns

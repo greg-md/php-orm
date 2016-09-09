@@ -4,7 +4,7 @@ namespace Greg\Orm\TableQuery;
 
 interface TableDeleteQueryTraitInterface
 {
-    public function intoDelete($column = null, $_ = null);
+    public function intoDelete(array $whereAre = []);
 
     public function getDeleteQuery();
 

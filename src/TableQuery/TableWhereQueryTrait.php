@@ -8,46 +8,11 @@ use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Query\WhereQueryTraitInterface;
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\TableInterface;
 
 trait TableWhereQueryTrait
 {
     protected $whereApplicators = [];
-
-    public function needWhereClause()
-    {
-        foreach($this->clauses as $clause) {
-            if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof FromQueryInterface)
-                or  !($clause instanceof HavingQueryInterface)
-                or  !($clause instanceof JoinsQueryInterface)
-            ) {
-                throw new \Exception('Current query could not have a WHERE clause.');
-            }
-        }
-
-        if (!isset($this->clauses['where'])) {
-            $this->clauses['where'] = $this->getStorage()->where();
-        }
-
-        return $this->clauses['where'];
-    }
-
-    /**
-     * @return WhereQueryTraitInterface
-     * @throws \Exception
-     */
-    public function needWhereQuery()
-    {
-        if (!$this->query) {
-            return $this->needWhereClause();
-        }
-
-        if (!($this->query instanceof WhereQueryTraitInterface)) {
-            throw new \Exception('Current query is not a WHERE clause.');
-        }
-
-        return $this->query;
-    }
 
     public function applyWhere(WhereQueryTraitInterface $query)
     {
@@ -63,242 +28,345 @@ trait TableWhereQueryTrait
         $this->whereApplicators[] = $callable;
     }
 
-    public function whereAre(array $columns)
+    /**
+     * @return $this
+     */
+    protected function newWhereClauseInstance()
     {
-        $this->needWhereQuery()->whereAre($columns);
+        return $this->newInstance()->intoWhere();
+    }
+
+    protected function checkWhereClauseQuery()
+    {
+        if (!($this->query instanceof WhereQueryTraitInterface)) {
+            throw new \Exception('Current query is not a WHERE clause.');
+        }
 
         return $this;
+    }
+
+    /**
+     * @return WhereQueryTraitInterface
+     * @throws \Exception
+     */
+    protected function getWhereClauseQuery()
+    {
+        $this->checkWhereClauseQuery();
+
+        return $this->query;
+    }
+
+    protected function needWhereClauseInstance()
+    {
+        if (!$this->query) {
+            if ($this->clauses) {
+                return $this->intoWhere();
+            }
+
+            return $this->newWhereClauseInstance();
+        }
+
+        return $this->checkWhereClauseQuery();
+    }
+
+    protected function intoWhereClause()
+    {
+        foreach($this->clauses as $clause) {
+            if (    !($clause instanceof WhereQueryInterface)
+                or  !($clause instanceof FromQueryInterface)
+                or  !($clause instanceof HavingQueryInterface)
+                or  !($clause instanceof JoinsQueryInterface)
+            ) {
+                throw new \Exception('Current query could not have a WHERE clause.');
+            }
+        }
+
+        return $this->getStorage()->where();
+    }
+
+    public function intoWhere()
+    {
+        $this->setClause('WHERE', $this->intoWhereClause());
+
+        return $this;
+    }
+
+    /**
+     * @return WhereQueryInterface
+     */
+    public function getWhereClause()
+    {
+        return $this->getClause('WHERE');
+    }
+
+    public function whereAre(array $columns)
+    {
+        $instance = $this->needWhereClauseInstance();
+
+        $instance->getWhereClause()->whereAre($columns);
+
+        return $instance;
     }
 
     public function where($column, $operator, $value = null)
     {
-        $this->needWhereQuery()->where(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->where(...func_get_args());
+
+        return $instance;
     }
 
     public function orWhereAre(array $columns)
     {
-        $this->needWhereQuery()->orWhereAre($columns);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereAre($columns);
+
+        return $instance;
     }
 
     public function orWhere($column, $operator, $value = null)
     {
-        $this->needWhereQuery()->orWhere(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhere(...func_get_args());
+
+        return $instance;
     }
 
     public function whereRel($column1, $operator, $column2 = null)
     {
-        $this->needWhereQuery()->whereRel(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereRel(...func_get_args());
+
+        return $instance;
     }
 
     public function orWhereRel($column1, $operator, $column2 = null)
     {
-        $this->needWhereQuery()->orWhereRel(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereRel(...func_get_args());
+
+        return $instance;
     }
 
     public function whereIsNull($column)
     {
-        $this->needWhereQuery()->whereIsNull($column);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereIsNull($column);
+
+        return $instance;
     }
 
     public function orWhereIsNull($column)
     {
-        $this->needWhereQuery()->orWhereIsNull($column);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereIsNull($column);
+
+        return $instance;
     }
 
     public function whereIsNotNull($column)
     {
-        $this->needWhereQuery()->whereIsNotNull($column);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereIsNotNull($column);
+
+        return $instance;
     }
 
     public function orWhereIsNotNull($column)
     {
-        $this->needWhereQuery()->orWhereIsNotNull($column);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereIsNotNull($column);
+
+        return $instance;
     }
 
     public function whereBetween($column, $min, $max)
     {
-        $this->needWhereQuery()->whereBetween($column, $min, $max);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function orWhereBetween($column, $min, $max)
     {
-        $this->needWhereQuery()->orWhereBetween($column, $min, $max);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function whereNotBetween($column, $min, $max)
     {
-        $this->needWhereQuery()->whereNotBetween($column, $min, $max);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereNotBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function orWhereNotBetween($column, $min, $max)
     {
-        $this->needWhereQuery()->orWhereNotBetween($column, $min, $max);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereNotBetween($column, $min, $max);
+
+        return $instance;
     }
 
     public function whereDate($column, $date)
     {
-        $this->needWhereQuery()->whereDate($column, $date);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereDate($column, $date);
+
+        return $instance;
     }
 
     public function orWhereDate($column, $date)
     {
-        $this->needWhereQuery()->orWhereDate($column, $date);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereDate($column, $date);
+
+        return $instance;
     }
 
     public function whereTime($column, $date)
     {
-        $this->needWhereQuery()->whereTime($column, $date);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereTime($column, $date);
+
+        return $instance;
     }
 
     public function orWhereTime($column, $date)
     {
-        $this->needWhereQuery()->orWhereTime($column, $date);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereTime($column, $date);
+
+        return $instance;
     }
 
     public function whereYear($column, $year)
     {
-        $this->needWhereQuery()->whereYear($column, $year);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereYear($column, $year);
+
+        return $instance;
     }
 
     public function orWhereYear($column, $year)
     {
-        $this->needWhereQuery()->orWhereYear($column, $year);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereYear($column, $year);
+
+        return $instance;
     }
 
     public function whereMonth($column, $month)
     {
-        $this->needWhereQuery()->whereMonth($column, $month);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereMonth($column, $month);
+
+        return $instance;
     }
 
     public function orWhereMonth($column, $month)
     {
-        $this->needWhereQuery()->orWhereMonth($column, $month);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereMonth($column, $month);
+
+        return $instance;
     }
 
     public function whereDay($column, $day)
     {
-        $this->needWhereQuery()->whereDay($column, $day);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereDay($column, $day);
+
+        return $instance;
     }
 
     public function orWhereDay($column, $day)
     {
-        $this->needWhereQuery()->orWhereDay($column, $day);
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->orWhereDay($column, $day);
+
+        return $instance;
     }
 
     public function whereRaw($expr, $value = null, $_ = null)
     {
-        $this->needWhereQuery()->whereRaw(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereRaw(...func_get_args());
+
+        return $instance;
     }
 
     public function orWhereRaw($expr, $value = null, $_ = null)
     {
-        $this->needWhereQuery()->orWhereRaw(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
-    }
+        $instance->getWhereClause()->orWhereRaw(...func_get_args());
 
-    public function hasWhere()
-    {
-        return $this->needWhereQuery()->hasWhere();
-    }
-
-    public function getWhere()
-    {
-        return $this->needWhereQuery()->getWhere();
-    }
-
-    public function addWhere(array $conditions)
-    {
-        $this->needWhereQuery()->addWhere($conditions);
-
-        return $this;
-    }
-
-    public function setWhere(array $conditions)
-    {
-        $this->needWhereQuery()->setWhere($conditions);
-
-        return $this;
-    }
-
-    public function clearWhere()
-    {
-        $this->needWhereQuery()->clearWhere();
-
-        return $this;
+        return $instance;
     }
 
     public function whereExists($expr, $param = null, $_ = null)
     {
-        $this->needWhereQuery()->whereExists(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
 
-        return $this;
+        $instance->getWhereClause()->whereExists(...func_get_args());
+
+        return $instance;
     }
 
     public function whereNotExists($expr, $param = null, $_ = null)
     {
-        $this->needWhereQuery()->whereExists(...func_get_args());
+        $instance = $this->needWhereClauseInstance();
+
+        $instance->getWhereClause()->whereExists(...func_get_args());
+
+        return $instance;
+    }
+
+    public function hasWhere()
+    {
+        return $this->getWhereClauseQuery()->hasWhere();
+    }
+
+    public function clearWhere()
+    {
+        $this->getWhereClauseQuery()->clearWhere();
 
         return $this;
     }
 
-    public function whereToSql()
-    {
-        return $this->needWhereQuery()->whereToSql();
-    }
-
-    public function whereToString()
-    {
-        return $this->needWhereQuery()->whereToString();
-    }
+    /**
+     * @return TableInterface
+     */
+    abstract protected function newInstance();
 
     /**
      * @return StorageInterface

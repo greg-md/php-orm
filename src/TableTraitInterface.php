@@ -5,15 +5,25 @@ namespace Greg\Orm;
 use Greg\Orm\TableQuery\TableDeleteQueryTraitInterface;
 use Greg\Orm\TableQuery\TableFromQueryTraitInterface;
 use Greg\Orm\TableQuery\TableHavingQueryTraitInterface;
+use Greg\Orm\TableQuery\TableInsertQueryTraitInterface;
+use Greg\Orm\TableQuery\TableJoinsQueryTraitInterface;
 use Greg\Orm\TableQuery\TableQueryTraitInterface;
 use Greg\Orm\TableQuery\TableSelectQueryTraitInterface;
+use Greg\Orm\TableQuery\TableUpdateQueryTraitInterface;
+use Greg\Orm\TableQuery\TableWhereQueryTraitInterface;
 
 interface TableTraitInterface extends
     TableQueryTraitInterface,
-    TableFromQueryTraitInterface,
-    TableHavingQueryTraitInterface,
+
+    TableInsertQueryTraitInterface,
+    TableUpdateQueryTraitInterface,
+    TableDeleteQueryTraitInterface,
     TableSelectQueryTraitInterface,
-    TableDeleteQueryTraitInterface
+
+    TableFromQueryTraitInterface,
+    TableJoinsQueryTraitInterface,
+    TableWhereQueryTraitInterface,
+    TableHavingQueryTraitInterface
 {
     public function setPrefix($name);
 

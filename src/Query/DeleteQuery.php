@@ -10,6 +10,11 @@ class DeleteQuery implements DeleteQueryInterface
 
     public function fromTable($table, $_ = null)
     {
+        $this->fromUpdateTable(...func_get_args());
+    }
+
+    protected function fromUpdateTable($table, $_ = null)
+    {
         foreach (func_get_args() as $table) {
             list($tableAlias, $tableName) = $this->parseAlias($table);
 

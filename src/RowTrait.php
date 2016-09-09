@@ -185,7 +185,7 @@ trait RowTrait
 
         foreach($this->getIterator() as $row) {
             if ($row->isNew()) {
-                $this->insertData($row->clearData())->exec();
+                $this->insert($row->clearData());
 
                 $row->markAsNew(false);
 
@@ -193,13 +193,13 @@ trait RowTrait
                     $row[$column] = (int)$this->lastInsertId();
                 }
             } elseif ($record = $row->clearModifiedData()) {
-                $this->update($record)->whereAre($this->firstUniqueValues())->exec();
+                $this->whereAre($this->firstUniqueValues())->update($record);
             }
         }
 
         return $this;
     }
-    
+
     public function destroy()
     {
         $keys = [];
@@ -210,7 +210,7 @@ trait RowTrait
             $row->markAsNew(true);
         }
 
-        $this->delete()->where($this->firstUniqueIndex(), $keys)->exec();
+        $this->where($this->firstUniqueIndex(), $keys)->delete();
 
         return $this;
     }

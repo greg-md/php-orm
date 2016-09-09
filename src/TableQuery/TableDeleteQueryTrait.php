@@ -100,7 +100,6 @@ trait TableDeleteQueryTrait
 
         foreach($this->clauses as $clause) {
             if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof FromQueryInterface)
                 or  !($clause instanceof JoinsQueryInterface)
             ) {
                 throw new \Exception('Current query is not a DELETE statement.');
@@ -149,23 +148,29 @@ trait TableDeleteQueryTrait
         return $this->query;
     }
 
-    public function fromTable($table)
+    public function fromTable($table, $_ = null)
     {
         $instance = $this->needDeleteInstance();
 
-        $instance->getQuery()->fromTable($table);
+        $instance->getQuery()->fromTable(...func_get_args());
 
         return $instance;
     }
 
-    public function delete()
+    public function delete($table = null, $_ = null)
     {
-        return $this->execQuery($this->needDeleteInstance()->getQuery());
+        $instance = $this->needDeleteInstance();
+
+        if ($args = func_get_args()) {
+            $instance->fromTable($args);
+        }
+
+        return $this->execQuery($instance->getQuery());
     }
 
     public function truncate()
     {
-        $this->getStorage()->truncate($this->fullName());
+        return $this->getStorage()->truncate($this->fullName());
     }
 
     public function erase($key)

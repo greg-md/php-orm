@@ -7,60 +7,17 @@ use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\UpdateQueryInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\TableInterface;
 
+/**
+ * Class TableUpdateQueryTrait
+ * @package Greg\Orm\TableQuery
+ *
+ * @method UpdateQueryInterface getQuery();
+ */
 trait TableUpdateQueryTrait
 {
-    /**
-     * @return UpdateQueryInterface
-     * @throws \Exception
-     */
-    public function needUpdateQuery()
-    {
-        if (!$this->query) {
-            $this->update();
-
-            foreach($this->clauses as $clause) {
-                if (    !($clause instanceof WhereQueryInterface)
-                    or  !($clause instanceof FromQueryInterface)
-                    or  !($clause instanceof JoinsQueryInterface)
-                ) {
-                    throw new \Exception('Current query is not a UPDATE statement.');
-                }
-            }
-
-            foreach($this->clauses as $clause) {
-                if ($clause instanceof FromQueryInterface) {
-                    $this->addFrom($clause->getFrom());
-
-                    continue;
-                }
-
-                if ($clause instanceof JoinsQueryInterface) {
-                    $this->addJoins($clause->getJoins());
-
-                    continue;
-                }
-
-                if ($clause instanceof WhereQueryInterface) {
-                    $this->addWhere($clause->getWhere());
-
-                    continue;
-                }
-            }
-
-            $this->clearClauses();
-
-            return $this->query;
-        }
-
-        if (!($this->query instanceof UpdateQueryInterface)) {
-            throw new \Exception('Current query is not a UPDATE statement.');
-        }
-
-        return $this->query;
-    }
-
-    public function updateQuery(array $values = [])
+    protected function updateQuery(array $values = [])
     {
         $query = $this->getStorage()->update($this);
 
@@ -73,82 +30,138 @@ trait TableUpdateQueryTrait
         return $query;
     }
 
-    public function update(array $values = [])
+    /**
+     * @return $this
+     */
+    protected function newUpdateInstance()
     {
-        $this->query = $this->updateQuery(...func_get_args());
+        return $this->newInstance()->intoUpdate();
+    }
+
+    protected function checkUpdateQuery()
+    {
+        if (!($this->query instanceof UpdateQueryInterface)) {
+            throw new \Exception('Current query is not a UPDATE statement.');
+        }
 
         return $this;
+    }
+
+    protected function needUpdateInstance()
+    {
+        if (!$this->query) {
+            if ($this->clauses) {
+                return $this->intoUpdate();
+            }
+
+            return $this->newUpdateInstance();
+        }
+
+        return $this->checkUpdateQuery();
+    }
+
+    protected function intoUpdateQuery(array $values = [])
+    {
+        $query = $this->updateQuery($values);
+
+        foreach($this->clauses as $clause) {
+            if (    !($clause instanceof WhereQueryInterface)
+                or  !($clause instanceof JoinsQueryInterface)
+            ) {
+                throw new \Exception('Current query is not a UPDATE statement.');
+            }
+        }
+
+        foreach($this->clauses as $clause) {
+            if ($clause instanceof JoinsQueryInterface) {
+                $query->addJoins($clause->getJoins());
+
+                continue;
+            }
+
+            if ($clause instanceof WhereQueryInterface) {
+                $query->addWhere($clause->getWhere());
+
+                continue;
+            }
+        }
+
+        return $query;
+    }
+
+    public function intoUpdate(array $values = [])
+    {
+        $this->query = $this->intoUpdateQuery($values);
+
+        $this->clearClauses();
+
+        return $this;
+    }
+
+    /**
+     * @return UpdateQueryInterface
+     */
+    public function getUpdateQuery()
+    {
+        $this->checkUpdateQuery();
+
+        return $this->query;
     }
 
     public function table($table, $_ = null)
     {
-        $this->needUpdateQuery()->table(...func_get_args());
+        $instance = $this->needUpdateInstance();
 
-        return $this;
+        $instance->getQuery()->table(...func_get_args());
+
+        return $instance;
     }
 
-    public function updateSet($key, $value = null)
+    public function setForUpdate($key, $value = null)
     {
-        $this->needUpdateQuery()->set(...func_get_args());
+        $instance = $this->needUpdateInstance();
 
-        return $this;
+        $instance->getQuery()->set(...func_get_args());
+
+        return $instance;
     }
 
-    public function updateSetRaw($raw, $param = null, $_ = null)
+    public function setRawForUpdate($raw, $param = null, $_ = null)
     {
-        $this->needUpdateQuery()->set(...func_get_args());
+        $instance = $this->needUpdateInstance();
 
-        return $this;
+        $instance->getQuery()->setRaw(...func_get_args());
+
+        return $instance;
     }
 
     public function increment($column, $value = 1)
     {
-        $this->needUpdateQuery()->increment($column, $value);
+        $instance = $this->needUpdateInstance();
 
-        return $this;
+        $instance->getQuery()->increment($column, $value);
+
+        return $instance;
     }
 
     public function decrement($column, $value = 1)
     {
-        $this->needUpdateQuery()->decrement($column, $value);
+        $instance = $this->needUpdateInstance();
 
-        return $this;
+        $instance->getQuery()->decrement($column, $value);
+
+        return $instance;
     }
 
-    public function execUpdate()
+    public function update(array $set = [])
     {
-        return $this->needUpdateQuery()->exec();
+        return $this->execQuery($this->setForUpdate($set)->getQuery());
     }
 
-    public function updateStmtToSql()
-    {
-        return $this->needUpdateQuery()->updateStmtToSql();
-    }
-
-    public function updateStmtToString()
-    {
-        return $this->needUpdateQuery()->updateStmtToSql();
-    }
-
-    public function setStmtToSql()
-    {
-        return $this->needUpdateQuery()->setStmtToSql();
-    }
-
-    public function setStmtToString()
-    {
-        return $this->needUpdateQuery()->setStmtToString();
-    }
-
-    public function updateToSql()
-    {
-        return $this->needUpdateQuery()->updateToSql();
-    }
-
-    public function updateToString()
-    {
-        return $this->needUpdateQuery()->updateToString();
-    }
+    /**
+     * @return TableInterface
+     */
+    abstract protected function newInstance();
 
     /**
      * @return StorageInterface

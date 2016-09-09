@@ -8,10 +8,52 @@ use Greg\Orm\Query\JoinsQueryInterface;
 use Greg\Orm\Query\JoinsQueryTraitInterface;
 use Greg\Orm\Query\WhereQueryInterface;
 use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\TableInterface;
 
 trait TableJoinsQueryTrait
 {
-    protected function needJoinsClause()
+    /**
+     * @return $this
+     */
+    protected function newJoinsClauseInstance()
+    {
+        return $this->newInstance()->intoJoins();
+    }
+
+    protected function checkJoinsClauseQuery()
+    {
+        if (!($this->query instanceof JoinsQueryTraitInterface)) {
+            throw new \Exception('Current query is not a JOIN clause.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return JoinsQueryTraitInterface
+     * @throws \Exception
+     */
+    protected function getJoinsClauseQuery()
+    {
+        $this->checkJoinsClauseQuery();
+
+        return $this->query;
+    }
+
+    protected function needJoinsClauseInstance()
+    {
+        if (!$this->query) {
+            if ($this->clauses) {
+                return $this->intoJoins();
+            }
+
+            return $this->newJoinsClauseInstance();
+        }
+
+        return $this->checkJoinsClauseQuery();
+    }
+
+    protected function intoJoinsClause()
     {
         foreach($this->clauses as $clause) {
             if (    !($clause instanceof WhereQueryInterface)
@@ -23,116 +65,112 @@ trait TableJoinsQueryTrait
             }
         }
 
-        if (!isset($this->clauses['joins'])) {
-            $this->clauses['joins'] = $this->getStorage()->joins();
-        }
+        return $this->getStorage()->joins();
+    }
 
-        return $this->clauses['joins'];
+    public function intoJoins()
+    {
+        $this->setClause('JOIN', $this->intoJoinsClause());
+
+        return $this;
     }
 
     /**
-     * @return JoinsQueryTraitInterface
-     * @throws \Exception
+     * @return JoinsQueryInterface
      */
-    protected function needJoinsQuery()
+    public function getJoinsClause()
     {
-        if (!$this->query) {
-            return $this->needJoinsClause();
-        }
-
-        if (!($this->query instanceof JoinsQueryTraitInterface)) {
-            throw new \Exception('Current query is not a JOIN clause.');
-        }
-
-        return $this->query;
+        return $this->getClause('JOIN');
     }
 
     public function left($table, $on = null, $param = null, $_ = null)
     {
-        $this->needJoinsQuery()->left(...func_get_args());
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->left(...func_get_args());
+
+        return $instance;
     }
 
     public function right($table, $on = null, $param = null, $_ = null)
     {
-        $this->needJoinsQuery()->left(...func_get_args());
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->left(...func_get_args());
+
+        return $instance;
     }
 
     public function inner($table, $on = null, $param = null, $_ = null)
     {
-        $this->needJoinsQuery()->inner(...func_get_args());
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->inner(...func_get_args());
+
+        return $instance;
     }
 
     public function cross($table)
     {
-        $this->needJoinsQuery()->inner($table);
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->inner($table);
+
+        return $instance;
     }
 
     public function leftTo($source, $table, $on = null, $param = null, $_ = null)
     {
-        $this->needJoinsQuery()->leftTo(...func_get_args());
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->leftTo(...func_get_args());
+
+        return $instance;
     }
 
     public function rightTo($source, $table, $on = null, $param = null, $_ = null)
     {
-        $this->needJoinsQuery()->rightTo(...func_get_args());
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->rightTo(...func_get_args());
+
+        return $instance;
     }
 
     public function innerTo($source, $table, $on = null, $param = null, $_ = null)
     {
-        $this->needJoinsQuery()->innerTo(...func_get_args());
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->innerTo(...func_get_args());
+
+        return $instance;
     }
 
     public function crossTo($source, $table)
     {
-        $this->needJoinsQuery()->innerTo($source, $table);
+        $instance = $this->needJoinsClauseInstance();
 
-        return $this;
+        $instance->getJoinsClause()->innerTo($source, $table);
+
+        return $instance;
     }
 
     public function hasJoins()
     {
-        return $this->needJoinsQuery()->hasJoins();
-    }
-
-    public function getJoins()
-    {
-        return $this->needJoinsQuery()->getJoins();
-    }
-
-    public function addJoins(array $joins)
-    {
-        $this->needJoinsQuery()->addJoins($joins);
-
-        return $this;
-    }
-
-    public function setJoins(array $joins)
-    {
-        $this->needJoinsQuery()->setJoins($joins);
-
-        return $this;
+        return $this->getJoinsClauseQuery()->hasJoins();
     }
 
     public function clearJoins()
     {
-        $this->needJoinsQuery()->clearJoins();
+        $this->getJoinsClauseQuery()->clearJoins();
 
         return $this;
     }
+
+    /**
+     * @return TableInterface
+     */
+    abstract protected function newInstance();
 
     /**
      * @return StorageInterface

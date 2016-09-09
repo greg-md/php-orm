@@ -342,9 +342,17 @@ trait ConditionsQueryTrait
         return $this;
     }
 
-    protected function subQueryToSql(ConditionsQueryInterface $query)
+    protected function parseCondition(&$condition)
     {
-        return $query->toSql();
+        if ($condition['expr'] instanceof ConditionsQueryInterface) {
+            list($exprSql, $exprParams) = $condition['expr']->toSql();
+
+            $condition['expr'] = $exprSql ? '(' . $exprSql . ')' : null;
+
+            $condition['params'] = $exprParams;
+        }
+
+        return $this;
     }
 
     protected function newConditions()
@@ -357,13 +365,7 @@ trait ConditionsQueryTrait
         $sql = $params = [];
 
         foreach($this->conditions as $condition) {
-            if ($condition['expr'] instanceof ConditionsQueryTraitInterface) {
-                list($exprSql, $exprParams) = $this->subQueryToSql($condition['expr']);
-
-                $condition['expr'] = $exprSql ? '(' . $exprSql . ')' : null;
-
-                $condition['params'] = $exprParams;
-            }
+            $this->parseCondition($condition);
 
             $sql[] = ($sql ? $condition['logic'] . ' ' : '') . $condition['expr'];
 
