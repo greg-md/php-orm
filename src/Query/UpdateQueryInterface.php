@@ -2,7 +2,12 @@
 
 namespace Greg\Orm\Query;
 
-interface UpdateQueryInterface extends QueryTraitInterface, JoinsQueryTraitInterface, WhereQueryTraitInterface
+interface UpdateQueryInterface extends
+    QueryInterface,
+    JoinClauseTraitInterface,
+    WhereClauseTraitInterface,
+    OrderByClauseTraitInterface,
+    LimitClauseTraitInterface
 {
     public function table($table, $_ = null);
 

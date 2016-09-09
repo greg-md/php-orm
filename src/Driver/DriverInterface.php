@@ -3,13 +3,15 @@
 namespace Greg\Orm\Driver;
 
 use Greg\Orm\Query\DeleteQueryInterface;
-use Greg\Orm\Query\FromQueryInterface;
-use Greg\Orm\Query\HavingQueryInterface;
+use Greg\Orm\Query\FromClauseInterface;
+use Greg\Orm\Query\HavingClauseInterface;
 use Greg\Orm\Query\InsertQueryInterface;
-use Greg\Orm\Query\JoinsQueryInterface;
+use Greg\Orm\Query\JoinClauseInterface;
+use Greg\Orm\Query\LimitClauseInterface;
+use Greg\Orm\Query\OrderByClauseInterface;
 use Greg\Orm\Query\SelectQueryInterface;
 use Greg\Orm\Query\UpdateQueryInterface;
-use Greg\Orm\Query\WhereQueryInterface;
+use Greg\Orm\Query\WhereClauseInterface;
 
 interface DriverInterface
 {
@@ -81,28 +83,40 @@ interface DriverInterface
     public function update($table = null);
 
     /**
-     * @return FromQueryInterface
+     * @return FromClauseInterface
      * @throws \Exception
      */
     public function from();
 
     /**
-     * @return JoinsQueryInterface
+     * @return JoinClauseInterface
      * @throws \Exception
      */
-    public function joins();
+    public function join();
 
     /**
-     * @return WhereQueryInterface
+     * @return WhereClauseInterface
      * @throws \Exception
      */
     public function where();
 
     /**
-     * @return HavingQueryInterface
+     * @return HavingClauseInterface
      * @throws \Exception
      */
     public function having();
+
+    /**
+     * @return OrderByClauseInterface
+     * @throws \Exception
+     */
+    public function orderBy();
+
+    /**
+     * @return LimitClauseInterface
+     * @throws \Exception
+     */
+    public function limit();
 
 
     static public function quoteLike($value, $escape = '\\');

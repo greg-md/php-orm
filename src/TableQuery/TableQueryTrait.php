@@ -2,14 +2,12 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Adapter\StmtInterface;
-use Greg\Orm\Query\QueryTraitInterface;
-use Greg\Orm\Storage\StorageInterface;
+use Greg\Orm\Query\QueryInterface;
 
 trait TableQueryTrait
 {
     /**
-     * @var QueryTraitInterface
+     * @var QueryInterface
      */
     protected $query = null;
 
@@ -101,6 +99,11 @@ trait TableQueryTrait
     public function toString()
     {
         return $this->getQuery()->toString();
+    }
+
+    public function __toString()
+    {
+        return (string)$this->toString();
     }
 
     protected function prepareQuery(QueryTraitInterface $query)

@@ -2,7 +2,15 @@
 
 namespace Greg\Orm\Query;
 
-interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface, HavingQueryTraitInterface
+interface SelectQueryInterface extends
+    QueryInterface,
+    FromClauseTraitInterface,
+    WhereClauseTraitInterface,
+    HavingClauseTraitInterface,
+    OrderByClauseTraitInterface,
+    GroupByClauseTraitInterface,
+    LimitClauseTraitInterface,
+    OffsetClauseTraitInterface
 {
     /**
      * @param bool $value
@@ -65,70 +73,6 @@ interface SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterf
     public function avg($column, $alias = null);
 
     public function sum($column, $alias = null);
-
-
-    /**
-     * @param $expr
-     * @return $this
-     */
-    public function groupBy($column);
-
-    /**
-     * @param $expr
-     * @param null $param
-     * @param null $_
-     * @return $this
-     */
-    public function groupByRaw($expr, $param = null, $_ = null);
-
-    /**
-     * @return bool
-     */
-    public function hasGroupBy();
-
-    /**
-     * @return $this
-     */
-    public function clearGroupBy();
-
-
-    /**
-     * @param $column
-     * @param null $type
-     * @return $this
-     */
-    public function orderBy($column, $type = null);
-
-    /**
-     * @param $expr
-     * @param null $param
-     * @param null $_
-     * @return $this
-     */
-    public function orderByRaw($expr, $param = null, $_ = null);
-
-    /**
-     * @return bool
-     */
-    public function hasOrderBy();
-
-    /**
-     * @return $this
-     */
-    public function clearOrderBy();
-
-
-    /**
-     * @param $number
-     * @return $this
-     */
-    public function limit($number);
-
-    /**
-     * @param $number
-     * @return $this
-     */
-    public function offset($number);
 
 
     public function union($expr, $param = null, $_ = null);

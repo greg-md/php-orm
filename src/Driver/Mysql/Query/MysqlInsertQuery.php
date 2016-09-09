@@ -6,5 +6,5 @@ use Greg\Orm\Query\InsertQuery;
 
 class MysqlInsertQuery extends InsertQuery
 {
-    use MysqlQueryTrait;
+    use MysqlClauseSupportTrait;
 }

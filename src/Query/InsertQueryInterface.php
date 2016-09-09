@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface InsertQueryInterface extends QueryTraitInterface
+interface InsertQueryInterface extends QueryInterface
 {
     public function into($table);
 

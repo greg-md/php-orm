@@ -51,23 +51,18 @@ use Greg\Orm\TableInterface;
  */
 class SelectQuery implements SelectQueryInterface
 {
-    use QueryTrait, FromQueryTrait, WhereQueryTrait, HavingQueryTrait;
-
-    const ORDER_ASC = 'ASC';
-
-    const ORDER_DESC = 'DESC';
+    use ClauseTrait,
+        FromClauseTrait,
+        WhereClauseTrait,
+        HavingClauseTrait,
+        OrderByClauseTrait,
+        GroupByClauseTrait,
+        LimitClauseTrait,
+        OffsetClauseTrait;
 
     protected $distinct = false;
 
     protected $columns = [];
-
-    protected $groupBy = [];
-
-    protected $orderBy = [];
-
-    protected $limit = null;
-
-    protected $offset = null;
 
     protected $unions = [];
 
@@ -209,129 +204,6 @@ class SelectQuery implements SelectQueryInterface
         return $this->columnRaw('SUM(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
     }
 
-    public function groupBy($column)
-    {
-        return $this->addGroupBy($this->quoteNameExpr($column));
-    }
-
-    public function groupByRaw($expr, $param = null, $_ = null)
-    {
-        return $this->addGroupBy($this->quoteExpr($expr), is_array($param) ? $param : array_slice(func_get_args(), 1));
-    }
-
-    protected function addGroupBy($expr, array $params = [])
-    {
-        $this->groupBy[] = [
-            'expr' => $expr,
-            'params' => $params,
-        ];
-
-        return $this;
-    }
-
-    public function hasGroupBy()
-    {
-        return (bool)$this->groupBy;
-    }
-
-    public function clearGroupBy()
-    {
-        $this->groupBy = [];
-
-        return $this;
-    }
-
-    protected function groupByToSql()
-    {
-        $sql = $params = [];
-
-        foreach($this->groupBy as $groupBy) {
-            $sql[] = $groupBy['expr'];
-
-            $groupBy['params'] && $params = array_merge($params, $groupBy['params']);
-        }
-
-        $sql = $sql ? 'GROUP BY ' . implode(', ', $sql) : '';
-
-        return [$sql, $params];
-    }
-
-    protected function groupByToString()
-    {
-        return $this->groupByToSql()[0];
-    }
-
-    public function orderBy($column, $type = null)
-    {
-        if ($type and !in_array($type, [static::ORDER_ASC, static::ORDER_DESC])) {
-            throw new \Exception('Wrong ORDER type for SELECT statement.');
-        }
-
-        return $this->addOrderBy($this->quoteNameExpr($column), $type);
-    }
-
-    public function orderByRaw($expr, $param = null, $_ = null)
-    {
-        return $this->addOrderBy($this->quoteExpr($expr), null, is_array($param) ? $param : array_slice(func_get_args(), 1));
-    }
-
-    protected function addOrderBy($expr, $type = null, array $params = [])
-    {
-        $this->orderBy[] = [
-            'expr' => $expr,
-            'type' => $type,
-            'params' => $params,
-        ];
-
-        return $this;
-    }
-
-    public function hasOrderBy()
-    {
-        return (bool)$this->orderBy;
-    }
-
-    public function clearOrderBy()
-    {
-        $this->orderBy = [];
-
-        return $this;
-    }
-
-    protected function orderByToSql()
-    {
-        $sql = $params = [];
-
-        foreach($this->orderBy as $orderBy) {
-            $sql[] = $orderBy['expr'] . ($orderBy['type'] ? ' ' . $orderBy['type'] : '');
-
-            $orderBy['params'] && $params = array_merge($params, $orderBy['params']);
-        }
-
-        $sql = $sql ? 'ORDER BY ' . implode(', ', $sql) : '';
-
-        return [$sql, $params];
-    }
-
-    protected function orderByToString()
-    {
-        return $this->orderByToSql()[0];
-    }
-
-    public function limit($number)
-    {
-        $this->limit = (int)$number;
-
-        return $this;
-    }
-
-    public function offset($number)
-    {
-        $this->offset = (int)$number;
-
-        return $this;
-    }
-
     public function union($expr, $param = null, $_ = null)
     {
         return $this->unionType(null, ...func_get_args());
@@ -364,14 +236,14 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    protected function addSqlLimit(array &$sql)
+    protected function addSelectLimit(&$sql)
     {
         if ($this->limit) {
-            $sql[] = 'LIMIT ' . $this->limit;
+            $sql .= ' LIMIT ' . $this->limit;
         }
 
         if ($this->offset) {
-            $sql[] = 'OFFSET ' . $this->offset;
+            $sql .= ' OFFSET ' . $this->offset;
         }
 
         return $this;
@@ -442,7 +314,7 @@ class SelectQuery implements SelectQueryInterface
         list($groupBySql, $groupByParams) = $this->groupByToSql();
 
         if ($groupBySql) {
-            $query[] = $groupBySql;
+            $sql[] = $groupBySql;
 
             $params = array_merge($params, $groupByParams);
         }
@@ -458,14 +330,14 @@ class SelectQuery implements SelectQueryInterface
         list($orderBySql, $orderByParams) = $this->orderByToSql();
 
         if ($orderBySql) {
-            $query[] = $orderBySql;
+            $sql[] = $orderBySql;
 
             $params = array_merge($params, $orderByParams);
         }
 
-        $this->addSqlLimit($sql);
-
         $sql = implode(' ', $sql);
+
+        $this->addSelectLimit($sql);
 
         if ($this->unions) {
             $sql = ['(' . $sql . ')'];
@@ -495,6 +367,11 @@ class SelectQuery implements SelectQueryInterface
     public function toString()
     {
         return $this->selectToString();
+    }
+
+    public function __toString()
+    {
+        return (string)$this->toString();
     }
 
     /*

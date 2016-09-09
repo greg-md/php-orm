@@ -2,11 +2,13 @@
 
 namespace Greg\Orm\Driver;
 
-use Greg\Orm\Query\FromQuery;
-use Greg\Orm\Query\HavingQuery;
-use Greg\Orm\Query\JoinsQuery;
-use Greg\Orm\Query\QueryTrait;
-use Greg\Orm\Query\WhereQuery;
+use Greg\Orm\Query\FromClause;
+use Greg\Orm\Query\HavingClause;
+use Greg\Orm\Query\JoinClause;
+use Greg\Orm\Query\LimitClause;
+use Greg\Orm\Query\OrderByClause;
+use Greg\Orm\Query\QuerySupport;
+use Greg\Orm\Query\WhereClause;
 use Greg\Orm\Storage\Sqlite\Query\SqliteDeleteQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteInsertQuery;
 use Greg\Orm\Storage\Sqlite\Query\SqliteSelectQuery;
@@ -99,31 +101,41 @@ class Sqlite extends DriverAbstract implements SqliteInterface
 
     public function from()
     {
-        return new FromQuery();
+        return new FromClause();
     }
 
-    public function joins()
+    public function join()
     {
-        return new JoinsQuery();
+        return new JoinClause();
     }
 
     public function where()
     {
-        return new WhereQuery();
+        return new WhereClause();
     }
 
     public function having()
     {
-        return new HavingQuery();
+        return new HavingClause();
+    }
+
+    public function orderBy()
+    {
+        return new OrderByClause();
+    }
+
+    public function limit()
+    {
+        return new LimitClause();
     }
 
     static public function quoteLike($value, $escape = '\\')
     {
-        return QueryTrait::quoteLike($value, $escape);
+        return QuerySupport::quoteLike($value, $escape);
     }
 
     static public function concat(array $values, $delimiter = '')
     {
-        return QueryTrait::concat($values, $delimiter);
+        return QuerySupport::concat($values, $delimiter);
     }
 }

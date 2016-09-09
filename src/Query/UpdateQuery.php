@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class UpdateQuery implements UpdateQueryInterface
 {
-    use QueryTrait, JoinsQueryTrait, WhereQueryTrait;
+    use ClauseTrait, JoinClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
 
     protected $tables = [];
 
@@ -15,7 +15,7 @@ class UpdateQuery implements UpdateQueryInterface
         foreach (func_get_args() as $table) {
             list($tableAlias, $tableName) = $this->parseAlias($table);
 
-            if ($tableName instanceof QueryTraitInterface) {
+            if (!is_scalar($tableName)) {
                 throw new \Exception('Derived tables are not supported in UPDATE statement.');
             }
 
@@ -95,7 +95,7 @@ class UpdateQuery implements UpdateQueryInterface
                 $expr .= ' AS ' . $table['alias'];
             }
 
-            list($joinsSql, $joinsParams) = $this->joinsToSql($source);
+            list($joinsSql, $joinsParams) = $this->joinToSql($source);
 
             if ($joinsSql) {
                 $expr .= ' ' . $joinsSql;
@@ -148,7 +148,7 @@ class UpdateQuery implements UpdateQueryInterface
 
         $sql = [$sql];
 
-        list($joinsSql, $joinsParams) = $this->joinsToSql();
+        list($joinsSql, $joinsParams) = $this->joinToSql();
 
         if ($joinsSql) {
             $sql[] = $joinsSql;
@@ -170,7 +170,17 @@ class UpdateQuery implements UpdateQueryInterface
             $params = array_merge($params, $whereParams);
         }
 
+        list($orderBySql, $orderByParams) = $this->orderByToSql();
+
+        if ($orderBySql) {
+            $sql[] = $orderBySql;
+
+            $params = array_merge($params, $orderByParams);
+        }
+
         $sql = implode(' ', $sql);
+
+        $this->addLimitToSql($sql);
 
         return [$sql, $params];
     }
@@ -188,5 +198,10 @@ class UpdateQuery implements UpdateQueryInterface
     public function toString()
     {
         return $this->updateToString();
+    }
+
+    public function __toString()
+    {
+        return (string)$this->toString();
     }
 }

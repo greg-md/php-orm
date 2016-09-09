@@ -6,14 +6,15 @@ use Greg\Orm\Column;
 use Greg\Orm\Constraint;
 use Greg\Orm\Driver\Mysql\Query\MysqlDeleteQuery;
 use Greg\Orm\Driver\Mysql\Query\MysqlInsertQuery;
-use Greg\Orm\Driver\Mysql\Query\MysqlQueryTrait;
+use Greg\Orm\Driver\Mysql\Query\MysqlQuerySupport;
 use Greg\Orm\Driver\Mysql\Query\MysqlSelectQuery;
 use Greg\Orm\Driver\Mysql\Query\MysqlUpdateQuery;
-use Greg\Orm\Query\FromQuery;
-use Greg\Orm\Query\HavingQuery;
-use Greg\Orm\Query\JoinsQuery;
-use Greg\Orm\Query\QueryTrait;
-use Greg\Orm\Query\WhereQuery;
+use Greg\Orm\Query\FromClause;
+use Greg\Orm\Query\HavingClause;
+use Greg\Orm\Query\JoinClause;
+use Greg\Orm\Query\LimitClause;
+use Greg\Orm\Query\OrderByClause;
+use Greg\Orm\Query\WhereClause;
 use Greg\Support\Arr;
 use Greg\Support\Str;
 
@@ -167,32 +168,42 @@ class Mysql extends DriverAbstract implements MysqlInterface
 
     public function from()
     {
-        return new FromQuery();
+        return new FromClause();
     }
 
-    public function joins()
+    public function join()
     {
-        return new JoinsQuery();
+        return new JoinClause();
     }
 
     public function where()
     {
-        return new WhereQuery();
+        return new WhereClause();
     }
 
     public function having()
     {
-        return new HavingQuery();
+        return new HavingClause();
+    }
+
+    public function orderBy()
+    {
+        return new OrderByClause();
+    }
+
+    public function limit()
+    {
+        return new LimitClause();
     }
 
     static public function quoteLike($value, $escape = '\\')
     {
-        return QueryTrait::quoteLike($value, $escape);
+        return MysqlQuerySupport::quoteLike($value, $escape);
     }
 
     static public function concat(array $values, $delimiter = '')
     {
-        return MysqlQueryTrait::concat($values, $delimiter);
+        return MysqlQuerySupport::concat($values, $delimiter);
     }
 
     public function tableInfo($tableName, $save = true)

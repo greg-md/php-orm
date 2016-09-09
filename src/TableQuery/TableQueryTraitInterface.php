@@ -38,6 +38,8 @@ interface TableQueryTraitInterface
 
     public function toString();
 
+    public function __toString();
+
 
     public function prepare();
 }

@@ -6,7 +6,7 @@ use Greg\Support\Arr;
 
 class InsertQuery implements InsertQueryInterface
 {
-    use QueryTrait;
+    use ClauseTrait;
 
     protected $into = null;
 
@@ -22,7 +22,7 @@ class InsertQuery implements InsertQueryInterface
 
         unset($tableAlias);
 
-        if ($tableName instanceof QueryTraitInterface) {
+        if (!is_scalar($tableName)) {
             throw new \Exception('Derived tables are not supported in INSERT statement.');
         }
 
@@ -149,5 +149,10 @@ class InsertQuery implements InsertQueryInterface
     public function toString()
     {
         return $this->insertToString();
+    }
+
+    public function __toString()
+    {
+        return (string)$this->toString();
     }
 }

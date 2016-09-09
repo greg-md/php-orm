@@ -6,5 +6,5 @@ use Greg\Orm\Query\DeleteQuery;
 
 class MysqlDeleteQuery extends DeleteQuery
 {
-    use MysqlQueryTrait;
+    use MysqlClauseSupportTrait;
 }

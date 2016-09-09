@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class DeleteQuery implements DeleteQueryInterface
 {
-    use QueryTrait, FromQueryTrait, WhereQueryTrait;
+    use ClauseTrait, FromClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
 
     protected $fromTables = [];
 
@@ -18,7 +18,7 @@ class DeleteQuery implements DeleteQueryInterface
         foreach (func_get_args() as $table) {
             list($tableAlias, $tableName) = $this->parseAlias($table);
 
-            if ($tableName instanceof QueryTraitInterface) {
+            if (!is_scalar($tableName)) {
                 throw new \Exception('Derived tables are not supported in UPDATE statement.');
             }
 
@@ -64,11 +64,13 @@ class DeleteQuery implements DeleteQueryInterface
 
         list($fromSql, $fromParams) = $this->fromToSql();
 
-        if ($fromSql) {
-            $sql[] = $fromSql;
-
-            $params = array_merge($params, $fromParams);
+        if (!$fromSql) {
+            throw new \Exception('Undefined DELETE FROM clause.');
         }
+
+        $sql[] = $fromSql;
+
+        $params = array_merge($params, $fromParams);
 
         list($whereSql, $whereParams) = $this->whereToSql();
 
@@ -78,7 +80,17 @@ class DeleteQuery implements DeleteQueryInterface
             $params = array_merge($params, $whereParams);
         }
 
+        list($orderBySql, $orderByParams) = $this->orderByToSql();
+
+        if ($orderBySql) {
+            $sql[] = $orderBySql;
+
+            $params = array_merge($params, $orderByParams);
+        }
+
         $sql = implode(' ', $sql);
+
+        $this->addLimitToSql($sql);
 
         return [$sql, $params];
     }
@@ -96,5 +108,10 @@ class DeleteQuery implements DeleteQueryInterface
     public function toString()
     {
         return $this->deleteToString();
+    }
+
+    public function __toString()
+    {
+        return (string)$this->toString();
     }
 }

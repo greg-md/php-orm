@@ -3,12 +3,14 @@ PHP Object-Relational Mapping
 
 # Documentation
 
-## Drivers
+## Drivers:
 
 - **Mysql**
 - **Sqlite**
 
 ## `DriverInterface`
+
+#### Methods:
 
 - `connector()`
 - `reconnect()`
@@ -41,7 +43,13 @@ PHP Object-Relational Mapping
 - `static concat($values, $delimiter = '')`
 
 
-## `MysqlInterface extends DriverInterface`
+## `MysqlInterface`
+
+#### Extends:
+
+- **`DriverInterface`**
+
+#### Methods:
 
 - `dsn($name = null)`
 - `dbName()`
@@ -51,10 +59,16 @@ PHP Object-Relational Mapping
 - `tableRelationships($tableName, $withRules = false)`
 
 
-## `SqliteInterface extends DriverInterface`
+## `SqliteInterface`
+
+#### Extends:
+
+- **`DriverInterface`**
 
 
 ## `StmtInterface`
+
+#### Methods:
 
 - `bindParams(array $params)`
 - `bindParam($key, $value)`
@@ -77,6 +91,8 @@ PHP Object-Relational Mapping
 
 ## `QueryTraitInterface`
 
+#### Methods:
+
 - `getQuoteNameWith()`
 - `setQuoteNameWith($value)`
 
@@ -88,12 +104,10 @@ PHP Object-Relational Mapping
 
 - `when($condition, callable $callable)`
 
-- `toSql()`
-- `toString()`
-- `__toString()`
 
+## `JoinClauseTraitInterface`
 
-## `JoinsQueryTraitInterface`
+#### Methods:
 
 - `left($table, $on = null, $param = null, $_ = null)`
 - `right($table, $on = null, $param = null, $_ = null)`
@@ -112,13 +126,23 @@ PHP Object-Relational Mapping
 - `clearJoins()`
 
 
-## `JoinsQueryInterface extends QueryTraitInterface, JoinsQueryTraitInterface`
+## `JoinClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`JoinClauseTraitInterface`**
+
+#### Methods:
 
 - `toSql($source = null)`
 - `toString($source = null)`
+- `__toString()`
 
 
-## `ConditionsQueryTraitInterface`
+## `ConditionsExprTraitInterface`
+
+#### Methods:
 
 - `conditions(array $columns)`
 - `condition($column, $operator, $value = null)`
@@ -159,10 +183,23 @@ PHP Object-Relational Mapping
 - `clearConditions()`
 
 
-## `ConditionsQueryInterface extends QueryTraitInterface, ConditionsQueryTraitInterface`
+## `ConditionsExprInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`ConditionsExprTraitInterface`**
+
+#### Methods:
+
+- `toSql()`
+- `toString()`
+- `__toString()`
 
 
-## `OnQueryTraitInterface`
+## `OnClauseTraitInterface`
+
+#### Methods:
 
 - `onAre(array $columns)`
 - `on($column, $operator, $value = null)`
@@ -202,13 +239,27 @@ PHP Object-Relational Mapping
 - `setOn(array $conditions)`
 - `clearOn()`
 
-## `OnQueryInterface extends QueryTraitInterface, OnQueryTraitInterface`
+## `OnClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`OnClauseTraitInterface`**
+
+#### Methods:
 
 - `toSql($useClause = true)`
 - `toString($useClause = true)`
+- `__toString()`
 
 
-## `FromQueryTraitInterface extends JoinsQueryTraitInterface`
+## `FromClauseTraitInterface`
+
+#### Extends:
+
+- **`JoinClauseTraitInterface`**
+
+#### Methods:
 
 - `from($table, $_ = null)`
 - `fromRaw($expr, $param = null, $_ = null)`
@@ -220,13 +271,23 @@ PHP Object-Relational Mapping
 - `clearFrom()`
 
 
-## `FromQueryInterface extends QueryTraitInterface, FromQueryTraitInterface`
+## `FromClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`FromClauseTraitInterface`**
+
+#### Methods:
 
 - `toSql($useClause = true)`
 - `toString($useClause = true)`
+- `__toString()`
 
 
-## `HavingQueryTraitInterface`
+## `HavingClauseTraitInterface`
+
+#### Methods:
 
 - `havingAre(array $columns)`
 - `having($column, $operator, $value = null)`
@@ -267,83 +328,23 @@ PHP Object-Relational Mapping
 - `clearHaving()`
 
 
-## `HavingQueryInterface extends QueryTraitInterface, HavingQueryTraitInterface`
+## `HavingClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`HavingClauseTraitInterface`**
+
+#### Methods:
 
 - `toSql($useClause = true)`
 - `toString($useClause = true)`
+- `__toString()`
 
 
-## `DeleteQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface`
+## `WhereClauseTraitInterface`
 
-- `fromTable($table, $_ = null)`
-
-
-## `InsertQueryInterface extends QueryTraitInterface`
-
-- `into($table)`
-
-- `columns(array $columns)`
-- `clearColumns()`
-
-- `values(array $values)`
-- `clearValues()`
-
-- `data(array $data)`
-- `clearData()`
-
-- `select($sql)`
-- `clearSelect()`
-
-
-## `SelectQueryInterface extends QueryTraitInterface, FromQueryTraitInterface, WhereQueryTraitInterface, HavingQueryTraitInterface`
-
-- `distinct($value = true)`
-
-- `selectFrom($table, $column = null, $_ = null)`
-
-- `columnsFrom($table, $column, $_ = null)`
-- `columns($column, $_ = null)`
-- `column($column, $alias = null)`
-- `columnRaw($column, $alias = null)`
-- `hasColumns()`
-- `clearColumns()`
-
-- `count($column = '*', $alias = null)`
-- `max($column, $alias = null)`
-- `min($column, $alias = null)`
-- `avg($column, $alias = null)`
-- `sum($column, $alias = null)`
-
-- `groupBy($column)`
-- `groupByRaw($expr, $param = null, $_ = null)`
-- `hasGroupBy()`
-- `clearGroupBy()`
-
-- `orderBy($column, $type = null)`
-- `orderByRaw($expr, $param = null, $_ = null)`
-- `hasOrderBy()`
-- `clearOrderBy()`
-
-- `limit($number)`
-- `offset($number)`
-
-- `union($expr, $param = null, $_ = null)`
-- `unionAll($expr, $param = null, $_ = null)`
-- `unionDistinct($expr, $param = null, $_ = null)`
-
-
-## `UpdateQueryInterface extends QueryTraitInterface, JoinsQueryTraitInterface, WhereQueryTraitInterface`
-
-- `table($table, $_ = null)`
-
-- `set($key, $value = null)`
-- `setRaw($raw, $param = null, $_ = null)`
-
-- `increment($column, $value = 1)`
-- `decrement($column, $value = 1)`
-
-
-## `WhereQueryTraitInterface`
+#### Methods:
 
 - `whereAre(array $columns)`
 - `where($column, $operator, $value = null)`
@@ -380,17 +381,217 @@ PHP Object-Relational Mapping
 - `whereRaw($expr, $value = null, $_ = null)`
 - `orWhereRaw($expr, $value = null, $_ = null)`
 
-- `hasWhere` alias of `hasConditions()`
-- `getWhere` alias of `getConditions()`
-- `addWhere` alias of `addConditions(array $conditions)`
-- `setWhere` alias of `setConditions(array $conditions)`
-- `clearWhere` alias of `clearConditions()`
+- `hasWhere()`
+- `getWhere()`
+- `addWhere(array $conditions)`
+- `setWhere(array $conditions)`
+- `clearWhere()`
 
 
-## `WhereQueryInterface extends QueryTraitInterface, WhereQueryTraitInterface`
+## `WhereClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`WhereClauseTraitInterface`**
+
+#### Methods:
 
 - `toSql($useClause = true)`
 - `toString($useClause = true)`
+- `__toString()`
+
+
+## `OrderByClauseTraitInterface`
+
+#### Methods:
+
+- `orderBy($column, $type = null)`
+- `orderByRaw($expr, $param = null, $_ = null)`
+- `hasOrderBy()`
+- `clearOrderBy()`
+
+
+## `OrderByClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`OrderByClauseTraitInterface`**
+
+#### Methods:
+
+- `toSql()`
+- `toString()`
+- `__toString()`
+
+
+## `GroupByClauseTraitInterface`
+
+#### Methods:
+
+- `groupBy($column)`
+- `groupByRaw($expr, $param = null, $_ = null)`
+- `hasGroupBy()`
+- `clearGroupBy()`
+
+
+## `GroupByClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`GroupByClauseTraitInterface`**
+
+#### Methods:
+
+- `toSql()`
+- `toString()`
+- `__toString()`
+
+
+## `LimitClauseTraitInterface`
+
+#### Methods:
+
+- `limit($number)`
+- `addLimitToSql(&$sql)`
+
+
+## `LimitClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`LimitClauseTraitInterface`**
+
+
+## `OffsetClauseTraitInterface`
+
+#### Methods:
+
+- `offset($number)`
+- `addOffsetToSql(&$sql)`
+
+
+## `OffsetClauseInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`OffsetClauseTraitInterface`**
+
+
+## `DeleteQueryInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`FromClauseTraitInterface`**
+- **`WhereClauseTraitInterface`**
+- **`OrderByClauseTraitInterface`**
+- **`LimitClauseTraitInterface`**
+
+#### Methods:
+
+- `fromTable($table, $_ = null)`
+
+- `toSql()`
+- `toString()`
+- `__toString()`
+
+
+## `InsertQueryInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+
+#### Methods:
+
+- `into($table)`
+
+- `columns(array $columns)`
+- `clearColumns()`
+
+- `values(array $values)`
+- `clearValues()`
+
+- `data(array $data)`
+- `clearData()`
+
+- `select($sql)`
+- `clearSelect()`
+
+- `toSql()`
+- `toString()`
+- `__toString()`
+
+
+## `SelectQueryInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`FromClauseTraitInterface`**
+- **`WhereClauseTraitInterface`**
+- **`HavingClauseTraitInterface`**
+- **`OrderByClauseTraitInterface`**
+- **`GroupByClauseTraitInterface`**
+- **`LimitClauseTraitInterface`**
+- **`OffsetClauseTraitInterface`**
+
+#### Methods:
+
+- `distinct($value = true)`
+
+- `selectFrom($table, $column = null, $_ = null)`
+
+- `columnsFrom($table, $column, $_ = null)`
+- `columns($column, $_ = null)`
+- `column($column, $alias = null)`
+- `columnRaw($column, $alias = null)`
+- `hasColumns()`
+- `clearColumns()`
+
+- `count($column = '*', $alias = null)`
+- `max($column, $alias = null)`
+- `min($column, $alias = null)`
+- `avg($column, $alias = null)`
+- `sum($column, $alias = null)`
+
+- `union($expr, $param = null, $_ = null)`
+- `unionAll($expr, $param = null, $_ = null)`
+- `unionDistinct($expr, $param = null, $_ = null)`
+
+- `toSql()`
+- `toString()`
+- `__toString()`
+
+
+## `UpdateQueryInterface`
+
+#### Extends:
+
+- **`QueryTraitInterface`**
+- **`JoinClauseTraitInterface`**
+- **`WhereClauseTraitInterface`**
+- **`OrderByClauseTraitInterface`**
+- **`LimitClauseTraitInterface`**
+
+#### Methods:
+
+- `table($table, $_ = null)`
+
+- `set($key, $value = null)`
+- `setRaw($raw, $param = null, $_ = null)`
+
+- `increment($column, $value = 1)`
+- `decrement($column, $value = 1)`
+
+- `toSql()`
+- `toString()`
+- `__toString()`
 
 
 ## `Column`
@@ -423,6 +624,7 @@ PHP Object-Relational Mapping
 - `setComment($comment)`
 - `getValues()`
 - `setValues(array $values)`
+
 
 ## `Constraint`
 
@@ -471,7 +673,7 @@ PHP Object-Relational Mapping
 - `execute()`
 - `exec()`
 
-## `TableFromQueryTraitInterface`
+## `TableFromClauseTraitInterface`
 
 - `from($table, $_ = null)`
 - `fromRaw($expr, $param = null, $_ = null)`
@@ -481,7 +683,7 @@ PHP Object-Relational Mapping
 - `setFrom(array $from)`
 - `clearFrom()`
 
-## `TableJoinsQueryTrait`
+## `TableJoinClauseTrait`
 
 - `left($table, $on = null, $param = null, $_ = null)`
 - `right($table, $on = null, $param = null, $_ = null)`
@@ -497,7 +699,7 @@ PHP Object-Relational Mapping
 - `setJoins(array $joins)`
 - `clearJoins()`
 
-## `TableHavingQueryTrait`
+## `TableHavingClauseTrait`
 
 - `havingAre(array $columns)`
 - `having($column, $operator, $value = null)`
@@ -577,19 +779,6 @@ PHP Object-Relational Mapping
 - `hasSelect()`
 - `clearSelect()`
 
-- `groupBy($column)`
-- `groupByRaw($expr, $param = null, $_ = null)`
-- `hasGroupBy()`
-- `clearGroupBy()`
-
-- `orderBy($column, $type = null)`
-- `orderByRaw($expr, $param = null, $_ = null)`
-- `hasOrderBy()`
-- `clearOrderBy()`
-
-- `limit($number)`
-- `offset($number)`
-
 - `union($expr, $param = null, $_ = null)`
 - `unionAll($expr, $param = null, $_ = null)`
 - `unionDistinct($expr, $param = null, $_ = null)`
@@ -633,6 +822,3 @@ PHP Object-Relational Mapping
 - `setDeleted($timestamp)`
 
 # @todo
-
-- Add ORDER BY and LIMIT clauses to UPDATE and DELETE statements.
-- Check sql documentation and add needed sql clauses in statements.

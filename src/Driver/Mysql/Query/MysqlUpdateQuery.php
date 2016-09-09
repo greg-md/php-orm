@@ -6,5 +6,5 @@ use Greg\Orm\Query\UpdateQuery;
 
 class MysqlUpdateQuery extends UpdateQuery
 {
-    use MysqlQueryTrait;
+    use MysqlClauseSupportTrait;
 }
