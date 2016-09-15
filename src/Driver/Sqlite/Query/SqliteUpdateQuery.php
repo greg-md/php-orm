@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Orm\Storage\Sqlite\Query;
+namespace Greg\Orm\Driver\Sqlite\Query;
 
 use Greg\Orm\Query\UpdateQuery;
 

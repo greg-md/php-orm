@@ -18,13 +18,13 @@ interface GroupByClauseTraitInterface
      */
     public function groupByRaw($expr, $param = null, $_ = null);
 
-    /**
-     * @return bool
-     */
     public function hasGroupBy();
 
-    /**
-     * @return $this
-     */
+    public function getGroupBy();
+
+    public function addGroupBy(array $groupBy);
+
+    public function setGroupBy(array $groupBy);
+
     public function clearGroupBy();
 }

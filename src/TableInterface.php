@@ -6,10 +6,10 @@ use Greg\Orm\Driver\DriverInterface;
 
 interface TableInterface extends TableTraitInterface, RowTraitInterface
 {
-    public function setStorage(DriverInterface $storage);
+    public function setDriver(DriverInterface $driver);
 
     /**
      * @return DriverInterface
      */
-    public function getStorage();
+    public function getDriver();
 }

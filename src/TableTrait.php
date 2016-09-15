@@ -2,24 +2,35 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\TableQuery\TableDeleteQueryTrait;
-use Greg\Orm\TableQuery\TableFromQueryTrait;
-use Greg\Orm\TableQuery\TableHavingQueryTrait;
-use Greg\Orm\TableQuery\TableInsertQueryTrait;
-use Greg\Orm\TableQuery\TableJoinsQueryTrait;
+use Greg\Orm\TableQuery\DeleteTableQueryTrait;
+use Greg\Orm\TableQuery\FromTableClauseTrait;
+use Greg\Orm\TableQuery\HavingTableClauseTrait;
+use Greg\Orm\TableQuery\InsertTableQueryTrait;
+use Greg\Orm\TableQuery\JoinTableClauseTrait;
+use Greg\Orm\TableQuery\LimitTableClauseTrait;
+use Greg\Orm\TableQuery\OrderByTableClauseTrait;
+use Greg\Orm\TableQuery\SelectTableQueryTrait;
 use Greg\Orm\TableQuery\TableQueryTrait;
-use Greg\Orm\TableQuery\TableSelectQueryTrait;
-use Greg\Orm\TableQuery\TableUpdateQueryTrait;
-use Greg\Orm\TableQuery\TableWhereQueryTrait;
+use Greg\Orm\TableQuery\UpdateTableQueryTrait;
+use Greg\Orm\TableQuery\WhereTableClauseTrait;
 use Greg\Support\Arr;
 use Greg\Support\DateTime;
 use Greg\Support\Url;
 
 trait TableTrait
 {
-    use TableQueryTrait, TableInsertQueryTrait, TableUpdateQueryTrait, TableDeleteQueryTrait, TableSelectQueryTrait;
+    use TableQueryTrait,
+        InsertTableQueryTrait,
+        UpdateTableQueryTrait,
+        DeleteTableQueryTrait,
+        SelectTableQueryTrait,
 
-    use TableFromQueryTrait, TableJoinsQueryTrait, TableWhereQueryTrait, TableHavingQueryTrait;
+        FromTableClauseTrait,
+        JoinTableClauseTrait,
+        WhereTableClauseTrait,
+        HavingTableClauseTrait,
+        OrderByTableClauseTrait,
+        LimitTableClauseTrait;
 
     protected $prefix = null;
 
@@ -254,7 +265,7 @@ trait TableTrait
         return array_keys($this->getColumns());
     }
 
-    public function combineFirstUniqueIndex($values)
+    protected function combineFirstUniqueIndex($values)
     {
         $values = (array)$values;
 
@@ -269,12 +280,12 @@ trait TableTrait
         return array_combine($keys, $values);
     }
 
-    public function fixColumnValueType($column, $value, $clear = false, $reverse = false)
+    protected function fixColumnValueType($column, $value, $clear = false, $reverse = false)
     {
         return Arr::first($this->fixValuesTypes([$column => $value], $clear, $reverse));
     }
 
-    public function fixValuesTypes(array $data, $clear = false, $reverse = false)
+    protected function fixValuesTypes(array $data, $clear = false, $reverse = false)
     {
         foreach($data as $columnName => &$value) {
             if (!($column = $this->getColumn($columnName))) {

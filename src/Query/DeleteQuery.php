@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class DeleteQuery implements DeleteQueryInterface
 {
-    use ClauseTrait, FromClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
+    use QueryClauseTrait, FromClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
 
     protected $fromTables = [];
 

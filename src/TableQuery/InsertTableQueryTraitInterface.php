@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
-interface TableInsertQueryTraitInterface
+interface InsertTableQueryTraitInterface
 {
     public function insert(array $data);
 

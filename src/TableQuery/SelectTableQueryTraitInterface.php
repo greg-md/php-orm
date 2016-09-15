@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\TableQuery;
 
-interface TableSelectQueryTraitInterface
+interface SelectTableQueryTraitInterface
 {
-    public function intoSelect($column = null, $_ = null);
+    public function intoSelect();
 
     public function getSelectQuery();
 
@@ -49,17 +49,6 @@ interface TableSelectQueryTraitInterface
 
     public function clearGroupBy();
 
-
-    public function orderBy($column, $type = null);
-
-    public function orderByRaw($expr, $param = null, $_ = null);
-
-    public function hasOrderBy();
-
-    public function clearOrderBy();
-
-
-    public function limit($number);
 
     public function offset($number);
 

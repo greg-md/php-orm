@@ -2,20 +2,20 @@
 
 namespace Greg\Orm\Table;
 
-use Greg\Orm\Query\WhereQueryTraitInterface;
+use Greg\Orm\Query\WhereClauseInterface;
 
 trait SoftDeleteTrait
 {
     protected $softDeleteColumn = 'DeletedAt';
 
     /**
-     * @var WhereQueryTraitInterface|null
+     * @var WhereClauseInterface|null
      */
     protected $softDeleteClause = null;
 
     protected function bootSoftDeleteTrait()
     {
-        $this->applyOnWhere(function(WhereQueryTraitInterface $query) {
+        $this->applyOnWhere(function(WhereClauseInterface $query) {
             $this->softDeleteClause = $query;
 
             $this->loadSoftDeleted();

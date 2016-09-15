@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-trait ClauseSupportTrait
+trait QueryClauseSupportTrait
 {
     protected function quoteLike($value, $escape = '\\')
     {

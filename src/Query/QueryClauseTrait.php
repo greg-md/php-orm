@@ -5,9 +5,9 @@ namespace Greg\Orm\Query;
 use Greg\Orm\Query;
 use Greg\Support\Debug;
 
-trait ClauseTrait
+trait QueryClauseTrait
 {
-    use ClauseSupportTrait;
+    use QueryClauseSupportTrait;
 
     public function when($condition, callable $callable)
     {

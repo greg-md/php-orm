@@ -2,19 +2,17 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Query\FromQueryInterface;
-use Greg\Orm\Query\HavingQueryInterface;
-use Greg\Orm\Query\HavingQueryTraitInterface;
-use Greg\Orm\Query\JoinsQueryInterface;
-use Greg\Orm\Query\WhereQueryInterface;
-use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
+use Greg\Orm\Driver\DriverInterface;
+use Greg\Orm\Query\FromClauseInterface;
+use Greg\Orm\Query\HavingClauseInterface;
+use Greg\Orm\Query\HavingClauseTraitInterface;
+use Greg\Orm\Query\JoinClauseInterface;
+use Greg\Orm\Query\LimitClauseInterface;
+use Greg\Orm\Query\OrderByClauseInterface;
+use Greg\Orm\Query\WhereClauseInterface;
 
-trait TableHavingQueryTrait
+trait HavingTableClauseTrait
 {
-    /**
-     * @return $this
-     */
     protected function newHavingClauseInstance()
     {
         return $this->newInstance()->intoHaving();
@@ -22,7 +20,7 @@ trait TableHavingQueryTrait
 
     protected function checkHavingClauseQuery()
     {
-        if (!($this->query instanceof HavingQueryTraitInterface)) {
+        if (!($this->query instanceof HavingClauseTraitInterface)) {
             throw new \Exception('Current query is not a HAVING clause.');
         }
 
@@ -30,7 +28,7 @@ trait TableHavingQueryTrait
     }
 
     /**
-     * @return HavingQueryTraitInterface
+     * @return HavingClauseTraitInterface
      * @throws \Exception
      */
     protected function getHavingClauseQuery()
@@ -56,27 +54,31 @@ trait TableHavingQueryTrait
     protected function intoHavingClause()
     {
         foreach($this->clauses as $clause) {
-            if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof FromQueryInterface)
-                or  !($clause instanceof HavingQueryInterface)
-                or  !($clause instanceof JoinsQueryInterface)
+            if (    !($clause instanceof FromClauseInterface)
+                or  !($clause instanceof HavingClauseInterface)
+                or  !($clause instanceof JoinClauseInterface)
+                or  !($clause instanceof LimitClauseInterface)
+                or  !($clause instanceof OrderByClauseInterface)
+                or  !($clause instanceof WhereClauseInterface)
             ) {
                 throw new \Exception('Current query could not have a HAVING clause.');
             }
         }
 
-        return $this->getStorage()->having();
+        return $this->getDriver()->having();
     }
 
     public function intoHaving()
     {
-        $this->setClause('HAVING', $this->intoHavingClause());
+        if (!$this->hasClause('HAVING')) {
+            $this->setClause('HAVING', $this->intoHavingClause());
+        }
 
         return $this;
     }
 
     /**
-     * @return HavingQueryInterface
+     * @return HavingClauseInterface
      */
     public function getHavingClause()
     {
@@ -330,12 +332,12 @@ trait TableHavingQueryTrait
     }
 
     /**
-     * @return TableInterface
+     * @return $this
      */
     abstract protected function newInstance();
 
     /**
-     * @return StorageInterface
+     * @return DriverInterface
      */
-    abstract public function getStorage();
+    abstract public function getDriver();
 }

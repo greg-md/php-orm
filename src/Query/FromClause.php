@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class FromClause implements FromClauseInterface
 {
-    use ClauseTrait, FromClauseTrait;
+    use QueryClauseTrait, FromClauseTrait;
 
     public function toSql($useClause = true)
     {

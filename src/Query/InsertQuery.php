@@ -6,7 +6,7 @@ use Greg\Support\Arr;
 
 class InsertQuery implements InsertQueryInterface
 {
-    use ClauseTrait;
+    use QueryClauseTrait;
 
     protected $into = null;
 

@@ -54,33 +54,28 @@ interface DriverInterface
 
 
     /**
-     * @param null $column
-     * @param null $_
      * @return SelectQueryInterface
      * @throws \Exception
      */
-    public function select($column = null, $_ = null);
+    public function select();
 
     /**
-     * @param null $into
      * @return InsertQueryInterface
      * @throws \Exception
      */
-    public function insert($into = null);
+    public function insert();
 
     /**
-     * @param null $from
      * @return DeleteQueryInterface
      * @throws \Exception
      */
-    public function delete($from = null);
+    public function delete();
 
     /**
-     * @param null $table
      * @return UpdateQueryInterface
      * @throws \Exception
      */
-    public function update($table = null);
+    public function update();
 
     /**
      * @return FromClauseInterface
@@ -111,6 +106,12 @@ interface DriverInterface
      * @throws \Exception
      */
     public function orderBy();
+
+    /**
+     * @return OrderByClauseInterface
+     * @throws \Exception
+     */
+    public function groupBy();
 
     /**
      * @return LimitClauseInterface

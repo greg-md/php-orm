@@ -12,12 +12,12 @@ abstract class Table implements TableInterface
     /**
      * @var DriverInterface|null
      */
-    protected $storage = null;
+    protected $driver = null;
 
-    public function __construct(array $data = [], DriverInterface $storage = null)
+    public function __construct(array $data = [], DriverInterface $driver = null)
     {
-        if ($storage) {
-            $this->setStorage($storage);
+        if ($driver) {
+            $this->setDriver($driver);
         }
 
         $this->boot();
@@ -47,31 +47,36 @@ abstract class Table implements TableInterface
         return $this;
     }
 
+    /**
+     * @param array $data
+     * @return $this
+     * @throws \Exception
+     */
     protected function newInstance(array $data = [])
     {
         $class = get_called_class();
 
-        return new $class($data, $this->getStorage());
+        return new $class($data, $this->getDriver());
     }
 
-    public function setStorage(DriverInterface $storage)
+    public function setDriver(DriverInterface $driver)
     {
-        $this->storage = $storage;
+        $this->driver = $driver;
 
         return $this;
     }
 
-    public function getStorage()
+    public function getDriver()
     {
-        if (!$this->storage) {
-            throw new \Exception('Table storage is not defined.');
+        if (!$this->driver) {
+            throw new \Exception('Table driver is not defined.');
         }
 
-        return $this->storage;
+        return $this->driver;
     }
 
     public function lastInsertId()
     {
-        return $this->getStorage()->lastInsertId();
+        return $this->getDriver()->lastInsertId();
     }
 }

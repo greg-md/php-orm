@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class ConditionsExpr implements ConditionsExprInterface
 {
-    use ClauseTrait, ConditionsExprTrait;
+    use QueryClauseTrait, ConditionsExprTrait;
 
     public function toSql()
     {

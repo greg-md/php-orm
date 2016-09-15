@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
-interface TableFromQueryTraitInterface
+interface FromTableClauseTraitInterface
 {
     public function intoFrom();
 

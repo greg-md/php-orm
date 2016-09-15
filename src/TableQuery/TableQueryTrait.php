@@ -2,6 +2,8 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Driver\DriverInterface;
+use Greg\Orm\Query\ClauseInterface;
 use Greg\Orm\Query\QueryInterface;
 
 trait TableQueryTrait
@@ -22,7 +24,7 @@ trait TableQueryTrait
         return $this->query;
     }
 
-    public function setQuery(QueryTraitInterface $query)
+    public function setQuery(QueryInterface $query)
     {
         $this->query = $query;
 
@@ -32,6 +34,11 @@ trait TableQueryTrait
     public function hasClauses()
     {
         return (bool)$this->clauses;
+    }
+
+    public function hasClause($clause)
+    {
+        return isset($this->clauses[$clause]);
     }
 
     public function getClauses()
@@ -62,7 +69,7 @@ trait TableQueryTrait
         return $this;
     }
 
-    public function setClause($clause, QueryTraitInterface $query)
+    public function setClause($clause, ClauseInterface $query)
     {
         $this->clauses[$clause] = $query;
 
@@ -78,12 +85,12 @@ trait TableQueryTrait
 
     public function concat(array $values, $delimiter = '')
     {
-        return $this->getStorage()->concat($values, $delimiter);
+        return $this->getDriver()->concat($values, $delimiter);
     }
 
     public function quoteLike($value, $escape = '\\')
     {
-        return $this->getStorage()->quoteLike($value, $escape);
+        return $this->getDriver()->quoteLike($value, $escape);
     }
 
     public function when($condition, callable $callable)
@@ -106,11 +113,11 @@ trait TableQueryTrait
         return (string)$this->toString();
     }
 
-    protected function prepareQuery(QueryTraitInterface $query)
+    protected function prepareQuery(QueryInterface $query)
     {
         list($sql, $params) = $query->toSql();
 
-        $stmt = $this->getStorage()->prepare($sql);
+        $stmt = $this->getDriver()->prepare($sql);
 
         if ($params) {
             $stmt->bindParams($params);
@@ -119,11 +126,7 @@ trait TableQueryTrait
         return $stmt;
     }
 
-    /**
-     * @param QueryTraitInterface $query
-     * @return StmtInterface
-     */
-    protected function executeQuery(QueryTraitInterface $query)
+    protected function executeQuery(QueryInterface $query)
     {
         $stmt = $this->prepareQuery($query);
 
@@ -132,11 +135,7 @@ trait TableQueryTrait
         return $stmt;
     }
 
-    /**
-     * @param QueryTraitInterface $query
-     * @return StmtInterface
-     */
-    protected function execQuery(QueryTraitInterface $query)
+    protected function execQuery(QueryInterface $query)
     {
         return $this->prepareQuery($query)->execute();
     }
@@ -147,7 +146,7 @@ trait TableQueryTrait
     }
 
     /**
-     * @return StorageInterface
+     * @return DriverInterface
      */
-    abstract public function getStorage();
+    abstract public function getDriver();
 }

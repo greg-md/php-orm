@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
-interface TableHavingQueryTraitInterface
+interface HavingTableClauseTraitInterface
 {
     public function intoHaving();
 

@@ -10,6 +10,7 @@ use Greg\Orm\Driver\Mysql\Query\MysqlQuerySupport;
 use Greg\Orm\Driver\Mysql\Query\MysqlSelectQuery;
 use Greg\Orm\Driver\Mysql\Query\MysqlUpdateQuery;
 use Greg\Orm\Query\FromClause;
+use Greg\Orm\Query\GroupByClause;
 use Greg\Orm\Query\HavingClause;
 use Greg\Orm\Query\JoinClause;
 use Greg\Orm\Query\LimitClause;
@@ -122,48 +123,24 @@ class Mysql extends DriverAbstract implements MysqlInterface
         return new PdoStmt($stmt, $this);
     }
 
-    public function select($column = null, $_ = null)
+    public function select()
     {
-        $query = new MysqlSelectQuery();
-
-        if ($columns = is_array($column) ? $column : func_get_args()) {
-            $query->columns($columns);
-        }
-
-        return $query;
+        return new MysqlSelectQuery();
     }
 
-    public function insert($into = null)
+    public function insert()
     {
-        $query = new MysqlInsertQuery();
-
-        if ($into !== null) {
-            $query->into($into);
-        }
-
-        return $query;
+        return new MysqlInsertQuery();
     }
 
-    public function delete($from = null)
+    public function delete()
     {
-        $query = new MysqlDeleteQuery();
-
-        if ($from !== null) {
-            $query->from($from);
-        }
-
-        return $query;
+        return new MysqlDeleteQuery();
     }
 
-    public function update($table = null)
+    public function update()
     {
-        $query = new MysqlUpdateQuery();
-
-        if ($table !== null) {
-            $query->table($table);
-        }
-
-        return $query;
+        return new MysqlUpdateQuery();
     }
 
     public function from()
@@ -189,6 +166,11 @@ class Mysql extends DriverAbstract implements MysqlInterface
     public function orderBy()
     {
         return new OrderByClause();
+    }
+
+    public function groupBy()
+    {
+        return new GroupByClause();
     }
 
     public function limit()

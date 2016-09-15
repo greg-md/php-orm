@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface ClauseInterface
+interface ClauseInterface extends QueryClauseInterface
 {
-    public function when($condition, callable $callable);
+
 }

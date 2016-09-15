@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class GroupByClause implements GroupByClauseInterface
 {
-    use ClauseTrait, GroupByClauseTrait;
+    use QueryClauseTrait, GroupByClauseTrait;
 
     public function toSql()
     {

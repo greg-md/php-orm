@@ -2,16 +2,19 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Query\QueryTraitInterface;
+use Greg\Orm\Query\ClauseInterface;
+use Greg\Orm\Query\QueryInterface;
 
-interface TableQueryTraitInterface
+interface TableQueryInterface
 {
     public function getQuery();
 
-    public function setQuery(QueryTraitInterface $query);
+    public function setQuery(QueryInterface $query);
 
 
     public function hasClauses();
+
+    public function hasClause($clause);
 
     public function getClauses();
 
@@ -21,7 +24,7 @@ interface TableQueryTraitInterface
 
     public function setClauses(array $clauses);
 
-    public function setClause($clause, QueryTraitInterface $query);
+    public function setClause($clause, ClauseInterface $query);
 
     public function clearClauses();
 

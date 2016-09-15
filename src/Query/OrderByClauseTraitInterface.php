@@ -23,10 +23,14 @@ interface OrderByClauseTraitInterface
      */
     public function orderByRaw($expr, $param = null, $_ = null);
 
-    /**
-     * @return bool
-     */
+
     public function hasOrderBy();
+
+    public function getOrderBy();
+
+    public function addOrderBy(array $conditions);
+
+    public function setOrderBy(array $conditions);
 
     /**
      * @return $this

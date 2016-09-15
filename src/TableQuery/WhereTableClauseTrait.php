@@ -2,19 +2,20 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Query\FromQueryInterface;
-use Greg\Orm\Query\HavingQueryInterface;
-use Greg\Orm\Query\JoinsQueryInterface;
-use Greg\Orm\Query\WhereQueryInterface;
-use Greg\Orm\Query\WhereQueryTraitInterface;
-use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
+use Greg\Orm\Driver\DriverInterface;
+use Greg\Orm\Query\FromClauseInterface;
+use Greg\Orm\Query\HavingClauseInterface;
+use Greg\Orm\Query\JoinClauseInterface;
+use Greg\Orm\Query\LimitClauseInterface;
+use Greg\Orm\Query\OrderByClauseInterface;
+use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Query\WhereClauseTraitInterface;
 
-trait TableWhereQueryTrait
+trait WhereTableClauseTrait
 {
     protected $whereApplicators = [];
 
-    public function applyWhere(WhereQueryTraitInterface $query)
+    public function applyWhere(WhereClauseTraitInterface $query)
     {
         foreach ($this->whereApplicators as $applicator) {
             $query->whereRaw($applicator);
@@ -28,9 +29,6 @@ trait TableWhereQueryTrait
         $this->whereApplicators[] = $callable;
     }
 
-    /**
-     * @return $this
-     */
     protected function newWhereClauseInstance()
     {
         return $this->newInstance()->intoWhere();
@@ -38,7 +36,7 @@ trait TableWhereQueryTrait
 
     protected function checkWhereClauseQuery()
     {
-        if (!($this->query instanceof WhereQueryTraitInterface)) {
+        if (!($this->query instanceof WhereClauseTraitInterface)) {
             throw new \Exception('Current query is not a WHERE clause.');
         }
 
@@ -46,7 +44,7 @@ trait TableWhereQueryTrait
     }
 
     /**
-     * @return WhereQueryTraitInterface
+     * @return WhereClauseTraitInterface
      * @throws \Exception
      */
     protected function getWhereClauseQuery()
@@ -72,27 +70,31 @@ trait TableWhereQueryTrait
     protected function intoWhereClause()
     {
         foreach($this->clauses as $clause) {
-            if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof FromQueryInterface)
-                or  !($clause instanceof HavingQueryInterface)
-                or  !($clause instanceof JoinsQueryInterface)
+            if (    !($clause instanceof FromClauseInterface)
+                or  !($clause instanceof HavingClauseInterface)
+                or  !($clause instanceof JoinClauseInterface)
+                or  !($clause instanceof LimitClauseInterface)
+                or  !($clause instanceof OrderByClauseInterface)
+                or  !($clause instanceof WhereClauseInterface)
             ) {
                 throw new \Exception('Current query could not have a WHERE clause.');
             }
         }
 
-        return $this->getStorage()->where();
+        return $this->getDriver()->where();
     }
 
     public function intoWhere()
     {
-        $this->setClause('WHERE', $this->intoWhereClause());
+        if (!$this->hasClause('WHERE')) {
+            $this->setClause('WHERE', $this->intoWhereClause());
+        }
 
         return $this;
     }
 
     /**
-     * @return WhereQueryInterface
+     * @return WhereClauseInterface
      */
     public function getWhereClause()
     {
@@ -364,12 +366,12 @@ trait TableWhereQueryTrait
     }
 
     /**
-     * @return TableInterface
+     * @return $this
      */
     abstract protected function newInstance();
 
     /**
-     * @return StorageInterface
+     * @return DriverInterface
      */
-    abstract public function getStorage();
+    abstract public function getDriver();
 }

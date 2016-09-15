@@ -2,11 +2,11 @@
 
 namespace Greg\Orm\TableQuery;
 
-interface TableJoinsQueryTraitInterface
+interface JoinTableClauseTraitInterface
 {
-    public function intoJoins();
+    public function intoJoin();
 
-    public function getJoinsClause();
+    public function getJoinClause();
 
     public function left($table, $on = null, $param = null, $_ = null);
 

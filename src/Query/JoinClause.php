@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class JoinClause implements JoinClauseInterface
 {
-    use ClauseTrait, JoinClauseTrait;
+    use QueryClauseTrait, JoinClauseTrait;
 
     public function toSql($source = null)
     {

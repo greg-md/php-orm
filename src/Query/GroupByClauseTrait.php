@@ -8,15 +8,15 @@ trait GroupByClauseTrait
 
     public function groupBy($column)
     {
-        return $this->addGroupBy($this->quoteNameExpr($column));
+        return $this->_addGroupBy($this->quoteNameExpr($column));
     }
 
     public function groupByRaw($expr, $param = null, $_ = null)
     {
-        return $this->addGroupBy($this->quoteExpr($expr), is_array($param) ? $param : array_slice(func_get_args(), 1));
+        return $this->_addGroupBy($this->quoteExpr($expr), is_array($param) ? $param : array_slice(func_get_args(), 1));
     }
 
-    protected function addGroupBy($expr, array $params = [])
+    protected function _addGroupBy($expr, array $params = [])
     {
         $this->groupBy[] = [
             'expr' => $expr,
@@ -29,6 +29,25 @@ trait GroupByClauseTrait
     public function hasGroupBy()
     {
         return (bool)$this->groupBy;
+    }
+
+    public function getGroupBy()
+    {
+        return $this->groupBy;
+    }
+
+    public function addGroupBy(array $groupBy)
+    {
+        $this->groupBy = array_merge($this->groupBy, $groupBy);
+
+        return $this;
+    }
+
+    public function setGroupBy(array $groupBy)
+    {
+        $this->groupBy = $groupBy;
+
+        return $this;
     }
 
     public function clearGroupBy()

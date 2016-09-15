@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class HavingClause implements HavingClauseInterface
 {
-    use ClauseTrait, HavingClauseTrait;
+    use QueryClauseTrait, HavingClauseTrait;
 
     public function toSql($useClause = true)
     {

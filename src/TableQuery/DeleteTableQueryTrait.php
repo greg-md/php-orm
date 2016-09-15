@@ -2,12 +2,13 @@
 
 namespace Greg\Orm\TableQuery;
 
+use Greg\Orm\Driver\DriverInterface;
 use Greg\Orm\Query\DeleteQueryInterface;
-use Greg\Orm\Query\FromQueryInterface;
-use Greg\Orm\Query\JoinsQueryInterface;
-use Greg\Orm\Query\WhereQueryInterface;
-use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
+use Greg\Orm\Query\FromClauseInterface;
+use Greg\Orm\Query\JoinClauseInterface;
+use Greg\Orm\Query\LimitClauseInterface;
+use Greg\Orm\Query\OrderByClauseInterface;
+use Greg\Orm\Query\WhereClauseInterface;
 
 /**
  * Class TableDeleteQueryTrait
@@ -49,24 +50,19 @@ use Greg\Orm\TableInterface;
  *
  * @method DeleteQueryInterface getQuery();
  */
-trait TableDeleteQueryTrait
+trait DeleteTableQueryTrait
 {
-    protected function deleteQuery(array $whereAre = [])
+    protected function deleteQuery()
     {
-        $query = $this->getStorage()->delete($this);
+        $query = $this->getDriver()->delete();
 
-        if ($whereAre) {
-            $query->whereAre($whereAre);
-        }
+        $query->from($this);
 
         $this->applyWhere($query);
 
         return $query;
     }
 
-    /**
-     * @return $this
-     */
     protected function newDeleteInstance()
     {
         return $this->newInstance()->intoDelete();
@@ -94,33 +90,48 @@ trait TableDeleteQueryTrait
         return $this->checkDeleteQuery();
     }
 
-    protected function intoDeleteQuery(array $whereAre = [])
+    protected function intoDeleteQuery()
     {
-        $query = $this->deleteQuery($whereAre);
+        $query = $this->deleteQuery();
 
         foreach($this->clauses as $clause) {
-            if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof JoinsQueryInterface)
+            if (    !($clause instanceof FromClauseInterface)
+                or  !($clause instanceof JoinClauseInterface)
+                or  !($clause instanceof WhereClauseInterface)
+                or  !($clause instanceof OrderByClauseInterface)
+                or  !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a DELETE statement.');
             }
         }
 
         foreach($this->clauses as $clause) {
-            if ($clause instanceof FromQueryInterface) {
+            if ($clause instanceof FromClauseInterface) {
                 $query->addFrom($clause->getFrom());
 
                 continue;
             }
 
-            if ($clause instanceof JoinsQueryInterface) {
+            if ($clause instanceof JoinClauseInterface) {
                 $query->addJoins($clause->getJoins());
 
                 continue;
             }
 
-            if ($clause instanceof WhereQueryInterface) {
+            if ($clause instanceof WhereClauseInterface) {
                 $query->addWhere($clause->getWhere());
+
+                continue;
+            }
+            
+            if ($clause instanceof OrderByClauseInterface) {
+                $query->addOrderBy($clause->getOrderBy());
+
+                continue;
+            }
+
+            if ($clause instanceof LimitClauseInterface) {
+                $query->setLimit($clause->getLimit());
 
                 continue;
             }
@@ -129,9 +140,9 @@ trait TableDeleteQueryTrait
         return $query;
     }
 
-    public function intoDelete(array $whereAre = [])
+    public function intoDelete()
     {
-        $this->query = $this->intoDeleteQuery($whereAre);
+        $this->query = $this->intoDeleteQuery();
 
         $this->clearClauses();
 
@@ -170,7 +181,7 @@ trait TableDeleteQueryTrait
 
     public function truncate()
     {
-        return $this->getStorage()->truncate($this->fullName());
+        return $this->getDriver()->truncate($this->fullName());
     }
 
     public function erase($key)
@@ -179,12 +190,12 @@ trait TableDeleteQueryTrait
     }
 
     /**
-     * @return TableInterface
+     * @return $this
      */
     abstract protected function newInstance();
 
     /**
-     * @return StorageInterface
+     * @return DriverInterface
      */
-    abstract public function getStorage();
+    abstract public function getDriver();
 }

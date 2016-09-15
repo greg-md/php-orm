@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-interface QueryInterface extends ClauseInterface
+interface QueryInterface extends QueryClauseInterface
 {
     public function toSql();
 

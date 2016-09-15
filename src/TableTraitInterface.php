@@ -2,28 +2,32 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\TableQuery\TableDeleteQueryTraitInterface;
-use Greg\Orm\TableQuery\TableFromQueryTraitInterface;
-use Greg\Orm\TableQuery\TableHavingQueryTraitInterface;
-use Greg\Orm\TableQuery\TableInsertQueryTraitInterface;
-use Greg\Orm\TableQuery\TableJoinsQueryTraitInterface;
-use Greg\Orm\TableQuery\TableQueryTraitInterface;
-use Greg\Orm\TableQuery\TableSelectQueryTraitInterface;
-use Greg\Orm\TableQuery\TableUpdateQueryTraitInterface;
-use Greg\Orm\TableQuery\TableWhereQueryTraitInterface;
+use Greg\Orm\TableQuery\DeleteTableQueryTraitInterface;
+use Greg\Orm\TableQuery\FromTableClauseTraitInterface;
+use Greg\Orm\TableQuery\HavingTableClauseTraitInterface;
+use Greg\Orm\TableQuery\InsertTableQueryTraitInterface;
+use Greg\Orm\TableQuery\JoinTableClauseTraitInterface;
+use Greg\Orm\TableQuery\LimitTableClauseTraitInterface;
+use Greg\Orm\TableQuery\OrderByTableClauseTraitInterface;
+use Greg\Orm\TableQuery\SelectTableQueryTraitInterface;
+use Greg\Orm\TableQuery\TableQueryInterface;
+use Greg\Orm\TableQuery\UpdateTableQueryTraitInterface;
+use Greg\Orm\TableQuery\WhereTableClauseTraitInterface;
 
 interface TableTraitInterface extends
-    TableQueryTraitInterface,
+    TableQueryInterface,
 
-    TableInsertQueryTraitInterface,
-    TableUpdateQueryTraitInterface,
-    TableDeleteQueryTraitInterface,
-    TableSelectQueryTraitInterface,
+    InsertTableQueryTraitInterface,
+    UpdateTableQueryTraitInterface,
+    DeleteTableQueryTraitInterface,
+    SelectTableQueryTraitInterface,
 
-    TableFromQueryTraitInterface,
-    TableJoinsQueryTraitInterface,
-    TableWhereQueryTraitInterface,
-    TableHavingQueryTraitInterface
+    FromTableClauseTraitInterface,
+    JoinTableClauseTraitInterface,
+    WhereTableClauseTraitInterface,
+    HavingTableClauseTraitInterface,
+    OrderByTableClauseTraitInterface,
+    LimitTableClauseTraitInterface
 {
     public function setPrefix($name);
 
@@ -76,8 +80,4 @@ interface TableTraitInterface extends
     public function getFirstUniqueKeys();
 
     public function firstUniqueIndex();
-
-    public function combineFirstUniqueIndex($values);
-
-    public function fixValuesTypes(array $row, $clear = false, $reverse = false);
 }

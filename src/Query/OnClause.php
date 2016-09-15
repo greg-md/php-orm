@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class OnClause implements OnClauseInterface
 {
-    use ClauseTrait, OnClauseTrait;
+    use QueryClauseTrait, OnClauseTrait;
 
     public function toSql($useClause = true)
     {

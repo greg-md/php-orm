@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\TableQuery;
 
-interface TableDeleteQueryTraitInterface
+interface DeleteTableQueryTraitInterface
 {
-    public function intoDelete(array $whereAre = []);
+    public function intoDelete();
 
     public function getDeleteQuery();
 

@@ -2,12 +2,12 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Query\FromQueryInterface;
-use Greg\Orm\Query\JoinsQueryInterface;
+use Greg\Orm\Driver\DriverInterface;
+use Greg\Orm\Query\JoinClauseInterface;
+use Greg\Orm\Query\LimitClauseInterface;
+use Greg\Orm\Query\OrderByClauseInterface;
 use Greg\Orm\Query\UpdateQueryInterface;
-use Greg\Orm\Query\WhereQueryInterface;
-use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
+use Greg\Orm\Query\WhereClauseInterface;
 
 /**
  * Class TableUpdateQueryTrait
@@ -15,15 +15,13 @@ use Greg\Orm\TableInterface;
  *
  * @method UpdateQueryInterface getQuery();
  */
-trait TableUpdateQueryTrait
+trait UpdateTableQueryTrait
 {
-    protected function updateQuery(array $values = [])
+    protected function updateQuery()
     {
-        $query = $this->getStorage()->update($this);
+        $query = $this->getDriver()->update();
 
-        if ($values) {
-            $query->set($values);
-        }
+        $query->table($this);
 
         $this->applyWhere($query);
 
@@ -60,27 +58,41 @@ trait TableUpdateQueryTrait
         return $this->checkUpdateQuery();
     }
 
-    protected function intoUpdateQuery(array $values = [])
+    protected function intoUpdateQuery()
     {
-        $query = $this->updateQuery($values);
+        $query = $this->updateQuery();
 
         foreach($this->clauses as $clause) {
-            if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof JoinsQueryInterface)
+            if (    !($clause instanceof JoinClauseInterface)
+                or  !($clause instanceof WhereClauseInterface)
+                or  !($clause instanceof OrderByClauseInterface)
+                or  !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a UPDATE statement.');
             }
         }
 
         foreach($this->clauses as $clause) {
-            if ($clause instanceof JoinsQueryInterface) {
+            if ($clause instanceof JoinClauseInterface) {
                 $query->addJoins($clause->getJoins());
 
                 continue;
             }
 
-            if ($clause instanceof WhereQueryInterface) {
+            if ($clause instanceof WhereClauseInterface) {
                 $query->addWhere($clause->getWhere());
+
+                continue;
+            }
+
+            if ($clause instanceof OrderByClauseInterface) {
+                $query->addOrderBy($clause->getOrderBy());
+
+                continue;
+            }
+
+            if ($clause instanceof LimitClauseInterface) {
+                $query->setLimit($clause->getLimit());
 
                 continue;
             }
@@ -89,9 +101,9 @@ trait TableUpdateQueryTrait
         return $query;
     }
 
-    public function intoUpdate(array $values = [])
+    public function intoUpdate()
     {
-        $this->query = $this->intoUpdateQuery($values);
+        $this->query = $this->intoUpdateQuery();
 
         $this->clearClauses();
 
@@ -159,12 +171,12 @@ trait TableUpdateQueryTrait
     }
 
     /**
-     * @return TableInterface
+     * @return $this
      */
     abstract protected function newInstance();
 
     /**
-     * @return StorageInterface
+     * @return DriverInterface
      */
-    abstract public function getStorage();
+    abstract public function getDriver();
 }

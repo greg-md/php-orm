@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class UpdateQuery implements UpdateQueryInterface
 {
-    use ClauseTrait, JoinClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
+    use QueryClauseTrait, JoinClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
 
     protected $tables = [];
 

@@ -2,14 +2,14 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Storage\MysqlInterface;
+use Greg\Orm\Driver\MysqlInterface;
 
 trait TableSchemaTrait
 {
     protected function populateSchema($populateInfo = true, $populateReferences = true, $populateRelationships = false)
     {
         if ($populateInfo) {
-            $info = $this->getStorage()->tableInfo($this->fullName());
+            $info = $this->getDriver()->tableInfo($this->fullName());
 
             foreach($info['columns'] as $column) {
                 $this->addColumn($column);
@@ -21,11 +21,11 @@ trait TableSchemaTrait
         }
 
         if ($populateReferences) {
-            //$references = $this->getStorage()->getTableReferences($this->getName());
+            //$references = $this->getDriver()->getTableReferences($this->getName());
         }
 
         if ($populateRelationships) {
-            //$relationships = $this->getStorage()->getTableRelationships($this->getName());
+            //$relationships = $this->getDriver()->getTableRelationships($this->getName());
         }
 
         return $this;
@@ -39,5 +39,5 @@ trait TableSchemaTrait
     /**
      * @return MysqlInterface
      */
-    abstract public function getStorage();
+    abstract public function getDriver();
 }

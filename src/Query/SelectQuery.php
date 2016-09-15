@@ -51,7 +51,7 @@ use Greg\Orm\TableInterface;
  */
 class SelectQuery implements SelectQueryInterface
 {
-    use ClauseTrait,
+    use QueryClauseTrait,
         FromClauseTrait,
         WhereClauseTrait,
         HavingClauseTrait,

@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
-interface TableWhereQueryTraitInterface
+interface WhereTableClauseTraitInterface
 {
     public function intoWhere();
 

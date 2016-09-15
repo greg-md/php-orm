@@ -13,11 +13,33 @@ trait OffsetClauseTrait
         return $this;
     }
 
-    public function addOffsetToSql(&$sql)
+    protected function addOffsetToSql(&$sql)
     {
         if ($this->offset) {
             $sql .= ' OFFSET ' . $this->offset;
         }
+
+        return $this;
+    }
+
+    public function hasOffset()
+    {
+        return (bool)$this->offset;
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    public function setOffset($number)
+    {
+        return $this->offset($number);
+    }
+
+    public function clearOffset()
+    {
+        $this->offset = null;
 
         return $this;
     }

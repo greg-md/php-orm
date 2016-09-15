@@ -3,16 +3,17 @@
 namespace Greg\Orm\Driver;
 
 use Greg\Orm\Query\FromClause;
+use Greg\Orm\Query\GroupByClause;
 use Greg\Orm\Query\HavingClause;
 use Greg\Orm\Query\JoinClause;
 use Greg\Orm\Query\LimitClause;
 use Greg\Orm\Query\OrderByClause;
 use Greg\Orm\Query\QuerySupport;
 use Greg\Orm\Query\WhereClause;
-use Greg\Orm\Storage\Sqlite\Query\SqliteDeleteQuery;
-use Greg\Orm\Storage\Sqlite\Query\SqliteInsertQuery;
-use Greg\Orm\Storage\Sqlite\Query\SqliteSelectQuery;
-use Greg\Orm\Storage\Sqlite\Query\SqliteUpdateQuery;
+use Greg\Orm\Driver\Sqlite\Query\SqliteDeleteQuery;
+use Greg\Orm\Driver\Sqlite\Query\SqliteInsertQuery;
+use Greg\Orm\Driver\Sqlite\Query\SqliteSelectQuery;
+use Greg\Orm\Driver\Sqlite\Query\SqliteUpdateQuery;
 
 class Sqlite extends DriverAbstract implements SqliteInterface
 {
@@ -55,48 +56,24 @@ class Sqlite extends DriverAbstract implements SqliteInterface
         return new PdoStmt($stmt, $this);
     }
 
-    public function select($column = null, $_ = null)
+    public function select()
     {
-        $query = new SqliteSelectQuery();
-
-        if ($columns = is_array($column) ? $column : func_get_args()) {
-            $query->columns($columns);
-        }
-
-        return $query;
+        return new SqliteSelectQuery();
     }
 
-    public function insert($into = null)
+    public function insert()
     {
-        $query = new SqliteInsertQuery();
-
-        if ($into !== null) {
-            $query->into($into);
-        }
-
-        return $query;
+        return new SqliteInsertQuery();
     }
 
-    public function delete($from = null)
+    public function delete()
     {
-        $query = new SqliteDeleteQuery();
-
-        if ($from !== null) {
-            $query->from($from);
-        }
-
-        return $query;
+        return new SqliteDeleteQuery();
     }
 
-    public function update($table = null)
+    public function update()
     {
-        $query = new SqliteUpdateQuery();
-
-        if ($table !== null) {
-            $query->table($table);
-        }
-
-        return $query;
+        return new SqliteUpdateQuery();
     }
 
     public function from()
@@ -122,6 +99,11 @@ class Sqlite extends DriverAbstract implements SqliteInterface
     public function orderBy()
     {
         return new OrderByClause();
+    }
+
+    public function groupBy()
+    {
+        return new GroupByClause();
     }
 
     public function limit()

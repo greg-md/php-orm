@@ -2,15 +2,16 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Adapter\StmtInterface;
-use Greg\Orm\Query\FromQueryInterface;
-use Greg\Orm\Query\HavingQueryInterface;
-use Greg\Orm\Query\JoinsQueryInterface;
-use Greg\Orm\Query\QueryTraitInterface;
+use Greg\Orm\Driver\DriverInterface;
+use Greg\Orm\Driver\StmtInterface;
+use Greg\Orm\Query\FromClauseInterface;
+use Greg\Orm\Query\HavingClauseInterface;
+use Greg\Orm\Query\JoinClauseInterface;
+use Greg\Orm\Query\LimitClauseInterface;
+use Greg\Orm\Query\OrderByClauseInterface;
+use Greg\Orm\Query\QueryInterface;
 use Greg\Orm\Query\SelectQueryInterface;
-use Greg\Orm\Query\WhereQueryInterface;
-use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
+use Greg\Orm\Query\WhereClauseInterface;
 
 /**
  * Class TableSelectQueryTrait
@@ -55,11 +56,11 @@ use Greg\Orm\TableInterface;
 
  * @method SelectQueryInterface getQuery();
  */
-trait TableSelectQueryTrait
+trait SelectTableQueryTrait
 {
-    protected function selectQuery($column = null, $_ = null)
+    protected function selectQuery()
     {
-        $query = $this->getStorage()->select(...func_get_args());
+        $query = $this->getDriver()->select();
 
         $query->from($this);
 
@@ -98,41 +99,55 @@ trait TableSelectQueryTrait
         return $this->checkSelectQuery();
     }
 
-    protected function intoSelectQuery($column = null, $_ = null)
+    protected function intoSelectQuery()
     {
-        $query = $this->selectQuery(...func_get_args());
+        $query = $this->selectQuery();
 
         foreach($this->clauses as $clause) {
-            if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof FromQueryInterface)
-                or  !($clause instanceof HavingQueryInterface)
-                or  !($clause instanceof JoinsQueryInterface)
+            if (    !($clause instanceof FromClauseInterface)
+                or  !($clause instanceof JoinClauseInterface)
+                or  !($clause instanceof WhereClauseInterface)
+                or  !($clause instanceof HavingClauseInterface)
+                or  !($clause instanceof OrderByClauseInterface)
+                or  !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a SELECT statement.');
             }
         }
 
         foreach($this->clauses as $clause) {
-            if ($clause instanceof FromQueryInterface) {
+            if ($clause instanceof FromClauseInterface) {
                 $query->addFrom($clause->getFrom());
 
                 continue;
             }
 
-            if ($clause instanceof JoinsQueryInterface) {
+            if ($clause instanceof JoinClauseInterface) {
                 $query->addJoins($clause->getJoins());
 
                 continue;
             }
 
-            if ($clause instanceof WhereQueryInterface) {
+            if ($clause instanceof WhereClauseInterface) {
                 $query->addWhere($clause->getWhere());
 
                 continue;
             }
 
-            if ($clause instanceof HavingQueryInterface) {
+            if ($clause instanceof HavingClauseInterface) {
                 $query->addHaving($clause->getHaving());
+
+                continue;
+            }
+
+            if ($clause instanceof OrderByClauseInterface) {
+                $query->addOrderBy($clause->getOrderBy());
+
+                continue;
+            }
+
+            if ($clause instanceof LimitClauseInterface) {
+                $query->setLimit($clause->getLimit());
 
                 continue;
             }
@@ -141,9 +156,9 @@ trait TableSelectQueryTrait
         return $query;
     }
 
-    public function intoSelect($column = null, $_ = null)
+    public function intoSelect()
     {
-        $this->query = $this->intoSelectQuery(...func_get_args());
+        $this->query = $this->intoSelectQuery();
 
         $this->clearClauses();
 
@@ -321,45 +336,6 @@ trait TableSelectQueryTrait
         return $this;
     }
 
-    public function orderBy($column, $type = null)
-    {
-        $instance = $this->needSelectInstance();
-
-        $instance->getQuery()->orderBy($column, $type);
-
-        return $instance;
-    }
-
-    public function orderByRaw($expr, $param = null, $_ = null)
-    {
-        $instance = $this->needSelectInstance();
-
-        $instance->getQuery()->orderByRaw(...func_get_args());
-
-        return $instance;
-    }
-
-    public function hasOrderBy()
-    {
-        return $this->getSelectQuery()->hasOrderBy();
-    }
-
-    public function clearOrderBy()
-    {
-        $this->getSelectQuery()->clearOrderBy();
-
-        return $this;
-    }
-
-    public function limit($number)
-    {
-        $instance = $this->needSelectInstance();
-
-        $instance->getQuery()->limit($number);
-
-        return $instance;
-    }
-
     public function offset($number)
     {
         $instance = $this->needSelectInstance();
@@ -515,9 +491,6 @@ trait TableSelectQueryTrait
         return $row;
     }
 
-    /**
-     * @return TableInterface|TableInterface[]
-     */
     public function rows()
     {
         $stmt = $this->executeSelectRowInstance();
@@ -638,18 +611,18 @@ trait TableSelectQueryTrait
     }
 
     /**
-     * @return StorageInterface
-     */
-    abstract public function getStorage();
-
-    /**
-     * @return TableInterface
+     * @return $this
      */
     abstract protected function newInstance();
 
     /**
-     * @param QueryTraitInterface $query
+     * @return DriverInterface
+     */
+    abstract public function getDriver();
+
+    /**
+     * @param QueryInterface $query
      * @return StmtInterface
      */
-    abstract protected function executeQuery(QueryTraitInterface $query);
+    abstract protected function executeQuery(QueryInterface $query);
 }

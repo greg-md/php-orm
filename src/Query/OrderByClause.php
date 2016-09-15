@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class OrderByClause implements OrderByClauseInterface
 {
-    use ClauseTrait, OrderByClauseTrait;
+    use QueryClauseTrait, OrderByClauseTrait;
 
     public function toSql()
     {

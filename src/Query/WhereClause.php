@@ -4,7 +4,7 @@ namespace Greg\Orm\Query;
 
 class WhereClause implements WhereClauseInterface
 {
-    use ClauseTrait, WhereClauseTrait;
+    use QueryClauseTrait, WhereClauseTrait;
 
     public function toSql($useClause = true)
     {

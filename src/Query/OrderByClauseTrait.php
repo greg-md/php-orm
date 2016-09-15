@@ -12,15 +12,15 @@ trait OrderByClauseTrait
             throw new \Exception('Wrong ORDER type for statement.');
         }
 
-        return $this->addOrderBy($this->quoteNameExpr($column), $type);
+        return $this->_addOrderBy($this->quoteNameExpr($column), $type);
     }
 
     public function orderByRaw($expr, $param = null, $_ = null)
     {
-        return $this->addOrderBy($this->quoteExpr($expr), null, is_array($param) ? $param : array_slice(func_get_args(), 1));
+        return $this->_addOrderBy($this->quoteExpr($expr), null, is_array($param) ? $param : array_slice(func_get_args(), 1));
     }
 
-    protected function addOrderBy($expr, $type = null, array $params = [])
+    protected function _addOrderBy($expr, $type = null, array $params = [])
     {
         $this->orderBy[] = [
             'expr' => $expr,
@@ -34,6 +34,25 @@ trait OrderByClauseTrait
     public function hasOrderBy()
     {
         return (bool)$this->orderBy;
+    }
+
+    public function getOrderBy()
+    {
+        return $this->orderBy;
+    }
+
+    public function addOrderBy(array $orderBy)
+    {
+        $this->orderBy = array_merge($this->orderBy, $orderBy);
+
+        return $this;
+    }
+
+    public function setOrderBy(array $orderBy)
+    {
+        $this->orderBy = $orderBy;
+
+        return $this;
     }
 
     public function clearOrderBy()

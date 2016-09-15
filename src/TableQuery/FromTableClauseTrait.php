@@ -2,19 +2,17 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Query\FromQueryInterface;
-use Greg\Orm\Query\FromQueryTraitInterface;
-use Greg\Orm\Query\HavingQueryInterface;
-use Greg\Orm\Query\JoinsQueryInterface;
-use Greg\Orm\Query\WhereQueryInterface;
-use Greg\Orm\Storage\StorageInterface;
-use Greg\Orm\TableInterface;
+use Greg\Orm\Driver\DriverInterface;
+use Greg\Orm\Query\FromClauseInterface;
+use Greg\Orm\Query\FromClauseTraitInterface;
+use Greg\Orm\Query\HavingClauseInterface;
+use Greg\Orm\Query\JoinClauseInterface;
+use Greg\Orm\Query\LimitClauseInterface;
+use Greg\Orm\Query\OrderByClauseInterface;
+use Greg\Orm\Query\WhereClauseInterface;
 
-trait TableFromQueryTrait
+trait FromTableClauseTrait
 {
-    /**
-     * @return $this
-     */
     protected function newFromClauseInstance()
     {
         return $this->newInstance()->intoFrom();
@@ -22,7 +20,7 @@ trait TableFromQueryTrait
 
     protected function checkFromClauseQuery()
     {
-        if (!($this->query instanceof FromQueryTraitInterface)) {
+        if (!($this->query instanceof FromClauseTraitInterface)) {
             throw new \Exception('Current query is not a FROM clause.');
         }
 
@@ -30,7 +28,7 @@ trait TableFromQueryTrait
     }
 
     /**
-     * @return FromQueryTraitInterface
+     * @return FromClauseTraitInterface
      * @throws \Exception
      */
     protected function getFromClauseQuery()
@@ -56,27 +54,31 @@ trait TableFromQueryTrait
     protected function intoFromClause()
     {
         foreach($this->clauses as $clause) {
-            if (    !($clause instanceof WhereQueryInterface)
-                or  !($clause instanceof FromQueryInterface)
-                or  !($clause instanceof HavingQueryInterface)
-                or  !($clause instanceof JoinsQueryInterface)
+            if (    !($clause instanceof FromClauseInterface)
+                or  !($clause instanceof HavingClauseInterface)
+                or  !($clause instanceof JoinClauseInterface)
+                or  !($clause instanceof LimitClauseInterface)
+                or  !($clause instanceof OrderByClauseInterface)
+                or  !($clause instanceof WhereClauseInterface)
             ) {
                 throw new \Exception('Current query could not have a FROM clause.');
             }
         }
 
-        return $this->getStorage()->from();
+        return $this->getDriver()->from();
     }
 
     public function intoFrom()
     {
-        $this->setClause('FROM', $this->intoFromClause());
+        if (!$this->hasClause('FROM')) {
+            $this->setClause('FROM', $this->intoFromClause());
+        }
 
         return $this;
     }
 
     /**
-     * @return FromQueryInterface
+     * @return FromClauseInterface
      */
     public function getFromClause()
     {
@@ -114,12 +116,12 @@ trait TableFromQueryTrait
     }
 
     /**
-     * @return TableInterface
+     * @return $this
      */
     abstract protected function newInstance();
 
     /**
-     * @return StorageInterface
+     * @return DriverInterface
      */
-    abstract public function getStorage();
+    abstract public function getDriver();
 }
