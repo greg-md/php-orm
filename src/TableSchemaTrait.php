@@ -11,7 +11,7 @@ trait TableSchemaTrait
         if ($populateInfo) {
             $info = $this->getDriver()->tableInfo($this->fullName());
 
-            foreach($info['columns'] as $column) {
+            foreach ($info['columns'] as $column) {
                 $this->addColumn($column);
             }
 

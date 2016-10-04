@@ -8,7 +8,6 @@ interface FromClauseTraitInterface extends JoinClauseTraitInterface
 
     public function fromRaw($expr, $param = null, $_ = null);
 
-
     public function hasFrom();
 
     public function getFrom();

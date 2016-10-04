@@ -6,10 +6,10 @@ interface OffsetClauseTraitInterface
 {
     /**
      * @param $number
+     *
      * @return $this
      */
     public function offset($number);
-
 
     public function hasOffset();
 

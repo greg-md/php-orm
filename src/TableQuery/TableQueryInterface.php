@@ -11,7 +11,6 @@ interface TableQueryInterface
 
     public function setQuery(QueryInterface $query);
 
-
     public function hasClauses();
 
     public function hasClause($clause);
@@ -28,21 +27,17 @@ interface TableQueryInterface
 
     public function clearClauses();
 
-
     public function concat(array $values, $delimiter = '');
 
     public function quoteLike($value, $escape = '\\');
 
-
     public function when($condition, callable $callable);
-
 
     public function toSql();
 
     public function toString();
 
     public function __toString();
-
 
     public function prepare();
 }

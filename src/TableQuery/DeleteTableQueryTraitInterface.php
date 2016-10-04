@@ -8,9 +8,7 @@ interface DeleteTableQueryTraitInterface
 
     public function getDeleteQuery();
 
-
     public function fromTable($table);
-
 
     public function delete();
 

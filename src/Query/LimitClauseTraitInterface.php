@@ -6,10 +6,10 @@ interface LimitClauseTraitInterface
 {
     /**
      * @param $number
+     *
      * @return $this
      */
     public function limit($number);
-
 
     public function hasLimit();
 

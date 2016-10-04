@@ -33,7 +33,7 @@ trait TableQueryTrait
 
     public function hasClauses()
     {
-        return (bool)$this->clauses;
+        return (bool) $this->clauses;
     }
 
     public function hasClause($clause)
@@ -110,7 +110,7 @@ trait TableQueryTrait
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 
     protected function prepareQuery(QueryInterface $query)

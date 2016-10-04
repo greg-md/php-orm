@@ -99,13 +99,13 @@ trait JoinClauseTrait
         }
 
         $this->joins[$tableKey] = [
-            'type' => $type,
+            'type'   => $type,
             'source' => $source,
 
             'table' => $tableName,
             'alias' => $tableAlias,
 
-            'on' => $on,
+            'on'     => $on,
             'params' => $params,
         ];
 
@@ -119,7 +119,7 @@ trait JoinClauseTrait
 
     public function hasJoins()
     {
-        return (bool)$this->joins;
+        return (bool) $this->joins;
     }
 
     public function getJoins()
@@ -152,7 +152,7 @@ trait JoinClauseTrait
     {
         $sql = $params = [];
 
-        foreach($this->joins as $join) {
+        foreach ($this->joins as $join) {
             if ($source != $join['source']) {
                 continue;
             }

@@ -14,10 +14,8 @@ use Greg\Orm\Query\SelectQueryInterface;
 use Greg\Orm\Query\WhereClauseInterface;
 
 /**
- * Class TableSelectQueryTrait
- * @package Greg\Orm\TableQuery
+ * Class TableSelectQueryTrait.
  *
- * Ide Helper methods
  * @method $this whereAre(array $columns);
  * @method $this where($column, $operator, $value = null);
  * @method $this orWhereAre(array $columns);
@@ -50,7 +48,6 @@ use Greg\Orm\Query\WhereClauseInterface;
  * @method $this whereNotExists($expr, $param = null, $_ = null);
  * @method $this whereToSql();
  * @method $this whereToString();
- *
  * @method $this create(array $data = []);
  * @method $this save(array $data = []);
 
@@ -103,19 +100,19 @@ trait SelectTableQueryTrait
     {
         $query = $this->selectQuery();
 
-        foreach($this->clauses as $clause) {
-            if (    !($clause instanceof FromClauseInterface)
-                or  !($clause instanceof JoinClauseInterface)
-                or  !($clause instanceof WhereClauseInterface)
-                or  !($clause instanceof HavingClauseInterface)
-                or  !($clause instanceof OrderByClauseInterface)
-                or  !($clause instanceof LimitClauseInterface)
+        foreach ($this->clauses as $clause) {
+            if (!($clause instanceof FromClauseInterface)
+                or !($clause instanceof JoinClauseInterface)
+                or !($clause instanceof WhereClauseInterface)
+                or !($clause instanceof HavingClauseInterface)
+                or !($clause instanceof OrderByClauseInterface)
+                or !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a SELECT statement.');
             }
         }
 
-        foreach($this->clauses as $clause) {
+        foreach ($this->clauses as $clause) {
             if ($clause instanceof FromClauseInterface) {
                 $query->addFrom($clause->getFrom());
 
@@ -446,7 +443,7 @@ trait SelectTableQueryTrait
 
     public function exists()
     {
-        return (bool)$this->clearSelect()->selectRaw(1)->fetchColumn();
+        return (bool) $this->clearSelect()->selectRaw(1)->fetchColumn();
     }
 
     protected function selectRowQuery()
@@ -463,8 +460,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @return StmtInterface
      * @throws \Exception
+     *
+     * @return StmtInterface
      */
     protected function executeSelectRowInstance()
     {
@@ -497,7 +495,7 @@ trait SelectTableQueryTrait
 
         $rows = $this->newInstance();
 
-        foreach($stmt->fetchAssocGenerator() as $row) {
+        foreach ($stmt->fetchAssocGenerator() as $row) {
             $rows->___appendRowData($row);
         }
 
@@ -508,7 +506,7 @@ trait SelectTableQueryTrait
     {
         $stmt = $this->executeSelectRowInstance();
 
-        foreach($stmt->fetchAssocGenerator() as $record) {
+        foreach ($stmt->fetchAssocGenerator() as $record) {
             yield $this->newInstance()->___appendRowData($record);
         }
     }
@@ -539,7 +537,7 @@ trait SelectTableQueryTrait
             } else {
                 $records = $stmt->fetchAssocAll();
 
-                $k = sizeof($records);
+                $k = count($records);
 
                 if (call_user_func_array($callable, [$records]) === false) {
                     $k = 0;
@@ -572,7 +570,7 @@ trait SelectTableQueryTrait
 
             $rows = $this->newInstance();
 
-            foreach($data as $item) {
+            foreach ($data as $item) {
                 $rows->___appendRowData($item);
             }
 
@@ -622,6 +620,7 @@ trait SelectTableQueryTrait
 
     /**
      * @param QueryInterface $query
+     *
      * @return StmtInterface
      */
     abstract protected function executeQuery(QueryInterface $query);

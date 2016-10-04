@@ -11,6 +11,7 @@ interface OrderByClauseTraitInterface
     /**
      * @param $column
      * @param null $type
+     *
      * @return $this
      */
     public function orderBy($column, $type = null);
@@ -19,10 +20,10 @@ interface OrderByClauseTraitInterface
      * @param $expr
      * @param null $param
      * @param null $_
+     *
      * @return $this
      */
     public function orderByRaw($expr, $param = null, $_ = null);
-
 
     public function hasOrderBy();
 

@@ -8,7 +8,7 @@ trait LimitClauseTrait
 
     public function limit($number)
     {
-        $this->limit = (int)$number;
+        $this->limit = (int) $number;
 
         return $this;
     }
@@ -24,7 +24,7 @@ trait LimitClauseTrait
 
     public function hasLimit()
     {
-        return (bool)$this->limit;
+        return (bool) $this->limit;
     }
 
     public function getLimit()

@@ -18,6 +18,6 @@ class JoinClause implements JoinClauseInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

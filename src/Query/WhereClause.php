@@ -18,6 +18,6 @@ class WhereClause implements WhereClauseInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

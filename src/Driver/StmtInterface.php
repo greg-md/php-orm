@@ -9,17 +9,17 @@ interface StmtInterface
     /**
      * @param $key
      * @param $value
+     *
      * @return mixed
      */
     public function bindParam($key, $value);
 
-
     /**
      * @param array $params
+     *
      * @return mixed
      */
     public function execute(array $params = []);
-
 
     public function fetch();
 
@@ -27,18 +27,15 @@ interface StmtInterface
 
     public function fetchGenerator();
 
-
     public function fetchAssoc();
 
     public function fetchAssocAll();
 
     public function fetchAssocGenerator();
 
-
     public function fetchColumn($column = 0);
 
     public function fetchAllColumn($column = 0);
-
 
     public function fetchPairs($key = 0, $value = 1);
 }

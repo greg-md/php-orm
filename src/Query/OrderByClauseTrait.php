@@ -23,8 +23,8 @@ trait OrderByClauseTrait
     protected function _addOrderBy($expr, $type = null, array $params = [])
     {
         $this->orderBy[] = [
-            'expr' => $expr,
-            'type' => $type,
+            'expr'   => $expr,
+            'type'   => $type,
             'params' => $params,
         ];
 
@@ -33,7 +33,7 @@ trait OrderByClauseTrait
 
     public function hasOrderBy()
     {
-        return (bool)$this->orderBy;
+        return (bool) $this->orderBy;
     }
 
     public function getOrderBy()
@@ -66,7 +66,7 @@ trait OrderByClauseTrait
     {
         $sql = $params = [];
 
-        foreach($this->orderBy as $orderBy) {
+        foreach ($this->orderBy as $orderBy) {
             $sql[] = $orderBy['expr'] . ($orderBy['type'] ? ' ' . $orderBy['type'] : '');
 
             $orderBy['params'] && $params = array_merge($params, $orderBy['params']);

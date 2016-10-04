@@ -8,7 +8,6 @@ interface WhereTableClauseTraitInterface
 
     public function getWhereClause();
 
-
     public function whereAre(array $columns);
 
     public function where($column, $operator, $value = null);
@@ -60,7 +59,6 @@ interface WhereTableClauseTraitInterface
     public function whereRaw($expr, $value = null, $_ = null);
 
     public function orWhereRaw($expr, $value = null, $_ = null);
-
 
     public function hasWhere();
 

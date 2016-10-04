@@ -48,6 +48,7 @@ trait PdoDriverTrait
 
     /**
      * @param string $sql
+     *
      * @return PdoStmt
      */
     public function prepare($sql)
@@ -57,6 +58,7 @@ trait PdoDriverTrait
 
     /**
      * @param $sql
+     *
      * @return PdoStmt
      */
     public function query($sql)

@@ -7,8 +7,8 @@ use Greg\Support\Arr;
 
 class MysqlQuerySupport extends QuerySupport
 {
-    static public function concat(array $values, $delimiter = '')
+    public static function concat(array $values, $delimiter = '')
     {
-        return sizeof($values) > 1 ? 'concat_ws("' . $delimiter . '", ' . implode(', ', $values) . ')' : Arr::first($values);
+        return count($values) > 1 ? 'concat_ws("' . $delimiter . '", ' . implode(', ', $values) . ')' : Arr::first($values);
     }
 }

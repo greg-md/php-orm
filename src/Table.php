@@ -38,7 +38,7 @@ abstract class Table implements TableInterface
 
     protected function bootTraits()
     {
-        foreach (Obj::usesRecursive(static::class, Table::class) as $trait) {
+        foreach (Obj::usesRecursive(static::class, self::class) as $trait) {
             if (method_exists($this, $method = 'boot' . Obj::baseName($trait))) {
                 call_user_func_array([$this, $method], []);
             }
@@ -49,8 +49,10 @@ abstract class Table implements TableInterface
 
     /**
      * @param array $data
-     * @return $this
+     *
      * @throws \Exception
+     *
+     * @return $this
      */
     protected function newInstance(array $data = [])
     {

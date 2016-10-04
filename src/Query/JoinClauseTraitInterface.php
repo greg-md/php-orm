@@ -12,7 +12,6 @@ interface JoinClauseTraitInterface
 
     public function cross($table);
 
-
     public function leftTo($source, $table, $on = null, $param = null, $_ = null);
 
     public function rightTo($source, $table, $on = null, $param = null, $_ = null);
@@ -20,7 +19,6 @@ interface JoinClauseTraitInterface
     public function innerTo($source, $table, $on = null, $param = null, $_ = null);
 
     public function crossTo($source, $table);
-
 
     public function hasJoins();
 

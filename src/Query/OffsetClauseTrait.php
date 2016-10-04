@@ -8,7 +8,7 @@ trait OffsetClauseTrait
 
     public function offset($number)
     {
-        $this->offset = (int)$number;
+        $this->offset = (int) $number;
 
         return $this;
     }
@@ -24,7 +24,7 @@ trait OffsetClauseTrait
 
     public function hasOffset()
     {
-        return (bool)$this->offset;
+        return (bool) $this->offset;
     }
 
     public function getOffset()
