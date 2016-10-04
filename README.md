@@ -1,4 +1,4 @@
-# php-orm
+# Greg PHP ORM
 
 [![StyleCI](https://styleci.io/repos/66441719/shield?style=flat)](https://styleci.io/repos/66441719)
 [![Build Status](https://travis-ci.org/greg-md/php-orm.svg)](https://travis-ci.org/greg-md/php-orm)
