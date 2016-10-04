@@ -828,5 +828,3 @@ PHP Object-Relational Mapping
 - `isDeleted()`
 - `getDeleted()`
 - `setDeleted($timestamp)`
-
-# @todo
