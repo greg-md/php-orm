@@ -2,7 +2,6 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Query;
 use Greg\Support\Debug;
 
 trait QueryClauseTrait

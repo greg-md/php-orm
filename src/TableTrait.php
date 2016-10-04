@@ -57,7 +57,7 @@ trait TableTrait
 
     public function setPrefix($name)
     {
-        $this->prefix = (string)$name;
+        $this->prefix = (string) $name;
 
         return $this;
     }
@@ -69,7 +69,7 @@ trait TableTrait
 
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
 
         return $this;
     }
@@ -90,7 +90,7 @@ trait TableTrait
 
     public function setAlias($name)
     {
-        $this->alias = (string)$name;
+        $this->alias = (string) $name;
 
         return $this;
     }
@@ -102,7 +102,7 @@ trait TableTrait
 
     public function setLabel($name)
     {
-        $this->label = (string)$name;
+        $this->label = (string) $name;
 
         return $this;
     }
@@ -131,7 +131,7 @@ trait TableTrait
 
     protected function searchColumn($name)
     {
-        return Arr::firstRef($this->columns, function(Column $column) use ($name) {
+        return Arr::firstRef($this->columns, function (Column $column) use ($name) {
             return $column->getName() === $name;
         });
     }
@@ -140,7 +140,7 @@ trait TableTrait
     {
         $undefined = [];
 
-        foreach($columns as $columnName) {
+        foreach ($columns as $columnName) {
             if (!$this->searchColumn($columnName)) {
                 if ($returnFirst) {
                     return $columnName;
@@ -168,7 +168,7 @@ trait TableTrait
 
         $return = [];
 
-        foreach($columns as $columnName) {
+        foreach ($columns as $columnName) {
             $return[$columnName] = $this->searchColumn($columnName);
         }
 
@@ -182,7 +182,7 @@ trait TableTrait
 
     public function setCustomColumnType($key, $value)
     {
-        $this->customColumnsTypes[$key] = (string)$value;
+        $this->customColumnsTypes[$key] = (string) $value;
 
         return $this;
     }
@@ -199,7 +199,7 @@ trait TableTrait
 
     public function setNameColumn($name)
     {
-        $this->nameColumn = (string)$name;
+        $this->nameColumn = (string) $name;
 
         return $this;
     }
@@ -211,7 +211,7 @@ trait TableTrait
 
     public function setAutoIncrement($columnName)
     {
-        $this->autoIncrement = (string)$columnName;
+        $this->autoIncrement = (string) $columnName;
 
         return $this;
     }
@@ -223,7 +223,7 @@ trait TableTrait
 
     public function setPrimaryKeys($columnsNames)
     {
-        $this->primaryKeys = (array)$columnsNames;
+        $this->primaryKeys = (array) $columnsNames;
 
         return $this;
     }
@@ -267,13 +267,13 @@ trait TableTrait
 
     protected function combineFirstUniqueIndex($values)
     {
-        $values = (array)$values;
+        $values = (array) $values;
 
         if (!$keys = $this->firstUniqueIndex()) {
             throw new \Exception('Table does not have primary keys.');
         }
 
-        if (sizeof($keys) !== sizeof($values)) {
+        if (count($keys) !== count($values)) {
             throw new \Exception('Unique columns count should be the same as keys count.');
         }
 
@@ -287,7 +287,7 @@ trait TableTrait
 
     protected function fixValuesTypes(array $data, $clear = false, $reverse = false)
     {
-        foreach($data as $columnName => &$value) {
+        foreach ($data as $columnName => &$value) {
             if (!($column = $this->getColumn($columnName))) {
                 if ($clear) {
                     unset($data[$columnName]);
@@ -301,18 +301,18 @@ trait TableTrait
             }
 
             if (!$column->allowNull()) {
-                $value = (string)$value;
+                $value = (string) $value;
             }
 
             if ($column->isInt() and (!$column->allowNull() or $value !== null)) {
-                $value = (int)$value;
+                $value = (int) $value;
             }
 
             if ($column->isFloat() and (!$column->allowNull() or $value !== null)) {
-                $value = (double)$value;
+                $value = (float) $value;
             }
 
-            switch($this->getColumnType($columnName)) {
+            switch ($this->getColumnType($columnName)) {
                 case Column::TYPE_DATETIME:
                 case Column::TYPE_TIMESTAMP:
                     if ($value) {
@@ -339,7 +339,7 @@ trait TableTrait
 
                     break;
                 case 'boolean':
-                    $value = (bool)$value;
+                    $value = (bool) $value;
 
                     break;
                 case 'json':

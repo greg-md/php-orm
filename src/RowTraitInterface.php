@@ -2,7 +2,7 @@
 
 namespace Greg\Orm;
 
-interface RowTraitInterface extends \ArrayAccess, \IteratorAggregate/*, \Serializable*/, \Countable
+interface RowTraitInterface extends \ArrayAccess, \IteratorAggregate /*, \Serializable*/ , \Countable
 {
     public function toArray();
 

@@ -3,18 +3,17 @@
 namespace Greg\Orm;
 
 use Greg\Cache\CacheStorageInterface;
+use Greg\Engine\InternalTrait;
 use Greg\Orm\Query\Expr;
 use Greg\Orm\Query\Where;
 use Greg\Orm\Table\Column;
 use Greg\Orm\Table\Row;
-use Greg\Engine\InternalTrait;
-use Greg\Support\DateTime;
 use Greg\Support\Arr;
+use Greg\Support\DateTime;
 use Greg\Support\Url;
 
 /**
- * Class Table
- * @package Greg\Orm
+ * Class Table.
  *
  * @method beginTransaction()
  * @method commit()
@@ -81,6 +80,7 @@ class TableOld implements TableInterface
 
     /**
      * If you want to enable it, make sure this table have cache storage, because the queries are slow.
+     *
      * @var bool
      */
     protected $autoLoadRelationships = false;
@@ -122,7 +122,7 @@ class TableOld implements TableInterface
 
     protected function getInfo()
     {
-        $caller = function() {
+        $caller = function () {
             return $this->storage()->getTableInfo($this->getName());
         };
 
@@ -137,7 +137,7 @@ class TableOld implements TableInterface
 
     protected function getReferences()
     {
-        $caller = function() {
+        $caller = function () {
             return $this->storage()->getTableReferences($this->getName());
         };
 
@@ -152,7 +152,7 @@ class TableOld implements TableInterface
 
     protected function getRelationships()
     {
-        $caller = function() {
+        $caller = function () {
             return $this->storage()->getTableRelationships($this->getName());
         };
 
@@ -167,11 +167,12 @@ class TableOld implements TableInterface
 
     /**
      * @param Table\Column[] $columns
+     *
      * @return $this
      */
     public function addColumns(array $columns)
     {
-        foreach($columns as $column) {
+        foreach ($columns as $column) {
             $this->columns($column->name(), $column);
         }
 
@@ -197,13 +198,13 @@ class TableOld implements TableInterface
 
     public function combineFirstUnique($values)
     {
-        $values = (array)$values;
+        $values = (array) $values;
 
         if (!$keys = $this->getFirstUnique()) {
             throw new \Exception('Table does not have primary keys.');
         }
 
-        if (sizeof($keys) !== sizeof($values)) {
+        if (count($keys) !== count($values)) {
             throw new \Exception('Unique columns count should be the same as keys count.');
         }
 
@@ -221,8 +222,10 @@ class TableOld implements TableInterface
 
     /**
      * @param null $keys
-     * @return Table\Rowable|Table\Rowable[]
+     *
      * @throws \Exception
+     *
+     * @return Table\Rowable|Table\Rowable[]
      */
     public function findRowable($keys = null)
     {
@@ -240,12 +243,14 @@ class TableOld implements TableInterface
     }
 
     /**
-     * @param null $keys
-     * @param null $references
-     * @param null $relationships
+     * @param null   $keys
+     * @param null   $references
+     * @param null   $relationships
      * @param string $dependencies
-     * @return Table\Rowable|Table\Rowable[]
+     *
      * @throws \Exception
+     *
+     * @return Table\Rowable|Table\Rowable[]
      */
     public function findRowableFull($keys = null, $references = null, $relationships = null, $dependencies = '*')
     {
@@ -319,7 +324,7 @@ class TableOld implements TableInterface
 
     public function insertDataRelationships(Row $row, $relationships = [])
     {
-        foreach($relationships as $relationshipPath => $inserts) {
+        foreach ($relationships as $relationshipPath => $inserts) {
             list($tableName, $constraintColumns) = explode(':', $relationshipPath, 2);
 
             $constraintColumns = explode('.', $constraintColumns);
@@ -328,12 +333,12 @@ class TableOld implements TableInterface
 
             $table = $this->getKnownTable($tableName);
 
-            foreach($this->getTableRelationships($tableName) as $relationshipInfo) {
+            foreach ($this->getTableRelationships($tableName) as $relationshipInfo) {
                 $relationshipColumns = [];
 
                 $relationshipInsert = [];
 
-                foreach($relationshipInfo['Constraint'] as $constraint) {
+                foreach ($relationshipInfo['Constraint'] as $constraint) {
                     $relationshipColumns[] = $constraint['RelationshipColumnName'];
 
                     $relationshipInsert[$constraint['RelationshipColumnName']] = $row[$constraint['ColumnName']];
@@ -345,7 +350,7 @@ class TableOld implements TableInterface
                     continue;
                 }
 
-                foreach($inserts as $insert) {
+                foreach ($inserts as $insert) {
                     $table->insertData($relationshipInsert + $insert);
                 }
 
@@ -415,9 +420,11 @@ class TableOld implements TableInterface
 
     /**
      * @param array $data
-     * @param bool $reset
-     * @return \Greg\Orm\Table\Row
+     * @param bool  $reset
+     *
      * @throws \Exception
+     *
+     * @return \Greg\Orm\Table\Row
      */
     public function createRow(array $data, $reset = true)
     {
@@ -428,7 +435,7 @@ class TableOld implements TableInterface
         if ($reset) {
             $rowData = [];
 
-            foreach($this->columns() as $name => $column) {
+            foreach ($this->columns() as $name => $column) {
                 $rowData[$column->name()] = $column->defaultValue();
             }
 
@@ -459,7 +466,7 @@ class TableOld implements TableInterface
 
     public function newRowable(array $rows = [], $reset = true)
     {
-        foreach($rows as &$row) {
+        foreach ($rows as &$row) {
             $row['isNew'] = true;
         }
         unset($row);
@@ -479,9 +486,11 @@ class TableOld implements TableInterface
 
     /**
      * @param array $rows
-     * @param bool $reset
-     * @return Table\Rowable[]|Table\Rowable
+     * @param bool  $reset
+     *
      * @throws \Exception
+     *
+     * @return Table\Rowable[]|Table\Rowable
      */
     public function createRowable(array $rows = [], $reset = true)
     {
@@ -492,11 +501,11 @@ class TableOld implements TableInterface
         if ($reset && $rows) {
             $defaults = [];
 
-            foreach($this->columns() as $name => $column) {
+            foreach ($this->columns() as $name => $column) {
                 $defaults[$column->name()] = $column->defaultValue();
             }
 
-            foreach($rows as &$row) {
+            foreach ($rows as &$row) {
                 $row['row'] = array_replace($defaults, $row['row']);
             }
             unset($row);
@@ -507,8 +516,10 @@ class TableOld implements TableInterface
 
     /**
      * @param $data
-     * @return \Greg\Orm\Table\Row[]|\Greg\Orm\Table\Rows
+     *
      * @throws \Exception
+     *
+     * @return \Greg\Orm\Table\Row[]|\Greg\Orm\Table\Rows
      */
     public function createRows(array $data = [])
     {
@@ -526,8 +537,10 @@ class TableOld implements TableInterface
      * @param $total
      * @param $page
      * @param $limit
-     * @return \Greg\Orm\Table\Row[]|\Greg\Orm\Table\RowsPagination
+     *
      * @throws \Exception
+     *
+     * @return \Greg\Orm\Table\Row[]|\Greg\Orm\Table\RowsPagination
      */
     public function createRowsPagination($items, $total, $page = null, $limit = null)
     {
@@ -565,18 +578,18 @@ class TableOld implements TableInterface
             $references = array_keys($this->references());
         }
 
-        $references = (array)$references;
+        $references = (array) $references;
 
         $tablesReferences = Arr::group($this->references(), 'ReferencedTableName', false);
 
         if ($references) {
-            foreach($items as &$item) {
+            foreach ($items as &$item) {
                 $item['references'] = [];
             }
             unset($item);
         }
 
-        foreach($references as $referenceTableName => $referenceParams) {
+        foreach ($references as $referenceTableName => $referenceParams) {
             if (is_int($referenceTableName)) {
                 $referenceTableName = $referenceParams;
 
@@ -584,11 +597,11 @@ class TableOld implements TableInterface
             }
 
             $referenceParams = array_merge([
-                'references' => null,
+                'references'    => null,
                 'relationships' => null,
-                'dependencies' => '*',
-                'full' => true,
-                'callback' => null,
+                'dependencies'  => '*',
+                'full'          => true,
+                'callback'      => null,
             ], $referenceParams);
 
             $referenceTable = $this->getKnownTable($referenceTableName);
@@ -599,10 +612,10 @@ class TableOld implements TableInterface
                 throw new \Exception('Reference `' . $referenceTableName . '` not found.');
             }
 
-            foreach($tableReferences as $info) {
+            foreach ($tableReferences as $info) {
                 $columns = [];
 
-                foreach($info['Constraint'] as $constraint) {
+                foreach ($info['Constraint'] as $constraint) {
                     $columns[] = $constraint['ColumnName'];
                 }
 
@@ -610,7 +623,7 @@ class TableOld implements TableInterface
 
                 $key = $this->referencesAliases($key) ?: $key;
 
-                foreach($items as &$item) {
+                foreach ($items as &$item) {
                     $item['references'][$key] = null;
                 }
             }
@@ -618,14 +631,14 @@ class TableOld implements TableInterface
 
             $parts = [];
 
-            foreach($tableReferences as $info) {
+            foreach ($tableReferences as $info) {
                 $columns = [];
 
-                foreach($info['Constraint'] as $constraint) {
+                foreach ($info['Constraint'] as $constraint) {
                     $columns[] = $constraint['ReferencedColumnName'];
                 }
 
-                $columnsCount = sizeof($columns);
+                $columnsCount = count($columns);
 
                 $columns = implode('.', $columns);
 
@@ -633,10 +646,10 @@ class TableOld implements TableInterface
                     $parts[$columns] = [];
                 }
 
-                foreach($items as $item) {
+                foreach ($items as $item) {
                     $itemKeys = [];
 
-                    foreach($info['Constraint'] as $constraint) {
+                    foreach ($info['Constraint'] as $constraint) {
                         $columnName = $constraint['ColumnName'];
 
                         $key = $item[$this->getName()][$columnName];
@@ -656,7 +669,7 @@ class TableOld implements TableInterface
 
                     $hasKeysCombination = false;
 
-                    foreach($parts[$columns] as $keys) {
+                    foreach ($parts[$columns] as $keys) {
                         if ($keys === $itemKeys) {
                             $hasKeysCombination = true;
                             break;
@@ -669,7 +682,7 @@ class TableOld implements TableInterface
                 }
             }
 
-            foreach($parts as $key => $part) {
+            foreach ($parts as $key => $part) {
                 if (!$part) {
                     unset($parts[$key]);
                 }
@@ -685,8 +698,8 @@ class TableOld implements TableInterface
                 $this->callCallable($referenceParams['callback'], $query);
             }
 
-            $query->where(function(Where $query) use ($parts) {
-                foreach($parts as $columns => $values) {
+            $query->where(function (Where $query) use ($parts) {
+                foreach ($parts as $columns => $values) {
                     $query->orWhereCol(explode('.', $columns), $values);
                 }
             });
@@ -697,10 +710,10 @@ class TableOld implements TableInterface
                 $referenceItems = $query->{$rows ? 'rows' : 'assocAll'}();
             }
 
-            foreach($tableReferences as $info) {
+            foreach ($tableReferences as $info) {
                 $columns = $rColumns = [];
 
-                foreach($info['Constraint'] as $constraint) {
+                foreach ($info['Constraint'] as $constraint) {
                     $columns[] = $constraint['ColumnName'];
 
                     $rColumns[] = $constraint['ReferencedColumnName'];
@@ -710,18 +723,18 @@ class TableOld implements TableInterface
 
                 $key = $this->referencesAliases($key) ?: $key;
 
-                foreach($items as &$item) {
+                foreach ($items as &$item) {
                     $values = [];
 
-                    foreach($columns as $column) {
+                    foreach ($columns as $column) {
                         $values[] = $item[$this->getName()][$column];
                     }
 
                     if (array_filter($values)) {
-                        foreach($referenceItems as $reItem) {
+                        foreach ($referenceItems as $reItem) {
                             $rValues = [];
 
-                            foreach($rColumns as $rColumn) {
+                            foreach ($rColumns as $rColumn) {
                                 if ($referenceParams['full']) {
                                     $rValues[] = $reItem[$referenceTableName][$rColumn];
                                 } else {
@@ -749,14 +762,14 @@ class TableOld implements TableInterface
             $relationships = array_keys($this->relationships());
         }
 
-        if ($relationships = (array)$relationships) {
-            foreach($items as &$item) {
+        if ($relationships = (array) $relationships) {
+            foreach ($items as &$item) {
                 $item['relationships'] = [];
             }
             unset($item);
         }
 
-        foreach($relationships as $relationshipTableName => $relationshipParams) {
+        foreach ($relationships as $relationshipTableName => $relationshipParams) {
             if (is_int($relationshipTableName)) {
                 $relationshipTableName = $relationshipParams;
 
@@ -764,22 +777,22 @@ class TableOld implements TableInterface
             }
 
             $relationshipParams = array_merge([
-                'references' => null,
+                'references'    => null,
                 'relationships' => null,
-                'dependencies' => '*',
-                'full' => true,
-                'callback' => null,
+                'dependencies'  => '*',
+                'full'          => true,
+                'callback'      => null,
             ], $relationshipParams);
 
             $relationshipTable = $this->getKnownTable($relationshipTableName);
 
             $tableRelationships = $this->getTableRelationships($relationshipTable->getName());
 
-            foreach($items as &$item) {
-                foreach($tableRelationships as $info) {
+            foreach ($items as &$item) {
+                foreach ($tableRelationships as $info) {
                     $key = [$relationshipTableName];
 
-                    foreach($info['Constraint'] as $constraint) {
+                    foreach ($info['Constraint'] as $constraint) {
                         $key[] = $constraint['RelationshipColumnName'];
                     }
 
@@ -834,10 +847,10 @@ class TableOld implements TableInterface
             } else {
                 $parts = [];
 
-                foreach($tableRelationships as $info) {
+                foreach ($tableRelationships as $info) {
                     $columns = [];
 
-                    foreach($info['Constraint'] as $constraint) {
+                    foreach ($info['Constraint'] as $constraint) {
                         $columns[] = $constraint['RelationshipColumnName'];
                     }
 
@@ -847,10 +860,10 @@ class TableOld implements TableInterface
                         $parts[$columns] = [];
                     }
 
-                    foreach($items as $item) {
+                    foreach ($items as $item) {
                         $itemKeys = [];
 
-                        foreach($info['Constraint'] as $constraint) {
+                        foreach ($info['Constraint'] as $constraint) {
                             $key = $item[$this->getName()][$constraint['ColumnName']];
 
                             if ($key) {
@@ -864,7 +877,7 @@ class TableOld implements TableInterface
 
                         $hasKeysCombination = false;
 
-                        foreach($parts[$columns] as $keys) {
+                        foreach ($parts[$columns] as $keys) {
                             if ($keys === $itemKeys) {
                                 $hasKeysCombination = true;
                                 break;
@@ -877,7 +890,7 @@ class TableOld implements TableInterface
                     }
                 }
 
-                foreach($parts as $key => $part) {
+                foreach ($parts as $key => $part) {
                     if (!$part) {
                         unset($parts[$key]);
                     }
@@ -887,8 +900,8 @@ class TableOld implements TableInterface
                     continue;
                 }
 
-                $query->where(function(Where $query) use ($parts) {
-                    foreach($parts as $columns => $values) {
+                $query->where(function (Where $query) use ($parts) {
+                    foreach ($parts as $columns => $values) {
                         $query->orWhereCol(explode('.', $columns), $values);
                     }
                 });
@@ -900,10 +913,10 @@ class TableOld implements TableInterface
                 $relationshipItems = $query->{$rows ? 'rows' : 'assocAll'}();
             }
 
-            foreach($tableRelationships as $info) {
+            foreach ($tableRelationships as $info) {
                 $columns = $relationshipColumns = [];
 
-                foreach($info['Constraint'] as $constraint) {
+                foreach ($info['Constraint'] as $constraint) {
                     $columns[] = $constraint['ColumnName'];
 
                     $relationshipColumns[] = $constraint['RelationshipColumnName'];
@@ -917,18 +930,18 @@ class TableOld implements TableInterface
 
                 $key = $this->relationshipsAliases($key) ?: $key;
 
-                foreach($items as &$item) {
+                foreach ($items as &$item) {
                     $values = [];
 
-                    foreach($columns as $column) {
+                    foreach ($columns as $column) {
                         $values[] = $item[$this->getName()][$column];
                     }
 
                     if (array_filter($values)) {
-                        foreach($relationshipItems as $relationshipItem) {
+                        foreach ($relationshipItems as $relationshipItem) {
                             $relationshipValues = [];
 
-                            foreach($relationshipColumns as $relationshipColumn) {
+                            foreach ($relationshipColumns as $relationshipColumn) {
                                 if ($relationshipParams['full']) {
                                     $relationshipValues[] = $relationshipItem[$relationshipTableName][$relationshipColumn];
                                 } else {
@@ -955,9 +968,9 @@ class TableOld implements TableInterface
             $dependencies = array_keys($this->dependencies());
         }
 
-        $dependencies = (array)$dependencies;
+        $dependencies = (array) $dependencies;
 
-        foreach($dependencies as $dependenceName => $dependenceParams) {
+        foreach ($dependencies as $dependenceName => $dependenceParams) {
             if (is_int($dependenceName)) {
                 $dependenceName = $dependenceParams;
 
@@ -965,14 +978,14 @@ class TableOld implements TableInterface
             }
 
             $dependenceParams = array_merge([
-                'references' => null,
+                'references'    => null,
                 'relationships' => null,
-                'dependencies' => '*',
-                'full' => true,
-                'callback' => null,
+                'dependencies'  => '*',
+                'full'          => true,
+                'callback'      => null,
             ], $dependenceParams);
 
-            foreach($items as $item) {
+            foreach ($items as $item) {
                 $item[$dependenceName] = null;
             }
             unset($item);
@@ -986,10 +999,10 @@ class TableOld implements TableInterface
 
             $parts = [];
 
-            foreach($tableRelationships as $tableRelationship) {
+            foreach ($tableRelationships as $tableRelationship) {
                 $columns = [];
 
-                foreach($tableRelationship['Constraint'] as $constraint) {
+                foreach ($tableRelationship['Constraint'] as $constraint) {
                     $columns[] = $constraint['RelationshipColumnName'];
                 }
 
@@ -999,10 +1012,10 @@ class TableOld implements TableInterface
                     $parts[$columns] = [];
                 }
 
-                foreach($items as $item) {
+                foreach ($items as $item) {
                     $itemKeys = [];
 
-                    foreach($tableRelationship['Constraint'] as $constraint) {
+                    foreach ($tableRelationship['Constraint'] as $constraint) {
                         $key = $item[$this->name()][$constraint['ColumnName']];
 
                         if ($key) {
@@ -1016,7 +1029,7 @@ class TableOld implements TableInterface
 
                     $hasKeysCombination = false;
 
-                    foreach($parts[$columns] as $keys) {
+                    foreach ($parts[$columns] as $keys) {
                         if ($keys === $itemKeys) {
                             $hasKeysCombination = true;
 
@@ -1030,7 +1043,7 @@ class TableOld implements TableInterface
                 }
             }
 
-            foreach($parts as $key => $part) {
+            foreach ($parts as $key => $part) {
                 if (!$part) {
                     unset($parts[$key]);
                 }
@@ -1050,8 +1063,8 @@ class TableOld implements TableInterface
                 $query->whereCols($filter);
             }
 
-            $query->where(function(Where $query) use ($parts) {
-                foreach($parts as $columns => $values) {
+            $query->where(function (Where $query) use ($parts) {
+                foreach ($parts as $columns => $values) {
                     $query->orWhereCol(explode('.', $columns), $values);
                 }
             });
@@ -1070,27 +1083,27 @@ class TableOld implements TableInterface
                 }
             }
 
-            foreach($tableRelationships as $tableRelationship) {
+            foreach ($tableRelationships as $tableRelationship) {
                 $columns = $relationshipColumns = [];
 
-                foreach($tableRelationship['Constraint'] as $constraint) {
+                foreach ($tableRelationship['Constraint'] as $constraint) {
                     $columns[] = $constraint['ColumnName'];
 
                     $relationshipColumns[] = $constraint['RelationshipColumnName'];
                 }
 
-                foreach($items as &$item) {
+                foreach ($items as &$item) {
                     $values = [];
 
-                    foreach($columns as $column) {
+                    foreach ($columns as $column) {
                         $values[] = $item[$this->getName()][$column];
                     }
 
                     if (array_filter($values)) {
-                        foreach($dependenceItems as $dependenceItem) {
+                        foreach ($dependenceItems as $dependenceItem) {
                             $relationshipValues = [];
 
-                            foreach($relationshipColumns as $relationshipColumn) {
+                            foreach ($relationshipColumns as $relationshipColumn) {
                                 if ($dependenceParams['full']) {
                                     $relationshipValues[] = $dependenceItem[$dependenceTable->name()][$relationshipColumn];
                                 } else {
@@ -1113,7 +1126,7 @@ class TableOld implements TableInterface
 
     public function toFullFormat(&$items, $rows = false)
     {
-        foreach($items as $key => &$item) {
+        foreach ($items as $key => &$item) {
             if ($rows) {
                 $item = $this->createRow($item);
             }
@@ -1131,19 +1144,13 @@ class TableOld implements TableInterface
         return $this;
     }
 
-
-
-
-
-
-
     public function fixRowableFormat(&$rows)
     {
-        foreach($rows as &$row) {
+        foreach ($rows as &$row) {
             $row = [
-                'row' => $row,
-                'dependencies' => [],
-                'references' => [],
+                'row'           => $row,
+                'dependencies'  => [],
+                'references'    => [],
                 'relationships' => [],
             ];
         }
@@ -1186,11 +1193,11 @@ class TableOld implements TableInterface
         }
 
         $params = array_merge([
-            'references' => null,
+            'references'    => null,
             'relationships' => null,
-            'dependencies' => '*',
-            'full' => true,
-            'callback' => null,
+            'dependencies'  => '*',
+            'full'          => true,
+            'callback'      => null,
         ], $params);
 
         return $this;
@@ -1202,14 +1209,14 @@ class TableOld implements TableInterface
 
         $parts = [];
 
-        foreach($relationships as $info) {
+        foreach ($relationships as $info) {
             $columns = [];
 
-            foreach($info['Constraint'] as $constraint) {
+            foreach ($info['Constraint'] as $constraint) {
                 $columns[] = $constraint[$constraintName];
             }
 
-            $columnsCount = sizeof($columns);
+            $columnsCount = count($columns);
 
             $columns = implode('.', $columns);
 
@@ -1217,10 +1224,10 @@ class TableOld implements TableInterface
                 $parts[$columns] = [];
             }
 
-            foreach($rows as &$rowFull) {
+            foreach ($rows as &$rowFull) {
                 $itemKeys = [];
 
-                foreach($info['Constraint'] as $constraint) {
+                foreach ($info['Constraint'] as $constraint) {
                     $key = $rowFull['row'][$constraint['ColumnName']];
 
                     if (!$key and !$table->columns($constraint[$constraintName])->allowNull()) {
@@ -1238,7 +1245,7 @@ class TableOld implements TableInterface
 
                 $hasKeysCombination = false;
 
-                foreach($parts[$columns] as $keys) {
+                foreach ($parts[$columns] as $keys) {
                     if ($keys === $itemKeys) {
                         $hasKeysCombination = true;
                         break;
@@ -1252,7 +1259,7 @@ class TableOld implements TableInterface
             unset($rowFull);
         }
 
-        foreach($parts as $key => $part) {
+        foreach ($parts as $key => $part) {
             if (!$part) {
                 unset($parts[$key]);
             }
@@ -1261,21 +1268,18 @@ class TableOld implements TableInterface
         return $parts;
     }
 
-
-
-
     protected function findDependencies($dependencies = '*')
     {
         if ($dependencies == '*') {
             $dependencies = array_keys($this->dependencies());
         }
 
-        return (string)$dependencies;
+        return (string) $dependencies;
     }
 
     protected function prepareRowableTableDependenceFormat(&$rows, $name)
     {
-        foreach($rows as &$row) {
+        foreach ($rows as &$row) {
             $row['dependencies'][$name] = null;
         }
         unset($row);
@@ -1285,7 +1289,7 @@ class TableOld implements TableInterface
 
     public function addRowableDependencies(&$rows, $dependencies = '*')
     {
-        foreach($this->findDependencies($dependencies) as $name => $params) {
+        foreach ($this->findDependencies($dependencies) as $name => $params) {
             if (is_int($name)) {
                 $name = $params;
 
@@ -1327,8 +1331,8 @@ class TableOld implements TableInterface
             $query->whereCols($filter);
         }
 
-        $query->where(function(Where $query) use ($parts) {
-            foreach($parts as $columns => $values) {
+        $query->where(function (Where $query) use ($parts) {
+            foreach ($parts as $columns => $values) {
                 $query->orWhereCol(explode('.', $columns), $values);
             }
         });
@@ -1339,27 +1343,27 @@ class TableOld implements TableInterface
             $dependenceRows = $query->assocAllRowable();
         }
 
-        foreach($relationships as $info) {
+        foreach ($relationships as $info) {
             $columns = $relationshipColumns = [];
 
-            foreach($info['Constraint'] as $constraint) {
+            foreach ($info['Constraint'] as $constraint) {
                 $columns[] = $constraint['ColumnName'];
 
                 $relationshipColumns[] = $constraint['RelationshipColumnName'];
             }
 
-            foreach($rows as &$rowFull) {
+            foreach ($rows as &$rowFull) {
                 $values = [];
 
-                foreach($columns as $column) {
+                foreach ($columns as $column) {
                     $values[] = $rowFull['row'][$column];
                 }
 
                 if (array_filter($values)) {
-                    foreach($dependenceRows as $dependenceRow) {
+                    foreach ($dependenceRows as $dependenceRow) {
                         $relationshipValues = [];
 
-                        foreach($relationshipColumns as $relationshipColumn) {
+                        foreach ($relationshipColumns as $relationshipColumn) {
                             $relationshipValues[] = $dependenceRow['row'][$relationshipColumn];
                         }
 
@@ -1375,26 +1379,23 @@ class TableOld implements TableInterface
         return $this;
     }
 
-
-
-
     protected function findReferences($references = '*')
     {
         if ($references == '*') {
             $references = array_keys($this->references());
         }
 
-        return (array)$references;
+        return (array) $references;
     }
 
     protected function prepareRowableTableReferencesFormat(&$rows, $tableName)
     {
         $references = $this->getTableReferences($tableName);
 
-        foreach($references as $info) {
+        foreach ($references as $info) {
             $key = [];
 
-            foreach($info['Constraint'] as $constraint) {
+            foreach ($info['Constraint'] as $constraint) {
                 $key[] = $constraint['ColumnName'];
             }
 
@@ -1402,7 +1403,7 @@ class TableOld implements TableInterface
 
             $key = $this->referencesAliases($key) ?: $key;
 
-            foreach($rows as &$rowFull) {
+            foreach ($rows as &$rowFull) {
                 $rowFull['references'][$key] = null;
             }
         }
@@ -1413,7 +1414,7 @@ class TableOld implements TableInterface
 
     public function addRowableReferences(&$rows, $references)
     {
-        foreach($this->findReferences($references) as $name => $params) {
+        foreach ($this->findReferences($references) as $name => $params) {
             if (is_int($name)) {
                 $name = $params;
 
@@ -1448,8 +1449,8 @@ class TableOld implements TableInterface
             $this->callCallable($params['callback'], $query);
         }
 
-        $query->where(function(Where $query) use ($parts) {
-            foreach($parts as $columns => $values) {
+        $query->where(function (Where $query) use ($parts) {
+            foreach ($parts as $columns => $values) {
                 $query->orWhereCol(explode('.', $columns), $values);
             }
         });
@@ -1460,10 +1461,10 @@ class TableOld implements TableInterface
             $referenceRows = $query->assocAllRowable();
         }
 
-        foreach($references as $info) {
+        foreach ($references as $info) {
             $columns = $rColumns = [];
 
-            foreach($info['Constraint'] as $constraint) {
+            foreach ($info['Constraint'] as $constraint) {
                 $columns[] = $constraint['ColumnName'];
 
                 $rColumns[] = $constraint['ReferencedColumnName'];
@@ -1473,18 +1474,18 @@ class TableOld implements TableInterface
 
             $key = $this->referencesAliases($key) ?: $key;
 
-            foreach($rows as &$rowFull) {
+            foreach ($rows as &$rowFull) {
                 $values = [];
 
-                foreach($columns as $column) {
+                foreach ($columns as $column) {
                     $values[] = $rowFull['row'][$column];
                 }
 
                 if (array_filter($values)) {
-                    foreach($referenceRows as $referenceRow) {
+                    foreach ($referenceRows as $referenceRow) {
                         $rValues = [];
 
-                        foreach($rColumns as $rColumn) {
+                        foreach ($rColumns as $rColumn) {
                             $rValues[] = $referenceRow['row'][$rColumn];
                         }
 
@@ -1507,15 +1508,15 @@ class TableOld implements TableInterface
             $relationships = array_keys($this->relationships());
         }
 
-        return (array)$relationships;
+        return (array) $relationships;
     }
 
     protected function prepareRowableTableRelationshipsFormat(&$rows, $relationships)
     {
-        foreach($relationships as $info) {
+        foreach ($relationships as $info) {
             $key = $this->relationshipsAliases($info['ConstraintName']) ?: $info['ConstraintName'];
 
-            foreach($rows as &$row) {
+            foreach ($rows as &$row) {
                 $row['relationships'][$key] = [];
             }
         }
@@ -1526,7 +1527,7 @@ class TableOld implements TableInterface
 
     public function addRowableRelationships(&$rows, $relationships)
     {
-        foreach($this->findRelationships($relationships) as $name => $params) {
+        foreach ($this->findRelationships($relationships) as $name => $params) {
             if (is_int($name)) {
                 $name = $params;
 
@@ -1597,8 +1598,8 @@ class TableOld implements TableInterface
                 return $this;
             }
 
-            $query->where(function(Where $query) use ($parts) {
-                foreach($parts as $columns => $values) {
+            $query->where(function (Where $query) use ($parts) {
+                foreach ($parts as $columns => $values) {
                     $query->orWhereCol(explode('.', $columns), $values);
                 }
             });
@@ -1610,10 +1611,10 @@ class TableOld implements TableInterface
             $relationshipRows = $query->assocAllRowable();
         }
 
-        foreach($relationships as $info) {
+        foreach ($relationships as $info) {
             $columns = $relationshipColumns = [];
 
-            foreach($info['Constraint'] as $constraint) {
+            foreach ($info['Constraint'] as $constraint) {
                 $columns[] = $constraint['ColumnName'];
 
                 $relationshipColumns[] = $constraint['RelationshipColumnName'];
@@ -1621,18 +1622,18 @@ class TableOld implements TableInterface
 
             $key = $this->relationshipsAliases($info['ConstraintName']) ?: $info['ConstraintName'];
 
-            foreach($rows as &$rowFull) {
+            foreach ($rows as &$rowFull) {
                 $values = [];
 
-                foreach($columns as $column) {
+                foreach ($columns as $column) {
                     $values[] = $rowFull['row'][$column];
                 }
 
                 if (array_filter($values)) {
-                    foreach($relationshipRows as $relationshipItem) {
+                    foreach ($relationshipRows as $relationshipItem) {
                         $relationshipValues = [];
 
-                        foreach($relationshipColumns as $relationshipColumn) {
+                        foreach ($relationshipColumns as $relationshipColumn) {
                             $relationshipValues[] = $relationshipItem['row'][$relationshipColumn];
                         }
 
@@ -1648,15 +1649,9 @@ class TableOld implements TableInterface
         return $this;
     }
 
-
-
-
-
-
-
     public function parseData(array $data, $clear = false, $reverse = false)
     {
-        foreach($data as $columnName => &$value) {
+        foreach ($data as $columnName => &$value) {
             if (!($column = $this->columns($columnName))) {
                 if ($clear) {
                     unset($data[$columnName]);
@@ -1674,18 +1669,18 @@ class TableOld implements TableInterface
             }
 
             if (!$column->allowNull()) {
-                $value = (string)$value;
+                $value = (string) $value;
             }
 
             if ($column->isInt() and (!$column->allowNull() or $value !== null)) {
-                $value = (int)$value;
+                $value = (int) $value;
             }
 
             if ($column->isFloat() and (!$column->allowNull() or $value !== null)) {
-                $value = (double)$value;
+                $value = (float) $value;
             }
 
-            switch($this->columnsTypes($columnName) ?: $column->type()) {
+            switch ($this->columnsTypes($columnName) ?: $column->type()) {
                 case Column::TYPE_DATETIME:
                 case Column::TYPE_TIMESTAMP:
                     if ($value) {
@@ -1712,7 +1707,7 @@ class TableOld implements TableInterface
 
                     break;
                 case 'boolean':
-                    $value = (bool)$value;
+                    $value = (bool) $value;
 
                     break;
                 case 'json':
@@ -1792,8 +1787,10 @@ class TableOld implements TableInterface
 
     /**
      * @param $name
-     * @return Table
+     *
      * @throws \Exception
+     *
+     * @return Table
      */
     public function getReferenceTable($name)
     {
@@ -1804,8 +1801,10 @@ class TableOld implements TableInterface
 
     /**
      * @param $name
-     * @return Table
+     *
      * @throws \Exception
+     *
+     * @return Table
      */
     public function getDependenceTable($name)
     {
@@ -1816,7 +1815,7 @@ class TableOld implements TableInterface
 
     public function findReferenceTableByColumn($name)
     {
-        foreach($this->references() as $reference) {
+        foreach ($this->references() as $reference) {
             if ($name == implode('.', array_column($reference['Constraint'], 'ColumnName'))) {
                 return $this->getKnownTable($reference['ReferencedTableName']);
             }
@@ -1836,8 +1835,10 @@ class TableOld implements TableInterface
 
     /**
      * @param $name
-     * @return Table
+     *
      * @throws \Exception
+     *
+     * @return Table
      */
     public function getKnownTable($name)
     {
@@ -1870,10 +1871,11 @@ class TableOld implements TableInterface
     }
 
     /**
-     * @param null $key
-     * @param null $value
+     * @param null   $key
+     * @param null   $value
      * @param string $type
-     * @param bool $replace
+     * @param bool   $replace
+     *
      * @return $this|Table\Column|Table\Column[]
      */
     public function columns($key = null, $value = null, $type = Obj::PROP_APPEND, $replace = false)
@@ -1973,6 +1975,7 @@ class TableOld implements TableInterface
 
     /**
      * @param \Greg\Orm\StorageInterface $value
+     *
      * @return \Greg\Orm\StorageInterface|null
      */
     public function storage(\Greg\Orm\StorageInterface $value = null)
@@ -1982,6 +1985,7 @@ class TableOld implements TableInterface
 
     /**
      * @param CacheStorageInterface $value
+     *
      * @return CacheStorageInterface|null
      */
     public function cacheStorage(CacheStorageInterface $value = null)

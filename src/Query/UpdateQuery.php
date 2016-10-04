@@ -28,7 +28,7 @@ class UpdateQuery implements UpdateQueryInterface
             }
 
             $this->tables[$tableKey] = [
-                'name' => $tableName,
+                'name'  => $tableName,
                 'alias' => $tableAlias,
             ];
         }
@@ -39,7 +39,7 @@ class UpdateQuery implements UpdateQueryInterface
     public function set($key, $value = null)
     {
         if (is_array($key)) {
-            foreach($key as $k => $v) {
+            foreach ($key as $k => $v) {
                 $this->set($k, $v);
             }
         } else {
@@ -73,7 +73,7 @@ class UpdateQuery implements UpdateQueryInterface
         $params = is_array($param) ? $param : array_slice(func_get_args(), 1);
 
         $this->set[] = [
-            'raw' => $expr,
+            'raw'    => $expr,
             'params' => $params,
         ];
 
@@ -88,7 +88,7 @@ class UpdateQuery implements UpdateQueryInterface
 
         $sql = $params = [];
 
-        foreach($this->tables as $source => $table) {
+        foreach ($this->tables as $source => $table) {
             $expr = $table['name'];
 
             if ($table['alias']) {
@@ -124,7 +124,7 @@ class UpdateQuery implements UpdateQueryInterface
 
         $sql = $params = [];
 
-        foreach($this->set as $item) {
+        foreach ($this->set as $item) {
             $expr = $item['raw'];
 
             $item['params'] && $params = array_merge($params, $item['params']);
@@ -202,6 +202,6 @@ class UpdateQuery implements UpdateQueryInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

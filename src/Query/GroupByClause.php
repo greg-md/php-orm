@@ -18,6 +18,6 @@ class GroupByClause implements GroupByClauseInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

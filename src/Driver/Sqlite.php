@@ -2,6 +2,10 @@
 
 namespace Greg\Orm\Driver;
 
+use Greg\Orm\Driver\Sqlite\Query\SqliteDeleteQuery;
+use Greg\Orm\Driver\Sqlite\Query\SqliteInsertQuery;
+use Greg\Orm\Driver\Sqlite\Query\SqliteSelectQuery;
+use Greg\Orm\Driver\Sqlite\Query\SqliteUpdateQuery;
 use Greg\Orm\Query\FromClause;
 use Greg\Orm\Query\GroupByClause;
 use Greg\Orm\Query\HavingClause;
@@ -10,10 +14,6 @@ use Greg\Orm\Query\LimitClause;
 use Greg\Orm\Query\OrderByClause;
 use Greg\Orm\Query\QuerySupport;
 use Greg\Orm\Query\WhereClause;
-use Greg\Orm\Driver\Sqlite\Query\SqliteDeleteQuery;
-use Greg\Orm\Driver\Sqlite\Query\SqliteInsertQuery;
-use Greg\Orm\Driver\Sqlite\Query\SqliteSelectQuery;
-use Greg\Orm\Driver\Sqlite\Query\SqliteUpdateQuery;
 
 class Sqlite extends DriverAbstract implements SqliteInterface
 {
@@ -111,12 +111,12 @@ class Sqlite extends DriverAbstract implements SqliteInterface
         return new LimitClause();
     }
 
-    static public function quoteLike($value, $escape = '\\')
+    public static function quoteLike($value, $escape = '\\')
     {
         return QuerySupport::quoteLike($value, $escape);
     }
 
-    static public function concat(array $values, $delimiter = '')
+    public static function concat(array $values, $delimiter = '')
     {
         return QuerySupport::concat($values, $delimiter);
     }

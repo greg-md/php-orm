@@ -11,10 +11,8 @@ use Greg\Orm\Query\OrderByClauseInterface;
 use Greg\Orm\Query\WhereClauseInterface;
 
 /**
- * Class TableDeleteQueryTrait
- * @package Greg\Orm\TableQuery
+ * Class TableDeleteQueryTrait.
  *
- * Ide Helper methods
  * @method $this whereAre(array $columns);
  * @method $this where($column, $operator, $value = null);
  * @method $this orWhereAre(array $columns);
@@ -47,7 +45,6 @@ use Greg\Orm\Query\WhereClauseInterface;
  * @method $this whereNotExists($expr, $param = null, $_ = null);
  * @method $this whereToSql();
  * @method $this whereToString();
- *
  * @method DeleteQueryInterface getQuery();
  */
 trait DeleteTableQueryTrait
@@ -94,18 +91,18 @@ trait DeleteTableQueryTrait
     {
         $query = $this->deleteQuery();
 
-        foreach($this->clauses as $clause) {
-            if (    !($clause instanceof FromClauseInterface)
-                or  !($clause instanceof JoinClauseInterface)
-                or  !($clause instanceof WhereClauseInterface)
-                or  !($clause instanceof OrderByClauseInterface)
-                or  !($clause instanceof LimitClauseInterface)
+        foreach ($this->clauses as $clause) {
+            if (!($clause instanceof FromClauseInterface)
+                or !($clause instanceof JoinClauseInterface)
+                or !($clause instanceof WhereClauseInterface)
+                or !($clause instanceof OrderByClauseInterface)
+                or !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a DELETE statement.');
             }
         }
 
-        foreach($this->clauses as $clause) {
+        foreach ($this->clauses as $clause) {
             if ($clause instanceof FromClauseInterface) {
                 $query->addFrom($clause->getFrom());
 
@@ -123,7 +120,7 @@ trait DeleteTableQueryTrait
 
                 continue;
             }
-            
+
             if ($clause instanceof OrderByClauseInterface) {
                 $query->addOrderBy($clause->getOrderBy());
 

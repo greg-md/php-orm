@@ -45,11 +45,11 @@ class Column
     const DOUBLE_LENGTH = 8;
 
     const INT_TYPES = [
-        self::TYPE_TINYINT => self::TINYINT_LENGTH,
-        self::TYPE_SMALLINT => self::SMALLINT_LENGTH,
+        self::TYPE_TINYINT   => self::TINYINT_LENGTH,
+        self::TYPE_SMALLINT  => self::SMALLINT_LENGTH,
         self::TYPE_MEDIUMINT => self::MEDIUMINT_LENGTH,
-        self::TYPE_INT => self::INT_LENGTH,
-        self::TYPE_BIGINT => self::BIGINT_LENGTH,
+        self::TYPE_INT       => self::INT_LENGTH,
+        self::TYPE_BIGINT    => self::BIGINT_LENGTH,
     ];
 
     const FLOAT_TYPES = [
@@ -72,27 +72,27 @@ class Column
 
     protected $values = [];
 
-    static public function getIntLength($type)
+    public static function getIntLength($type)
     {
         return Arr::get(static::INT_TYPES, $type);
     }
 
-    static public function getFloatLength($type)
+    public static function getFloatLength($type)
     {
         return Arr::get(static::FLOAT_TYPES, $type);
     }
 
-    static public function isIntType($type)
+    public static function isIntType($type)
     {
         return static::getIntLength($type) !== null;
     }
 
-    static public function isFloatType($type)
+    public static function isFloatType($type)
     {
         return static::getFloatLength($type) !== null;
     }
 
-    static public function isNumericType($type)
+    public static function isNumericType($type)
     {
         return static::isIntType($type) || static::isFloatType($type);
     }
@@ -168,7 +168,7 @@ class Column
 
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
 
         return $this;
     }
@@ -180,7 +180,7 @@ class Column
 
     public function setType($length)
     {
-        $this->type = (string)$length;
+        $this->type = (string) $length;
 
         return $this;
     }
@@ -192,7 +192,7 @@ class Column
 
     public function setLength($length)
     {
-        $this->length = (int)$length;
+        $this->length = (int) $length;
 
         return $this;
     }
@@ -200,7 +200,7 @@ class Column
     public function isUnsigned($value = null)
     {
         if (func_num_args()) {
-            $this->isUnsigned = (bool)$value;
+            $this->isUnsigned = (bool) $value;
 
             return $this;
         }
@@ -211,7 +211,7 @@ class Column
     public function allowNull($value = null)
     {
         if (func_num_args()) {
-            $this->allowNull = (bool)$value;
+            $this->allowNull = (bool) $value;
 
             return $this;
         }
@@ -238,7 +238,7 @@ class Column
 
     public function setComment($comment)
     {
-        $this->comment = (string)$comment;
+        $this->comment = (string) $comment;
 
         return $this;
     }

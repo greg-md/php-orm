@@ -112,6 +112,6 @@ class DeleteQuery implements DeleteQueryInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

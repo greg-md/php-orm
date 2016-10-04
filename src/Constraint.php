@@ -11,7 +11,7 @@ class Constraint
     protected $onUpdate = null;
 
     protected $onDelete = null;
-    
+
     protected $relations = null;
 
     public function getName()
@@ -21,7 +21,7 @@ class Constraint
 
     public function setName($name)
     {
-        $this->name = (string)$name;
+        $this->name = (string) $name;
 
         return $this;
     }
@@ -33,7 +33,7 @@ class Constraint
 
     public function setReferencedTableName($name)
     {
-        $this->referencedTableName = (string)$name;
+        $this->referencedTableName = (string) $name;
 
         return $this;
     }
@@ -41,7 +41,7 @@ class Constraint
     public function onUpdate($type = null)
     {
         if (func_num_args()) {
-            $this->onUpdate = (string)$type;
+            $this->onUpdate = (string) $type;
 
             return $this;
         }
@@ -52,7 +52,7 @@ class Constraint
     public function onDelete($type = null)
     {
         if (func_num_args()) {
-            $this->onDelete = (string)$type;
+            $this->onDelete = (string) $type;
 
             return $this;
         }
@@ -77,7 +77,7 @@ class Constraint
     public function setRelation($position, $columnName, $referencedColumnName)
     {
         $this->relations[$position] = [
-            'columnName' => $columnName,
+            'columnName'           => $columnName,
             'referencedColumnName' => $referencedColumnName,
         ];
 

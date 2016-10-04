@@ -11,16 +11,15 @@ interface UpdateQueryInterface extends
 {
     public function table($table, $_ = null);
 
-
     /**
      * @param $key
      * @param null $value
+     *
      * @return $this
      */
     public function set($key, $value = null);
 
     public function setRaw($raw, $param = null, $_ = null);
-
 
     public function increment($column, $value = 1);
 

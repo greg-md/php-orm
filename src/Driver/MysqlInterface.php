@@ -10,7 +10,6 @@ interface MysqlInterface extends DriverInterface
 
     public function charset();
 
-
     public function tableInfo($tableName, $save = true);
 
     public function tableReferences($tableName);

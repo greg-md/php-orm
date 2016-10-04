@@ -6,5 +6,4 @@ use Greg\Orm\Query\SelectQuery;
 
 class SqliteSelectQuery extends SelectQuery
 {
-
 }

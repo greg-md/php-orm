@@ -5,12 +5,8 @@ namespace Greg\Orm\Query;
 use Greg\Orm\TableInterface;
 
 /**
- * Class SelectQuery
- * @package Greg\Orm\Query
+ * Class SelectQuery.
  *
- * Ide Helper methods
- *
- * FROM
  * @method $this from($table, $_ = null);
  * @method $this fromRaw($expr, $param = null, $_ = null);
  *
@@ -47,7 +43,6 @@ use Greg\Orm\TableInterface;
  * @method $this whereNotExists($expr, $param = null, $_ = null);
  * @method $this whereToSql();
  * @method $this whereToString();
- *
  */
 class SelectQuery implements SelectQueryInterface
 {
@@ -73,7 +68,7 @@ class SelectQuery implements SelectQueryInterface
 
     public function distinct($value = true)
     {
-        $this->distinct = (bool)$value;
+        $this->distinct = (bool) $value;
 
         return $this;
     }
@@ -101,7 +96,7 @@ class SelectQuery implements SelectQueryInterface
             $tableAlias = $tableName;
         }
 
-        foreach($columns as &$col) {
+        foreach ($columns as &$col) {
             $col = $tableAlias . '.' . $col;
         }
         unset($col);
@@ -117,7 +112,7 @@ class SelectQuery implements SelectQueryInterface
             $column = func_get_args();
         }
 
-        foreach($column as $alias => $col) {
+        foreach ($column as $alias => $col) {
             $this->column($col, !is_int($alias) ? $alias : null);
         }
 
@@ -159,8 +154,8 @@ class SelectQuery implements SelectQueryInterface
     protected function addColumn($expr, $alias = null, array $params = [])
     {
         $this->columns[] = [
-            'expr' => $expr,
-            'alias' => $alias,
+            'expr'   => $expr,
+            'alias'  => $alias,
             'params' => $params,
         ];
 
@@ -228,8 +223,8 @@ class SelectQuery implements SelectQueryInterface
         }
 
         $this->unions[] = [
-            'type' => $type,
-            'expr' => $expr,
+            'type'   => $type,
+            'expr'   => $expr,
             'params' => $params,
         ];
 
@@ -262,7 +257,7 @@ class SelectQuery implements SelectQueryInterface
         if ($this->columns) {
             $sqlColumns = [];
 
-            foreach($this->columns as $column) {
+            foreach ($this->columns as $column) {
                 $expr = $column['expr'];
 
                 if ($column['alias']) {
@@ -342,7 +337,7 @@ class SelectQuery implements SelectQueryInterface
         if ($this->unions) {
             $sql = ['(' . $sql . ')'];
 
-            foreach($this->unions as $union) {
+            foreach ($this->unions as $union) {
                 $sql[] = ($union['type'] ? $union['type'] . ' ' : '') . '(' . $union['expr'] . ')';
 
                 $union['params'] && $params = array_merge($params, $union['params']);
@@ -371,7 +366,7 @@ class SelectQuery implements SelectQueryInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 
     /*

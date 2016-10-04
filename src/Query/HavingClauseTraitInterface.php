@@ -6,6 +6,7 @@ interface HavingClauseTraitInterface
 {
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function havingAre(array $columns);
@@ -14,12 +15,14 @@ interface HavingClauseTraitInterface
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function having($column, $operator, $value = null);
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function orHavingAre(array $columns);
@@ -28,15 +31,16 @@ interface HavingClauseTraitInterface
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orHaving($column, $operator, $value = null);
-
 
     /**
      * @param $column1
      * @param $operator
      * @param null $column2
+     *
      * @return $this
      */
     public function havingRel($column1, $operator, $column2 = null);
@@ -45,10 +49,10 @@ interface HavingClauseTraitInterface
      * @param $column1
      * @param $operator
      * @param null $column2
+     *
      * @return $this
      */
     public function orHavingRel($column1, $operator, $column2 = null);
-
 
     public function havingIsNull($column);
 
@@ -58,7 +62,6 @@ interface HavingClauseTraitInterface
 
     public function orHavingIsNotNull($column);
 
-
     public function havingBetween($column, $min, $max);
 
     public function orHavingBetween($column, $min, $max);
@@ -66,7 +69,6 @@ interface HavingClauseTraitInterface
     public function havingNotBetween($column, $min, $max);
 
     public function orHavingNotBetween($column, $min, $max);
-
 
     public function havingDate($column, $date);
 
@@ -88,11 +90,11 @@ interface HavingClauseTraitInterface
 
     public function orHavingDay($column, $day);
 
-
     /**
      * @param $expr
      * @param null $value
      * @param null $_
+     *
      * @return $this
      */
     public function havingRaw($expr, $value = null, $_ = null);
@@ -101,10 +103,10 @@ interface HavingClauseTraitInterface
      * @param $expr
      * @param null $value
      * @param null $_
+     *
      * @return $this
      */
     public function orHavingRaw($expr, $value = null, $_ = null);
-
 
     public function hasHaving();
 

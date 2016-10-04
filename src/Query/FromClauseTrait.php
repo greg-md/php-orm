@@ -43,7 +43,7 @@ trait FromClauseTrait
             }
 
             $this->from[$tableKey] = [
-                'expr' => $expr,
+                'expr'   => $expr,
                 'params' => $params,
             ];
         }
@@ -54,7 +54,7 @@ trait FromClauseTrait
     public function fromRaw($expr, $param = null, $_ = null)
     {
         $this->from[] = [
-            'expr' => $expr,
+            'expr'   => $expr,
             'params' => is_array($param) ? $param : array_slice(func_get_args(), 1),
         ];
 
@@ -63,7 +63,7 @@ trait FromClauseTrait
 
     public function hasFrom()
     {
-        return (bool)$this->from;
+        return (bool) $this->from;
     }
 
     public function getFrom()
@@ -98,7 +98,7 @@ trait FromClauseTrait
 
         $sql = [];
 
-        foreach($this->from as $source => $table) {
+        foreach ($this->from as $source => $table) {
             $expr = $table['expr'];
 
             $table['params'] && $params = array_merge($params, $table['params']);

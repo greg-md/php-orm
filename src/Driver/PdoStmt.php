@@ -22,7 +22,7 @@ class PdoStmt implements StmtInterface
     {
         $k = 1;
 
-        foreach($params as $key => $param) {
+        foreach ($params as $key => $param) {
             $this->bindParam(is_int($key) ? $k++ : $key, $param);
         }
 
@@ -36,6 +36,7 @@ class PdoStmt implements StmtInterface
 
     /**
      * @param array $params
+     *
      * @return mixed
      */
     public function execute(array $params = [])
@@ -136,7 +137,7 @@ class PdoStmt implements StmtInterface
     {
         $pairs = [];
 
-        foreach($this->fetchAll() as $row) {
+        foreach ($this->fetchAll() as $row) {
             $pairs[Arr::getRef($row, $key)] = Arr::getRef($row, $value);
         }
 

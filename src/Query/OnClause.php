@@ -18,6 +18,6 @@ class OnClause implements OnClauseInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

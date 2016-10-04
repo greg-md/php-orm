@@ -42,7 +42,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
 
             $dsn = [];
 
-            foreach(explode(';', $dsnString) as $info) {
+            foreach (explode(';', $dsnString) as $info) {
                 list($key, $value) = explode('=', $info, 2);
 
                 $dsn[$key] = $value;
@@ -64,7 +64,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
     {
         $dsn = $this->dsn;
 
-        foreach($dsn as $key => &$value) {
+        foreach ($dsn as $key => &$value) {
             $value = $key . '=' . $value;
         }
         unset($value);
@@ -178,12 +178,12 @@ class Mysql extends DriverAbstract implements MysqlInterface
         return new LimitClause();
     }
 
-    static public function quoteLike($value, $escape = '\\')
+    public static function quoteLike($value, $escape = '\\')
     {
         return MysqlQuerySupport::quoteLike($value, $escape);
     }
 
-    static public function concat(array $values, $delimiter = '')
+    public static function concat(array $values, $delimiter = '')
     {
         return MysqlQuerySupport::concat($values, $delimiter);
     }
@@ -213,7 +213,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
 
         $columns = [];
 
-        foreach($columnsInfo as $info) {
+        foreach ($columnsInfo as $info) {
             if ($info['Key'] == 'PRI') {
                 $primaryKeys[] = $info['Field'];
             }
@@ -226,8 +226,8 @@ class Mysql extends DriverAbstract implements MysqlInterface
         }
 
         return [
-            'columns' => $columns,
-            'primaryKeys' => $primaryKeys,
+            'columns'       => $columns,
+            'primaryKeys'   => $primaryKeys,
             'autoIncrement' => $autoIncrement,
         ];
     }
@@ -304,11 +304,11 @@ class Mysql extends DriverAbstract implements MysqlInterface
         }
 
         if (!$null) {
-            $info['Default'] = (string)$info['Default'];
+            $info['Default'] = (string) $info['Default'];
         }
 
         if (Column::isNumericType($type) and (!$null or $info['Default'] !== null)) {
-            $info['Default'] = (int)$info['Default'];
+            $info['Default'] = (int) $info['Default'];
         }
 
         $defaultValue = $info['Default'];
@@ -329,7 +329,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
     {
         $references = [];
 
-        foreach($this->parseTableReferences($sql) as $info) {
+        foreach ($this->parseTableReferences($sql) as $info) {
             $reference = new Constraint();
 
             $reference->setName($info['ConstraintName'])
@@ -337,7 +337,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
                 ->onUpdate($info['OnUpdate'])
                 ->onDelete($info['OnDelete']);
 
-            foreach($info['Constraint'] as $constraintInfo) {
+            foreach ($info['Constraint'] as $constraintInfo) {
                 $reference->setRelation($constraintInfo['Position'], $constraintInfo['ColumnName'], $constraintInfo['ReferencedColumnName']);
             }
 
@@ -356,28 +356,28 @@ class Mysql extends DriverAbstract implements MysqlInterface
         $references = [];
 
         if (preg_match_all('#' . $regex . '#i', $sql, $matches)) {
-            foreach($matches[0] as $k => $match) {
+            foreach ($matches[0] as $k => $match) {
                 $constraint = [];
 
                 $columnsNames = Str::splitQuoted($matches[2][$k], ', ', '`');
 
                 $referencesColumnsNames = Str::splitQuoted($matches[4][$k], ', ', '`');
 
-                foreach($columnsNames as $kk => $columnName) {
+                foreach ($columnsNames as $kk => $columnName) {
                     $constraint[$kk + 1] = [
-                        'Position' => $kk + 1,
-                        'ColumnName' => $columnName,
+                        'Position'             => $kk + 1,
+                        'ColumnName'           => $columnName,
                         'ReferencedColumnName' => $referencesColumnsNames[$kk],
                     ];
                 }
 
                 $references[] = [
-                    'ConstraintName' => $matches[1][$k],
-                    'TableName' => $tableName,
+                    'ConstraintName'      => $matches[1][$k],
+                    'TableName'           => $tableName,
                     'ReferencedTableName' => $matches[3][$k],
-                    'OnUpdate' => $matches[5][$k],
-                    'OnDelete' => $matches[6][$k],
-                    'Constraint' => $constraint,
+                    'OnUpdate'            => $matches[5][$k],
+                    'OnDelete'            => $matches[6][$k],
+                    'Constraint'          => $constraint,
                 ];
             }
         }
@@ -443,7 +443,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
     {
         $relationships = [];
 
-        foreach($this->parseTableRelationshipsAsArray($items, $withRules) as $relationship) {
+        foreach ($this->parseTableRelationshipsAsArray($items, $withRules) as $relationship) {
             $constraint = new Constraint();
 
             $constraint->setName($relationship['ConstraintName']);
@@ -456,7 +456,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
                 $constraint->onDelete($relationship['OnDelete']);
             }
 
-            foreach($relationship['Constraint'] as $relation) {
+            foreach ($relationship['Constraint'] as $relation) {
                 $constraint->setRelation($relation['Position'], $relation['ColumnName'], $relation['RelationshipColumnName']);
             }
 
@@ -470,14 +470,14 @@ class Mysql extends DriverAbstract implements MysqlInterface
     {
         $relationships = [];
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             if (!isset($relationships[$item['CONSTRAINT_NAME']])) {
                 $relationships[$item['CONSTRAINT_NAME']] = [
-                    'ConstraintName' => $item['CONSTRAINT_NAME'],
-                    'DbName' => $item['REFERENCED_TABLE_SCHEMA'],
-                    'TableName' => $item['REFERENCED_TABLE_NAME'],
+                    'ConstraintName'          => $item['CONSTRAINT_NAME'],
+                    'DbName'                  => $item['REFERENCED_TABLE_SCHEMA'],
+                    'TableName'               => $item['REFERENCED_TABLE_NAME'],
                     'RelationshipTableSchema' => $item['TABLE_SCHEMA'],
-                    'RelationshipTableName' => $item['TABLE_NAME'],
+                    'RelationshipTableName'   => $item['TABLE_NAME'],
                 ];
 
                 if ($withRules) {
@@ -487,8 +487,8 @@ class Mysql extends DriverAbstract implements MysqlInterface
             }
 
             $relationships[$item['CONSTRAINT_NAME']]['Constraint'][$item['POSITION_IN_UNIQUE_CONSTRAINT']] = [
-                'Position' => $item['POSITION_IN_UNIQUE_CONSTRAINT'],
-                'ColumnName' => $item['REFERENCED_COLUMN_NAME'],
+                'Position'               => $item['POSITION_IN_UNIQUE_CONSTRAINT'],
+                'ColumnName'             => $item['REFERENCED_COLUMN_NAME'],
                 'RelationshipColumnName' => $item['COLUMN_NAME'],
             ];
         }

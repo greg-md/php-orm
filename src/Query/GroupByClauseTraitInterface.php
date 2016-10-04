@@ -6,6 +6,7 @@ interface GroupByClauseTraitInterface
 {
     /**
      * @param $column
+     *
      * @return $this
      */
     public function groupBy($column);
@@ -14,6 +15,7 @@ interface GroupByClauseTraitInterface
      * @param $expr
      * @param null $param
      * @param null $_
+     *
      * @return $this
      */
     public function groupByRaw($expr, $param = null, $_ = null);

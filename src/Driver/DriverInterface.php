@@ -19,7 +19,6 @@ interface DriverInterface
 
     public function reconnect();
 
-
     public function transaction(callable $callable);
 
     public function inTransaction();
@@ -30,9 +29,9 @@ interface DriverInterface
 
     public function rollBack();
 
-
     /**
      * @param $sql
+     *
      * @return StmtInterface
      */
     public function prepare($sql);
@@ -47,80 +46,88 @@ interface DriverInterface
 
     public function truncate($tableName);
 
-
     public function listen(callable $callable);
 
     public function fire($sql);
 
-
     /**
-     * @return SelectQueryInterface
      * @throws \Exception
+     *
+     * @return SelectQueryInterface
      */
     public function select();
 
     /**
-     * @return InsertQueryInterface
      * @throws \Exception
+     *
+     * @return InsertQueryInterface
      */
     public function insert();
 
     /**
-     * @return DeleteQueryInterface
      * @throws \Exception
+     *
+     * @return DeleteQueryInterface
      */
     public function delete();
 
     /**
-     * @return UpdateQueryInterface
      * @throws \Exception
+     *
+     * @return UpdateQueryInterface
      */
     public function update();
 
     /**
-     * @return FromClauseInterface
      * @throws \Exception
+     *
+     * @return FromClauseInterface
      */
     public function from();
 
     /**
-     * @return JoinClauseInterface
      * @throws \Exception
+     *
+     * @return JoinClauseInterface
      */
     public function join();
 
     /**
-     * @return WhereClauseInterface
      * @throws \Exception
+     *
+     * @return WhereClauseInterface
      */
     public function where();
 
     /**
-     * @return HavingClauseInterface
      * @throws \Exception
+     *
+     * @return HavingClauseInterface
      */
     public function having();
 
     /**
-     * @return OrderByClauseInterface
      * @throws \Exception
+     *
+     * @return OrderByClauseInterface
      */
     public function orderBy();
 
     /**
-     * @return OrderByClauseInterface
      * @throws \Exception
+     *
+     * @return OrderByClauseInterface
      */
     public function groupBy();
 
     /**
-     * @return LimitClauseInterface
      * @throws \Exception
+     *
+     * @return LimitClauseInterface
      */
     public function limit();
 
+    public static function quoteLike($value, $escape = '\\');
 
-    static public function quoteLike($value, $escape = '\\');
-
-    static public function concat(array $values, $delimiter = '');
+    public static function concat(array $values, $delimiter = '');
 }

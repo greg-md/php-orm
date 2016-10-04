@@ -19,7 +19,7 @@ trait GroupByClauseTrait
     protected function _addGroupBy($expr, array $params = [])
     {
         $this->groupBy[] = [
-            'expr' => $expr,
+            'expr'   => $expr,
             'params' => $params,
         ];
 
@@ -28,7 +28,7 @@ trait GroupByClauseTrait
 
     public function hasGroupBy()
     {
-        return (bool)$this->groupBy;
+        return (bool) $this->groupBy;
     }
 
     public function getGroupBy()
@@ -61,7 +61,7 @@ trait GroupByClauseTrait
     {
         $sql = $params = [];
 
-        foreach($this->groupBy as $groupBy) {
+        foreach ($this->groupBy as $groupBy) {
             $sql[] = $groupBy['expr'];
 
             $groupBy['params'] && $params = array_merge($params, $groupBy['params']);

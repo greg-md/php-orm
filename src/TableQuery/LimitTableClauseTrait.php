@@ -28,8 +28,9 @@ trait LimitTableClauseTrait
     }
 
     /**
-     * @return LimitClauseTraitInterface
      * @throws \Exception
+     *
+     * @return LimitClauseTraitInterface
      */
     protected function getLimitClauseQuery()
     {
@@ -53,13 +54,13 @@ trait LimitTableClauseTrait
 
     protected function intoLimitClause()
     {
-        foreach($this->clauses as $clause) {
-            if (    !($clause instanceof FromClauseInterface)
-                or  !($clause instanceof HavingClauseInterface)
-                or  !($clause instanceof JoinClauseInterface)
-                or  !($clause instanceof LimitClauseInterface)
-                or  !($clause instanceof OrderByClauseInterface)
-                or  !($clause instanceof WhereClauseInterface)
+        foreach ($this->clauses as $clause) {
+            if (!($clause instanceof FromClauseInterface)
+                or !($clause instanceof HavingClauseInterface)
+                or !($clause instanceof JoinClauseInterface)
+                or !($clause instanceof LimitClauseInterface)
+                or !($clause instanceof OrderByClauseInterface)
+                or !($clause instanceof WhereClauseInterface)
             ) {
                 throw new \Exception('Current query could not have a LIMIT clause.');
             }

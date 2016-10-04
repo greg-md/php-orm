@@ -18,6 +18,6 @@ class OrderByClause implements OrderByClauseInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

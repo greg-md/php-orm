@@ -8,11 +8,9 @@ interface FromTableClauseTraitInterface
 
     public function getFromClause();
 
-
     public function from($table, $_ = null);
 
     public function fromRaw($expr, $param = null, $_ = null);
-
 
     public function hasFrom();
 

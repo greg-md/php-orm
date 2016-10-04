@@ -4,7 +4,7 @@ namespace Greg\Orm;
 
 use Greg\Orm\Table\RowInterface;
 
-class TableRelationship
+class TableRelationshipOld
 {
     protected $table = null;
 
@@ -24,8 +24,9 @@ class TableRelationship
     }
 
     /**
-     * @return Table
      * @throws \Exception
+     *
+     * @return Table
      */
     public function getTable()
     {
@@ -61,7 +62,7 @@ class TableRelationship
 
     public function insertMultiData(array $multiData)
     {
-        foreach($multiData as $data) {
+        foreach ($multiData as $data) {
             $this->insertData($data);
         }
 
@@ -80,8 +81,8 @@ class TableRelationship
         if ($row = $this->row()) {
             $references = $this->getTable()->getTableReferences($row->getTableName());
 
-            foreach($references as $reference) {
-                foreach($reference['Constraint'] as $constraint) {
+            foreach ($references as $reference) {
+                foreach ($reference['Constraint'] as $constraint) {
                     $data[$constraint['ColumnName']] = $row[$constraint['ReferencedColumnName']];
                 }
             }
@@ -92,6 +93,7 @@ class TableRelationship
 
     /**
      * @param Table $value
+     *
      * @return $this|Table
      */
     public function table(Table $value = null)
@@ -101,6 +103,7 @@ class TableRelationship
 
     /**
      * @param RowInterface $value
+     *
      * @return $this|RowInterface
      */
     public function row(RowInterface $value = null)

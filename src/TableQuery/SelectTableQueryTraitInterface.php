@@ -8,9 +8,7 @@ interface SelectTableQueryTraitInterface
 
     public function getSelectQuery();
 
-
     public function distinct($value = true);
-
 
     public function select($column = null, $_ = null);
 
@@ -40,7 +38,6 @@ interface SelectTableQueryTraitInterface
 
     public function clearSelect();
 
-
     public function groupBy($column);
 
     public function groupByRaw($expr, $param = null, $_ = null);
@@ -49,16 +46,13 @@ interface SelectTableQueryTraitInterface
 
     public function clearGroupBy();
 
-
     public function offset($number);
-
 
     public function union($expr, $param = null, $_ = null);
 
     public function unionAll($expr, $param = null, $_ = null);
 
     public function unionDistinct($expr, $param = null, $_ = null);
-
 
     public function assoc();
 
@@ -67,7 +61,6 @@ interface SelectTableQueryTraitInterface
     public function assocAll();
 
     public function assocGenerator();
-
 
     public function fetchColumn($column = 0);
 
@@ -87,7 +80,6 @@ interface SelectTableQueryTraitInterface
 
     public function exists();
 
-
     public function row();
 
     public function rowOrFail();
@@ -96,16 +88,13 @@ interface SelectTableQueryTraitInterface
 
     public function rowsGenerator();
 
-
     public function chunk($count, callable $callable, $callOneByOne = false);
 
     public function chunkRows($count, callable $callable, $callOneByOne = false);
 
-
     public function find($key);
 
     public function findOrFail($keys);
-
 
     public function firstOrNew(array $data);
 

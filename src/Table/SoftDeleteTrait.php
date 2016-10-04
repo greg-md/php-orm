@@ -15,7 +15,7 @@ trait SoftDeleteTrait
 
     protected function bootSoftDeleteTrait()
     {
-        $this->applyOnWhere(function(WhereClauseInterface $query) {
+        $this->applyOnWhere(function (WhereClauseInterface $query) {
             $this->softDeleteClause = $query;
 
             $this->loadSoftDeleted();
@@ -56,7 +56,7 @@ trait SoftDeleteTrait
 
     public function setSoftDeleteColumn($name)
     {
-        $this->softDeleteColumn = (string)$name;
+        $this->softDeleteColumn = (string) $name;
 
         return $this;
     }
@@ -78,7 +78,7 @@ trait SoftDeleteTrait
 
     public function isDeleted()
     {
-        return (bool)$this->getDeleted();
+        return (bool) $this->getDeleted();
     }
 
     public function getDeleted()

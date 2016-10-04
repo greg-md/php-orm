@@ -159,8 +159,8 @@ trait WhereClauseTrait
         }
 
         $this->exists = [
-            'type' => $type,
-            'expr' => $expr,
+            'type'   => $type,
+            'expr'   => $expr,
             'params' => $params,
         ];
     }

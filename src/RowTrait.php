@@ -5,10 +5,8 @@ namespace Greg\Orm;
 use Greg\Support\Arr;
 
 /**
- * Class RowTrait
- * @package Greg\Orm
+ * Class RowTrait.
  *
- * Ide Helper methods
  * @method $this whereAre(array $columns);
  * @method $this where($column, $operator, $value = null);
  * @method $this orWhereAre(array $columns);
@@ -41,11 +39,8 @@ use Greg\Support\Arr;
  * @method $this whereNotExists($expr, $param = null, $_ = null);
  * @method $this whereToSql();
  * @method $this whereToString();
- *
  * @method $this insertData(array $data);
- *
  * @method $this update(array $values = []);
- *
  * @method $this delete(array $whereAre = []);
  */
 trait RowTrait
@@ -70,7 +65,7 @@ trait RowTrait
     public function ___appendRefRow(array &$row)
     {
         $row['data'] = Arr::getArrayRef($row, 'data');
-        $row['isNew'] = (bool)Arr::getRef($row, 'isNew');
+        $row['isNew'] = (bool) Arr::getRef($row, 'isNew');
         $row['modified'] = Arr::getArrayRef($row, 'modified');
 
         $this->rows[] = &$row;
@@ -81,8 +76,8 @@ trait RowTrait
     public function ___appendRowData(array $data, $isNew = false)
     {
         $row = [
-            'data' => $data,
-            'isNew' => $isNew,
+            'data'     => $data,
+            'isNew'    => $isNew,
             'modified' => [],
         ];
 
@@ -91,13 +86,16 @@ trait RowTrait
 
     /**
      * @param callable|null $callable
+     *
      * @return static
      */
     public function first(callable $callable = null)
     {
         foreach ($this as $key => $row) {
             if ($callable !== null) {
-                if (call_user_func_array($callable, [$row, $key])) return $row;
+                if (call_user_func_array($callable, [$row, $key])) {
+                    return $row;
+                }
             } else {
                 return $row;
             }
@@ -124,7 +122,7 @@ trait RowTrait
     {
         $keys = [];
 
-        foreach($this->getPrimaryKeys() as $key) {
+        foreach ($this->getPrimaryKeys() as $key) {
             $keys[$key] = $this[$key];
         }
 
@@ -138,7 +136,7 @@ trait RowTrait
         foreach ($this->getUniqueKeys() as $name => $uniqueKeys) {
             $keys = [];
 
-            foreach($uniqueKeys as $key) {
+            foreach ($uniqueKeys as $key) {
                 $keys[$key] = $this[$key];
             }
 
@@ -152,7 +150,7 @@ trait RowTrait
     {
         $keys = [];
 
-        foreach($this->firstUniqueIndex() as $key) {
+        foreach ($this->firstUniqueIndex() as $key) {
             $keys[$key] = $this[$key];
         }
 
@@ -163,7 +161,7 @@ trait RowTrait
     {
         $record = [];
 
-        foreach($this->getColumns() as $column) {
+        foreach ($this->getColumns() as $column) {
             $record[$column->getName()] = $column->getDefaultValue();
         }
 
@@ -183,14 +181,14 @@ trait RowTrait
     {
         $data && $this->set($data);
 
-        foreach($this->getIterator() as $row) {
+        foreach ($this->getIterator() as $row) {
             if ($row->isNew()) {
                 $this->insert($row->clearData());
 
                 $row->markAsNew(false);
 
                 if ($column = $this->autoIncrement()) {
-                    $row[$column] = (int)$this->lastInsertId();
+                    $row[$column] = (int) $this->lastInsertId();
                 }
             } elseif ($record = $row->clearModifiedData()) {
                 $this->whereAre($this->firstUniqueValues())->update($record);
@@ -204,7 +202,7 @@ trait RowTrait
     {
         $keys = [];
 
-        foreach($this->getIterator() as $row) {
+        foreach ($this->getIterator() as $row) {
             $keys[] = $row->firstUniqueValues();
 
             $row->markAsNew(true);
@@ -226,7 +224,7 @@ trait RowTrait
 
     public function markAsNew($value = true)
     {
-        foreach($this->rows as &$row) {
+        foreach ($this->rows as &$row) {
             $row['isNew'] = $value;
         }
         unset($row);
@@ -294,22 +292,22 @@ trait RowTrait
     public function set($column, $value = null)
     {
         if (is_array($column)) {
-            foreach($column as $c => $v) {
-                $this->set($c , $v);
+            foreach ($column as $c => $v) {
+                $this->set($c, $v);
             }
         } else {
             if (!$this->hasColumn($column)) {
                 throw new \Exception('Column `' . $column . '` is not in the row.');
             }
 
-            if (($this->fillable != '*' and !in_array($column, (array)$this->fillable))
-                or ($this->guarded == '*' or in_array($column, (array)$this->guarded))) {
+            if (($this->fillable != '*' and !in_array($column, (array) $this->fillable))
+                or ($this->guarded == '*' or in_array($column, (array) $this->guarded))) {
                 throw new \Exception('Column `' . $column . '` is not fillable in the row.');
             }
 
             $value = $this->fixColumnValueType($column, $value);
 
-            foreach($this->rows as &$row) {
+            foreach ($this->rows as &$row) {
                 if ($row['data'][$column] !== $value) {
                     Arr::setRef($row['modified'], $column, $value);
                 } else {
@@ -326,7 +324,7 @@ trait RowTrait
     {
         if ($row = $this->first()) {
             if (is_array($column)) {
-                foreach($column as $c => $v) {
+                foreach ($column as $c => $v) {
                     $row->set($c, $v);
                 }
             } else {
@@ -345,7 +343,7 @@ trait RowTrait
 
         $values = [];
 
-        foreach($this->rows as &$row) {
+        foreach ($this->rows as &$row) {
             $values[] = Arr::get($row['modified'], $column, Arr::get($row['data'], $column, $else));
         }
         unset($row);
@@ -389,14 +387,14 @@ trait RowTrait
      */
     public function getIterator()
     {
-        foreach($this->rows as $key => &$row) {
+        foreach ($this->rows as $key => &$row) {
             yield $this->newInstance()->___appendRefRow($row);
         }
     }
 
     public function count()
     {
-        return sizeof($this->rows);
+        return count($this->rows);
     }
 
     /**

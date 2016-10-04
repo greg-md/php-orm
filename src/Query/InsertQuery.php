@@ -81,12 +81,12 @@ class InsertQuery implements InsertQueryInterface
             list($sql, $params) = $expr->toSql();
 
             $this->select = [
-                'sql' => $sql,
+                'sql'    => $sql,
                 'params' => $params,
             ];
         } else {
             $this->select = [
-                'sql' => $this->quoteExpr($expr),
+                'sql'    => $this->quoteExpr($expr),
                 'params' => $params,
             ];
         }
@@ -122,7 +122,7 @@ class InsertQuery implements InsertQueryInterface
         } else {
             $values = [];
 
-            foreach($this->columns as $column) {
+            foreach ($this->columns as $column) {
                 $values[] = Arr::getRef($this->values, $column);
             }
 
@@ -153,6 +153,6 @@ class InsertQuery implements InsertQueryInterface
 
     public function __toString()
     {
-        return (string)$this->toString();
+        return (string) $this->toString();
     }
 }

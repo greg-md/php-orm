@@ -6,6 +6,7 @@ interface WhereClauseTraitInterface
 {
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function whereAre(array $columns);
@@ -14,12 +15,14 @@ interface WhereClauseTraitInterface
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function where($column, $operator, $value = null);
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function orWhereAre(array $columns);
@@ -28,15 +31,16 @@ interface WhereClauseTraitInterface
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orWhere($column, $operator, $value = null);
-
 
     /**
      * @param $column1
      * @param $operator
      * @param null $column2
+     *
      * @return $this
      */
     public function whereRel($column1, $operator, $column2 = null);
@@ -45,10 +49,10 @@ interface WhereClauseTraitInterface
      * @param $column1
      * @param $operator
      * @param null $column2
+     *
      * @return $this
      */
     public function orWhereRel($column1, $operator, $column2 = null);
-
 
     public function whereIsNull($column);
 
@@ -58,7 +62,6 @@ interface WhereClauseTraitInterface
 
     public function orWhereIsNotNull($column);
 
-
     public function whereBetween($column, $min, $max);
 
     public function orWhereBetween($column, $min, $max);
@@ -66,7 +69,6 @@ interface WhereClauseTraitInterface
     public function whereNotBetween($column, $min, $max);
 
     public function orWhereNotBetween($column, $min, $max);
-
 
     public function whereDate($column, $date);
 
@@ -88,16 +90,15 @@ interface WhereClauseTraitInterface
 
     public function orWhereDay($column, $day);
 
-
     public function whereExists($expr, $param = null, $_ = null);
 
     public function whereNotExists($expr, $param = null, $_ = null);
-
 
     /**
      * @param $expr
      * @param null $value
      * @param null $_
+     *
      * @return $this
      */
     public function whereRaw($expr, $value = null, $_ = null);
@@ -106,10 +107,10 @@ interface WhereClauseTraitInterface
      * @param $expr
      * @param null $value
      * @param null $_
+     *
      * @return $this
      */
     public function orWhereRaw($expr, $value = null, $_ = null);
-
 
     public function hasWhere();
 

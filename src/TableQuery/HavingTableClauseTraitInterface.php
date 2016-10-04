@@ -8,7 +8,6 @@ interface HavingTableClauseTraitInterface
 
     public function getHavingClause();
 
-
     public function havingAre(array $columns);
 
     public function having($column, $operator, $value = null);
@@ -60,7 +59,6 @@ interface HavingTableClauseTraitInterface
     public function havingRaw($expr, $value = null, $_ = null);
 
     public function orHavingRaw($expr, $value = null, $_ = null);
-
 
     public function hasHaving();
 

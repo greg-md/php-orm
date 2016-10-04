@@ -10,8 +10,7 @@ use Greg\Orm\Query\UpdateQueryInterface;
 use Greg\Orm\Query\WhereClauseInterface;
 
 /**
- * Class TableUpdateQueryTrait
- * @package Greg\Orm\TableQuery
+ * Class TableUpdateQueryTrait.
  *
  * @method UpdateQueryInterface getQuery();
  */
@@ -62,17 +61,17 @@ trait UpdateTableQueryTrait
     {
         $query = $this->updateQuery();
 
-        foreach($this->clauses as $clause) {
-            if (    !($clause instanceof JoinClauseInterface)
-                or  !($clause instanceof WhereClauseInterface)
-                or  !($clause instanceof OrderByClauseInterface)
-                or  !($clause instanceof LimitClauseInterface)
+        foreach ($this->clauses as $clause) {
+            if (!($clause instanceof JoinClauseInterface)
+                or !($clause instanceof WhereClauseInterface)
+                or !($clause instanceof OrderByClauseInterface)
+                or !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a UPDATE statement.');
             }
         }
 
-        foreach($this->clauses as $clause) {
+        foreach ($this->clauses as $clause) {
             if ($clause instanceof JoinClauseInterface) {
                 $query->addJoins($clause->getJoins());
 

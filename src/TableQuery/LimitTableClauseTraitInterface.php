@@ -8,9 +8,7 @@ interface LimitTableClauseTraitInterface
 
     public function getLimitClause();
 
-
     public function limit($number);
-
 
     public function hasLimit();
 
