@@ -6,26 +6,25 @@
   "homepage": "https://github.com/greg-md/php-orm",
   "license": "MIT",
   "authors": [
-    {
-      "name": "Grigorii Duca",
-      "email": "contact@greg.md",
-      "homepage": "http://greg.md",
-      "role": "Developer"
-    }
+    {"name": "Grigorii Duca", "email": "contact@greg.md", "homepage": "http://greg.md"}
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/greg-md/php-support"
-    }
-  ],
+  "minimum-stability": "dev",
   "require": {
+    "php": "^5.6 || ^7.0",
+    "ext-pdo": "*",
     "greg-md/php-support": "dev-master"
   },
-  "minimum-stability": "dev",
+  "require-dev": {
+    "phpunit/phpunit": "5.5.*"
+  },
   "autoload": {
     "psr-4": {
       "Greg\\Orm\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Greg\\Orm\\Tests\\": "tests/"
     }
   }
 }
