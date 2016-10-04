@@ -2,11 +2,11 @@
   "name": "greg-md/php-orm",
   "type": "library",
   "description": "Greg PHP ORM",
-  "keywords": ["greg","php-orm"],
+  "keywords": [ "greg", "php-orm" ],
   "homepage": "https://github.com/greg-md/php-orm",
   "license": "MIT",
   "authors": [
-    {"name": "Grigorii Duca", "email": "contact@greg.md", "homepage": "http://greg.md"}
+    { "name": "Grigorii Duca", "email": "contact@greg.md", "homepage": "http://greg.md/" }
   ],
   "minimum-stability": "dev",
   "require": {
