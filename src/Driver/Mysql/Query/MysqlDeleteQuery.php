@@ -8,4 +8,3 @@ class MysqlDeleteQuery extends DeleteQuery
 {
     use MysqlClauseSupportTrait;
 }
-

@@ -106,7 +106,7 @@ trait RowTrait
 
     public function firstWhere($column, $value)
     {
-        return $this->first(function($item) use ($column, $value) {
+        return $this->first(function ($item) use ($column, $value) {
             return $item[$column] == $value;
         });
     }
