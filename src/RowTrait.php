@@ -104,6 +104,13 @@ trait RowTrait
         return null;
     }
 
+    public function firstWhere($column, $value)
+    {
+        return $this->first(function($item) use ($column, $value) {
+            return $item[$column] == $value;
+        });
+    }
+
     protected function &firstRecord()
     {
         return Arr::firstRef($this->rows);
@@ -395,6 +402,16 @@ trait RowTrait
     public function count()
     {
         return count($this->rows);
+    }
+
+    public function __get($name)
+    {
+        return $this->getFirst($name);
+    }
+
+    public function __set($name, $value)
+    {
+        return $this->setFirst($name, $value);
     }
 
     /**

@@ -8,7 +8,11 @@ interface OrderByTableClauseTraitInterface
 
     public function getOrderByClause();
 
-    public function orderBy($column);
+    public function orderBy($column, $type = null);
+
+    public function orderAsc($column);
+
+    public function orderDesc($column);
 
     public function orderByRaw($expr, $param = null, $_ = null);
 

@@ -16,6 +16,10 @@ abstract class Table implements TableInterface
 
     public function __construct(array $data = [], DriverInterface $driver = null)
     {
+        if ($data) {
+            $this->___appendRowData($data, true);
+        }
+
         if ($driver) {
             $this->setDriver($driver);
         }
@@ -23,10 +27,6 @@ abstract class Table implements TableInterface
         $this->boot();
 
         $this->bootTraits();
-
-        if ($data) {
-            $this->___appendRowData($data, true);
-        }
 
         return $this;
     }
@@ -77,8 +77,29 @@ abstract class Table implements TableInterface
         return $this->driver;
     }
 
+    public function hasDriver()
+    {
+        return $this->driver ? true : false;
+    }
+
     public function lastInsertId()
     {
         return $this->getDriver()->lastInsertId();
+    }
+
+    public function __sleep()
+    {
+        return array_diff(array_keys(get_object_vars($this)), [
+            'driver',
+            'query',
+            'clauses',
+        ]);
+    }
+
+    public function __wakeup()
+    {
+        $this->boot();
+
+        $this->bootTraits();
     }
 }

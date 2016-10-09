@@ -93,10 +93,10 @@ trait DeleteTableQueryTrait
 
         foreach ($this->clauses as $clause) {
             if (!($clause instanceof FromClauseInterface)
-                or !($clause instanceof JoinClauseInterface)
-                or !($clause instanceof WhereClauseInterface)
-                or !($clause instanceof OrderByClauseInterface)
-                or !($clause instanceof LimitClauseInterface)
+                and !($clause instanceof JoinClauseInterface)
+                and !($clause instanceof WhereClauseInterface)
+                and !($clause instanceof OrderByClauseInterface)
+                and !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a DELETE statement.');
             }

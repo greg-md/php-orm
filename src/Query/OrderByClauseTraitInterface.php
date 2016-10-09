@@ -16,6 +16,10 @@ interface OrderByClauseTraitInterface
      */
     public function orderBy($column, $type = null);
 
+    public function orderAsc($column);
+
+    public function orderDesc($column);
+
     /**
      * @param $expr
      * @param null $param

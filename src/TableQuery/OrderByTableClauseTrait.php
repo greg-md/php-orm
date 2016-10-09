@@ -56,11 +56,11 @@ trait OrderByTableClauseTrait
     {
         foreach ($this->clauses as $clause) {
             if (!($clause instanceof FromClauseInterface)
-                or !($clause instanceof HavingClauseInterface)
-                or !($clause instanceof JoinClauseInterface)
-                or !($clause instanceof LimitClauseInterface)
-                or !($clause instanceof OrderByClauseInterface)
-                or !($clause instanceof WhereClauseInterface)
+                and !($clause instanceof HavingClauseInterface)
+                and !($clause instanceof JoinClauseInterface)
+                and !($clause instanceof LimitClauseInterface)
+                and !($clause instanceof OrderByClauseInterface)
+                and !($clause instanceof WhereClauseInterface)
             ) {
                 throw new \Exception('Current query could not have a ORDER BY clause.');
             }
@@ -86,11 +86,29 @@ trait OrderByTableClauseTrait
         return $this->getClause('ORDER_BY');
     }
 
-    public function orderBy($column)
+    public function orderBy($column, $type = null)
     {
         $instance = $this->needOrderByClauseInstance();
 
         $instance->getOrderByClause()->orderBy(...func_get_args());
+
+        return $instance;
+    }
+
+    public function orderAsc($column)
+    {
+        $instance = $this->needOrderByClauseInstance();
+
+        $instance->getOrderByClause()->orderAsc(...func_get_args());
+
+        return $instance;
+    }
+
+    public function orderDesc($column)
+    {
+        $instance = $this->needOrderByClauseInstance();
+
+        $instance->getOrderByClause()->orderDesc(...func_get_args());
 
         return $instance;
     }

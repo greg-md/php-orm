@@ -15,6 +15,16 @@ trait OrderByClauseTrait
         return $this->_addOrderBy($this->quoteNameExpr($column), $type);
     }
 
+    public function orderAsc($column)
+    {
+        return $this->orderBy($column, OrderByClauseTraitInterface::ORDER_ASC);
+    }
+
+    public function orderDesc($column)
+    {
+        return $this->orderBy($column, OrderByClauseTraitInterface::ORDER_DESC);
+    }
+
     public function orderByRaw($expr, $param = null, $_ = null)
     {
         return $this->_addOrderBy($this->quoteExpr($expr), null, is_array($param) ? $param : array_slice(func_get_args(), 1));

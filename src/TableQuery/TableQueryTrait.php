@@ -98,8 +98,68 @@ trait TableQueryTrait
         return $this->getQuery()->when($condition, $callable);
     }
 
+    protected function clausesToSql()
+    {
+        $sql = $params = [];
+
+        if ($this->hasClause('FROM')) {
+            list($s, $p) = $this->getFromClause()->toSql();
+
+            $sql[] = $s;
+
+            $params = array_merge($params, $p);
+        }
+
+        if ($this->hasClause('JOIN')) {
+            list($s, $p) = $this->getJoinClause()->toSql();
+
+            $sql[] = $s;
+
+            $params = array_merge($params, $p);
+        }
+
+        if ($this->hasClause('WHERE')) {
+            list($s, $p) = $this->getWhereClause()->toSql();
+
+            $sql[] = $s;
+
+            $params = array_merge($params, $p);
+        }
+
+        if ($this->hasClause('HAVING')) {
+            list($s, $p) = $this->getHavingClause()->toSql();
+
+            $sql[] = $s;
+
+            $params = array_merge($params, $p);
+        }
+
+        if ($this->hasClause('ORDER_BY')) {
+            list($s, $p) = $this->getOrderByClause()->toSql();
+
+            $sql[] = $s;
+
+            $params = array_merge($params, $p);
+        }
+
+        if ($this->hasClause('LIMIT')) {
+            list($s, $p) = $this->getLimitClause()->toSql();
+
+            $sql[] = $s;
+
+            $params = array_merge($params, $p);
+        }
+
+        return [implode(' ', $sql), $params];
+    }
+
     public function toSql()
     {
+        if ($this->clauses and !$this->query) {
+            return $this->clausesToSql();
+            //return $this->newCurrentSelectInstance()->toSql();
+        }
+
         return $this->getQuery()->toSql();
     }
 

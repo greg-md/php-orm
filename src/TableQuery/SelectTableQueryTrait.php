@@ -12,6 +12,7 @@ use Greg\Orm\Query\OrderByClauseInterface;
 use Greg\Orm\Query\QueryInterface;
 use Greg\Orm\Query\SelectQueryInterface;
 use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Table;
 
 /**
  * Class TableSelectQueryTrait.
@@ -74,6 +75,14 @@ trait SelectTableQueryTrait
         return $this->newInstance()->intoSelect();
     }
 
+    /**
+     * @return $this
+     */
+    protected function newCurrentSelectInstance()
+    {
+        return $this->newInstance()->setClauses($this->getClauses())->intoSelect();
+    }
+
     protected function checkSelectQuery()
     {
         if (!($this->query instanceof SelectQueryInterface)) {
@@ -102,11 +111,11 @@ trait SelectTableQueryTrait
 
         foreach ($this->clauses as $clause) {
             if (!($clause instanceof FromClauseInterface)
-                or !($clause instanceof JoinClauseInterface)
-                or !($clause instanceof WhereClauseInterface)
-                or !($clause instanceof HavingClauseInterface)
-                or !($clause instanceof OrderByClauseInterface)
-                or !($clause instanceof LimitClauseInterface)
+                and !($clause instanceof JoinClauseInterface)
+                and !($clause instanceof WhereClauseInterface)
+                and !($clause instanceof HavingClauseInterface)
+                and !($clause instanceof OrderByClauseInterface)
+                and !($clause instanceof LimitClauseInterface)
             ) {
                 throw new \Exception('Current query is not a SELECT statement.');
             }
@@ -185,7 +194,9 @@ trait SelectTableQueryTrait
     {
         $instance = $this->needSelectInstance();
 
-        $instance->getQuery()->columns(...func_get_args());
+        if ($args = func_get_args()) {
+            $instance->getQuery()->columns(...$args);
+        }
 
         return $instance;
     }
@@ -489,6 +500,9 @@ trait SelectTableQueryTrait
         return $row;
     }
 
+    /**
+     * @return Table|Table[]
+     */
     public function rows()
     {
         $stmt = $this->executeSelectRowInstance();
@@ -609,7 +623,7 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @return $this
+     * @return Table
      */
     abstract protected function newInstance();
 

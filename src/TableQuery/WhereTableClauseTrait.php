@@ -72,11 +72,11 @@ trait WhereTableClauseTrait
     {
         foreach ($this->clauses as $clause) {
             if (!($clause instanceof FromClauseInterface)
-                or !($clause instanceof HavingClauseInterface)
-                or !($clause instanceof JoinClauseInterface)
-                or !($clause instanceof LimitClauseInterface)
-                or !($clause instanceof OrderByClauseInterface)
-                or !($clause instanceof WhereClauseInterface)
+                and !($clause instanceof HavingClauseInterface)
+                and !($clause instanceof JoinClauseInterface)
+                and !($clause instanceof LimitClauseInterface)
+                and !($clause instanceof OrderByClauseInterface)
+                and !($clause instanceof WhereClauseInterface)
             ) {
                 throw new \Exception('Current query could not have a WHERE clause.');
             }
