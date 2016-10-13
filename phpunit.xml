@@ -1,6 +1,6 @@
 <phpunit bootstrap="phpunit.bootstrap.php">
     <testsuites>
-        <testsuite name="PHP Support Test Suite">
+        <testsuite name="PHP ORM Test Suite">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>

@@ -6,34 +6,39 @@ use Greg\Orm\Driver\MysqlInterface;
 
 trait TableSchemaTrait
 {
-    protected function populateSchema($populateInfo = true, $populateReferences = true, $populateRelationships = false)
+    protected function populateWithInfo(array $info)
     {
-        if ($populateInfo) {
-            $info = $this->getDriver()->tableInfo($this->fullName());
-
-            foreach ($info['columns'] as $column) {
-                $this->addColumn($column);
-            }
-
-            $info['primaryKeys'] && $this->setPrimaryKeys($info['primaryKeys']);
-
-            $info['autoIncrement'] && $this->setAutoIncrement($info['autoIncrement']);
+        foreach ($info['columns'] as $column) {
+            $this->addColumn($column);
         }
 
-        if ($populateReferences) {
-            //$references = $this->getDriver()->getTableReferences($this->getName());
-        }
+        $info['primaryKeys'] && $this->setPrimaryKeys($info['primaryKeys']);
 
-        if ($populateRelationships) {
-            //$relationships = $this->getDriver()->getTableRelationships($this->getName());
-        }
+        $info['autoIncrement'] && $this->setAutoIncrement($info['autoIncrement']);
 
         return $this;
     }
 
+    protected function populateInfo()
+    {
+        $info = $this->getDriver()->tableInfo($this->fullName());
+
+        return $this->populateWithInfo($info);
+    }
+
+    protected function populateReferences()
+    {
+        //$references = $this->getDriver()->getTableReferences($this->getName());
+    }
+
+    protected function populateRelationships()
+    {
+        //$relationships = $this->getDriver()->getTableRelationships($this->getName());
+    }
+
     protected function bootTableSchemaTrait()
     {
-        $this->populateSchema();
+        $this->populateInfo();
     }
 
     /**
