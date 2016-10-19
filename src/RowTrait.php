@@ -386,7 +386,7 @@ trait RowTrait
 
     public function offsetUnset($offset)
     {
-        throw new \Exception('You can not unset column `' . $offset . '` from the row.');
+        throw new \Exception('You cannot unset column `' . $offset . '` from the row.');
     }
 
     /**

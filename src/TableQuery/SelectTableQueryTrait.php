@@ -462,7 +462,7 @@ trait SelectTableQueryTrait
         $query = $this->needSelectInstance()->getQuery();
 
         if ($query->hasColumns()) {
-            throw new \Exception('You can not fetch as rows while you have custom SELECT columns.');
+            throw new \Exception('You cannot fetch as rows while you have custom SELECT columns.');
         }
 
         $query->columnsFrom($this, '*');
