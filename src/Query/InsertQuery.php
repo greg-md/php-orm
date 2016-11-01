@@ -35,6 +35,8 @@ class InsertQuery implements InsertQueryInterface
 
     public function columns(array $columns)
     {
+        $columns = array_combine($columns, $columns);
+
         $this->columns = array_map([$this, 'quoteNameExpr'], $columns);
 
         return $this;
@@ -122,8 +124,8 @@ class InsertQuery implements InsertQueryInterface
         } else {
             $values = [];
 
-            foreach ($this->columns as $column) {
-                $values[] = Arr::getRef($this->values, $column);
+            foreach ($this->columns as $key => $column) {
+                $values[] = Arr::getRef($this->values, $key);
             }
 
             $sql[] = 'VALUES ' . $this->prepareForBind($values);

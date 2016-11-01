@@ -352,4 +352,9 @@ trait TableTrait
 
         return $data;
     }
+
+    public function hasMany($relationshipTable, $relationshipKey, $tableKey = null)
+    {
+
+    }
 }
