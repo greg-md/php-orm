@@ -32,7 +32,9 @@ trait UpdateTableQueryTrait
      */
     protected function newUpdateInstance()
     {
-        return $this->newInstance()->intoUpdate();
+        return $this->newInstance()
+            ->setWhereApplicators($this->getWhereApplicators())
+            ->intoUpdate();
     }
 
     protected function checkUpdateQuery()

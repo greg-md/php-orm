@@ -259,6 +259,7 @@ trait ConditionsExprTrait
         }
 
         // Omg, don't change this! It just works! :))
+
         $column = (array) $column;
 
         $value = (array) $value;
@@ -312,6 +313,7 @@ trait ConditionsExprTrait
 
             $valueExpr = $this->prepareForBind($value);
         }
+
         // Omg end.
 
         $column = $this->packColumns($column);

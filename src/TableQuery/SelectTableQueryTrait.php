@@ -72,15 +72,9 @@ trait SelectTableQueryTrait
      */
     protected function newSelectInstance()
     {
-        return $this->newInstance()->intoSelect();
-    }
-
-    /**
-     * @return $this
-     */
-    protected function newCurrentSelectInstance()
-    {
-        return $this->newInstance()->setClauses($this->getClauses())->intoSelect();
+        return $this->newInstance()
+            ->setWhereApplicators($this->getWhereApplicators())
+            ->intoSelect();
     }
 
     protected function checkSelectQuery()

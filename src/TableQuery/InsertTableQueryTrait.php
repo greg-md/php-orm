@@ -6,6 +6,8 @@ use Greg\Orm\Driver\DriverInterface;
 
 trait InsertTableQueryTrait
 {
+    protected $defaults = [];
+
     protected function insertQuery()
     {
         $query = $this->getDriver()->insert();
@@ -15,9 +17,30 @@ trait InsertTableQueryTrait
         return $query;
     }
 
+    public function setDefaults(array $defaults)
+    {
+        $this->defaults = $defaults;
+
+        return $this;
+    }
+
+    public function getDefaults()
+    {
+        return $this->defaults;
+    }
+
     public function insert(array $data)
     {
-        return $this->execQuery($this->insertQuery()->data($data));
+        return $this->execQuery($this->insertQuery()->data($data + $this->getDefaults()));
+    }
+
+    public function insertForEach($column, array $values, array $data)
+    {
+        foreach ($values as $value) {
+            $this->insert($data + [$column => $value]);
+        }
+
+        return $this;
     }
 
     public function insertAndGetId(array $data)

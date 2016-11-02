@@ -62,7 +62,9 @@ trait DeleteTableQueryTrait
 
     protected function newDeleteInstance()
     {
-        return $this->newInstance()->intoDelete();
+        return $this->newInstance()
+            ->setWhereApplicators($this->getWhereApplicators())
+            ->intoDelete();
     }
 
     protected function checkDeleteQuery()

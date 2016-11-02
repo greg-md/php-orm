@@ -29,6 +29,18 @@ trait WhereTableClauseTrait
         $this->whereApplicators[] = $callable;
     }
 
+    public function setWhereApplicators(array $applicators)
+    {
+        $this->whereApplicators = $applicators;
+
+        return $this;
+    }
+
+    public function getWhereApplicators()
+    {
+        return $this->whereApplicators;
+    }
+
     protected function newWhereClauseInstance()
     {
         return $this->newInstance()->intoWhere();

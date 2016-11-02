@@ -14,7 +14,7 @@ abstract class Table implements TableInterface
      */
     protected $driver = null;
 
-    public function __construct(array $data = [], DriverInterface $driver = null)
+    public final function __construct(array $data = [], DriverInterface $driver = null)
     {
         if ($data) {
             $this->___appendRowData($data, true);

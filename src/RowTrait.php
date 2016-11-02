@@ -39,7 +39,7 @@ use Greg\Support\Arr;
  * @method $this whereNotExists($expr, $param = null, $_ = null);
  * @method $this whereToSql();
  * @method $this whereToString();
- * @method $this insertData(array $data);
+ * @method $this insert(array $data);
  * @method $this update(array $values = []);
  * @method $this delete(array $whereAre = []);
  */

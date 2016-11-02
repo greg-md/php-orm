@@ -157,7 +157,6 @@ trait TableQueryTrait
     {
         if ($this->clauses and !$this->query) {
             return $this->clausesToSql();
-            //return $this->newCurrentSelectInstance()->toSql();
         }
 
         return $this->getQuery()->toSql();
