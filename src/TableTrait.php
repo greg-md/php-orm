@@ -356,8 +356,10 @@ trait TableTrait
 
     /**
      * @param $table
-     * @return Table
+     *
      * @throws \Exception
+     *
+     * @return Table
      */
     protected function getTableInstance($table)
     {
@@ -386,7 +388,7 @@ trait TableTrait
 
         $values = $this->get($tableKey);
 
-        $relationshipTable->applyOnWhere(function(WhereClauseInterface $query) use ($relationshipKey, $values) {
+        $relationshipTable->applyOnWhere(function (WhereClauseInterface $query) use ($relationshipKey, $values) {
             $query->where($relationshipKey, $values);
         });
 
