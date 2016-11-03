@@ -372,22 +372,6 @@ trait TableTrait
         return $table;
     }
 
-    /*
-    public function forEachReference($referencedTable, $referencedColumn, $tableColumn)
-    {
-        $referencedTable = $this->getTableInstance($referencedTable);
-
-        $values = $referencedTable->select($referencedColumn)->fetchAllColumn();
-
-        return $this->forEachValue($tableColumn, $values);
-    }
-
-    public function forEachValue($tableColumn, array $values)
-    {
-        return $this->newInstance();
-    }
-    */
-
     public function hasMany($relationshipTable, $relationshipKey, $tableKey = null)
     {
         $relationshipTable = $this->getTableInstance($relationshipTable);
