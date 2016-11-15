@@ -92,4 +92,10 @@ trait SoftDeleteTrait
 
         return $this;
     }
+
+    abstract public function applyOnWhere(callable $callable);
+
+    abstract public function thisColumn($columnName);
+
+    abstract public function set($column, $value = null);
 }

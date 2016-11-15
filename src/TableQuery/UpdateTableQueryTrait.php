@@ -9,11 +9,6 @@ use Greg\Orm\Query\OrderByClauseInterface;
 use Greg\Orm\Query\UpdateQueryInterface;
 use Greg\Orm\Query\WhereClauseInterface;
 
-/**
- * Class TableUpdateQueryTrait.
- *
- * @method UpdateQueryInterface getQuery();
- */
 trait UpdateTableQueryTrait
 {
     protected function updateQuery()
