@@ -18,9 +18,13 @@ trait RowTrait
 
     protected $guarded = [];
 
-    public function toArray()
+    public function toArray($full = false)
     {
-        return $this->rows;
+        if ($full) {
+            return $this->rows;
+        }
+
+        return array_column($this->rows, 'data');
     }
 
     public function ___appendRefRow(array &$row)
