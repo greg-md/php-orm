@@ -10,7 +10,7 @@ trait FromClauseTrait
 
     public function from($table, $_ = null)
     {
-        $this->fromTable(...func_get_args());
+        return $this->fromTable(...func_get_args());
     }
 
     protected function fromTable($table, $_ = null)

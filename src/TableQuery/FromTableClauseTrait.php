@@ -83,6 +83,10 @@ trait FromTableClauseTrait
      */
     public function getFromClause()
     {
+        if ($this->query) {
+            return $this->getFromClauseQuery();
+        }
+
         return $this->getClause('FROM');
     }
 

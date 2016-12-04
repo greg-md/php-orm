@@ -20,132 +20,184 @@ trait HavingClauseTrait
 
     public function havingAre(array $columns)
     {
-        return $this->havingConditions()->conditions(...func_get_args());
+        $this->havingConditions()->conditions(...func_get_args());
+
+        return $this;
     }
 
     public function having($column, $operator, $value = null)
     {
-        return $this->havingConditions()->condition(...func_get_args());
+        $this->havingConditions()->condition(...func_get_args());
+
+        return $this;
     }
 
     public function orHavingAre(array $columns)
     {
-        return $this->havingConditions()->orConditions(...func_get_args());
+        $this->havingConditions()->orConditions(...func_get_args());
+
+        return $this;
     }
 
     public function orHaving($column, $operator, $value = null)
     {
-        return $this->havingConditions()->orCondition(...func_get_args());
+        $this->havingConditions()->orCondition(...func_get_args());
+
+        return $this;
     }
 
     public function havingRel($column1, $operator, $column2 = null)
     {
-        return $this->havingConditions()->conditionRel(...func_get_args());
+        $this->havingConditions()->conditionRel(...func_get_args());
+
+        return $this;
     }
 
     public function orHavingRel($column1, $operator, $column2 = null)
     {
-        return $this->havingConditions()->orConditionRel(...func_get_args());
+        $this->havingConditions()->orConditionRel(...func_get_args());
+
+        return $this;
     }
 
     public function havingIsNull($column)
     {
-        return $this->havingConditions()->conditionIsNull($column);
+        $this->havingConditions()->conditionIsNull($column);
+
+        return $this;
     }
 
     public function orHavingIsNull($column)
     {
-        return $this->havingConditions()->orConditionIsNull($column);
+        $this->havingConditions()->orConditionIsNull($column);
+
+        return $this;
     }
 
     public function havingIsNotNull($column)
     {
-        return $this->havingConditions()->conditionIsNotNull($column);
+        $this->havingConditions()->conditionIsNotNull($column);
+
+        return $this;
     }
 
     public function orHavingIsNotNull($column)
     {
-        return $this->havingConditions()->orConditionIsNotNull($column);
+        $this->havingConditions()->orConditionIsNotNull($column);
+
+        return $this;
     }
 
     public function havingBetween($column, $min, $max)
     {
-        return $this->havingConditions()->conditionBetween($column, $min, $max);
+        $this->havingConditions()->conditionBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function orHavingBetween($column, $min, $max)
     {
-        return $this->havingConditions()->orConditionBetween($column, $min, $max);
+        $this->havingConditions()->orConditionBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function havingNotBetween($column, $min, $max)
     {
-        return $this->havingConditions()->conditionNotBetween($column, $min, $max);
+        $this->havingConditions()->conditionNotBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function orHavingNotBetween($column, $min, $max)
     {
-        return $this->havingConditions()->orConditionNotBetween($column, $min, $max);
+        $this->havingConditions()->orConditionNotBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function havingDate($column, $date)
     {
-        return $this->havingConditions()->conditionDate($column, $date);
+        $this->havingConditions()->conditionDate($column, $date);
+
+        return $this;
     }
 
     public function orHavingDate($column, $date)
     {
-        return $this->havingConditions()->orConditionDate($column, $date);
+        $this->havingConditions()->orConditionDate($column, $date);
+
+        return $this;
     }
 
     public function havingTime($column, $date)
     {
-        return $this->havingConditions()->conditionTime($column, $date);
+        $this->havingConditions()->conditionTime($column, $date);
+
+        return $this;
     }
 
     public function orHavingTime($column, $date)
     {
-        return $this->havingConditions()->orConditionTime($column, $date);
+        $this->havingConditions()->orConditionTime($column, $date);
+
+        return $this;
     }
 
     public function havingYear($column, $year)
     {
-        return $this->havingConditions()->conditionYear($column, $year);
+        $this->havingConditions()->conditionYear($column, $year);
+
+        return $this;
     }
 
     public function orHavingYear($column, $year)
     {
-        return $this->havingConditions()->orConditionYear($column, $year);
+        $this->havingConditions()->orConditionYear($column, $year);
+
+        return $this;
     }
 
     public function havingMonth($column, $month)
     {
-        return $this->havingConditions()->conditionMonth($column, $month);
+        $this->havingConditions()->conditionMonth($column, $month);
+
+        return $this;
     }
 
     public function orHavingMonth($column, $month)
     {
-        return $this->havingConditions()->orConditionMonth($column, $month);
+        $this->havingConditions()->orConditionMonth($column, $month);
+
+        return $this;
     }
 
     public function havingDay($column, $day)
     {
-        return $this->havingConditions()->conditionDay($column, $day);
+        $this->havingConditions()->conditionDay($column, $day);
+
+        return $this;
     }
 
     public function orHavingDay($column, $day)
     {
-        return $this->havingConditions()->orConditionDay($column, $day);
+        $this->havingConditions()->orConditionDay($column, $day);
+
+        return $this;
     }
 
     public function havingRaw($expr, $value = null, $_ = null)
     {
-        return $this->havingConditions()->conditionRaw(...func_get_args());
+        $this->havingConditions()->conditionRaw(...func_get_args());
+
+        return $this;
     }
 
     public function orHavingRaw($expr, $value = null, $_ = null)
     {
-        return $this->havingConditions()->orConditionRaw(...func_get_args());
+        $this->havingConditions()->orConditionRaw(...func_get_args());
+
+        return $this;
     }
 
     public function hasHaving()

@@ -142,11 +142,11 @@ trait RowTrait
 
     public function create(array $data = [])
     {
+        $data = array_merge($this->defaultRowData(), $data);
+
         $data = $this->fixValuesTypes($data);
 
-        $record = array_merge($this->defaultRowData(), $data);
-
-        return $this->newInstance()->___appendRowData($record, true);
+        return $this->newInstance()->___appendRowData($data, true);
     }
 
     public function save(array $data = [])
@@ -157,11 +157,11 @@ trait RowTrait
             if ($row->isNew()) {
                 $this->insert($row->clearData());
 
-                $row->markAsNew(false);
-
-                if ($column = $this->autoIncrement()) {
+                if ($column = $this->getAutoIncrement()) {
                     $row[$column] = (int) $this->lastInsertId();
                 }
+
+                $row->markAsNew(false);
             } elseif ($record = $row->clearModifiedData()) {
                 $this->whereAre($this->firstUniqueValues())->update($record);
             }
@@ -281,9 +281,13 @@ trait RowTrait
 
             foreach ($this->rows as &$row) {
                 if ($row['data'][$column] !== $value) {
-                    Arr::setRef($row['modified'], $column, $value);
+                    if ($row['isNew']) {
+                        $row['data'][$column] = $value;
+                    } else {
+                        $row['modified'][$column] = $value;
+                    }
                 } else {
-                    Arr::del($row['modified'], $column);
+                    unset($row['modified'][$column]);
                 }
             }
             unset($row);
@@ -378,7 +382,7 @@ trait RowTrait
     {
         return $this->setFirst($name, $value);
     }
-
+    
     /**
      * @return $this
      */

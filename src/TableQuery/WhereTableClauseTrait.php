@@ -111,6 +111,10 @@ trait WhereTableClauseTrait
      */
     public function getWhereClause()
     {
+        if ($this->query) {
+            return $this->getWhereClauseQuery();
+        }
+
         return $this->getClause('WHERE');
     }
 

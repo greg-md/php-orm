@@ -2,7 +2,6 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Query\WhereClauseInterface;
 use Greg\Orm\TableQuery\DeleteTableQueryTrait;
 use Greg\Orm\TableQuery\FromTableClauseTrait;
 use Greg\Orm\TableQuery\HavingTableClauseTrait;
@@ -352,50 +351,5 @@ trait TableTrait
         unset($value);
 
         return $data;
-    }
-
-    /**
-     * @param $table
-     *
-     * @throws \Exception
-     *
-     * @return Table
-     */
-    protected function getTableInstance($table)
-    {
-        if (is_scalar($table)) {
-            if (!is_subclass_of($table, Table::class)) {
-                throw new \Exception('`' . $table . '` is not an instance of `' . Table::class . '`.');
-            }
-
-            $table = new $table([], $this->getDriver());
-        }
-
-        return $table;
-    }
-
-    public function hasMany($relationshipTable, $relationshipKey, $tableKey = null)
-    {
-        $relationshipTable = $this->getTableInstance($relationshipTable);
-
-        $relationshipKey = (array) $relationshipKey;
-
-        if (!$tableKey) {
-            $tableKey = $this->getPrimaryKeys();
-        }
-
-        $tableKey = (array) $tableKey;
-
-        $values = $this->get($tableKey);
-
-        $relationshipTable->applyOnWhere(function (WhereClauseInterface $query) use ($relationshipKey, $values) {
-            $query->where($relationshipKey, $values);
-        });
-
-        $filters = array_combine($relationshipKey, $this->getFirst($tableKey));
-
-        $relationshipTable->setDefaults($filters);
-
-        return $relationshipTable;
     }
 }

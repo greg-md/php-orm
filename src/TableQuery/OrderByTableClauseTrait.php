@@ -83,6 +83,10 @@ trait OrderByTableClauseTrait
      */
     public function getOrderByClause()
     {
+        if ($this->query) {
+            return $this->getOrderByClauseQuery();
+        }
+
         return $this->getClause('ORDER_BY');
     }
 

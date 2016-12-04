@@ -20,132 +20,184 @@ trait OnClauseTrait
 
     public function onAre(array $columns)
     {
-        return $this->onConditions()->conditions(...func_get_args());
+        $this->onConditions()->conditions(...func_get_args());
+
+        return $this;
     }
 
     public function on($column, $operator, $value = null)
     {
-        return $this->onConditions()->condition(...func_get_args());
+        $this->onConditions()->condition(...func_get_args());
+
+        return $this;
     }
 
     public function orOnAre(array $columns)
     {
-        return $this->onConditions()->orConditions(...func_get_args());
+        $this->onConditions()->orConditions(...func_get_args());
+
+        return $this;
     }
 
     public function orOn($column, $operator, $value = null)
     {
-        return $this->onConditions()->orCondition(...func_get_args());
+        $this->onConditions()->orCondition(...func_get_args());
+
+        return $this;
     }
 
     public function onRel($column1, $operator, $column2 = null)
     {
-        return $this->onConditions()->conditionRel(...func_get_args());
+        $this->onConditions()->conditionRel(...func_get_args());
+
+        return $this;
     }
 
     public function orOnRel($column1, $operator, $column2 = null)
     {
-        return $this->onConditions()->orConditionRel(...func_get_args());
+        $this->onConditions()->orConditionRel(...func_get_args());
+
+        return $this;
     }
 
     public function onIsNull($column)
     {
-        return $this->onConditions()->conditionIsNull($column);
+        $this->onConditions()->conditionIsNull($column);
+
+        return $this;
     }
 
     public function orOnIsNull($column)
     {
-        return $this->onConditions()->orConditionIsNull($column);
+        $this->onConditions()->orConditionIsNull($column);
+
+        return $this;
     }
 
     public function onIsNotNull($column)
     {
-        return $this->onConditions()->conditionIsNotNull($column);
+        $this->onConditions()->conditionIsNotNull($column);
+
+        return $this;
     }
 
     public function orOnIsNotNull($column)
     {
-        return $this->onConditions()->orConditionIsNotNull($column);
+        $this->onConditions()->orConditionIsNotNull($column);
+
+        return $this;
     }
 
     public function onBetween($column, $min, $max)
     {
-        return $this->onConditions()->conditionBetween($column, $min, $max);
+        $this->onConditions()->conditionBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function orOnBetween($column, $min, $max)
     {
-        return $this->onConditions()->orConditionBetween($column, $min, $max);
+        $this->onConditions()->orConditionBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function onNotBetween($column, $min, $max)
     {
-        return $this->onConditions()->conditionNotBetween($column, $min, $max);
+        $this->onConditions()->conditionNotBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function orOnNotBetween($column, $min, $max)
     {
-        return $this->onConditions()->orConditionNotBetween($column, $min, $max);
+        $this->onConditions()->orConditionNotBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function onDate($column, $date)
     {
-        return $this->onConditions()->conditionDate($column, $date);
+        $this->onConditions()->conditionDate($column, $date);
+
+        return $this;
     }
 
     public function orOnDate($column, $date)
     {
-        return $this->onConditions()->orConditionDate($column, $date);
+        $this->onConditions()->orConditionDate($column, $date);
+
+        return $this;
     }
 
     public function onTime($column, $date)
     {
-        return $this->onConditions()->conditionTime($column, $date);
+        $this->onConditions()->conditionTime($column, $date);
+
+        return $this;
     }
 
     public function orOnTime($column, $date)
     {
-        return $this->onConditions()->orConditionTime($column, $date);
+        $this->onConditions()->orConditionTime($column, $date);
+
+        return $this;
     }
 
     public function onYear($column, $year)
     {
-        return $this->onConditions()->conditionYear($column, $year);
+        $this->onConditions()->conditionYear($column, $year);
+
+        return $this;
     }
 
     public function orOnYear($column, $year)
     {
-        return $this->onConditions()->orConditionYear($column, $year);
+        $this->onConditions()->orConditionYear($column, $year);
+
+        return $this;
     }
 
     public function onMonth($column, $month)
     {
-        return $this->onConditions()->conditionMonth($column, $month);
+        $this->onConditions()->conditionMonth($column, $month);
+
+        return $this;
     }
 
     public function orOnMonth($column, $month)
     {
-        return $this->onConditions()->orConditionMonth($column, $month);
+        $this->onConditions()->orConditionMonth($column, $month);
+
+        return $this;
     }
 
     public function onDay($column, $day)
     {
-        return $this->onConditions()->conditionDay($column, $day);
+        $this->onConditions()->conditionDay($column, $day);
+
+        return $this;
     }
 
     public function orOnDay($column, $day)
     {
-        return $this->onConditions()->orConditionDay($column, $day);
+        $this->onConditions()->orConditionDay($column, $day);
+
+        return $this;
     }
 
     public function onRaw($expr, $value = null, $_ = null)
     {
-        return $this->onConditions()->condition(...func_get_args());
+        $this->onConditions()->condition(...func_get_args());
+
+        return $this;
     }
 
     public function orOnRaw($expr, $value = null, $_ = null)
     {
-        return $this->onConditions()->orCondition(...func_get_args());
+        $this->onConditions()->orCondition(...func_get_args());
+
+        return $this;
     }
 
     public function hasOn()

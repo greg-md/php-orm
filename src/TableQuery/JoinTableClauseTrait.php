@@ -83,6 +83,10 @@ trait JoinTableClauseTrait
      */
     public function getJoinClause()
     {
+        if ($this->query) {
+            return $this->getJoinClauseQuery();
+        }
+
         return $this->getClause('JOIN');
     }
 

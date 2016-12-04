@@ -83,6 +83,10 @@ trait LimitTableClauseTrait
      */
     public function getLimitClause()
     {
+        if ($this->query) {
+            return $this->getLimitClauseQuery();
+        }
+
         return $this->getClause('LIMIT');
     }
 

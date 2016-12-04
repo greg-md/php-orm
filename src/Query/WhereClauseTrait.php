@@ -22,132 +22,180 @@ trait WhereClauseTrait
 
     public function whereAre(array $columns)
     {
-        return $this->whereConditions()->conditions(...func_get_args());
+        $this->whereConditions()->conditions(...func_get_args());
+
+        return $this;
     }
 
     public function where($column, $operator, $value = null)
     {
-        return $this->whereConditions()->condition(...func_get_args());
+        $this->whereConditions()->condition(...func_get_args());
+
+        return $this;
     }
 
     public function orWhereAre(array $columns)
     {
-        return $this->whereConditions()->orConditions(...func_get_args());
+        $this->whereConditions()->orConditions(...func_get_args());
+
+        return $this;
     }
 
     public function orWhere($column, $operator, $value = null)
     {
-        return $this->whereConditions()->orCondition(...func_get_args());
+        $this->whereConditions()->orCondition(...func_get_args());
+
+        return $this;
     }
 
     public function whereRel($column1, $operator, $column2 = null)
     {
-        return $this->whereConditions()->conditionRel(...func_get_args());
+        $this->whereConditions()->conditionRel(...func_get_args());
+
+        return $this;
     }
 
     public function orWhereRel($column1, $operator, $column2 = null)
     {
-        return $this->whereConditions()->orConditionRel(...func_get_args());
+        $this->whereConditions()->orConditionRel(...func_get_args());
+
+        return $this;
     }
 
     public function whereIsNull($column)
     {
-        return $this->whereConditions()->conditionIsNull($column);
+        $this->whereConditions()->conditionIsNull($column);
+
+        return $this;
     }
 
     public function orWhereIsNull($column)
     {
-        return $this->whereConditions()->orConditionIsNull($column);
+        $this->whereConditions()->orConditionIsNull($column);
+
+        return $this;
     }
 
     public function whereIsNotNull($column)
     {
-        return $this->whereConditions()->conditionIsNotNull($column);
+        $this->whereConditions()->conditionIsNotNull($column);
+
+        return $this;
     }
 
     public function orWhereIsNotNull($column)
     {
-        return $this->whereConditions()->orConditionIsNotNull($column);
+        $this->whereConditions()->orConditionIsNotNull($column);
+
+        return $this;
     }
 
     public function whereBetween($column, $min, $max)
     {
-        return $this->whereConditions()->conditionBetween($column, $min, $max);
+        $this->whereConditions()->conditionBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function orWhereBetween($column, $min, $max)
     {
-        return $this->whereConditions()->orConditionBetween($column, $min, $max);
+        $this->whereConditions()->orConditionBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function whereNotBetween($column, $min, $max)
     {
-        return $this->whereConditions()->conditionNotBetween($column, $min, $max);
+        $this->whereConditions()->conditionNotBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function orWhereNotBetween($column, $min, $max)
     {
-        return $this->whereConditions()->orConditionNotBetween($column, $min, $max);
+        $this->whereConditions()->orConditionNotBetween($column, $min, $max);
+
+        return $this;
     }
 
     public function whereDate($column, $date)
     {
-        return $this->whereConditions()->conditionDate($column, $date);
+        $this->whereConditions()->conditionDate($column, $date);
+
+        return $this;
     }
 
     public function orWhereDate($column, $date)
     {
-        return $this->whereConditions()->orConditionDate($column, $date);
+        $this->whereConditions()->orConditionDate($column, $date);
+
+        return $this;
     }
 
     public function whereTime($column, $date)
     {
-        return $this->whereConditions()->conditionTime($column, $date);
+        $this->whereConditions()->conditionTime($column, $date);
+
+        return $this;
     }
 
     public function orWhereTime($column, $date)
     {
-        return $this->whereConditions()->orConditionTime($column, $date);
+        $this->whereConditions()->orConditionTime($column, $date);
+
+        return $this;
     }
 
     public function whereYear($column, $year)
     {
-        return $this->whereConditions()->conditionYear($column, $year);
+        $this->whereConditions()->conditionYear($column, $year);
+
+        return $this;
     }
 
     public function orWhereYear($column, $year)
     {
-        return $this->whereConditions()->orConditionYear($column, $year);
+        $this->whereConditions()->orConditionYear($column, $year);
+
+        return $this;
     }
 
     public function whereMonth($column, $month)
     {
-        return $this->whereConditions()->conditionMonth($column, $month);
+        $this->whereConditions()->conditionMonth($column, $month);
+
+        return $this;
     }
 
     public function orWhereMonth($column, $month)
     {
-        return $this->whereConditions()->orConditionMonth($column, $month);
+        $this->whereConditions()->orConditionMonth($column, $month);
+
+        return $this;
     }
 
     public function whereDay($column, $day)
     {
-        return $this->whereConditions()->conditionDay($column, $day);
+        $this->whereConditions()->conditionDay($column, $day);
+
+        return $this;
     }
 
     public function orWhereDay($column, $day)
     {
-        return $this->whereConditions()->orConditionDay($column, $day);
+        $this->whereConditions()->orConditionDay($column, $day);
+
+        return $this;
     }
 
     public function whereExists($expr, $param = null, $_ = null)
     {
-        $this->addExists(null, ...func_get_args());
+        return $this->addExists(null, ...func_get_args());
     }
 
     public function whereNotExists($expr, $param = null, $_ = null)
     {
-        $this->addExists('NOT', ...func_get_args());
+        return $this->addExists('NOT', ...func_get_args());
     }
 
     protected function addExists($type, $expr, $param = null, $_ = null)
@@ -163,16 +211,22 @@ trait WhereClauseTrait
             'expr'   => $expr,
             'params' => $params,
         ];
+
+        return $this;
     }
 
     public function whereRaw($expr, $value = null, $_ = null)
     {
-        return $this->whereConditions()->conditionRaw(...func_get_args());
+        $this->whereConditions()->conditionRaw(...func_get_args());
+
+        return $this;
     }
 
     public function orWhereRaw($expr, $value = null, $_ = null)
     {
-        return $this->whereConditions()->orConditionRaw(...func_get_args());
+        $this->whereConditions()->orConditionRaw(...func_get_args());
+
+        return $this;
     }
 
     public function hasWhere()

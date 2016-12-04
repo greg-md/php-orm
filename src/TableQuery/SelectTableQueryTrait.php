@@ -436,13 +436,15 @@ trait SelectTableQueryTrait
 
     public function row()
     {
-        $record = $this->executeSelectRowInstance()->fetchAssoc();
+        if ($record = $this->executeSelectRowInstance()->fetchAssoc()) {
+            $row = $this->newInstance();
 
-        $row = $this->newInstance();
+            $row->___appendRowData($record);
 
-        $row->___appendRowData($record);
+            return $row;
+        }
 
-        return $row;
+        return null;
     }
 
     public function rowOrFail()

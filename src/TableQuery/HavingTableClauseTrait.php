@@ -83,6 +83,10 @@ trait HavingTableClauseTrait
      */
     public function getHavingClause()
     {
+        if ($this->query) {
+            return $this->getHavingClauseQuery();
+        }
+
         return $this->getClause('HAVING');
     }
 
