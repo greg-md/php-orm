@@ -382,7 +382,7 @@ trait RowTrait
     {
         return $this->setFirst($name, $value);
     }
-    
+
     /**
      * @return $this
      */

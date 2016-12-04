@@ -7,8 +7,7 @@ use Greg\Orm\Query\WhereClauseInterface;
 use Greg\Support\Obj;
 
 /**
- * Class Table
- * @package Greg\Orm
+ * Class Table.
  *
  * @method $this where($column, $operator, $value = null)
  * @method $this|null row()
@@ -106,8 +105,8 @@ abstract class Table implements TableInterface
     protected function getTableInstance($table)
     {
         if (is_scalar($table)) {
-            if (!is_subclass_of($table, Table::class)) {
-                throw new \Exception('`' . $table . '` is not an instance of `' . Table::class . '`.');
+            if (!is_subclass_of($table, self::class)) {
+                throw new \Exception('`' . $table . '` is not an instance of `' . self::class . '`.');
             }
 
             $table = new $table([], $this->getDriver());
