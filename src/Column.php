@@ -74,12 +74,16 @@ class Column
 
     public static function getIntLength($type)
     {
-        return Arr::get(static::INT_TYPES, $type);
+        $types = static::INT_TYPES;
+
+        return Arr::get($types, $type);
     }
 
     public static function getFloatLength($type)
     {
-        return Arr::get(static::FLOAT_TYPES, $type);
+        $types = static::FLOAT_TYPES;
+
+        return Arr::get($types, $type);
     }
 
     public static function isIntType($type)
