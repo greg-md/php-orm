@@ -313,8 +313,8 @@ trait RowTrait
 
     public function get($column, $else = null)
     {
-        if (!$this->hasColumn($column)) {
-            throw new \Exception('Column `' . $column . '` is not in the row.');
+        if ($undefined = $this->searchUndefinedColumns((array)$column, true)) {
+            throw new \Exception('Column `' . $undefined . '` is not in the row.');
         }
 
         $values = [];
