@@ -313,7 +313,7 @@ trait RowTrait
 
     public function get($column, $else = null)
     {
-        if ($undefined = $this->searchUndefinedColumns((array)$column, true)) {
+        if ($undefined = $this->searchUndefinedColumns((array) $column, true)) {
             throw new \Exception('Column `' . $undefined . '` is not in the row.');
         }
 
