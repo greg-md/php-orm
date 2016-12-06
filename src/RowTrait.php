@@ -29,9 +29,9 @@ trait RowTrait
 
     public function ___appendRefRow(array &$row)
     {
-        $row['data'] = Arr::getArrayRef($row, 'data');
-        $row['isNew'] = (bool) Arr::getRef($row, 'isNew');
-        $row['modified'] = Arr::getArrayRef($row, 'modified');
+        $row['data'] = Arr::getArray($row, 'data');
+        $row['isNew'] = (bool) Arr::get($row, 'isNew');
+        $row['modified'] = Arr::getArray($row, 'modified');
 
         $this->rows[] = &$row;
 
@@ -78,7 +78,7 @@ trait RowTrait
 
     protected function &firstRecord()
     {
-        return Arr::firstRef($this->rows);
+        return Arr::first($this->rows);
     }
 
     public function autoIncrement()
@@ -244,7 +244,7 @@ trait RowTrait
         }
 
         foreach ($this->rows as &$row) {
-            if (!Arr::hasRef($row['data'], $column)) {
+            if (!Arr::has($row['data'], $column)) {
                 return false;
             }
         }

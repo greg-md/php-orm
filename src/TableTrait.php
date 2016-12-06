@@ -131,7 +131,7 @@ trait TableTrait
 
     protected function searchColumn($name)
     {
-        return Arr::firstRef($this->columns, function (Column $column) use ($name) {
+        return Arr::first($this->columns, function (Column $column) use ($name) {
             return $column->getName() === $name;
         });
     }
@@ -189,7 +189,7 @@ trait TableTrait
 
     public function getCustomColumnType($key)
     {
-        return Arr::getRef($this->customColumnsTypes, $key);
+        return Arr::get($this->customColumnsTypes, $key);
     }
 
     public function getCustomColumnTypes()
@@ -245,7 +245,7 @@ trait TableTrait
 
     public function getFirstUniqueKeys()
     {
-        return Arr::firstRef($this->uniqueKeys);
+        return Arr::first($this->uniqueKeys);
     }
 
     public function firstUniqueIndex()
@@ -282,7 +282,9 @@ trait TableTrait
 
     protected function fixColumnValueType($column, $value, $clear = false, $reverse = false)
     {
-        return Arr::first($this->fixValuesTypes([$column => $value], $clear, $reverse));
+        $values = $this->fixValuesTypes([$column => $value], $clear, $reverse);
+
+        return Arr::first($values);
     }
 
     protected function fixValuesTypes(array $data, $clear = false, $reverse = false)

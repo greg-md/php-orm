@@ -75,7 +75,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
     public function dsn($name = null)
     {
         if (func_num_args()) {
-            return Arr::getRef($this->dsn, $name);
+            return Arr::get($this->dsn, $name);
         }
 
         return $this->dsn;
@@ -278,7 +278,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
         if (preg_match('#^([a-z]+)(?:\((.+?)\))?(?: (unsigned))?#i', $info['Type'], $matches)) {
             $type = $matches[1];
 
-            if (Arr::hasRef($matches, 2)) {
+            if (Arr::has($matches, 2)) {
                 if ($matches[1] === 'enum') {
                     $values = str_getcsv($matches[2], ',', "'");
                 } else {
@@ -286,7 +286,7 @@ class Mysql extends DriverAbstract implements MysqlInterface
                 }
             }
 
-            if (Arr::hasRef($matches, 3)) {
+            if (Arr::has($matches, 3)) {
                 $unsigned = true;
             }
 

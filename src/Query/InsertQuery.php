@@ -125,7 +125,7 @@ class InsertQuery implements InsertQueryInterface
             $values = [];
 
             foreach ($this->columns as $key => $column) {
-                $values[] = Arr::getRef($this->values, $key);
+                $values[] = Arr::get($this->values, $key);
             }
 
             $sql[] = 'VALUES ' . $this->prepareForBind($values);

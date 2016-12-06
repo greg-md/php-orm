@@ -125,7 +125,7 @@ class PdoStmt implements StmtInterface
 
         $row = $this->fetchAssoc();
 
-        return $row ? Arr::getRef($row, $column) : null;
+        return $row ? Arr::get($row, $column) : null;
     }
 
     public function fetchAllColumn($column = 0)
@@ -135,12 +135,8 @@ class PdoStmt implements StmtInterface
 
     public function fetchPairs($key = 0, $value = 1)
     {
-        $pairs = [];
+        $all = $this->fetchAll();
 
-        foreach ($this->fetchAll() as $row) {
-            $pairs[Arr::getRef($row, $key)] = Arr::getRef($row, $value);
-        }
-
-        return $pairs;
+        return Arr::pairs($all, $key, $value);
     }
 }
