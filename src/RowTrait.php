@@ -78,7 +78,7 @@ trait RowTrait
 
     protected function &firstRecord()
     {
-        return Arr::first($this->rows);
+        return Arr::firstRef($this->rows);
     }
 
     public function autoIncrement()
