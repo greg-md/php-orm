@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-phpunit": "^0.21.4",
+    "yargs": "^6.5.0"
+  }
+}
