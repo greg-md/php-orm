@@ -15,7 +15,7 @@ class MysqlOffsetClauseTest extends TestCase
 
         $this->assertEquals('SELECT `Foo` FROM `Bar` OFFSET 10', $query->addOffsetToSql($sql));
     }
-    
+
     public function testCanDetermineIfExists()
     {
         $query = $this->newOffset();

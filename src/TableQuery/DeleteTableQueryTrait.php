@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Driver\DeleteQueryInterface;
+use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Driver\FromClauseInterface;
 use Greg\Orm\Driver\JoinClauseInterface;
 use Greg\Orm\Driver\LimitClauseInterface;

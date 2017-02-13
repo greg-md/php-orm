@@ -17,6 +17,7 @@ interface UpdateQueryStrategy extends
     /**
      * @param $table
      * @param array ...$tables
+     *
      * @return $this
      */
     public function table($table, ...$tables);
@@ -24,27 +25,31 @@ interface UpdateQueryStrategy extends
     /**
      * @param string $column
      * @param string $value
+     *
      * @return $this
      */
     public function set(string $column, string $value);
 
     /**
-     * @param string $raw
+     * @param string    $raw
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function setRaw(string $raw, string ...$params);
 
     /**
      * @param string $column
-     * @param int $value
+     * @param int    $value
+     *
      * @return $this
      */
     public function increment(string $column, int $value = 1);
 
     /**
      * @param string $column
-     * @param int $value
+     * @param int    $value
+     *
      * @return $this
      */
     public function decrement(string $column, int $value = 1);

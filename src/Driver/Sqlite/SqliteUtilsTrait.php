@@ -4,7 +4,7 @@ namespace Greg\Orm\Driver\Sqlite;
 
 trait SqliteUtilsTrait
 {
-//    protected function quoteLike(string $value, string $escape = '\\'): string
+    //    protected function quoteLike(string $value, string $escape = '\\'): string
 //    {
 //        return SqliteDriverUtils::quoteLike($value, $escape);
 //    }

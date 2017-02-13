@@ -23,8 +23,9 @@ abstract class DeleteQuery implements DeleteQueryStrategy
     private $rowsFrom = [];
 
     /**
-     * @param string $table
+     * @param string    $table
      * @param \string[] ...$tables
+     *
      * @return $this
      */
     public function rowsFrom(string $table, string ...$tables)
@@ -108,6 +109,7 @@ abstract class DeleteQuery implements DeleteQueryStrategy
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     protected function addLimitToSql(string $sql): string
@@ -120,8 +122,9 @@ abstract class DeleteQuery implements DeleteQueryStrategy
     }
 
     /**
-     * @return array
      * @throws QueryException
+     *
+     * @return array
      */
     protected function deleteToSql()
     {
@@ -170,12 +173,14 @@ abstract class DeleteQuery implements DeleteQueryStrategy
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteTableSql(string $sql): string;
 
     /**
      * @param string $name
+     *
      * @return string
      */
     abstract protected function quoteName(string $name): string;

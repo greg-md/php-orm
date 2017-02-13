@@ -6,7 +6,7 @@ use Greg\Orm\Clause\ConditionsStrategy;
 use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Driver\Sqlite\SqliteUtilsTrait;
 
-class SqliteJoinClause extends JoinClause
+class MysqlJoinClause extends JoinClause
 {
     use SqliteUtilsTrait;
 

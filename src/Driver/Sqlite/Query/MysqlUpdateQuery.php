@@ -7,7 +7,7 @@ use Greg\Orm\Driver\Sqlite\Clause\SqliteConditions;
 use Greg\Orm\Driver\Sqlite\SqliteUtilsTrait;
 use Greg\Orm\Query\UpdateQuery;
 
-class SqliteUpdateQuery extends UpdateQuery
+class MysqlUpdateQuery extends UpdateQuery
 {
     use SqliteUtilsTrait;
 

@@ -6,6 +6,7 @@ interface OffsetClauseTraitStrategy
 {
     /**
      * @param int $number
+     *
      * @return $this
      */
     public function offset(int $number);

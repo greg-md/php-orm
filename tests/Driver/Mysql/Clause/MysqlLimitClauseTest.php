@@ -15,7 +15,7 @@ class MysqlLimitClauseTest extends TestCase
 
         $this->assertEquals('SELECT `Foo` FROM `Bar` LIMIT 10', $query->addLimitToSql($sql));
     }
-    
+
     public function testCanDetermineIfExists()
     {
         $query = $this->newLimit();

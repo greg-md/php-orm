@@ -15,7 +15,8 @@ trait JoinClauseTrait
     /**
      * @param $table
      * @param string|null $on
-     * @param \string[] ...$params
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function left($table, string $on = null, string ...$params)
@@ -28,6 +29,7 @@ trait JoinClauseTrait
     /**
      * @param $table
      * @param callable|ConditionsStrategy $on
+     *
      * @return $this
      */
     public function leftOn($table, $on)
@@ -40,7 +42,8 @@ trait JoinClauseTrait
     /**
      * @param $table
      * @param string|null $on
-     * @param \string[] ...$params
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function right($table, string $on = null, string ...$params)
@@ -53,6 +56,7 @@ trait JoinClauseTrait
     /**
      * @param $table
      * @param callable|ConditionsStrategy $on
+     *
      * @return $this
      */
     public function rightOn($table, $on)
@@ -65,7 +69,8 @@ trait JoinClauseTrait
     /**
      * @param $table
      * @param string|null $on
-     * @param \string[] ...$params
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function inner($table, string $on = null, string ...$params)
@@ -78,6 +83,7 @@ trait JoinClauseTrait
     /**
      * @param $table
      * @param callable|ConditionsStrategy $on
+     *
      * @return $this
      */
     public function innerOn($table, $on)
@@ -89,6 +95,7 @@ trait JoinClauseTrait
 
     /**
      * @param $table
+     *
      * @return $this
      */
     public function cross($table)
@@ -102,7 +109,8 @@ trait JoinClauseTrait
      * @param $source
      * @param $table
      * @param string|null $on
-     * @param \string[] ...$params
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function leftTo($source, $table, string $on = null, string ...$params)
@@ -116,6 +124,7 @@ trait JoinClauseTrait
      * @param $source
      * @param $table
      * @param callable|ConditionsStrategy $on
+     *
      * @return $this
      */
     public function leftToOn($source, $table, $on)
@@ -129,7 +138,8 @@ trait JoinClauseTrait
      * @param $source
      * @param $table
      * @param string|null $on
-     * @param \string[] ...$params
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function rightTo($source, $table, string $on = null, string ...$params)
@@ -143,6 +153,7 @@ trait JoinClauseTrait
      * @param $source
      * @param $table
      * @param callable|ConditionsStrategy $on
+     *
      * @return $this
      */
     public function rightToOn($source, $table, $on)
@@ -156,7 +167,8 @@ trait JoinClauseTrait
      * @param $source
      * @param $table
      * @param string|null $on
-     * @param \string[] ...$params
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function innerTo($source, $table, string $on = null, string ...$params)
@@ -170,6 +182,7 @@ trait JoinClauseTrait
      * @param $source
      * @param $table
      * @param callable|ConditionsStrategy $on
+     *
      * @return $this
      */
     public function innerToOn($source, $table, $on)
@@ -182,6 +195,7 @@ trait JoinClauseTrait
     /**
      * @param $source
      * @param $table
+     *
      * @return $this
      */
     public function crossTo($source, $table)
@@ -192,13 +206,14 @@ trait JoinClauseTrait
     }
 
     /**
-     * @param string $tableKey
-     * @param string $type
+     * @param string      $tableKey
+     * @param string      $type
      * @param null|string $source
      * @param $table
      * @param null|string $alias
      * @param $on
      * @param array $params
+     *
      * @return $this
      */
     public function joinLogic(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = [])
@@ -245,6 +260,7 @@ trait JoinClauseTrait
 
     /**
      * @param string|null $source
+     *
      * @return array
      */
     protected function joinToSql(string $source = null)
@@ -276,6 +292,7 @@ trait JoinClauseTrait
 
     /**
      * @param string|null $source
+     *
      * @return string
      */
     protected function joinToString(string $source = null)
@@ -289,15 +306,16 @@ trait JoinClauseTrait
      * @param $table
      * @param $on
      * @param array $params
-     * @return $this
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     protected function join(string $type, $source, $table, $on = null, array $params = [])
     {
         if ($source) {
             $source = $this->getSourceName($source);
         }
-
         [$tableAlias, $tableName] = $this->parseAlias($table);
 
         if ($tableName instanceof SelectQueryStrategy) {
@@ -335,8 +353,10 @@ trait JoinClauseTrait
 
     /**
      * @param $source
-     * @return string
+     *
      * @throws QueryException
+     *
+     * @return string
      */
     protected function getSourceName($source): string
     {
@@ -351,6 +371,7 @@ trait JoinClauseTrait
 
     /**
      * @param array $join
+     *
      * @return array
      */
     protected function prepareJoin(array $join)
@@ -376,24 +397,28 @@ trait JoinClauseTrait
 
     /**
      * @param $name
+     *
      * @return array
      */
     abstract protected function parseAlias($name): array;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteSql(string $sql): string;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteTableSql(string $sql): string;
 
     /**
      * @param string $name
+     *
      * @return string
      */
     abstract protected function quoteName(string $name): string;

@@ -53,7 +53,7 @@ class MysqlJoinClauseTest extends TestCase
     {
         $query = $this->newJoin();
 
-        $query->{$type . 'On'}('Foo', function(ConditionsStrategy $query) {
+        $query->{$type . 'On'}('Foo', function (ConditionsStrategy $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -112,7 +112,7 @@ class MysqlJoinClauseTest extends TestCase
     {
         $query = $this->newJoin();
 
-        $query->{$type . 'ToOn'}('bar', 'Foo', function(ConditionsStrategy $query) {
+        $query->{$type . 'ToOn'}('bar', 'Foo', function (ConditionsStrategy $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 

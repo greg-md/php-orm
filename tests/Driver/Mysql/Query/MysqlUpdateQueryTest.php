@@ -125,7 +125,7 @@ class MysqlUpdateQueryTest extends TestCase
     {
         $query = $this->newQuery()
             ->table('Table1 as t')
-            ->innerToOn('t', 'Table2', function(ConditionsStrategy $strategy) {
+            ->innerToOn('t', 'Table2', function (ConditionsStrategy $strategy) {
                 $strategy->isNull('Column');
             })
             ->inner('Table3')

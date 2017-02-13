@@ -30,8 +30,10 @@ abstract class UpdateQuery implements UpdateQueryStrategy
     /**
      * @param $table
      * @param array ...$tables
-     * @return $this
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     public function table($table, ...$tables)
     {
@@ -54,8 +56,8 @@ abstract class UpdateQuery implements UpdateQueryStrategy
 
             $this->tables[] = [
                 'tableKey' => $tableKey,
-                'table'  => $tableName,
-                'alias' => $tableAlias,
+                'table'    => $tableName,
+                'alias'    => $tableAlias,
             ];
         }
 
@@ -91,6 +93,7 @@ abstract class UpdateQuery implements UpdateQueryStrategy
     /**
      * @param string $column
      * @param string $value
+     *
      * @return $this
      */
     public function set(string $column, string $value)
@@ -102,6 +105,7 @@ abstract class UpdateQuery implements UpdateQueryStrategy
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function setMultiple(array $columns)
@@ -114,8 +118,9 @@ abstract class UpdateQuery implements UpdateQueryStrategy
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function setRaw(string $sql, string ...$params)
@@ -127,7 +132,8 @@ abstract class UpdateQuery implements UpdateQueryStrategy
 
     /**
      * @param string $column
-     * @param int $value
+     * @param int    $value
+     *
      * @return $this
      */
     public function increment(string $column, int $value = 1)
@@ -141,7 +147,8 @@ abstract class UpdateQuery implements UpdateQueryStrategy
 
     /**
      * @param string $column
-     * @param int $value
+     * @param int    $value
+     *
      * @return $this
      */
     public function decrement(string $column, int $value = 1)
@@ -156,12 +163,13 @@ abstract class UpdateQuery implements UpdateQueryStrategy
     /**
      * @param $sql
      * @param array $params
+     *
      * @return $this
      */
     protected function setLogic($sql, array $params = [])
     {
         $this->set[] = [
-            'sql' => $sql,
+            'sql'    => $sql,
             'params' => $params,
         ];
 
@@ -195,8 +203,9 @@ abstract class UpdateQuery implements UpdateQueryStrategy
     }
 
     /**
-     * @return array
      * @throws QueryException
+     *
+     * @return array
      */
     protected function updateClauseToSql()
     {
@@ -231,6 +240,7 @@ abstract class UpdateQuery implements UpdateQueryStrategy
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     protected function addLimitToSql(string $sql): string
@@ -243,8 +253,9 @@ abstract class UpdateQuery implements UpdateQueryStrategy
     }
 
     /**
-     * @return array
      * @throws QueryException
+     *
+     * @return array
      */
     protected function setClauseToSql()
     {
@@ -345,18 +356,21 @@ abstract class UpdateQuery implements UpdateQueryStrategy
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteSql(string $sql): string;
 
     /**
      * @param string $name
+     *
      * @return string
      */
     abstract protected function quoteNameSql(string $name): string;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteTableSql(string $sql): string;

@@ -4,7 +4,7 @@ namespace Greg\Orm\Driver\Mysql;
 
 trait MysqlUtilsTrait
 {
-//    protected function quoteLike(string $value, string $escape = '\\'): string
+    //    protected function quoteLike(string $value, string $escape = '\\'): string
 //    {
 //        return MysqlDriverUtils::quoteLike($value, $escape);
 //    }

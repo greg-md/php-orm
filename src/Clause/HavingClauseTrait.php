@@ -13,6 +13,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function having($column, $operator, $value = null)
@@ -26,6 +27,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orHaving($column, $operator, $value = null)
@@ -37,6 +39,7 @@ trait HavingClauseTrait
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function havingMultiple(array $columns)
@@ -48,6 +51,7 @@ trait HavingClauseTrait
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function orHavingMultiple(array $columns)
@@ -61,6 +65,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function havingDate($column, $operator, $value = null)
@@ -74,6 +79,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orHavingDate($column, $operator, $value = null)
@@ -87,6 +93,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function havingTime($column, $operator, $value = null)
@@ -100,6 +107,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orHavingTime($column, $operator, $value = null)
@@ -113,6 +121,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function havingYear($column, $operator, $value = null)
@@ -126,6 +135,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orHavingYear($column, $operator, $value = null)
@@ -139,6 +149,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function havingMonth($column, $operator, $value = null)
@@ -152,6 +163,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orHavingMonth($column, $operator, $value = null)
@@ -165,6 +177,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function havingDay($column, $operator, $value = null)
@@ -178,6 +191,7 @@ trait HavingClauseTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orHavingDay($column, $operator, $value = null)
@@ -191,6 +205,7 @@ trait HavingClauseTrait
      * @param $column1
      * @param $operator
      * @param $column2
+     *
      * @return $this
      */
     public function havingRelation($column1, $operator, $column2 = null)
@@ -204,6 +219,7 @@ trait HavingClauseTrait
      * @param $column1
      * @param $operator
      * @param $column2
+     *
      * @return $this
      */
     public function orHavingRelation($column1, $operator, $column2 = null)
@@ -215,6 +231,7 @@ trait HavingClauseTrait
 
     /**
      * @param array $relations
+     *
      * @return $this
      */
     public function havingRelations(array $relations)
@@ -226,6 +243,7 @@ trait HavingClauseTrait
 
     /**
      * @param array $relations
+     *
      * @return $this
      */
     public function orHavingRelations(array $relations)
@@ -237,6 +255,7 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function havingIsNull(string $column)
@@ -248,6 +267,7 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orHavingIsNull(string $column)
@@ -259,6 +279,7 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function havingIsNotNull(string $column)
@@ -270,6 +291,7 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orHavingIsNotNull(string $column)
@@ -281,8 +303,9 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function havingBetween(string $column, int $min, int $max)
@@ -294,8 +317,9 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function orHavingBetween(string $column, int $min, int $max)
@@ -307,8 +331,9 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function havingNotBetween(string $column, int $min, int $max)
@@ -320,8 +345,9 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function orHavingNotBetween(string $column, int $min, int $max)
@@ -333,6 +359,7 @@ trait HavingClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function havingGroup(callable $callable)
@@ -344,6 +371,7 @@ trait HavingClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function orHavingGroup(callable $callable)
@@ -355,6 +383,7 @@ trait HavingClauseTrait
 
     /**
      * @param ConditionsStrategy $strategy
+     *
      * @return $this
      */
     public function havingCondition(ConditionsStrategy $strategy)
@@ -366,6 +395,7 @@ trait HavingClauseTrait
 
     /**
      * @param ConditionsStrategy $strategy
+     *
      * @return $this
      */
     public function orHavingCondition(ConditionsStrategy $strategy)
@@ -376,8 +406,9 @@ trait HavingClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function havingRaw(string $sql, string ...$params)
@@ -388,8 +419,9 @@ trait HavingClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function orHavingRaw(string $sql, string ...$params)
@@ -403,6 +435,7 @@ trait HavingClauseTrait
      * @param string $type
      * @param $sql
      * @param array $params
+     *
      * @return $this
      */
     public function havingLogic(string $type, $sql, array $params = [])
@@ -452,6 +485,7 @@ trait HavingClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return array
      */
     protected function havingToSql($useClause = true): array
@@ -467,6 +501,7 @@ trait HavingClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return string
      */
     protected function havingToString($useClause = true): string

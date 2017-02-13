@@ -94,7 +94,7 @@ class MysqlFromClauseTest extends TestCase
     {
         $query = $this->newFrom()
             ->from(['t' => new MysqlSelectQuery()])
-            ->innerOn('Table', function(ConditionsStrategy $strategy) {
+            ->innerOn('Table', function (ConditionsStrategy $strategy) {
                 $strategy->isNull('Column');
             });
 

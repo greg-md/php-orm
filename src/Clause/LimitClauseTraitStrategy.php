@@ -6,6 +6,7 @@ interface LimitClauseTraitStrategy
 {
     /**
      * @param int $number
+     *
      * @return $this
      */
     public function limit(int $number);
@@ -13,12 +14,12 @@ interface LimitClauseTraitStrategy
     /**
      * @return bool
      */
-    public function hasLimit(): bool ;
+    public function hasLimit(): bool;
 
     /**
      * @return int|null
      */
-    public function getLimit(): ?int ;
+    public function getLimit(): ?int;
 
     /**
      * @return $this

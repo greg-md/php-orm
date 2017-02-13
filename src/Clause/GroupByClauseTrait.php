@@ -11,6 +11,7 @@ trait GroupByClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function groupBy(string $column)
@@ -21,8 +22,9 @@ trait GroupByClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function groupByRaw(string $sql, string ...$params)
@@ -34,13 +36,14 @@ trait GroupByClauseTrait
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return $this
      */
     public function groupByLogic(string $sql, array $params = [])
     {
         $this->groupBy[] = [
-            'sql' => $sql,
+            'sql'    => $sql,
             'params' => $params,
         ];
 
@@ -101,12 +104,14 @@ trait GroupByClauseTrait
 
     /**
      * @param string $name
+     *
      * @return string
      */
     abstract protected function quoteNameSql(string $name): string;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteSql(string $sql): string;

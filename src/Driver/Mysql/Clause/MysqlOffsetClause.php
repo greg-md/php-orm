@@ -8,6 +8,7 @@ class MysqlOffsetClause extends OffsetClause
 {
     /**
      * @param string $sql
+     *
      * @return string
      */
     public function addOffsetToSql(string $sql): string

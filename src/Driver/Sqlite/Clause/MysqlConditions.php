@@ -6,7 +6,7 @@ use Greg\Orm\Clause\Conditions;
 use Greg\Orm\Clause\ConditionsStrategy;
 use Greg\Orm\Driver\Sqlite\SqliteUtilsTrait;
 
-class SqliteConditions extends Conditions
+class MysqlConditions extends Conditions
 {
     use SqliteUtilsTrait;
 

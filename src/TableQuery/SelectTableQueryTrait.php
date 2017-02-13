@@ -3,7 +3,6 @@
 namespace Greg\Orm\TableQuery;
 
 use Greg\Orm\Driver\DriverStrategy;
-use Greg\Orm\Driver\StatementStrategy;
 use Greg\Orm\Driver\FromClauseInterface;
 use Greg\Orm\Driver\HavingClauseInterface;
 use Greg\Orm\Driver\JoinClauseInterface;
@@ -11,6 +10,7 @@ use Greg\Orm\Driver\LimitClauseInterface;
 use Greg\Orm\Driver\OrderByClauseInterface;
 use Greg\Orm\Driver\QueryInterface;
 use Greg\Orm\Driver\SelectQueryInterface;
+use Greg\Orm\Driver\StatementStrategy;
 use Greg\Orm\Driver\WhereClauseInterface;
 use Greg\Orm\Table;
 

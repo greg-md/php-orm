@@ -39,6 +39,7 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param bool $value
+     *
      * @return $this
      */
     public function distinct(bool $value = true)
@@ -50,8 +51,9 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param $table
-     * @param string $column
+     * @param string    $column
      * @param \string[] ...$columns
+     *
      * @return $this
      */
     public function fromTable($table, string $column, string ...$columns)
@@ -63,8 +65,9 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param $table
-     * @param string $column
+     * @param string    $column
      * @param \string[] ...$columns
+     *
      * @return $this
      */
     public function columnsFrom($table, string $column, string ...$columns)
@@ -88,8 +91,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $column
+     * @param string    $column
      * @param \string[] ...$columns
+     *
      * @return $this
      */
     public function columns(string $column, string ...$columns)
@@ -104,8 +108,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function column(string $column, ?string $alias = null)
@@ -127,7 +132,8 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param SelectQueryStrategy $column
-     * @param string|null $alias
+     * @param string|null         $alias
+     *
      * @return $this
      */
     public function columnSelect(SelectQueryStrategy $column, ?string $alias = null)
@@ -142,8 +148,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function columnRaw(string $sql, string ...$params)
@@ -154,8 +161,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function count(string $column = '*', string $alias = null)
@@ -170,8 +178,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function max(string $column, string $alias = null)
@@ -186,8 +195,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function min(string $column, string $alias = null)
@@ -202,8 +212,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function avg(string $column, string $alias = null)
@@ -218,8 +229,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function sum(string $column, string $alias = null)
@@ -237,13 +249,14 @@ abstract class SelectQuery implements SelectQueryStrategy
      * @param $sql
      * @param $alias
      * @param array $params
+     *
      * @return $this
      */
     protected function columnLogic($sql, $alias = null, array $params = [])
     {
         $this->columns[] = [
-            'sql' => $sql,
-            'alias' => $alias,
+            'sql'    => $sql,
+            'alias'  => $alias,
             'params' => $params,
         ];
 
@@ -278,6 +291,7 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param SelectQueryStrategy $query
+     *
      * @return $this
      */
     public function union(SelectQueryStrategy $query)
@@ -289,6 +303,7 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param SelectQueryStrategy $query
+     *
      * @return $this
      */
     public function unionAll(SelectQueryStrategy $query)
@@ -300,6 +315,7 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param SelectQueryStrategy $query
+     *
      * @return $this
      */
     public function unionDistinct(SelectQueryStrategy $query)
@@ -310,8 +326,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function unionRaw(string $sql, string ...$params)
@@ -322,8 +339,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function unionAllRaw(string $sql, string ...$params)
@@ -334,8 +352,9 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function unionDistinctRaw(string $sql, string ...$params)
@@ -349,13 +368,14 @@ abstract class SelectQuery implements SelectQueryStrategy
      * @param null|string $type
      * @param $sql
      * @param array $params
+     *
      * @return $this
      */
     protected function unionLogic(?string $type, $sql, array $params = [])
     {
         $this->unions[] = [
-            'type' => $type,
-            'sql' => $sql,
+            'type'   => $type,
+            'sql'    => $sql,
             'params' => $params,
         ];
 
@@ -414,6 +434,7 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     protected function addSelectLimitToSql(string $sql): string
@@ -547,6 +568,7 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param array $column
+     *
      * @return array
      */
     protected function prepareColumn(array $column)
@@ -564,6 +586,7 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param array $union
+     *
      * @return array
      */
     protected function prepareUnion(array $union)
@@ -581,12 +604,14 @@ abstract class SelectQuery implements SelectQueryStrategy
 
     /**
      * @param string $name
+     *
      * @return string
      */
     abstract protected function quoteNameSql(string $name): string;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteSql(string $sql): string;

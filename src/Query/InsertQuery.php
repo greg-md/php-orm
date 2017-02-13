@@ -32,6 +32,7 @@ abstract class InsertQuery implements InsertQueryStrategy
 
     /**
      * @param string $table
+     *
      * @return $this
      */
     public function into(string $table)
@@ -69,6 +70,7 @@ abstract class InsertQuery implements InsertQueryStrategy
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function columns(array $columns)
@@ -113,6 +115,7 @@ abstract class InsertQuery implements InsertQueryStrategy
 
     /**
      * @param array $values
+     *
      * @return $this
      */
     public function values(array $values)
@@ -152,6 +155,7 @@ abstract class InsertQuery implements InsertQueryStrategy
 
     /**
      * @param array $data
+     *
      * @return $this
      */
     public function data(array $data)
@@ -173,6 +177,7 @@ abstract class InsertQuery implements InsertQueryStrategy
 
     /**
      * @param SelectQueryStrategy $strategy
+     *
      * @return $this
      */
     public function select(SelectQueryStrategy $strategy)
@@ -183,8 +188,9 @@ abstract class InsertQuery implements InsertQueryStrategy
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function selectRaw(string $sql, string ...$params)
@@ -245,8 +251,9 @@ abstract class InsertQuery implements InsertQueryStrategy
     }
 
     /**
-     * @return array
      * @throws QueryException
+     *
+     * @return array
      */
     protected function insertToSql()
     {
@@ -296,6 +303,7 @@ abstract class InsertQuery implements InsertQueryStrategy
     /**
      * @param $sql
      * @param array $params
+     *
      * @return $this
      */
     protected function selectLogic($sql, array $params = [])
@@ -303,7 +311,7 @@ abstract class InsertQuery implements InsertQueryStrategy
         $this->values = [];
 
         $this->select = [
-            'sql' => $sql,
+            'sql'    => $sql,
             'params' => $params,
         ];
 
@@ -312,38 +320,42 @@ abstract class InsertQuery implements InsertQueryStrategy
 
     /**
      * @param array $select
-     * @return array
+     *
      * @throws QueryException
+     *
+     * @return array
      */
     private function prepareSelect(array $select)
     {
         if ($select['sql'] instanceof SelectQueryStrategy) {
             $columnsCount = count($this->columns);
 
-            $selectColumnsCount = sizeof($select['sql']->getColumns());
+            $selectColumnsCount = count($select['sql']->getColumns());
 
             if ($selectColumnsCount and $selectColumnsCount !== $columnsCount) {
                 throw new QueryException('INSERT select columns count does not match.'
                                         . ' Expected ' . $columnsCount . ', got ' . $selectColumnsCount);
             }
-
             [$sql, $params] = $select['sql']->toSql();
 
             $select['sql'] = $sql;
 
             $select['params'] = $params;
         }
+
         return $select;
     }
 
     /**
      * @param $name
+     *
      * @return array
      */
     abstract protected function parseAlias($name): array;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteTableSql(string $sql): string;
@@ -351,6 +363,7 @@ abstract class InsertQuery implements InsertQueryStrategy
     /**
      * @param $value
      * @param int|null $rowLength
+     *
      * @return string
      */
     abstract protected function prepareForBind($value, int $rowLength = null): string;

@@ -42,6 +42,7 @@ class MysqlSelectQuery extends SelectQuery
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     protected function addTypeToSql(string $sql): string

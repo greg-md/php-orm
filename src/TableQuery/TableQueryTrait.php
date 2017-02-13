@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Driver\ClauseInterface;
+use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Driver\QueryInterface;
 
 trait TableQueryTrait

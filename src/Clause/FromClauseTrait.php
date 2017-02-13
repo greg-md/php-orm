@@ -17,8 +17,10 @@ trait FromClauseTrait
     /**
      * @param $table
      * @param array ...$tables
-     * @return $this
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     public function from($table, ...$tables)
     {
@@ -51,8 +53,9 @@ trait FromClauseTrait
 
     /**
      * @param null|string $alias
-     * @param string $sql
-     * @param \string[] ...$params
+     * @param string      $sql
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function fromRaw(?string $alias, string $sql, string ...$params)
@@ -74,16 +77,17 @@ trait FromClauseTrait
      * @param null|string $tableKey
      * @param $table
      * @param null|string $alias
-     * @param array $params
+     * @param array       $params
+     *
      * @return $this
      */
     public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = [])
     {
         $this->from[] = [
             'tableKey' => $tableKey,
-            'table' => $table,
-            'alias' => $alias,
-            'params' => $params,
+            'table'    => $table,
+            'alias'    => $alias,
+            'params'   => $params,
         ];
 
         return $this;
@@ -117,6 +121,7 @@ trait FromClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return array
      */
     protected function fromClauseToSql(bool $useClause = true): array
@@ -156,8 +161,10 @@ trait FromClauseTrait
 
     /**
      * @param bool $useClause
-     * @return array
+     *
      * @throws QueryException
+     *
+     * @return array
      */
     protected function fromToSql(bool $useClause = true): array
     {
@@ -184,6 +191,7 @@ trait FromClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return string
      */
     protected function fromToString(bool $useClause = true): string
@@ -193,6 +201,7 @@ trait FromClauseTrait
 
     /**
      * @param array $from
+     *
      * @return array
      */
     protected function prepareFrom(array $from): array
@@ -210,6 +219,7 @@ trait FromClauseTrait
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteTableSql(string $sql): string;

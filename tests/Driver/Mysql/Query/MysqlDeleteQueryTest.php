@@ -53,7 +53,7 @@ class MysqlDeleteQueryTest extends TestCase
     {
         $query = $this->newQuery()
             ->from('Table1')
-            ->innerOn('Table2', function(ConditionsStrategy $strategy) {
+            ->innerOn('Table2', function (ConditionsStrategy $strategy) {
                 $strategy->isNull('Column');
             })
             ->where('Foo', 'foo')

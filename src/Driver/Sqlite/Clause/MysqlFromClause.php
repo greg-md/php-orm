@@ -6,7 +6,7 @@ use Greg\Orm\Clause\ConditionsStrategy;
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Driver\Sqlite\SqliteUtilsTrait;
 
-class SqliteFromClause extends FromClause
+class MysqlFromClause extends FromClause
 {
     use SqliteUtilsTrait;
 

@@ -7,7 +7,7 @@ use Greg\Orm\Driver\Sqlite\Clause\SqliteConditions;
 use Greg\Orm\Driver\Sqlite\SqliteUtilsTrait;
 use Greg\Orm\Query\DeleteQuery;
 
-class SqliteDeleteQuery extends DeleteQuery
+class MysqlDeleteQuery extends DeleteQuery
 {
     use SqliteUtilsTrait;
 

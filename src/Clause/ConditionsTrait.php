@@ -16,6 +16,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function column($column, $operator, $value = null)
@@ -35,6 +36,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orColumn($column, $operator, $value = null)
@@ -52,6 +54,7 @@ trait ConditionsTrait
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function columns(array $columns)
@@ -65,6 +68,7 @@ trait ConditionsTrait
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function orColumns(array $columns)
@@ -80,6 +84,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function date($column, $operator, $value = null)
@@ -91,11 +96,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('AND', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'DATE(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return DateTime::dateString($value);
             }
         );
@@ -107,6 +112,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orDate($column, $operator, $value = null)
@@ -118,11 +124,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('OR', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'DATE(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return DateTime::dateString($value);
             }
         );
@@ -134,6 +140,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function time($column, $operator, $value = null)
@@ -145,11 +152,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('AND', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'TIME(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return DateTime::timeString($value);
             }
         );
@@ -161,6 +168,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orTime($column, $operator, $value = null)
@@ -172,11 +180,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('OR', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'TIME(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return DateTime::timeString($value);
             }
         );
@@ -188,6 +196,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function year($column, $operator, $value = null)
@@ -199,11 +208,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('AND', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'YEAR(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return (int) $value;
             }
         );
@@ -215,6 +224,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orYear($column, $operator, $value = null)
@@ -226,11 +236,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('OR', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'YEAR(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return (int) $value;
             }
         );
@@ -242,6 +252,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function month($column, $operator, $value = null)
@@ -253,11 +264,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('AND', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'MONTH(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return (int) $value;
             }
         );
@@ -269,6 +280,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orMonth($column, $operator, $value = null)
@@ -280,11 +292,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('OR', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'MONTH(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return (int) $value;
             }
         );
@@ -296,6 +308,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function day($column, $operator, $value = null)
@@ -307,11 +320,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('AND', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'DAY(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return (int) $value;
             }
         );
@@ -323,6 +336,7 @@ trait ConditionsTrait
      * @param $column
      * @param $operator
      * @param $value
+     *
      * @return $this
      */
     public function orDay($column, $operator, $value = null)
@@ -334,11 +348,11 @@ trait ConditionsTrait
         }
 
         $this->columnLogic('OR', $column, $operator, $value,
-            function(string $column) {
+            function (string $column) {
                 return 'DAY(' . $this->quoteNameSql($column) . ')';
             },
 
-            function(string $value) {
+            function (string $value) {
                 return (int) $value;
             }
         );
@@ -350,6 +364,7 @@ trait ConditionsTrait
      * @param $column1
      * @param $operator
      * @param $column2
+     *
      * @return $this
      */
     public function relation($column1, $operator, $column2 = null)
@@ -369,6 +384,7 @@ trait ConditionsTrait
      * @param $column1
      * @param $operator
      * @param $column2
+     *
      * @return $this
      */
     public function orRelation($column1, $operator, $column2 = null)
@@ -386,6 +402,7 @@ trait ConditionsTrait
 
     /**
      * @param array $relations
+     *
      * @return $this
      */
     public function relations(array $relations)
@@ -399,6 +416,7 @@ trait ConditionsTrait
 
     /**
      * @param array $relations
+     *
      * @return $this
      */
     public function orRelations(array $relations)
@@ -412,6 +430,7 @@ trait ConditionsTrait
 
     /**
      * @param string $columnName
+     *
      * @return $this
      */
     public function isNull(string $columnName)
@@ -423,6 +442,7 @@ trait ConditionsTrait
 
     /**
      * @param string $columnName
+     *
      * @return $this
      */
     public function orIsNull(string $columnName)
@@ -434,6 +454,7 @@ trait ConditionsTrait
 
     /**
      * @param string $columnName
+     *
      * @return $this
      */
     public function isNotNull(string $columnName)
@@ -445,6 +466,7 @@ trait ConditionsTrait
 
     /**
      * @param string $columnName
+     *
      * @return $this
      */
     public function orIsNotNull(string $columnName)
@@ -456,8 +478,9 @@ trait ConditionsTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function between(string $column, int $min, int $max)
@@ -469,8 +492,9 @@ trait ConditionsTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function orBetween(string $column, int $min, int $max)
@@ -482,8 +506,9 @@ trait ConditionsTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function notBetween(string $column, int $min, int $max)
@@ -495,8 +520,9 @@ trait ConditionsTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function orNotBetween(string $column, int $min, int $max)
@@ -508,6 +534,7 @@ trait ConditionsTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function group(callable $callable)
@@ -523,6 +550,7 @@ trait ConditionsTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function orGroup(callable $callable)
@@ -538,6 +566,7 @@ trait ConditionsTrait
 
     /**
      * @param ConditionsStrategy $strategy
+     *
      * @return $this
      */
     public function condition(ConditionsStrategy $strategy)
@@ -549,6 +578,7 @@ trait ConditionsTrait
 
     /**
      * @param ConditionsStrategy $strategy
+     *
      * @return $this
      */
     public function orCondition(ConditionsStrategy $strategy)
@@ -559,8 +589,9 @@ trait ConditionsTrait
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function raw(string $sql, string ...$params)
@@ -571,8 +602,9 @@ trait ConditionsTrait
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function orRaw(string $sql, string ...$params)
@@ -586,13 +618,14 @@ trait ConditionsTrait
      * @param string $type
      * @param $sql
      * @param array $params
+     *
      * @return $this
      */
     public function logic(string $type, $sql, array $params = [])
     {
         $this->conditions[] = [
             'logic'  => $type,
-            'sql' => $sql,
+            'sql'    => $sql,
             'params' => $params,
         ];
 
@@ -626,14 +659,16 @@ trait ConditionsTrait
     }
 
     /**
-     * @param string $type
-     * @param array $columns
-     * @param null|string $operator
-     * @param array $values
+     * @param string        $type
+     * @param array         $columns
+     * @param null|string   $operator
+     * @param array         $values
      * @param callable|null $columnCallable
      * @param callable|null $valueCallable
-     * @return $this
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     protected function rowLogic(string $type, array $columns, ?string $operator, array $values,
                                 callable $columnCallable = null, callable $valueCallable = null)
@@ -687,7 +722,7 @@ trait ConditionsTrait
                 $value = call_user_func_array($valueCallable, [(string) $value]);
             }
 
-            $value = (string)$value;
+            $value = (string) $value;
         }
         unset($value);
 
@@ -703,8 +738,10 @@ trait ConditionsTrait
      * @param $value
      * @param callable|null $columnCallable
      * @param callable|null $valueCallable
-     * @return $this
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     protected function columnLogic(string $type, $column, ?string $operator, $value,
                                    callable $columnCallable = null, callable $valueCallable = null)
@@ -745,18 +782,20 @@ trait ConditionsTrait
             $value = call_user_func_array($valueCallable, [(string) $value]);
         }
 
-        $this->logic($type, $sql, (array)$value);
+        $this->logic($type, $sql, (array) $value);
 
         return $this;
     }
 
     /**
-     * @param string $type
-     * @param array $columns1
+     * @param string      $type
+     * @param array       $columns1
      * @param null|string $operator
-     * @param array $columns2
-     * @return $this
+     * @param array       $columns2
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     protected function rowRelationLogic(string $type, array $columns1, ?string $operator, array $columns2)
     {
@@ -806,8 +845,10 @@ trait ConditionsTrait
      * @param $column1
      * @param null|string $operator
      * @param $column2
-     * @return $this
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     protected function relationLogic(string $type, $column1, ?string $operator, $column2)
     {
@@ -816,7 +857,7 @@ trait ConditionsTrait
         $column2 = $this->prepareRow($column2);
 
         if (is_array($column1)) {
-            $this->rowRelationLogic($type, $column1, $operator, (array)$column2);
+            $this->rowRelationLogic($type, $column1, $operator, (array) $column2);
 
             return $this;
         }
@@ -844,6 +885,7 @@ trait ConditionsTrait
 
     /**
      * @param $value
+     *
      * @return array|string
      */
     protected function prepareRow($value)
@@ -856,14 +898,15 @@ trait ConditionsTrait
     }
 
     /**
-     * @param array $columns
+     * @param array         $columns
      * @param callable|null $columnCallable
-     * @param bool $useIfNull
+     * @param bool          $useIfNull
+     *
      * @return string
      */
     protected function prepareColumns(array $columns, callable $columnCallable = null, bool $useIfNull = false): string
     {
-        foreach($columns as &$column) {
+        foreach ($columns as &$column) {
             if (is_array($column)) {
                 $column = $this->prepareColumns($column, $columnCallable, $useIfNull);
             } else {
@@ -905,6 +948,7 @@ trait ConditionsTrait
 
     /**
      * @param array $condition
+     *
      * @return array
      */
     protected function prepareCondition(array $condition): array
@@ -935,12 +979,14 @@ trait ConditionsTrait
 
     /**
      * @param string $name
+     *
      * @return string
      */
     abstract protected function quoteNameSql(string $name): string;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteSql(string $sql): string;
@@ -948,6 +994,7 @@ trait ConditionsTrait
     /**
      * @param $value
      * @param int|null $rowLength
+     *
      * @return string
      */
     abstract protected function prepareForBind($value, int $rowLength = null): string;

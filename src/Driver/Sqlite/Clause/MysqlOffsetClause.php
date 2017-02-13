@@ -4,10 +4,11 @@ namespace Greg\Orm\Driver\Sqlite\Clause;
 
 use Greg\Orm\Clause\OffsetClause;
 
-class SqliteOffsetClause extends OffsetClause
+class MysqlOffsetClause extends OffsetClause
 {
     /**
      * @param string $sql
+     *
      * @return string
      */
     public function addOffsetToSql(string $sql): string

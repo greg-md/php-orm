@@ -138,6 +138,7 @@ class MysqlConditionsTest extends TestCase
      * @test
      *
      * @depends testCanSetColumn
+     *
      * @param ConditionsStrategy $query
      */
     public function testCanSetOrColumn($query)
@@ -164,6 +165,7 @@ class MysqlConditionsTest extends TestCase
      * @test
      *
      * @depends testCanSetColumns
+     *
      * @param ConditionsStrategy $query
      */
     public function testCanSetOrColumns($query)
@@ -284,6 +286,7 @@ class MysqlConditionsTest extends TestCase
      * @test
      *
      * @depends testCanSetRelation
+     *
      * @param ConditionsStrategy $query
      */
     public function testCanSetOrRelation($query)
@@ -310,6 +313,7 @@ class MysqlConditionsTest extends TestCase
      * @test
      *
      * @depends testCanSetRelations
+     *
      * @param ConditionsStrategy $query
      */
     public function testCanSetOrRelations($query)
@@ -479,7 +483,7 @@ class MysqlConditionsTest extends TestCase
      */
     public function testCanSetOrTime($args)
     {
-        /** @var ConditionsStrategy $query */
+        /* @var ConditionsStrategy $query */
         [$query, $time] = $args;
 
         $query->{$this->method('orTime')}('Bar', $time);
@@ -566,7 +570,7 @@ class MysqlConditionsTest extends TestCase
     {
         $query = $this->newCondition();
 
-        $query->{$this->method('group')}(function(ConditionsStrategy $query) {
+        $query->{$this->method('group')}(function (ConditionsStrategy $query) {
             $query->column('Foo', 'foo');
         });
 
@@ -584,7 +588,7 @@ class MysqlConditionsTest extends TestCase
      */
     public function testCanSetOrGroup($query)
     {
-        $query->{$this->method('orGroup')}(function(ConditionsStrategy $query) {
+        $query->{$this->method('orGroup')}(function (ConditionsStrategy $query) {
             $query->column('Bar', 'bar');
         });
 

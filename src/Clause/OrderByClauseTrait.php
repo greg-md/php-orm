@@ -12,10 +12,12 @@ trait OrderByClauseTrait
     private $orderBy = [];
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $type
-     * @return $this
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     public function orderBy(string $column, string $type = null)
     {
@@ -34,6 +36,7 @@ trait OrderByClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orderAsc(string $column)
@@ -45,6 +48,7 @@ trait OrderByClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orderDesc(string $column)
@@ -55,8 +59,9 @@ trait OrderByClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function orderByRaw(string $sql, string ...$params)
@@ -67,15 +72,16 @@ trait OrderByClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string      $sql
      * @param null|string $type
-     * @param array $params
+     * @param array       $params
+     *
      * @return $this
      */
     public function orderByLogic(string $sql, ?string $type, array $params = [])
     {
         $this->orderBy[] = [
-            'sql' => $sql,
+            'sql'    => $sql,
             'type'   => $type,
             'params' => $params,
         ];
@@ -137,12 +143,14 @@ trait OrderByClauseTrait
 
     /**
      * @param string $name
+     *
      * @return string
      */
     abstract protected function quoteNameSql(string $name): string;
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     abstract protected function quoteSql(string $sql): string;

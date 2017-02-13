@@ -139,7 +139,7 @@ class MysqlInsertQueryTest extends TestCase
     {
         $query = $this->newQuery()->into('Table')->columns(['Column']);
 
-        $query->select((new MysqlSelectQuery)->column('Column'));
+        $query->select((new MysqlSelectQuery())->column('Column'));
 
         $this->assertEquals(['INSERT INTO `Table` (`Column`) SELECT `Column`', []], $query->toSql());
     }
@@ -148,7 +148,7 @@ class MysqlInsertQueryTest extends TestCase
     {
         $query = $this->newQuery()->into('Table')->columns(['Column']);
 
-        $query->selectRaw((string) (new MysqlSelectQuery)->column('Column'));
+        $query->selectRaw((string) (new MysqlSelectQuery())->column('Column'));
 
         $this->assertEquals(['INSERT INTO `Table` (`Column`) SELECT `Column`', []], $query->toSql());
     }
@@ -159,7 +159,7 @@ class MysqlInsertQueryTest extends TestCase
 
         $this->assertFalse($query->hasSelect());
 
-        $query->select((new MysqlSelectQuery)->column('Column'));
+        $query->select((new MysqlSelectQuery())->column('Column'));
 
         $this->assertTrue($query->hasSelect());
     }
@@ -168,7 +168,7 @@ class MysqlInsertQueryTest extends TestCase
     {
         $query = $this->newQuery()->into('Table')->columns(['Column']);
 
-        $query->select((new MysqlSelectQuery)->column('Column'));
+        $query->select((new MysqlSelectQuery())->column('Column'));
 
         $this->assertNotEmpty($query->getSelect());
     }
@@ -177,7 +177,7 @@ class MysqlInsertQueryTest extends TestCase
     {
         $query = $this->newQuery()->into('Table')->columns(['Column']);
 
-        $query->select((new MysqlSelectQuery)->column('Column'));
+        $query->select((new MysqlSelectQuery())->column('Column'));
 
         $query->clearSelect();
 

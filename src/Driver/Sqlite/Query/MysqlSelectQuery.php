@@ -7,7 +7,7 @@ use Greg\Orm\Driver\Sqlite\Clause\SqliteConditions;
 use Greg\Orm\Driver\Sqlite\SqliteUtilsTrait;
 use Greg\Orm\Query\SelectQuery;
 
-class SqliteSelectQuery extends SelectQuery
+class MysqlSelectQuery extends SelectQuery
 {
     use SqliteUtilsTrait;
 

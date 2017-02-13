@@ -14,7 +14,7 @@ class MysqlSelectQueryTest extends TestCase
 
         $this->assertEquals(['SELECT DISTINCT *', []], $query->toSql());
     }
-    
+
     public function testCanSetFromTable()
     {
         $query = $this->newQuery()->fromTable('Table', 'Column');
@@ -42,7 +42,7 @@ class MysqlSelectQueryTest extends TestCase
 
         $this->assertEquals(['SELECT `Column` AS `c` FROM `Table`', []], $query->toSql());
     }
-    
+
     public function testCanSetColumnSelect()
     {
         $query = $this->newQuery()->columnSelect($this->newQuery()->column('Column'), 'c')->from('Table');
@@ -207,7 +207,7 @@ class MysqlSelectQueryTest extends TestCase
     {
         $query = $this->newQuery()
             ->from('Table1')
-            ->innerOn('Table2', function(ConditionsStrategy $strategy) {
+            ->innerOn('Table2', function (ConditionsStrategy $strategy) {
                 $strategy->isNull('Column');
             })
             ->where('Foo', 'foo')

@@ -6,6 +6,7 @@ interface InsertQueryStrategy extends QueryStrategy
 {
     /**
      * @param string $table
+     *
      * @return $this
      */
     public function into(string $table);
@@ -27,6 +28,7 @@ interface InsertQueryStrategy extends QueryStrategy
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function columns(array $columns);
@@ -48,6 +50,7 @@ interface InsertQueryStrategy extends QueryStrategy
 
     /**
      * @param array $values
+     *
      * @return $this
      */
     public function values(array $values);
@@ -69,6 +72,7 @@ interface InsertQueryStrategy extends QueryStrategy
 
     /**
      * @param array $data
+     *
      * @return $this
      */
     public function data(array $data);
@@ -80,13 +84,15 @@ interface InsertQueryStrategy extends QueryStrategy
 
     /**
      * @param SelectQueryStrategy $strategy
+     *
      * @return $this
      */
     public function select(SelectQueryStrategy $strategy);
 
     /**
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return $this
      */
     public function selectRaw(string $sql, string ...$params);

@@ -5,8 +5,9 @@ namespace Greg\Orm\Query;
 interface QueryStrategy
 {
     /**
-     * @param bool $condition
+     * @param bool     $condition
      * @param callable $callable
+     *
      * @return $this
      */
     public function when(bool $condition, callable $callable);

@@ -10,6 +10,7 @@ abstract class JoinClause implements JoinClauseStrategy
 
     /**
      * @param string|null $source
+     *
      * @return array
      */
     public function toSql(string $source = null): array
@@ -19,6 +20,7 @@ abstract class JoinClause implements JoinClauseStrategy
 
     /**
      * @param string|null $source
+     *
      * @return string
      */
     public function toString(string $source = null): string
