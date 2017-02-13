@@ -2,14 +2,14 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverInterface;
-use Greg\Orm\Query\FromClauseInterface;
-use Greg\Orm\Query\HavingClauseInterface;
-use Greg\Orm\Query\JoinClauseInterface;
-use Greg\Orm\Query\LimitClauseInterface;
-use Greg\Orm\Query\OrderByClauseInterface;
-use Greg\Orm\Query\WhereClauseInterface;
-use Greg\Orm\Query\WhereClauseTraitInterface;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Driver\FromClauseInterface;
+use Greg\Orm\Driver\HavingClauseInterface;
+use Greg\Orm\Driver\JoinClauseInterface;
+use Greg\Orm\Driver\LimitClauseInterface;
+use Greg\Orm\Driver\OrderByClauseInterface;
+use Greg\Orm\Driver\WhereClauseInterface;
+use Greg\Orm\Driver\WhereClauseTraitInterface;
 
 trait WhereTableClauseTrait
 {
@@ -334,7 +334,7 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
-    public function whereRaw($expr, $value = null, $_ = null)
+    public function whereRaw($sql, $value = null, $_ = null)
     {
         $instance = $this->needWhereClauseInstance();
 
@@ -343,7 +343,7 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
-    public function orWhereRaw($expr, $value = null, $_ = null)
+    public function orWhereRaw($sql, $value = null, $_ = null)
     {
         $instance = $this->needWhereClauseInstance();
 
@@ -352,7 +352,7 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
-    public function whereExists($expr, $param = null, $_ = null)
+    public function whereExists($sql, $param = null, $_ = null)
     {
         $instance = $this->needWhereClauseInstance();
 
@@ -361,7 +361,7 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
-    public function whereNotExists($expr, $param = null, $_ = null)
+    public function whereNotExists($sql, $param = null, $_ = null)
     {
         $instance = $this->needWhereClauseInstance();
 
@@ -388,7 +388,7 @@ trait WhereTableClauseTrait
     abstract protected function newInstance();
 
     /**
-     * @return DriverInterface
+     * @return DriverStrategy
      */
     abstract public function getDriver();
 }

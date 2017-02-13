@@ -2,13 +2,13 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverInterface;
-use Greg\Orm\Query\DeleteQueryInterface;
-use Greg\Orm\Query\FromClauseInterface;
-use Greg\Orm\Query\JoinClauseInterface;
-use Greg\Orm\Query\LimitClauseInterface;
-use Greg\Orm\Query\OrderByClauseInterface;
-use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Driver\DeleteQueryInterface;
+use Greg\Orm\Driver\FromClauseInterface;
+use Greg\Orm\Driver\JoinClauseInterface;
+use Greg\Orm\Driver\LimitClauseInterface;
+use Greg\Orm\Driver\OrderByClauseInterface;
+use Greg\Orm\Driver\WhereClauseInterface;
 
 trait DeleteTableQueryTrait
 {
@@ -157,7 +157,7 @@ trait DeleteTableQueryTrait
     abstract protected function newInstance();
 
     /**
-     * @return DriverInterface
+     * @return DriverStrategy
      */
     abstract public function getDriver();
 }

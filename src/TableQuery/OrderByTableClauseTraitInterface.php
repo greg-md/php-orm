@@ -14,7 +14,7 @@ interface OrderByTableClauseTraitInterface
 
     public function orderDesc($column);
 
-    public function orderByRaw($expr, $param = null, $_ = null);
+    public function orderByRaw($sql, $param = null, $_ = null);
 
     public function hasOrderBy();
 

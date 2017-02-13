@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverInterface;
-use Greg\Orm\Query\ClauseInterface;
-use Greg\Orm\Query\QueryInterface;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Driver\ClauseInterface;
+use Greg\Orm\Driver\QueryInterface;
 
 trait TableQueryTrait
 {
@@ -205,7 +205,7 @@ trait TableQueryTrait
     }
 
     /**
-     * @return DriverInterface
+     * @return DriverStrategy
      */
     abstract public function getDriver();
 }

@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Query\ClauseInterface;
-use Greg\Orm\Query\QueryInterface;
+use Greg\Orm\Driver\ClauseInterface;
+use Greg\Orm\Driver\QueryInterface;
 
 interface TableQueryInterface
 {

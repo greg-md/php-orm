@@ -1,0 +1,51 @@
+<?php
+
+namespace Greg\Orm\Query;
+
+use Greg\Orm\Clause\JoinClauseTraitStrategy;
+use Greg\Orm\Clause\LimitClauseTraitStrategy;
+use Greg\Orm\Clause\OrderByClauseTraitStrategy;
+use Greg\Orm\Clause\WhereClauseTraitStrategy;
+
+interface UpdateQueryStrategy extends
+    QueryStrategy,
+    JoinClauseTraitStrategy,
+    WhereClauseTraitStrategy,
+    OrderByClauseTraitStrategy,
+    LimitClauseTraitStrategy
+{
+    /**
+     * @param $table
+     * @param array ...$tables
+     * @return $this
+     */
+    public function table($table, ...$tables);
+
+    /**
+     * @param string $column
+     * @param string $value
+     * @return $this
+     */
+    public function set(string $column, string $value);
+
+    /**
+     * @param string $raw
+     * @param \string[] ...$params
+     * @return $this
+     */
+    public function setRaw(string $raw, string ...$params);
+
+    /**
+     * @param string $column
+     * @param int $value
+     * @return $this
+     */
+    public function increment(string $column, int $value = 1);
+
+    /**
+     * @param string $column
+     * @param int $value
+     * @return $this
+     */
+    public function decrement(string $column, int $value = 1);
+}

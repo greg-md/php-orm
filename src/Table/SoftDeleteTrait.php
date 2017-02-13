@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Table;
 
-use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Driver\WhereClauseInterface;
 
 trait SoftDeleteTrait
 {

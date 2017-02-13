@@ -2,16 +2,16 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverInterface;
-use Greg\Orm\Driver\StmtInterface;
-use Greg\Orm\Query\FromClauseInterface;
-use Greg\Orm\Query\HavingClauseInterface;
-use Greg\Orm\Query\JoinClauseInterface;
-use Greg\Orm\Query\LimitClauseInterface;
-use Greg\Orm\Query\OrderByClauseInterface;
-use Greg\Orm\Query\QueryInterface;
-use Greg\Orm\Query\SelectQueryInterface;
-use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Driver\StatementStrategy;
+use Greg\Orm\Driver\FromClauseInterface;
+use Greg\Orm\Driver\HavingClauseInterface;
+use Greg\Orm\Driver\JoinClauseInterface;
+use Greg\Orm\Driver\LimitClauseInterface;
+use Greg\Orm\Driver\OrderByClauseInterface;
+use Greg\Orm\Driver\QueryInterface;
+use Greg\Orm\Driver\SelectQueryInterface;
+use Greg\Orm\Driver\WhereClauseInterface;
 use Greg\Orm\Table;
 
 trait SelectTableQueryTrait
@@ -247,7 +247,7 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function selectRaw($expr, $param = null, $_ = null)
+    public function selectRaw($sql, $param = null, $_ = null)
     {
         $instance = $this->needSelectInstance();
 
@@ -277,7 +277,7 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function groupByRaw($expr, $param = null, $_ = null)
+    public function groupByRaw($sql, $param = null, $_ = null)
     {
         $instance = $this->needSelectInstance();
 
@@ -307,7 +307,7 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function union($expr, $param = null, $_ = null)
+    public function union($sql, $param = null, $_ = null)
     {
         $instance = $this->needSelectInstance();
 
@@ -316,7 +316,7 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function unionAll($expr, $param = null, $_ = null)
+    public function unionAll($sql, $param = null, $_ = null)
     {
         $instance = $this->needSelectInstance();
 
@@ -325,7 +325,7 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function unionDistinct($expr, $param = null, $_ = null)
+    public function unionDistinct($sql, $param = null, $_ = null)
     {
         $instance = $this->needSelectInstance();
 
@@ -335,7 +335,7 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @return StmtInterface
+     * @return StatementStrategy
      */
     protected function executeSelectInstance()
     {
@@ -427,7 +427,7 @@ trait SelectTableQueryTrait
     /**
      * @throws \Exception
      *
-     * @return StmtInterface
+     * @return StatementStrategy
      */
     protected function executeSelectRowInstance()
     {
@@ -584,14 +584,14 @@ trait SelectTableQueryTrait
     abstract protected function newInstance();
 
     /**
-     * @return DriverInterface
+     * @return DriverStrategy
      */
     abstract public function getDriver();
 
     /**
      * @param QueryInterface $query
      *
-     * @return StmtInterface
+     * @return StatementStrategy
      */
     abstract protected function executeQuery(QueryInterface $query);
 }

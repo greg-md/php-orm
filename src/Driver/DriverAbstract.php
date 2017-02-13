@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Driver;
 
-abstract class DriverAbstract
+abstract class DriverAbstract implements DriverStrategy
 {
     protected $listeners = [];
 
@@ -13,7 +13,7 @@ abstract class DriverAbstract
         return $this;
     }
 
-    public function fire($sql)
+    public function fire(string $sql)
     {
         foreach ($this->listeners as $listener) {
             call_user_func_array($listener, [$sql]);

@@ -2,8 +2,8 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Driver\DriverInterface;
-use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Driver\WhereClauseInterface;
 use Greg\Support\Obj;
 
 /**
@@ -18,11 +18,11 @@ abstract class Table implements TableInterface
     use TableTrait, RowTrait;
 
     /**
-     * @var DriverInterface|null
+     * @var DriverStrategy|null
      */
     protected $driver = null;
 
-    final public function __construct(array $data = [], DriverInterface $driver = null)
+    final public function __construct(array $data = [], DriverStrategy $driver = null)
     {
         if ($data) {
             $this->___appendRowData($data, true);
@@ -69,7 +69,7 @@ abstract class Table implements TableInterface
         return new $class($data, $this->getDriver());
     }
 
-    public function setDriver(DriverInterface $driver)
+    public function setDriver(DriverStrategy $driver)
     {
         $this->driver = $driver;
 

@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverInterface;
+use Greg\Orm\Driver\DriverStrategy;
 
 trait InsertTableQueryTrait
 {
@@ -56,7 +56,7 @@ trait InsertTableQueryTrait
     }
 
     /**
-     * @return DriverInterface
+     * @return DriverStrategy
      */
     abstract public function getDriver();
 }

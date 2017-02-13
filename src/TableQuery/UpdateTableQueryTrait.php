@@ -2,12 +2,12 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverInterface;
-use Greg\Orm\Query\JoinClauseInterface;
-use Greg\Orm\Query\LimitClauseInterface;
-use Greg\Orm\Query\OrderByClauseInterface;
-use Greg\Orm\Query\UpdateQueryInterface;
-use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Driver\JoinClauseInterface;
+use Greg\Orm\Driver\LimitClauseInterface;
+use Greg\Orm\Driver\OrderByClauseInterface;
+use Greg\Orm\Driver\UpdateQueryInterface;
+use Greg\Orm\Driver\WhereClauseInterface;
 
 trait UpdateTableQueryTrait
 {
@@ -172,7 +172,7 @@ trait UpdateTableQueryTrait
     abstract protected function newInstance();
 
     /**
-     * @return DriverInterface
+     * @return DriverStrategy
      */
     abstract public function getDriver();
 }

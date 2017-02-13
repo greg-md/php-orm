@@ -2,131 +2,273 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\TableInterface;
+use Greg\Orm\Clause\FromClauseTrait;
+use Greg\Orm\Clause\GroupByClauseTrait;
+use Greg\Orm\Clause\HavingClauseTrait;
+use Greg\Orm\Clause\LimitClauseTrait;
+use Greg\Orm\Clause\OffsetClauseTrait;
+use Greg\Orm\Clause\OrderByClauseTrait;
+use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\WhenTrait;
 
-class SelectQuery implements SelectQueryInterface
+abstract class SelectQuery implements SelectQueryStrategy
 {
-    use QueryClauseTrait,
-        FromClauseTrait,
+    use FromClauseTrait,
         WhereClauseTrait,
         HavingClauseTrait,
         OrderByClauseTrait,
         GroupByClauseTrait,
         LimitClauseTrait,
-        OffsetClauseTrait;
-
-    protected $distinct = false;
-
-    protected $columns = [];
-
-    protected $unions = [];
+        OffsetClauseTrait,
+        WhenTrait;
 
     /**
-     * @var TableInterface|null
+     * @var bool
      */
-    protected $table = null;
+    private $distinct = false;
 
-    public function distinct($value = true)
+    /**
+     * @var array[]
+     */
+    private $columns = [];
+
+    /**
+     * @var array[]
+     */
+    private $unions = [];
+
+    /**
+     * @param bool $value
+     * @return $this
+     */
+    public function distinct(bool $value = true)
     {
-        $this->distinct = (bool) $value;
+        $this->distinct = $value;
 
         return $this;
     }
 
-    public function selectFrom($table, $column = null, $_ = null)
+    /**
+     * @param $table
+     * @param string $column
+     * @param \string[] ...$columns
+     * @return $this
+     */
+    public function fromTable($table, string $column, string ...$columns)
     {
-        $columns = is_array($column) ? $column : array_slice(func_get_args(), 1);
-
-        $this->fromTable($table);
-
-        if ($columns) {
-            $this->columnsFrom($table, $columns);
-        }
+        $this->from($table)->columnsFrom($table, $column, ...$columns);
 
         return $this;
     }
 
-    public function columnsFrom($table, $column, $_ = null)
+    /**
+     * @param $table
+     * @param string $column
+     * @param \string[] ...$columns
+     * @return $this
+     */
+    public function columnsFrom($table, string $column, string ...$columns)
     {
-        $columns = is_array($column) ? $column : array_slice(func_get_args(), 1);
-
         list($tableAlias, $tableName) = $this->parseAlias($table);
 
         if (!$tableAlias) {
             $tableAlias = $tableName;
         }
 
-        foreach ($columns as &$col) {
-            $col = $tableAlias . '.' . $col;
-        }
-        unset($col);
+        array_unshift($columns, $column);
 
-        $this->columns($columns);
+        foreach ($columns as &$column) {
+            $column = $tableAlias . '.' . $column;
+        }
+        unset($column);
+
+        $this->columns(...$columns);
 
         return $this;
     }
 
-    public function columns($column, $_ = null)
+    /**
+     * @param string $column
+     * @param \string[] ...$columns
+     * @return $this
+     */
+    public function columns(string $column, string ...$columns)
     {
-        if (!is_array($column)) {
-            $column = func_get_args();
-        }
+        array_unshift($columns, $column);
 
-        foreach ($column as $alias => $col) {
-            $this->column($col, !is_int($alias) ? $alias : null);
+        foreach ($columns as $alias => $column) {
+            $this->column($column, !is_int($alias) ? $alias : null);
         }
 
         return $this;
     }
 
-    public function column($column, $alias = null)
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
+    public function column(string $column, ?string $alias = null)
     {
-        if ($column instanceof SelectQueryInterface) {
-            list($columnSql, $columnParams) = $column->toSql();
+        list($columnAlias, $column) = $this->parseAlias($column);
 
-            $column = '(' . $columnSql . ')';
-
-            $params = $columnParams;
-        } else {
-            list($columnAlias, $column) = $this->parseAlias($column);
-
-            if (!$alias) {
-                $alias = $columnAlias;
-            }
-
-            $column = $this->quoteNameExpr($column);
-
-            $params = [];
+        if (!$alias) {
+            $alias = $columnAlias;
         }
 
         if ($alias) {
-            $alias = $this->quoteNameExpr($alias);
+            $alias = $this->quoteNameSql($alias);
         }
 
-        return $this->addColumn($column, $alias, $params);
+        $this->columnLogic($this->quoteNameSql($column), $alias);
+
+        return $this;
     }
 
-    public function columnRaw($expr, $param = null, $_ = null)
+    /**
+     * @param SelectQueryStrategy $column
+     * @param string|null $alias
+     * @return $this
+     */
+    public function columnSelect(SelectQueryStrategy $column, ?string $alias = null)
     {
-        return $this->addColumn($this->quoteExpr($expr), null, is_array($param) ? $param : array_slice(func_get_args(), 1));
+        if ($alias) {
+            $alias = $this->quoteNameSql($alias);
+        }
+
+        $this->columnLogic($column, $alias);
+
+        return $this;
     }
 
-    protected function addColumn($expr, $alias = null, array $params = [])
+    /**
+     * @param string $sql
+     * @param \string[] ...$params
+     * @return $this
+     */
+    public function columnRaw(string $sql, string ...$params)
+    {
+        $this->columnLogic($this->quoteSql($sql), null, $params);
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
+    public function count(string $column = '*', string $alias = null)
+    {
+        if ($alias) {
+            $alias = $this->quoteNameSql($alias);
+        }
+
+        $this->columnRaw('COUNT(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
+    public function max(string $column, string $alias = null)
+    {
+        if ($alias) {
+            $alias = $this->quoteNameSql($alias);
+        }
+
+        $this->columnRaw('MAX(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
+    public function min(string $column, string $alias = null)
+    {
+        if ($alias) {
+            $alias = $this->quoteNameSql($alias);
+        }
+
+        $this->columnRaw('MIN(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
+    public function avg(string $column, string $alias = null)
+    {
+        if ($alias) {
+            $alias = $this->quoteNameSql($alias);
+        }
+
+        $this->columnRaw('AVG(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
+    public function sum(string $column, string $alias = null)
+    {
+        if ($alias) {
+            $alias = $this->quoteNameSql($alias);
+        }
+
+        $this->columnRaw('SUM(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+
+        return $this;
+    }
+
+    /**
+     * @param $sql
+     * @param $alias
+     * @param array $params
+     * @return $this
+     */
+    protected function columnLogic($sql, $alias = null, array $params = [])
     {
         $this->columns[] = [
-            'expr'   => $expr,
-            'alias'  => $alias,
+            'sql' => $sql,
+            'alias' => $alias,
             'params' => $params,
         ];
 
         return $this;
     }
 
-    public function hasColumns()
+    /**
+     * @return bool
+     */
+    public function hasColumns(): bool
     {
-        return $this->columns ? true : false;
+        return (bool) $this->columns;
     }
 
+    /**
+     * @return array
+     */
+    public function getColumns(): array
+    {
+        return $this->columns;
+    }
+
+    /**
+     * @return $this
+     */
     public function clearColumns()
     {
         $this->columns = [];
@@ -134,64 +276,147 @@ class SelectQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function count($column = '*', $alias = null)
+    /**
+     * @param SelectQueryStrategy $query
+     * @return $this
+     */
+    public function union(SelectQueryStrategy $query)
     {
-        return $this->columnRaw('COUNT(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->unionLogic(null, $query);
+
+        return $this;
     }
 
-    public function max($column, $alias = null)
+    /**
+     * @param SelectQueryStrategy $query
+     * @return $this
+     */
+    public function unionAll(SelectQueryStrategy $query)
     {
-        return $this->columnRaw('MAX(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->unionLogic('ALL', $query);
+
+        return $this;
     }
 
-    public function min($column, $alias = null)
+    /**
+     * @param SelectQueryStrategy $query
+     * @return $this
+     */
+    public function unionDistinct(SelectQueryStrategy $query)
     {
-        return $this->columnRaw('MIN(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->unionLogic('DISTINCT', $query);
+
+        return $this;
     }
 
-    public function avg($column, $alias = null)
+    /**
+     * @param string $sql
+     * @param \string[] ...$params
+     * @return $this
+     */
+    public function unionRaw(string $sql, string ...$params)
     {
-        return $this->columnRaw('AVG(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->unionLogic(null, $sql, $params);
+
+        return $this;
     }
 
-    public function sum($column, $alias = null)
+    /**
+     * @param string $sql
+     * @param \string[] ...$params
+     * @return $this
+     */
+    public function unionAllRaw(string $sql, string ...$params)
     {
-        return $this->columnRaw('SUM(' . $column . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->unionLogic('ALL', $sql, $params);
+
+        return $this;
     }
 
-    public function union($expr, $param = null, $_ = null)
+    /**
+     * @param string $sql
+     * @param \string[] ...$params
+     * @return $this
+     */
+    public function unionDistinctRaw(string $sql, string ...$params)
     {
-        return $this->unionType(null, ...func_get_args());
+        $this->unionLogic('DISTINCT', $sql, $params);
+
+        return $this;
     }
 
-    public function unionAll($expr, $param = null, $_ = null)
+    /**
+     * @param null|string $type
+     * @param $sql
+     * @param array $params
+     * @return $this
+     */
+    protected function unionLogic(?string $type, $sql, array $params = [])
     {
-        return $this->unionType('ALL', ...func_get_args());
-    }
-
-    public function unionDistinct($expr, $param = null, $_ = null)
-    {
-        return $this->unionType('DISTINCT', ...func_get_args());
-    }
-
-    protected function unionType($type, $expr, $param = null, $_ = null)
-    {
-        if ($expr instanceof SelectQueryInterface) {
-            list($expr, $params) = $expr->toSql();
-        } else {
-            $params = is_array($param) ? $param : array_slice(func_get_args(), 1);
-        }
-
         $this->unions[] = [
-            'type'   => $type,
-            'expr'   => $expr,
+            'type' => $type,
+            'sql' => $sql,
             'params' => $params,
         ];
 
         return $this;
     }
 
-    protected function addSelectLimit(&$sql)
+    /**
+     * @return bool
+     */
+    public function hasUnions(): bool
+    {
+        return (bool) $this->unions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUnions(): array
+    {
+        return $this->unions;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearUnions()
+    {
+        $this->unions = [];
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function toSql(): array
+    {
+        return $this->selectToSql();
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(): string
+    {
+        return $this->selectToString();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function addSelectLimitToSql(string $sql): string
     {
         if ($this->limit) {
             $sql .= ' LIMIT ' . $this->limit;
@@ -201,10 +426,13 @@ class SelectQuery implements SelectQueryInterface
             $sql .= ' OFFSET ' . $this->offset;
         }
 
-        return $this;
+        return $sql;
     }
 
-    protected function selectClauseToSql()
+    /**
+     * @return array
+     */
+    protected function selectClauseToSql(): array
     {
         $params = [];
 
@@ -218,13 +446,15 @@ class SelectQuery implements SelectQueryInterface
             $sqlColumns = [];
 
             foreach ($this->columns as $column) {
-                $expr = $column['expr'];
+                $column = $this->prepareColumn($column);
+
+                $sqlPart = $column['sql'];
 
                 if ($column['alias']) {
-                    $expr .= ' AS ' . $column['alias'];
+                    $sqlPart .= ' AS ' . $column['alias'];
                 }
 
-                $sqlColumns[] = $expr;
+                $sqlColumns[] = $sqlPart;
 
                 $column['params'] && $params = array_merge($params, $column['params']);
             }
@@ -239,12 +469,10 @@ class SelectQuery implements SelectQueryInterface
         return [$sql, $params];
     }
 
-    protected function selectClauseToString()
-    {
-        return $this->selectClauseToSql()[0];
-    }
-
-    protected function selectToSql()
+    /**
+     * @return array
+     */
+    protected function selectToSql(): array
     {
         list($sql, $params) = $this->selectClauseToSql();
 
@@ -290,15 +518,15 @@ class SelectQuery implements SelectQueryInterface
             $params = array_merge($params, $orderByParams);
         }
 
-        $sql = implode(' ', $sql);
-
-        $this->addSelectLimit($sql);
+        $sql = $this->addSelectLimitToSql(implode(' ', $sql));
 
         if ($this->unions) {
             $sql = ['(' . $sql . ')'];
 
             foreach ($this->unions as $union) {
-                $sql[] = ($union['type'] ? $union['type'] . ' ' : '') . '(' . $union['expr'] . ')';
+                $union = $this->prepareUnion($union);
+
+                $sql[] = ($union['type'] ? $union['type'] . ' ' : '') . '(' . $union['sql'] . ')';
 
                 $union['params'] && $params = array_merge($params, $union['params']);
             }
@@ -309,23 +537,57 @@ class SelectQuery implements SelectQueryInterface
         return [$sql, $params];
     }
 
+    /**
+     * @return string
+     */
     protected function selectToString()
     {
         return $this->selectToSql()[0];
     }
 
-    public function toSql()
+    /**
+     * @param array $column
+     * @return array
+     */
+    protected function prepareColumn(array $column)
     {
-        return $this->selectToSql();
+        if ($column['sql'] instanceof SelectQueryStrategy) {
+            [$sql, $params] = $column['sql']->toSql();
+
+            $column['sql'] = '(' . $sql . ')';
+
+            $column['params'] = $params;
+        }
+
+        return $column;
     }
 
-    public function toString()
+    /**
+     * @param array $union
+     * @return array
+     */
+    protected function prepareUnion(array $union)
     {
-        return $this->selectToString();
+        if ($union['sql'] instanceof SelectQueryStrategy) {
+            [$sql, $params] = $union['sql']->toSql();
+
+            $union['sql'] = $sql;
+
+            $union['params'] = $params;
+        }
+
+        return $union;
     }
 
-    public function __toString()
-    {
-        return (string) $this->toString();
-    }
+    /**
+     * @param string $name
+     * @return string
+     */
+    abstract protected function quoteNameSql(string $name): string;
+
+    /**
+     * @param string $sql
+     * @return string
+     */
+    abstract protected function quoteSql(string $sql): string;
 }

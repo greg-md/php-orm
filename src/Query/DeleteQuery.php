@@ -2,48 +2,103 @@
 
 namespace Greg\Orm\Query;
 
-class DeleteQuery implements DeleteQueryInterface
+use Greg\Orm\Clause\FromClauseTrait;
+use Greg\Orm\Clause\LimitClauseTrait;
+use Greg\Orm\Clause\OrderByClauseTrait;
+use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\QueryException;
+use Greg\Orm\WhenTrait;
+
+abstract class DeleteQuery implements DeleteQueryStrategy
 {
-    use QueryClauseTrait, FromClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
+    use FromClauseTrait,
+        WhereClauseTrait,
+        OrderByClauseTrait,
+        LimitClauseTrait,
+        WhenTrait;
 
-    protected $fromTables = [];
+    /**
+     * @var array
+     */
+    private $rowsFrom = [];
 
-    public function fromTable($table, $_ = null)
+    /**
+     * @param string $table
+     * @param \string[] ...$tables
+     * @return $this
+     */
+    public function rowsFrom(string $table, string ...$tables)
     {
-        $this->fromUpdateTable(...func_get_args());
-    }
+        array_unshift($tables, $table);
 
-    protected function fromUpdateTable($table, $_ = null)
-    {
-        foreach (func_get_args() as $table) {
-            list($tableAlias, $tableName) = $this->parseAlias($table);
-
-            if (!is_scalar($tableName)) {
-                throw new \Exception('Derived tables are not supported in UPDATE statement.');
-            }
-
-            $source = $tableAlias ?: $tableName;
-
-            $tableName = $this->quoteTableExpr($tableName);
-
-            if ($tableAlias) {
-                $tableAlias = $this->quoteName($tableAlias);
-            }
-
-            $this->fromTables[$source] = $tableAlias ?: $tableName;
+        foreach ($tables as $table) {
+            $this->rowsFrom[] = $this->quoteName($table);
         }
 
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function hasRowsFrom(): bool
+    {
+        return (bool) $this->rowsFrom;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRowsFrom(): array
+    {
+        return $this->rowsFrom;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearRowsFrom()
+    {
+        $this->rowsFrom = [];
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function toSql(): array
+    {
+        return $this->deleteToSql();
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(): string
+    {
+        return $this->deleteToString();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
+    /**
+     * @return array
+     */
     protected function deleteClauseToSql()
     {
         $params = [];
 
         $sql = ['DELETE'];
 
-        if ($this->fromTables) {
-            $sql[] = implode(', ', $this->fromTables);
+        if ($this->rowsFrom) {
+            $sql[] = implode(', ', $this->rowsFrom);
         }
 
         $sql = implode(' ', $sql);
@@ -51,11 +106,23 @@ class DeleteQuery implements DeleteQueryInterface
         return [$sql, $params];
     }
 
-    protected function deleteClauseToString()
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function addLimitToSql(string $sql): string
     {
-        return $this->deleteClauseToSql()[0];
+        if ($limit = $this->getLimit()) {
+            $sql .= ' LIMIT ' . $limit;
+        }
+
+        return $sql;
     }
 
+    /**
+     * @return array
+     * @throws QueryException
+     */
     protected function deleteToSql()
     {
         list($sql, $params) = $this->deleteClauseToSql();
@@ -65,7 +132,7 @@ class DeleteQuery implements DeleteQueryInterface
         list($fromSql, $fromParams) = $this->fromToSql();
 
         if (!$fromSql) {
-            throw new \Exception('Undefined DELETE FROM clause.');
+            throw new QueryException('Undefined DELETE FROM clause.');
         }
 
         $sql[] = $fromSql;
@@ -88,30 +155,28 @@ class DeleteQuery implements DeleteQueryInterface
             $params = array_merge($params, $orderByParams);
         }
 
-        $sql = implode(' ', $sql);
-
-        $this->addLimitToSql($sql);
+        $sql = $this->addLimitToSql(implode(' ', $sql));
 
         return [$sql, $params];
     }
 
+    /**
+     * @return string
+     */
     protected function deleteToString()
     {
         return $this->deleteToSql()[0];
     }
 
-    public function toSql()
-    {
-        return $this->deleteToSql();
-    }
+    /**
+     * @param string $sql
+     * @return string
+     */
+    abstract protected function quoteTableSql(string $sql): string;
 
-    public function toString()
-    {
-        return $this->deleteToString();
-    }
-
-    public function __toString()
-    {
-        return (string) $this->toString();
-    }
+    /**
+     * @param string $name
+     * @return string
+     */
+    abstract protected function quoteName(string $name): string;
 }

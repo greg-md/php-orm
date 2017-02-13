@@ -56,9 +56,9 @@ interface HavingTableClauseTraitInterface
 
     public function orHavingDay($column, $day);
 
-    public function havingRaw($expr, $value = null, $_ = null);
+    public function havingRaw($sql, $value = null, $_ = null);
 
-    public function orHavingRaw($expr, $value = null, $_ = null);
+    public function orHavingRaw($sql, $value = null, $_ = null);
 
     public function hasHaving();
 

@@ -32,7 +32,7 @@ interface SelectTableQueryTraitInterface
 
     public function selectSum($column, $alias = null);
 
-    public function selectRaw($expr, $param = null, $_ = null);
+    public function selectRaw($sql, $param = null, $_ = null);
 
     public function hasSelect();
 
@@ -40,7 +40,7 @@ interface SelectTableQueryTraitInterface
 
     public function groupBy($column);
 
-    public function groupByRaw($expr, $param = null, $_ = null);
+    public function groupByRaw($sql, $param = null, $_ = null);
 
     public function hasGroupBy();
 
@@ -48,11 +48,11 @@ interface SelectTableQueryTraitInterface
 
     public function offset($number);
 
-    public function union($expr, $param = null, $_ = null);
+    public function union($sql, $param = null, $_ = null);
 
-    public function unionAll($expr, $param = null, $_ = null);
+    public function unionAll($sql, $param = null, $_ = null);
 
-    public function unionDistinct($expr, $param = null, $_ = null);
+    public function unionDistinct($sql, $param = null, $_ = null);
 
     public function assoc();
 

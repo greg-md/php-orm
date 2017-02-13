@@ -56,9 +56,9 @@ interface WhereTableClauseTraitInterface
 
     public function orWhereDay($column, $day);
 
-    public function whereRaw($expr, $value = null, $_ = null);
+    public function whereRaw($sql, $value = null, $_ = null);
 
-    public function orWhereRaw($expr, $value = null, $_ = null);
+    public function orWhereRaw($sql, $value = null, $_ = null);
 
     public function hasWhere();
 

@@ -2,33 +2,59 @@
 
 namespace Greg\Orm\Query;
 
-class UpdateQuery implements UpdateQueryInterface
+use Greg\Orm\Clause\JoinClauseTrait;
+use Greg\Orm\Clause\LimitClauseTrait;
+use Greg\Orm\Clause\OrderByClauseTrait;
+use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\QueryException;
+use Greg\Orm\WhenTrait;
+
+abstract class UpdateQuery implements UpdateQueryStrategy
 {
-    use QueryClauseTrait, JoinClauseTrait, WhereClauseTrait, OrderByClauseTrait, LimitClauseTrait;
+    use JoinClauseTrait,
+        WhereClauseTrait,
+        OrderByClauseTrait,
+        LimitClauseTrait,
+        WhenTrait;
 
-    protected $tables = [];
+    /**
+     * @var array[]
+     */
+    private $tables = [];
 
-    protected $set = [];
+    /**
+     * @var array[]
+     */
+    private $set = [];
 
-    public function table($table, $_ = null)
+    /**
+     * @param $table
+     * @param array ...$tables
+     * @return $this
+     * @throws QueryException
+     */
+    public function table($table, ...$tables)
     {
-        foreach (func_get_args() as $table) {
+        array_unshift($tables, $table);
+
+        foreach ($tables as $table) {
             list($tableAlias, $tableName) = $this->parseAlias($table);
 
             if (!is_scalar($tableName)) {
-                throw new \Exception('Derived tables are not supported in UPDATE statement.');
+                throw new QueryException('Derived tables are not supported in UPDATE statement.');
             }
 
             $tableKey = $tableAlias ?: $tableName;
 
-            $tableName = $this->quoteTableExpr($tableName);
+            $tableName = $this->quoteTableSql($tableName);
 
             if ($tableAlias) {
                 $tableAlias = $this->quoteName($tableAlias);
             }
 
-            $this->tables[$tableKey] = [
-                'name'  => $tableName,
+            $this->tables[] = [
+                'tableKey' => $tableKey,
+                'table'  => $tableName,
                 'alias' => $tableAlias,
             ];
         }
@@ -36,74 +62,166 @@ class UpdateQuery implements UpdateQueryInterface
         return $this;
     }
 
-    public function set($key, $value = null)
+    /**
+     * @return bool
+     */
+    public function hasTables(): bool
     {
-        if (is_array($key)) {
-            foreach ($key as $k => $v) {
-                $this->set($k, $v);
-            }
-        } else {
-            $this->addSet($this->quoteNameExpr($key) . ' = ?', $value);
+        return (bool) $this->tables;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTables(): array
+    {
+        return $this->tables;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearTables()
+    {
+        $this->tables = [];
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string $value
+     * @return $this
+     */
+    public function set(string $column, string $value)
+    {
+        $this->setLogic($this->quoteNameSql($column) . ' = ?', [$value]);
+
+        return $this;
+    }
+
+    /**
+     * @param array $columns
+     * @return $this
+     */
+    public function setMultiple(array $columns)
+    {
+        foreach ($columns as $column => $value) {
+            $this->set($column, $value);
         }
 
         return $this;
     }
 
-    public function setRaw($raw, $param = null, $_ = null)
+    /**
+     * @param string $sql
+     * @param \string[] ...$params
+     * @return $this
+     */
+    public function setRaw(string $sql, string ...$params)
     {
-        $this->addSet($this->quoteExpr($raw), is_array($param) ? $param : array_slice(func_get_args(), 1));
+        $this->setLogic($this->quoteSql($sql), $params);
+
+        return $this;
     }
 
-    public function increment($column, $value = 1)
+    /**
+     * @param string $column
+     * @param int $value
+     * @return $this
+     */
+    public function increment(string $column, int $value = 1)
     {
-        $column = $this->quoteNameExpr($column);
+        $column = $this->quoteNameSql($column);
 
-        $this->addSet($column . ' = ' . $column . ' + ?', $value);
+        $this->setLogic($column . ' = ' . $column . ' + ?', [$value]);
+
+        return $this;
     }
 
-    public function decrement($column, $value = 1)
+    /**
+     * @param string $column
+     * @param int $value
+     * @return $this
+     */
+    public function decrement(string $column, int $value = 1)
     {
-        $column = $this->quoteNameExpr($column);
+        $column = $this->quoteNameSql($column);
 
-        $this->addSet($column . ' = ' . $column . ' - ?', $value);
+        $this->setLogic($column . ' = ' . $column . ' - ?', [$value]);
+
+        return $this;
     }
 
-    protected function addSet($expr, $param = null, $_ = null)
+    /**
+     * @param $sql
+     * @param array $params
+     * @return $this
+     */
+    protected function setLogic($sql, array $params = [])
     {
-        $params = is_array($param) ? $param : array_slice(func_get_args(), 1);
-
         $this->set[] = [
-            'raw'    => $expr,
+            'sql' => $sql,
             'params' => $params,
         ];
 
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function hasSet(): bool
+    {
+        return (bool) $this->set;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSet(): array
+    {
+        return $this->set;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearSet()
+    {
+        $this->set = [];
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     * @throws QueryException
+     */
     protected function updateClauseToSql()
     {
         if (!$this->tables) {
-            throw new \Exception('Undefined UPDATE statement tables.');
+            throw new QueryException('Undefined tables in UPDATE statement.');
         }
 
         $sql = $params = [];
 
-        foreach ($this->tables as $source => $table) {
-            $expr = $table['name'];
+        foreach ($this->tables as $table) {
+            $sqlPart = $table['table'];
 
             if ($table['alias']) {
-                $expr .= ' AS ' . $table['alias'];
+                $sqlPart .= ' AS ' . $table['alias'];
             }
 
-            list($joinsSql, $joinsParams) = $this->joinToSql($source);
+            list($joinsSql, $joinsParams) = $this->joinToSql($table['tableKey']);
 
             if ($joinsSql) {
-                $expr .= ' ' . $joinsSql;
+                $sqlPart .= ' ' . $joinsSql;
 
                 $params = array_merge($params, $joinsParams);
             }
 
-            $sql[] = $expr;
+            $sql[] = $sqlPart;
         }
 
         $sql = 'UPDATE ' . implode(', ', $sql);
@@ -111,25 +229,37 @@ class UpdateQuery implements UpdateQueryInterface
         return [$sql, $params];
     }
 
-    protected function updateClauseToString()
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function addLimitToSql(string $sql): string
     {
-        return $this->updateClauseToSql()[0];
+        if ($limit = $this->getLimit()) {
+            $sql .= ' LIMIT ' . $limit;
+        }
+
+        return $sql;
     }
 
+    /**
+     * @return array
+     * @throws QueryException
+     */
     protected function setClauseToSql()
     {
         if (!$this->set) {
-            throw new \Exception('Undefined SET statement in UPDATE statement.');
+            throw new QueryException('Undefined SET statement in UPDATE statement.');
         }
 
         $sql = $params = [];
 
         foreach ($this->set as $item) {
-            $expr = $item['raw'];
+            $sqlPart = $item['sql'];
 
             $item['params'] && $params = array_merge($params, $item['params']);
 
-            $sql[] = $expr;
+            $sql[] = $sqlPart;
         }
 
         $sql = 'SET ' . implode(', ', $sql);
@@ -137,12 +267,10 @@ class UpdateQuery implements UpdateQueryInterface
         return [$sql, $params];
     }
 
-    protected function setClauseToString()
-    {
-        return $this->setClauseToSql()[0];
-    }
-
-    protected function updateToSql()
+    /**
+     * @return array
+     */
+    protected function updateToSql(): array
     {
         list($sql, $params) = $this->updateClauseToSql();
 
@@ -178,30 +306,58 @@ class UpdateQuery implements UpdateQueryInterface
             $params = array_merge($params, $orderByParams);
         }
 
-        $sql = implode(' ', $sql);
-
-        $this->addLimitToSql($sql);
+        $sql = $this->addLimitToSql(implode(' ', $sql));
 
         return [$sql, $params];
     }
 
-    protected function updateToString()
+    /**
+     * @return string
+     */
+    protected function updateToString(): string
     {
         return $this->updateToSql()[0];
     }
 
-    public function toSql()
+    /**
+     * @return array
+     */
+    public function toSql(): array
     {
         return $this->updateToSql();
     }
 
-    public function toString()
+    /**
+     * @return string
+     */
+    public function toString(): string
     {
         return $this->updateToString();
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
-        return (string) $this->toString();
+        return $this->toString();
     }
+
+    /**
+     * @param string $sql
+     * @return string
+     */
+    abstract protected function quoteSql(string $sql): string;
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    abstract protected function quoteNameSql(string $name): string;
+
+    /**
+     * @param string $sql
+     * @return string
+     */
+    abstract protected function quoteTableSql(string $sql): string;
 }

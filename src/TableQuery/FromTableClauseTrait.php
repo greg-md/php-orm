@@ -2,14 +2,14 @@
 
 namespace Greg\Orm\TableQuery;
 
-use Greg\Orm\Driver\DriverInterface;
-use Greg\Orm\Query\FromClauseInterface;
-use Greg\Orm\Query\FromClauseTraitInterface;
-use Greg\Orm\Query\HavingClauseInterface;
-use Greg\Orm\Query\JoinClauseInterface;
-use Greg\Orm\Query\LimitClauseInterface;
-use Greg\Orm\Query\OrderByClauseInterface;
-use Greg\Orm\Query\WhereClauseInterface;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Driver\FromClauseInterface;
+use Greg\Orm\Driver\FromClauseTraitInterface;
+use Greg\Orm\Driver\HavingClauseInterface;
+use Greg\Orm\Driver\JoinClauseInterface;
+use Greg\Orm\Driver\LimitClauseInterface;
+use Greg\Orm\Driver\OrderByClauseInterface;
+use Greg\Orm\Driver\WhereClauseInterface;
 
 trait FromTableClauseTrait
 {
@@ -99,7 +99,7 @@ trait FromTableClauseTrait
         return $instance;
     }
 
-    public function fromRaw($expr, $param = null, $_ = null)
+    public function fromRaw($sql, $param = null, $_ = null)
     {
         $instance = $this->needFromClauseInstance();
 
@@ -126,7 +126,7 @@ trait FromTableClauseTrait
     abstract protected function newInstance();
 
     /**
-     * @return DriverInterface
+     * @return DriverStrategy
      */
     abstract public function getDriver();
 }
