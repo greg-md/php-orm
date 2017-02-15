@@ -18,6 +18,7 @@ abstract class DialectAbstract implements DialectStrategy
 
     /**
      * @param string $name
+     *
      * @return string
      */
     public static function quoteTable(string $name): string
@@ -31,6 +32,7 @@ abstract class DialectAbstract implements DialectStrategy
 
     /**
      * @param string $name
+     *
      * @return string
      */
     public static function quoteName(string $name): string
@@ -48,6 +50,7 @@ abstract class DialectAbstract implements DialectStrategy
 
     /**
      * @param string $sql
+     *
      * @return string
      */
     public static function quoteSql(string $sql): string
@@ -62,6 +65,7 @@ abstract class DialectAbstract implements DialectStrategy
     /**
      * @param $value
      * @param int|null $rowLength
+     *
      * @return string
      */
     public static function prepareBindKeys($value, int $rowLength = null): string
@@ -81,7 +85,8 @@ abstract class DialectAbstract implements DialectStrategy
 
     /**
      * @param string $sql
-     * @param int $limit
+     * @param int    $limit
+     *
      * @return string
      */
     public static function addLimitToSql(string $sql, int $limit): string
@@ -91,7 +96,8 @@ abstract class DialectAbstract implements DialectStrategy
 
     /**
      * @param string $sql
-     * @param int $limit
+     * @param int    $limit
+     *
      * @return string
      */
     public static function addOffsetToSql(string $sql, int $limit): string
@@ -101,6 +107,7 @@ abstract class DialectAbstract implements DialectStrategy
 
     /**
      * @param $table
+     *
      * @return array
      */
     public static function parseTable($table): array

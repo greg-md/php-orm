@@ -879,11 +879,13 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
     }
 
     /**
-     * @param array $columns
+     * @param array       $columns
      * @param null|string $operator
-     * @param array $values
-     * @return $this
+     * @param array       $values
+     *
      * @throws QueryException
+     *
+     * @return $this
      */
     protected function prepareRowLogic(array &$columns, ?string &$operator, array &$values)
     {
@@ -904,8 +906,9 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
     }
 
     /**
-     * @param string $column
+     * @param string        $column
      * @param callable|null $columnCallable
+     *
      * @return string
      */
     protected function prepareColumn(string $column, callable $columnCallable = null): string
@@ -923,8 +926,10 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
      * @param null|string $operator
      * @param $value
      * @param int $key
-     * @return string
+     *
      * @throws QueryException
+     *
+     * @return string
      */
     protected function prepareRowOperator(?string $operator, $value, int $key): string
     {
@@ -950,8 +955,10 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
     /**
      * @param null|string $operator
      * @param $value
-     * @return string
+     *
      * @throws QueryException
+     *
+     * @return string
      */
     protected function prepareOperator(?string $operator, $value): string
     {
@@ -1009,6 +1016,7 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
     /**
      * @param $values
      * @param callable|null $valueCallable
+     *
      * @return array|string
      */
     protected function prepareValues($values, callable $valueCallable = null)

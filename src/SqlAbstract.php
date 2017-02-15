@@ -11,6 +11,7 @@ abstract class SqlAbstract implements SqlStrategy
 
     /**
      * SqlAbstract constructor.
+     *
      * @param DialectStrategy $dialect
      */
     public function __construct(DialectStrategy $dialect)
@@ -27,8 +28,9 @@ abstract class SqlAbstract implements SqlStrategy
     }
 
     /**
-     * @param bool $condition
+     * @param bool     $condition
      * @param callable $callable
+     *
      * @return $this
      */
     public function when(bool $condition, callable $callable)
