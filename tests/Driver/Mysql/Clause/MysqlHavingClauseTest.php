@@ -2,53 +2,20 @@
 
 namespace Greg\Orm\Tests\Driver\Mysql\Clause;
 
-use Greg\Orm\Driver\Mysql\Clause\MysqlHavingClause;
+use Greg\Orm\Clause\HavingClause;
+use Greg\Orm\Conditions;
+use Greg\Orm\Driver\Mysql\MysqlDialect;
+use Greg\Orm\Tests\Clause\HavingClauseAbstract;
 
-class MysqlHavingClauseTest extends MysqlConditionsTest
+class MysqlHavingClauseTest extends HavingClauseAbstract
 {
-    protected $prefix = 'HAVING ';
-
-    protected $methods = [
-        'column'       => 'having',
-        'orColumn'     => 'orHaving',
-        'columns'      => 'havingMultiple',
-        'orColumns'    => 'orHavingMultiple',
-        'date'         => 'havingDate',
-        'orDate'       => 'orHavingDate',
-        'time'         => 'havingTime',
-        'orTime'       => 'orHavingTime',
-        'year'         => 'havingYear',
-        'orYear'       => 'orHavingYear',
-        'month'        => 'havingMonth',
-        'orMonth'      => 'orHavingMonth',
-        'day'          => 'havingDay',
-        'orDay'        => 'orHavingDay',
-        'relation'     => 'havingRelation',
-        'orRelation'   => 'orHavingRelation',
-        'relations'    => 'havingRelations',
-        'orRelations'  => 'orHavingRelations',
-        'isNull'       => 'havingIsNull',
-        'orIsNull'     => 'orHavingIsNull',
-        'isNotNull'    => 'havingIsNotNull',
-        'orIsNotNull'  => 'orHavingIsNotNull',
-        'between'      => 'havingBetween',
-        'orBetween'    => 'orHavingBetween',
-        'notBetween'   => 'havingNotBetween',
-        'orNotBetween' => 'orHavingNotBetween',
-        'group'        => 'havingGroup',
-        'orGroup'      => 'orHavingGroup',
-        'condition'    => 'havingCondition',
-        'orCondition'  => 'orHavingCondition',
-        'raw'          => 'havingRaw',
-        'orRaw'        => 'orHavingRaw',
-        'logic'        => 'havingLogic',
-        'has'          => 'hasHaving',
-        'get'          => 'getHaving',
-        'clear'        => 'clearHaving',
-    ];
-
-    protected function newCondition()
+    protected function newClause()
     {
-        return new MysqlHavingClause();
+        return new HavingClause(new MysqlDialect());
+    }
+
+    protected function newConditions()
+    {
+        return new Conditions(new MysqlDialect());
     }
 }

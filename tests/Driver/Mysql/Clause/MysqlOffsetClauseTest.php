@@ -2,53 +2,15 @@
 
 namespace Greg\Orm\Tests\Driver\Mysql\Clause;
 
-use Greg\Orm\Driver\Mysql\Clause\MysqlOffsetClause;
-use PHPUnit\Framework\TestCase;
+use Greg\Orm\Clause\OffsetClause;
+use Greg\Orm\Clause\OffsetClauseStrategy;
+use Greg\Orm\Driver\Mysql\MysqlDialect;
+use Greg\Orm\Tests\Clause\OffsetClauseAbstract;
 
-class MysqlOffsetClauseTest extends TestCase
+class MysqlOffsetClauseTest extends OffsetClauseAbstract
 {
-    public function testCanLimit()
+    protected function newClause(): OffsetClauseStrategy
     {
-        $query = $this->newOffset()->offset(10);
-
-        $sql = 'SELECT `Foo` FROM `Bar`';
-
-        $this->assertEquals('SELECT `Foo` FROM `Bar` OFFSET 10', $query->addOffsetToSql($sql));
-    }
-
-    public function testCanDetermineIfExists()
-    {
-        $query = $this->newOffset();
-
-        $this->assertFalse($query->hasOffset());
-
-        $query->offset(10);
-
-        $this->assertTrue($query->hasOffset());
-    }
-
-    public function testCanGet()
-    {
-        $query = $this->newOffset();
-
-        $query->offset(10);
-
-        $this->assertEquals(10, $query->getOffset());
-    }
-
-    public function testCanClear()
-    {
-        $query = $this->newOffset();
-
-        $query->offset(10);
-
-        $query->clearOffset();
-
-        $this->assertNull($query->getOffset());
-    }
-
-    protected function newOffset()
-    {
-        return new MysqlOffsetClause();
+        return new OffsetClause(new MysqlDialect());
     }
 }

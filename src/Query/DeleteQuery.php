@@ -7,15 +7,14 @@ use Greg\Orm\Clause\LimitClauseTrait;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\QueryException;
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class DeleteQuery implements DeleteQueryStrategy
+class DeleteQuery extends SqlAbstract implements DeleteQueryStrategy
 {
     use FromClauseTrait,
         WhereClauseTrait,
         OrderByClauseTrait,
-        LimitClauseTrait,
-        WhenTrait;
+        LimitClauseTrait;
 
     /**
      * @var array
@@ -33,7 +32,7 @@ abstract class DeleteQuery implements DeleteQueryStrategy
         array_unshift($tables, $table);
 
         foreach ($tables as $table) {
-            $this->rowsFrom[] = $this->quoteName($table);
+            $this->rowsFrom[] = $this->dialect()->quoteName($table);
         }
 
         return $this;
@@ -170,18 +169,4 @@ abstract class DeleteQuery implements DeleteQueryStrategy
     {
         return $this->deleteToSql()[0];
     }
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteTableSql(string $sql): string;
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    abstract protected function quoteName(string $name): string;
 }

@@ -2,11 +2,11 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class HavingClause implements HavingClauseStrategy
+class HavingClause extends SqlAbstract implements HavingClauseStrategy
 {
-    use HavingClauseTrait, WhenTrait;
+    use HavingClauseTrait;
 
     /**
      * @param bool $useClause

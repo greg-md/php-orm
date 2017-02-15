@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-interface OrderByClauseStrategy extends ClauseStrategy, OrderByClauseTraitStrategy
+interface OrderByClauseStrategy extends OrderByClauseTraitStrategy
 {
     /**
      * @return array

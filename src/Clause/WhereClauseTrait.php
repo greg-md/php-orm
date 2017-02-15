@@ -2,6 +2,9 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\Conditions;
+use Greg\Orm\ConditionsStrategy;
+use Greg\Orm\DialectStrategy;
 use Greg\Orm\Query\SelectQueryStrategy;
 
 trait WhereClauseTrait
@@ -9,7 +12,7 @@ trait WhereClauseTrait
     /**
      * @var ConditionsStrategy|null
      */
-    private $whereConditions;
+    private $whereStrategy;
 
     /**
      * @var array|null
@@ -25,7 +28,7 @@ trait WhereClauseTrait
      */
     public function where($column, $operator, $value = null)
     {
-        $this->whereConditions()->column(...func_get_args());
+        $this->whereStrategy()->column(...func_get_args());
 
         return $this;
     }
@@ -39,7 +42,7 @@ trait WhereClauseTrait
      */
     public function orWhere($column, $operator, $value = null)
     {
-        $this->whereConditions()->orColumn(...func_get_args());
+        $this->whereStrategy()->orColumn(...func_get_args());
 
         return $this;
     }
@@ -51,7 +54,7 @@ trait WhereClauseTrait
      */
     public function whereMultiple(array $columns)
     {
-        $this->whereConditions()->columns(...func_get_args());
+        $this->whereStrategy()->columns(...func_get_args());
 
         return $this;
     }
@@ -63,7 +66,7 @@ trait WhereClauseTrait
      */
     public function orWhereMultiple(array $columns)
     {
-        $this->whereConditions()->orColumns(...func_get_args());
+        $this->whereStrategy()->orColumns(...func_get_args());
 
         return $this;
     }
@@ -77,7 +80,7 @@ trait WhereClauseTrait
      */
     public function whereDate($column, $operator, $value = null)
     {
-        $this->whereConditions()->date(...func_get_args());
+        $this->whereStrategy()->date(...func_get_args());
 
         return $this;
     }
@@ -91,7 +94,7 @@ trait WhereClauseTrait
      */
     public function orWhereDate($column, $operator, $value = null)
     {
-        $this->whereConditions()->orDate(...func_get_args());
+        $this->whereStrategy()->orDate(...func_get_args());
 
         return $this;
     }
@@ -105,7 +108,7 @@ trait WhereClauseTrait
      */
     public function whereTime($column, $operator, $value = null)
     {
-        $this->whereConditions()->time(...func_get_args());
+        $this->whereStrategy()->time(...func_get_args());
 
         return $this;
     }
@@ -119,7 +122,7 @@ trait WhereClauseTrait
      */
     public function orWhereTime($column, $operator, $value = null)
     {
-        $this->whereConditions()->orTime(...func_get_args());
+        $this->whereStrategy()->orTime(...func_get_args());
 
         return $this;
     }
@@ -133,7 +136,7 @@ trait WhereClauseTrait
      */
     public function whereYear($column, $operator, $value = null)
     {
-        $this->whereConditions()->year(...func_get_args());
+        $this->whereStrategy()->year(...func_get_args());
 
         return $this;
     }
@@ -147,7 +150,7 @@ trait WhereClauseTrait
      */
     public function orWhereYear($column, $operator, $value = null)
     {
-        $this->whereConditions()->orYear(...func_get_args());
+        $this->whereStrategy()->orYear(...func_get_args());
 
         return $this;
     }
@@ -161,7 +164,7 @@ trait WhereClauseTrait
      */
     public function whereMonth($column, $operator, $value = null)
     {
-        $this->whereConditions()->month(...func_get_args());
+        $this->whereStrategy()->month(...func_get_args());
 
         return $this;
     }
@@ -175,7 +178,7 @@ trait WhereClauseTrait
      */
     public function orWhereMonth($column, $operator, $value = null)
     {
-        $this->whereConditions()->orMonth(...func_get_args());
+        $this->whereStrategy()->orMonth(...func_get_args());
 
         return $this;
     }
@@ -189,7 +192,7 @@ trait WhereClauseTrait
      */
     public function whereDay($column, $operator, $value = null)
     {
-        $this->whereConditions()->day(...func_get_args());
+        $this->whereStrategy()->day(...func_get_args());
 
         return $this;
     }
@@ -203,7 +206,7 @@ trait WhereClauseTrait
      */
     public function orWhereDay($column, $operator, $value = null)
     {
-        $this->whereConditions()->orDay(...func_get_args());
+        $this->whereStrategy()->orDay(...func_get_args());
 
         return $this;
     }
@@ -217,7 +220,7 @@ trait WhereClauseTrait
      */
     public function whereRelation($column1, $operator, $column2 = null)
     {
-        $this->whereConditions()->relation(...func_get_args());
+        $this->whereStrategy()->relation(...func_get_args());
 
         return $this;
     }
@@ -231,7 +234,7 @@ trait WhereClauseTrait
      */
     public function orWhereRelation($column1, $operator, $column2 = null)
     {
-        $this->whereConditions()->orRelation(...func_get_args());
+        $this->whereStrategy()->orRelation(...func_get_args());
 
         return $this;
     }
@@ -243,7 +246,7 @@ trait WhereClauseTrait
      */
     public function whereRelations(array $relations)
     {
-        $this->whereConditions()->relations(...func_get_args());
+        $this->whereStrategy()->relations(...func_get_args());
 
         return $this;
     }
@@ -255,7 +258,7 @@ trait WhereClauseTrait
      */
     public function orWhereRelations(array $relations)
     {
-        $this->whereConditions()->orRelations(...func_get_args());
+        $this->whereStrategy()->orRelations(...func_get_args());
 
         return $this;
     }
@@ -267,7 +270,7 @@ trait WhereClauseTrait
      */
     public function whereIsNull(string $column)
     {
-        $this->whereConditions()->isNull(...func_get_args());
+        $this->whereStrategy()->isNull(...func_get_args());
 
         return $this;
     }
@@ -279,7 +282,7 @@ trait WhereClauseTrait
      */
     public function orWhereIsNull(string $column)
     {
-        $this->whereConditions()->orIsNull(...func_get_args());
+        $this->whereStrategy()->orIsNull(...func_get_args());
 
         return $this;
     }
@@ -291,7 +294,7 @@ trait WhereClauseTrait
      */
     public function whereIsNotNull(string $column)
     {
-        $this->whereConditions()->isNotNull(...func_get_args());
+        $this->whereStrategy()->isNotNull(...func_get_args());
 
         return $this;
     }
@@ -303,7 +306,7 @@ trait WhereClauseTrait
      */
     public function orWhereIsNotNull(string $column)
     {
-        $this->whereConditions()->orIsNotNull(...func_get_args());
+        $this->whereStrategy()->orIsNotNull(...func_get_args());
 
         return $this;
     }
@@ -317,7 +320,7 @@ trait WhereClauseTrait
      */
     public function whereBetween(string $column, int $min, int $max)
     {
-        $this->whereConditions()->between(...func_get_args());
+        $this->whereStrategy()->between(...func_get_args());
 
         return $this;
     }
@@ -331,7 +334,7 @@ trait WhereClauseTrait
      */
     public function orWhereBetween(string $column, int $min, int $max)
     {
-        $this->whereConditions()->orBetween(...func_get_args());
+        $this->whereStrategy()->orBetween(...func_get_args());
 
         return $this;
     }
@@ -345,7 +348,7 @@ trait WhereClauseTrait
      */
     public function whereNotBetween(string $column, int $min, int $max)
     {
-        $this->whereConditions()->notBetween(...func_get_args());
+        $this->whereStrategy()->notBetween(...func_get_args());
 
         return $this;
     }
@@ -359,7 +362,7 @@ trait WhereClauseTrait
      */
     public function orWhereNotBetween(string $column, int $min, int $max)
     {
-        $this->whereConditions()->orNotBetween(...func_get_args());
+        $this->whereStrategy()->orNotBetween(...func_get_args());
 
         return $this;
     }
@@ -371,7 +374,7 @@ trait WhereClauseTrait
      */
     public function whereGroup(callable $callable)
     {
-        $this->whereConditions()->group($callable);
+        $this->whereStrategy()->group($callable);
 
         return $this;
     }
@@ -383,7 +386,7 @@ trait WhereClauseTrait
      */
     public function orWhereGroup(callable $callable)
     {
-        $this->whereConditions()->orGroup($callable);
+        $this->whereStrategy()->orGroup($callable);
 
         return $this;
     }
@@ -393,9 +396,9 @@ trait WhereClauseTrait
      *
      * @return $this
      */
-    public function whereCondition(ConditionsStrategy $strategy)
+    public function whereConditions(ConditionsStrategy $strategy)
     {
-        $this->whereConditions()->condition($strategy);
+        $this->whereStrategy()->conditions($strategy);
 
         return $this;
     }
@@ -405,9 +408,9 @@ trait WhereClauseTrait
      *
      * @return $this
      */
-    public function orWhereCondition(ConditionsStrategy $strategy)
+    public function orWhereConditions(ConditionsStrategy $strategy)
     {
-        $this->whereConditions()->orCondition($strategy);
+        $this->whereStrategy()->orConditions($strategy);
 
         return $this;
     }
@@ -420,7 +423,7 @@ trait WhereClauseTrait
      */
     public function whereRaw(string $sql, string ...$params)
     {
-        $this->whereConditions()->raw($sql, ...$params);
+        $this->whereStrategy()->raw($sql, ...$params);
 
         return $this;
     }
@@ -433,7 +436,7 @@ trait WhereClauseTrait
      */
     public function orWhereRaw(string $sql, string ...$params)
     {
-        $this->whereConditions()->orRaw($sql, ...$params);
+        $this->whereStrategy()->orRaw($sql, ...$params);
 
         return $this;
     }
@@ -447,7 +450,7 @@ trait WhereClauseTrait
      */
     public function whereLogic(string $type, $sql, array $params = [])
     {
-        $this->whereConditions()->logic($type, $sql, $params);
+        $this->whereStrategy()->logic($type, $sql, $params);
 
         return $this;
     }
@@ -457,7 +460,7 @@ trait WhereClauseTrait
      */
     public function hasWhere(): bool
     {
-        return $this->whereConditions()->has();
+        return $this->whereStrategy()->has();
     }
 
     /**
@@ -465,7 +468,7 @@ trait WhereClauseTrait
      */
     public function getWhere(): array
     {
-        return $this->whereConditions()->get();
+        return $this->whereStrategy()->get();
     }
 
     /**
@@ -473,7 +476,7 @@ trait WhereClauseTrait
      */
     public function clearWhere()
     {
-        $this->whereConditions()->clear();
+        $this->whereStrategy()->clear();
 
         return $this;
     }
@@ -485,7 +488,7 @@ trait WhereClauseTrait
      */
     public function whereExists(SelectQueryStrategy $sql)
     {
-        $this->whereConditions = null;
+        $this->whereStrategy = null;
 
         $this->exists = [
             'sql'    => $sql,
@@ -502,7 +505,7 @@ trait WhereClauseTrait
      */
     public function whereNotExists(SelectQueryStrategy $sql)
     {
-        $this->whereConditions = null;
+        $this->whereStrategy = null;
 
         $this->exists = [
             'sql'    => $sql,
@@ -520,7 +523,7 @@ trait WhereClauseTrait
      */
     public function whereExistsRaw(string $sql, string ...$params)
     {
-        $this->whereConditions = null;
+        $this->whereStrategy = null;
 
         $this->exists = [
             'sql'    => $sql,
@@ -539,7 +542,7 @@ trait WhereClauseTrait
      */
     public function whereNotExistsRaw(string $sql, string ...$params)
     {
-        $this->whereConditions = null;
+        $this->whereStrategy = null;
 
         $this->exists = [
             'sql'    => $sql,
@@ -553,15 +556,15 @@ trait WhereClauseTrait
     /**
      * @return ConditionsStrategy|null
      */
-    protected function whereConditions()
+    protected function whereStrategy()
     {
-        if (!$this->whereConditions) {
+        if (!$this->whereStrategy) {
             $this->exists = null;
 
-            $this->whereConditions = $this->newWhereConditions();
+            $this->whereStrategy = new Conditions($this->dialect());
         }
 
-        return $this->whereConditions;
+        return $this->whereStrategy;
     }
 
     /**
@@ -582,7 +585,7 @@ trait WhereClauseTrait
 
             $params = $exists['params'];
         } else {
-            [$sql, $params] = $this->whereConditions()->toSql();
+            [$sql, $params] = $this->whereStrategy()->toSql();
         }
 
         if ($sql and $useClause) {
@@ -620,8 +623,5 @@ trait WhereClauseTrait
         return $exists;
     }
 
-    /**
-     * @return ConditionsStrategy
-     */
-    abstract protected function newWhereConditions(): ConditionsStrategy;
+    abstract protected function dialect(): DialectStrategy;
 }

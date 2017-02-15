@@ -201,4 +201,20 @@ interface SelectQueryStrategy extends
      * @return $this
      */
     public function lockInShareMode();
+
+    /**
+     * @return bool
+     */
+    public function hasLock(): bool;
+
+    /**
+     * @return string
+     */
+    public function getLock(): string;
+
+    /**
+     * @return $this
+     */
+    public function clearLock();
+
 }

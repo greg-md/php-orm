@@ -7,15 +7,14 @@ use Greg\Orm\Clause\LimitClauseTrait;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\QueryException;
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class UpdateQuery implements UpdateQueryStrategy
+class UpdateQuery extends SqlAbstract implements UpdateQueryStrategy
 {
     use JoinClauseTrait,
         WhereClauseTrait,
         OrderByClauseTrait,
-        LimitClauseTrait,
-        WhenTrait;
+        LimitClauseTrait;
 
     /**
      * @var array[]
@@ -40,7 +39,7 @@ abstract class UpdateQuery implements UpdateQueryStrategy
         array_unshift($tables, $table);
 
         foreach ($tables as $table) {
-            list($tableAlias, $tableName) = $this->parseAlias($table);
+            list($tableAlias, $tableName) = $this->dialect()->parseTable($table);
 
             if (!is_scalar($tableName)) {
                 throw new QueryException('Derived tables are not supported in UPDATE statement.');
@@ -48,10 +47,10 @@ abstract class UpdateQuery implements UpdateQueryStrategy
 
             $tableKey = $tableAlias ?: $tableName;
 
-            $tableName = $this->quoteTableSql($tableName);
+            $tableName = $this->dialect()->quoteTable($tableName);
 
             if ($tableAlias) {
-                $tableAlias = $this->quoteName($tableAlias);
+                $tableAlias = $this->dialect()->quoteName($tableAlias);
             }
 
             $this->tables[] = [
@@ -98,7 +97,7 @@ abstract class UpdateQuery implements UpdateQueryStrategy
      */
     public function set(string $column, string $value)
     {
-        $this->setLogic($this->quoteNameSql($column) . ' = ?', [$value]);
+        $this->setLogic($this->dialect()->quoteName($column) . ' = ?', [$value]);
 
         return $this;
     }
@@ -125,7 +124,7 @@ abstract class UpdateQuery implements UpdateQueryStrategy
      */
     public function setRaw(string $sql, string ...$params)
     {
-        $this->setLogic($this->quoteSql($sql), $params);
+        $this->setLogic($this->dialect()->quoteSql($sql), $params);
 
         return $this;
     }
@@ -138,7 +137,7 @@ abstract class UpdateQuery implements UpdateQueryStrategy
      */
     public function increment(string $column, int $value = 1)
     {
-        $column = $this->quoteNameSql($column);
+        $column = $this->dialect()->quoteName($column);
 
         $this->setLogic($column . ' = ' . $column . ' + ?', [$value]);
 
@@ -153,25 +152,9 @@ abstract class UpdateQuery implements UpdateQueryStrategy
      */
     public function decrement(string $column, int $value = 1)
     {
-        $column = $this->quoteNameSql($column);
+        $column = $this->dialect()->quoteName($column);
 
         $this->setLogic($column . ' = ' . $column . ' - ?', [$value]);
-
-        return $this;
-    }
-
-    /**
-     * @param $sql
-     * @param array $params
-     *
-     * @return $this
-     */
-    protected function setLogic($sql, array $params = [])
-    {
-        $this->set[] = [
-            'sql'    => $sql,
-            'params' => $params,
-        ];
 
         return $this;
     }
@@ -200,6 +183,30 @@ abstract class UpdateQuery implements UpdateQueryStrategy
         $this->set = [];
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function toSql(): array
+    {
+        return $this->updateToSql();
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(): string
+    {
+        return $this->updateToString();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
     }
 
     /**
@@ -331,47 +338,18 @@ abstract class UpdateQuery implements UpdateQueryStrategy
     }
 
     /**
-     * @return array
-     */
-    public function toSql(): array
-    {
-        return $this->updateToSql();
-    }
-
-    /**
-     * @return string
-     */
-    public function toString(): string
-    {
-        return $this->updateToString();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    /**
-     * @param string $sql
+     * @param $sql
+     * @param array $params
      *
-     * @return string
+     * @return $this
      */
-    abstract protected function quoteSql(string $sql): string;
+    protected function setLogic($sql, array $params = [])
+    {
+        $this->set[] = [
+            'sql'    => $sql,
+            'params' => $params,
+        ];
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    abstract protected function quoteNameSql(string $name): string;
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteTableSql(string $sql): string;
+        return $this;
+    }
 }

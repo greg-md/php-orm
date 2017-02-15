@@ -27,7 +27,7 @@ trait FromClauseTrait
         array_unshift($tables, $table);
 
         foreach ($tables as $table) {
-            list($tableAlias, $tableName) = $this->parseAlias($table);
+            list($tableAlias, $tableName) = $this->dialect()->parseTable($table);
 
             if ($tableName instanceof SelectQueryStrategy) {
                 if (!$tableAlias) {
@@ -38,11 +38,11 @@ trait FromClauseTrait
             } else {
                 $tableKey = $tableAlias ?: $tableName;
 
-                $tableName = $this->quoteTableSql($tableName);
+                $tableName = $this->dialect()->quoteTable($tableName);
             }
 
             if ($tableAlias) {
-                $tableAlias = $this->quoteName($tableAlias);
+                $tableAlias = $this->dialect()->quoteName($tableAlias);
             }
 
             $this->fromLogic($tableKey, $tableName, $tableAlias);
@@ -65,10 +65,10 @@ trait FromClauseTrait
         if ($alias) {
             $tableKey = $alias;
 
-            $alias = $this->quoteName($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->fromLogic($tableKey, $this->quoteSql($sql), $alias, $params);
+        $this->fromLogic($tableKey, $this->dialect()->quoteSql($sql), $alias, $params);
 
         return $this;
     }
@@ -137,7 +137,7 @@ trait FromClauseTrait
 
             $from['alias'] && $sqlPart .= ' AS ' . $from['alias'];
 
-            $from['params'] && $params = array_merge($params, $from['params']);
+            $params = array_merge($params, $from['params']);
 
             list($joinsSql, $joinsParams) = $this->joinToSql($from['tableKey']);
 
@@ -216,11 +216,4 @@ trait FromClauseTrait
 
         return $from;
     }
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteTableSql(string $sql): string;
 }

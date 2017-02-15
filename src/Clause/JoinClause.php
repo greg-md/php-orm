@@ -2,11 +2,11 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class JoinClause implements JoinClauseStrategy
+class JoinClause extends SqlAbstract implements JoinClauseStrategy
 {
-    use JoinClauseTrait, WhenTrait;
+    use JoinClauseTrait;
 
     /**
      * @param string|null $source

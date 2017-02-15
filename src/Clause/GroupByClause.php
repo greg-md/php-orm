@@ -2,11 +2,11 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class GroupByClause implements GroupByClauseStrategy
+class GroupByClause extends SqlAbstract implements GroupByClauseStrategy
 {
-    use GroupByClauseTrait, WhenTrait;
+    use GroupByClauseTrait;
 
     /**
      * @return array

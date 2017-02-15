@@ -2,6 +2,8 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\ConditionsStrategy;
+
 interface JoinClauseTraitStrategy
 {
     /**
@@ -141,12 +143,12 @@ interface JoinClauseTraitStrategy
     public function joinLogic(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = []);
 
     /**
-     * @return $this
+     * @return string
      */
     public function hasJoins();
 
     /**
-     * @return $this
+     * @return array
      */
     public function getJoins();
 

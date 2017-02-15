@@ -2,6 +2,8 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\DialectStrategy;
+
 trait GroupByClauseTrait
 {
     /**
@@ -16,7 +18,7 @@ trait GroupByClauseTrait
      */
     public function groupBy(string $column)
     {
-        $this->groupByLogic($this->quoteNameSql($column));
+        $this->groupByLogic($this->dialect()->quoteName($column));
 
         return $this;
     }
@@ -29,7 +31,7 @@ trait GroupByClauseTrait
      */
     public function groupByRaw(string $sql, string ...$params)
     {
-        $this->groupByLogic($this->quoteSql($sql), $params);
+        $this->groupByLogic($this->dialect()->quoteSql($sql), $params);
 
         return $this;
     }
@@ -102,17 +104,5 @@ trait GroupByClauseTrait
         return $this->groupByToSql()[0];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    abstract protected function quoteNameSql(string $name): string;
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteSql(string $sql): string;
+    abstract public function dialect(): DialectStrategy;
 }

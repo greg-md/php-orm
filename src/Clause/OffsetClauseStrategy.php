@@ -2,12 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-interface OffsetClauseStrategy extends ClauseStrategy, OffsetClauseTraitStrategy
+interface OffsetClauseStrategy extends OffsetClauseTraitStrategy
 {
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    public function addOffsetToSql(string $sql): string;
+
 }

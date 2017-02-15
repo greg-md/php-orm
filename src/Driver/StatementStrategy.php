@@ -25,17 +25,17 @@ interface StatementStrategy
 
     public function fetchAll();
 
-    public function fetchGenerator();
+    public function fetchYield();
 
     public function fetchAssoc();
 
     public function fetchAssocAll();
 
-    public function fetchAssocGenerator();
+    public function fetchAssocYield();
 
     public function fetchColumn($column = 0);
 
-    public function fetchAllColumn($column = 0);
+    public function fetchColumnAll($column = 0);
 
     public function fetchPairs($key = 0, $value = 1);
 }

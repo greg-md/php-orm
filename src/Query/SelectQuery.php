@@ -9,9 +9,9 @@ use Greg\Orm\Clause\LimitClauseTrait;
 use Greg\Orm\Clause\OffsetClauseTrait;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseTrait;
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class SelectQuery implements SelectQueryStrategy
+class SelectQuery extends SqlAbstract implements SelectQueryStrategy
 {
     use FromClauseTrait,
         WhereClauseTrait,
@@ -19,8 +19,11 @@ abstract class SelectQuery implements SelectQueryStrategy
         OrderByClauseTrait,
         GroupByClauseTrait,
         LimitClauseTrait,
-        OffsetClauseTrait,
-        WhenTrait;
+        OffsetClauseTrait;
+
+    private const LOCK_FOR_UPDATE = 'FOR UPDATE';
+
+    private const LOCK_IN_SHARE_MORE = 'IN SHARE MODE';
 
     /**
      * @var bool
@@ -36,6 +39,8 @@ abstract class SelectQuery implements SelectQueryStrategy
      * @var array[]
      */
     private $unions = [];
+
+    private $lock;
 
     /**
      * @param bool $value
@@ -72,7 +77,7 @@ abstract class SelectQuery implements SelectQueryStrategy
      */
     public function columnsFrom($table, string $column, string ...$columns)
     {
-        list($tableAlias, $tableName) = $this->parseAlias($table);
+        list($tableAlias, $tableName) = $this->dialect()->parseTable($table);
 
         if (!$tableAlias) {
             $tableAlias = $tableName;
@@ -115,17 +120,17 @@ abstract class SelectQuery implements SelectQueryStrategy
      */
     public function column(string $column, ?string $alias = null)
     {
-        list($columnAlias, $column) = $this->parseAlias($column);
+        list($columnAlias, $column) = $this->dialect()->parseTable($column);
 
         if (!$alias) {
             $alias = $columnAlias;
         }
 
         if ($alias) {
-            $alias = $this->quoteNameSql($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnLogic($this->quoteNameSql($column), $alias);
+        $this->columnLogic($this->dialect()->quoteName($column), $alias);
 
         return $this;
     }
@@ -139,7 +144,7 @@ abstract class SelectQuery implements SelectQueryStrategy
     public function columnSelect(SelectQueryStrategy $column, ?string $alias = null)
     {
         if ($alias) {
-            $alias = $this->quoteNameSql($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
         $this->columnLogic($column, $alias);
@@ -155,7 +160,7 @@ abstract class SelectQuery implements SelectQueryStrategy
      */
     public function columnRaw(string $sql, string ...$params)
     {
-        $this->columnLogic($this->quoteSql($sql), null, $params);
+        $this->columnLogic($this->dialect()->quoteSql($sql), null, $params);
 
         return $this;
     }
@@ -169,10 +174,10 @@ abstract class SelectQuery implements SelectQueryStrategy
     public function count(string $column = '*', string $alias = null)
     {
         if ($alias) {
-            $alias = $this->quoteNameSql($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnRaw('COUNT(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw('COUNT(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
 
         return $this;
     }
@@ -186,10 +191,10 @@ abstract class SelectQuery implements SelectQueryStrategy
     public function max(string $column, string $alias = null)
     {
         if ($alias) {
-            $alias = $this->quoteNameSql($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnRaw('MAX(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw('MAX(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
 
         return $this;
     }
@@ -203,10 +208,10 @@ abstract class SelectQuery implements SelectQueryStrategy
     public function min(string $column, string $alias = null)
     {
         if ($alias) {
-            $alias = $this->quoteNameSql($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnRaw('MIN(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw('MIN(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
 
         return $this;
     }
@@ -220,10 +225,10 @@ abstract class SelectQuery implements SelectQueryStrategy
     public function avg(string $column, string $alias = null)
     {
         if ($alias) {
-            $alias = $this->quoteNameSql($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnRaw('AVG(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw('AVG(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
 
         return $this;
     }
@@ -237,28 +242,10 @@ abstract class SelectQuery implements SelectQueryStrategy
     public function sum(string $column, string $alias = null)
     {
         if ($alias) {
-            $alias = $this->quoteNameSql($alias);
+            $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnRaw('SUM(' . $this->quoteNameSql($column) . ')' . ($alias ? ' AS ' . $alias : ''));
-
-        return $this;
-    }
-
-    /**
-     * @param $sql
-     * @param $alias
-     * @param array $params
-     *
-     * @return $this
-     */
-    protected function columnLogic($sql, $alias = null, array $params = [])
-    {
-        $this->columns[] = [
-            'sql'    => $sql,
-            'alias'  => $alias,
-            'params' => $params,
-        ];
+        $this->columnRaw('SUM(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
 
         return $this;
     }
@@ -365,24 +352,6 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
-     * @param null|string $type
-     * @param $sql
-     * @param array $params
-     *
-     * @return $this
-     */
-    protected function unionLogic(?string $type, $sql, array $params = [])
-    {
-        $this->unions[] = [
-            'type'   => $type,
-            'sql'    => $sql,
-            'params' => $params,
-        ];
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function hasUnions(): bool
@@ -404,6 +373,46 @@ abstract class SelectQuery implements SelectQueryStrategy
     public function clearUnions()
     {
         $this->unions = [];
+
+        return $this;
+    }
+
+    public function lockForUpdate()
+    {
+        $this->lock = self::LOCK_FOR_UPDATE;
+
+        return $this;
+    }
+
+    public function lockInShareMode()
+    {
+        $this->lock = self::LOCK_IN_SHARE_MORE;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLock(): bool
+    {
+        return (bool) $this->lock;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLock(): string
+    {
+        return $this->lock;
+    }
+
+    /**
+     * @return $this
+     */
+    public function clearLock()
+    {
+        $this->lock = null;
 
         return $this;
     }
@@ -555,6 +564,17 @@ abstract class SelectQuery implements SelectQueryStrategy
             $sql = implode(' UNION ', $sql);
         }
 
+        switch ($this->lock) {
+            case self::LOCK_FOR_UPDATE:
+                $sql = $this->dialect()->lockForUpdateSql($sql);
+
+                break;
+            case self::LOCK_IN_SHARE_MORE:
+                $sql = $this->dialect()->lockInShareMode($sql);
+
+                break;
+        }
+
         return [$sql, $params];
     }
 
@@ -585,6 +605,42 @@ abstract class SelectQuery implements SelectQueryStrategy
     }
 
     /**
+     * @param $sql
+     * @param $alias
+     * @param array $params
+     *
+     * @return $this
+     */
+    protected function columnLogic($sql, $alias = null, array $params = [])
+    {
+        $this->columns[] = [
+            'sql'    => $sql,
+            'alias'  => $alias,
+            'params' => $params,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @param null|string $type
+     * @param $sql
+     * @param array $params
+     *
+     * @return $this
+     */
+    protected function unionLogic(?string $type, $sql, array $params = [])
+    {
+        $this->unions[] = [
+            'type'   => $type,
+            'sql'    => $sql,
+            'params' => $params,
+        ];
+
+        return $this;
+    }
+
+    /**
      * @param array $union
      *
      * @return array
@@ -601,18 +657,4 @@ abstract class SelectQuery implements SelectQueryStrategy
 
         return $union;
     }
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    abstract protected function quoteNameSql(string $name): string;
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteSql(string $sql): string;
 }

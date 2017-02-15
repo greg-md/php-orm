@@ -2,12 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-interface LimitClauseStrategy extends ClauseStrategy, LimitClauseTraitStrategy
+interface LimitClauseStrategy extends LimitClauseTraitStrategy
 {
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    public function addLimitToSql(string $sql): string;
+
 }

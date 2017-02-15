@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class LimitClause implements LimitClauseStrategy
+class LimitClause extends SqlAbstract implements LimitClauseStrategy
 {
-    use LimitClauseTrait, WhenTrait;
+    use LimitClauseTrait;
 }

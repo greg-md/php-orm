@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\ConditionsStrategy;
 use Greg\Orm\Query\SelectQueryStrategy;
 
 interface WhereClauseTraitStrategy
@@ -243,14 +244,14 @@ interface WhereClauseTraitStrategy
      *
      * @return $this
      */
-    public function whereCondition(ConditionsStrategy $strategy);
+    public function whereConditions(ConditionsStrategy $strategy);
 
     /**
      * @param ConditionsStrategy $strategy
      *
      * @return $this
      */
-    public function orWhereCondition(ConditionsStrategy $strategy);
+    public function orWhereConditions(ConditionsStrategy $strategy);
 
     /**
      * @param string    $sql

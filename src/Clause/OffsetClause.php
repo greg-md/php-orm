@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class OffsetClause implements OffsetClauseStrategy
+class OffsetClause extends SqlAbstract implements OffsetClauseStrategy
 {
-    use OffsetClauseTrait, WhenTrait;
+    use OffsetClauseTrait;
 }

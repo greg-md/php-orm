@@ -9,13 +9,18 @@ class PdoStatement implements StatementStrategy
 {
     protected $stmt = null;
 
-    protected $adapter = null;
+    protected $driver = null;
 
-    public function __construct(\PDOStatement $stmt, DriverStrategy $adapter)
+    public function __construct(\PDOStatement $stmt, PdoDriverStrategy $driver)
     {
         $this->stmt = $stmt;
 
-        $this->adapter = $adapter;
+        $this->driver = $driver;
+    }
+
+    public function bindParam($key, $value)
+    {
+        return $this->stmt->bindValue($key, $value);
     }
 
     public function bindParams(array $params)
@@ -29,11 +34,6 @@ class PdoStatement implements StatementStrategy
         return $this;
     }
 
-    public function bindParam($key, $value)
-    {
-        return $this->stmt->bindValue($key, $value);
-    }
-
     /**
      * @param array $params
      *
@@ -41,46 +41,9 @@ class PdoStatement implements StatementStrategy
      */
     public function execute(array $params = [])
     {
-        $this->adapter->fire($this->stmt->queryString);
+        $this->driver->fire((string) $this->stmt->queryString);
 
-        return $this->tryParent(__FUNCTION__, func_get_args());
-    }
-
-    protected function tryParent($method, array $args = [])
-    {
-        try {
-            return $this->callParent($method, $args);
-        } catch (\PDOException $e) {
-            if ($e->errorInfo[1] == 2006) {
-                $this->adapter->reconnect();
-
-                return $this->callParent($method, $args);
-            }
-            throw $e;
-        }
-    }
-
-    protected function callParent($method, array $args = [])
-    {
-        $result = call_user_func_array([$this->stmt, $method], $args);
-
-        if ($result === false) {
-            $this->errorCheck();
-        }
-
-        return $result;
-    }
-
-    protected function errorCheck()
-    {
-        $errorInfo = $this->stmt->errorInfo();
-
-        // Bind or column index out of range
-        if ($errorInfo[1] and $errorInfo[1] != 25) {
-            throw new \Exception($errorInfo[2]);
-        }
-
-        return $this;
+        return $this->tryStatement(__FUNCTION__, func_get_args());
     }
 
     public function fetch()
@@ -93,7 +56,7 @@ class PdoStatement implements StatementStrategy
         return $this->stmt->fetchAll();
     }
 
-    public function fetchGenerator()
+    public function fetchYield()
     {
         while ($record = $this->stmt->fetch()) {
             yield $record;
@@ -110,7 +73,7 @@ class PdoStatement implements StatementStrategy
         return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function fetchAssocGenerator()
+    public function fetchAssocYield()
     {
         while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
             yield $record;
@@ -128,7 +91,7 @@ class PdoStatement implements StatementStrategy
         return $row ? Arr::get($row, $column) : null;
     }
 
-    public function fetchAllColumn($column = 0)
+    public function fetchColumnAll($column = 0)
     {
         return array_column($this->fetchAll(), $column);
     }
@@ -138,5 +101,41 @@ class PdoStatement implements StatementStrategy
         $all = $this->fetchAll();
 
         return Arr::pairs($all, $key, $value);
+    }
+
+    protected function tryStatement($method, array $args = [])
+    {
+        try {
+            return $this->callStatement($method, $args);
+        } catch (\PDOException $e) {
+            if ($e->errorInfo[1] == 2006) {
+                $this->driver->connect();
+
+                return $this->callStatement($method, $args);
+            }
+            throw $e;
+        }
+    }
+
+    protected function callStatement($method, array $args = [])
+    {
+        $result = call_user_func_array([$this->stmt, $method], $args);
+
+        if ($result === false) {
+            $errorInfo = $this->stmt->errorInfo();
+
+            // Exclude: Bind or column index out of range. It shouldn't be an exception.
+//        if ($errorInfo[1] == 25) {
+//            return $this;
+//        }
+
+            $e = new \PDOException($errorInfo[2], $errorInfo[1]);
+
+            $e->errorInfo = $errorInfo;
+
+            throw $e;
+        }
+
+        return $result;
     }
 }

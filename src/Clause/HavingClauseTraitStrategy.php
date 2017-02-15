@@ -2,6 +2,8 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\ConditionsStrategy;
+
 interface HavingClauseTraitStrategy
 {
     /**
@@ -241,14 +243,14 @@ interface HavingClauseTraitStrategy
      *
      * @return $this
      */
-    public function havingCondition(ConditionsStrategy $strategy);
+    public function havingConditions(ConditionsStrategy $strategy);
 
     /**
      * @param ConditionsStrategy $strategy
      *
      * @return $this
      */
-    public function orHavingCondition(ConditionsStrategy $strategy);
+    public function orHavingConditions(ConditionsStrategy $strategy);
 
     /**
      * @param string    $sql

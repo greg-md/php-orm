@@ -2,11 +2,11 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class WhereClause implements WhereClauseStrategy
+class WhereClause extends SqlAbstract implements WhereClauseStrategy
 {
-    use WhereClauseTrait, WhenTrait;
+    use WhereClauseTrait;
 
     /**
      * @param bool $useClause

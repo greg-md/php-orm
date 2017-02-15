@@ -2,6 +2,9 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\Conditions;
+use Greg\Orm\ConditionsStrategy;
+use Greg\Orm\DialectStrategy;
 use Greg\Orm\Query\SelectQueryStrategy;
 use Greg\Orm\QueryException;
 
@@ -280,7 +283,7 @@ trait JoinClauseTrait
 
             $join['on'] && $sqlPart .= ' ON ' . $join['on'];
 
-            $join['params'] && $params = array_merge($params, $join['params']);
+            $params = array_merge($params, $join['params']);
 
             $sql[] = $sqlPart;
         }
@@ -316,7 +319,8 @@ trait JoinClauseTrait
         if ($source) {
             $source = $this->getSourceName($source);
         }
-        [$tableAlias, $tableName] = $this->parseAlias($table);
+
+        [$tableAlias, $tableName] = $this->dialect()->parseTable($table);
 
         if ($tableName instanceof SelectQueryStrategy) {
             if (!$tableAlias) {
@@ -327,23 +331,23 @@ trait JoinClauseTrait
         } else {
             $tableKey = $tableAlias ?: $tableName;
 
-            $tableName = $this->quoteTableSql($tableName);
+            $tableName = $this->dialect()->quoteTable($tableName);
         }
 
         if ($tableAlias) {
-            $tableAlias = $this->quoteName($tableAlias);
+            $tableAlias = $this->dialect()->quoteName($tableAlias);
         }
 
         if (is_callable($on)) {
-            $strategy = $this->newOn();
+            $conditions = new Conditions($this->dialect());
 
-            call_user_func_array($on, [$strategy]);
+            call_user_func_array($on, [$conditions]);
 
-            $on = $strategy;
+            $on = $conditions;
         }
 
         if (is_scalar($on)) {
-            $on = $this->quoteSql($on);
+            $on = $this->dialect()->quoteSql($on);
         }
 
         $this->joinLogic($tableKey, $type, $source, $tableName, $tableAlias, $on, $params);
@@ -360,7 +364,7 @@ trait JoinClauseTrait
      */
     protected function getSourceName($source): string
     {
-        list($sourceAlias, $sourceName) = $this->parseAlias($source);
+        list($sourceAlias, $sourceName) = $this->dialect()->parseTable($source);
 
         if (($sourceName instanceof SelectQueryStrategy) and !$sourceAlias) {
             throw new QueryException('JOIN source table should have an alias name.');
@@ -395,36 +399,5 @@ trait JoinClauseTrait
         return $join;
     }
 
-    /**
-     * @param $name
-     *
-     * @return array
-     */
-    abstract protected function parseAlias($name): array;
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteSql(string $sql): string;
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteTableSql(string $sql): string;
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    abstract protected function quoteName(string $name): string;
-
-    /**
-     * @return ConditionsStrategy
-     */
-    abstract protected function newOn(): ConditionsStrategy;
+    abstract public function dialect(): DialectStrategy;
 }

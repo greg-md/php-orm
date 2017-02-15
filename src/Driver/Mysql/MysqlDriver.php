@@ -2,104 +2,30 @@
 
 namespace Greg\Orm\Driver\Mysql;
 
-use Greg\Orm\Clause\FromClauseStrategy;
-use Greg\Orm\Clause\GroupByClauseStrategy;
-use Greg\Orm\Clause\HavingClauseStrategy;
-use Greg\Orm\Clause\JoinClauseStrategy;
-use Greg\Orm\Clause\LimitClauseStrategy;
-use Greg\Orm\Clause\OrderByClauseStrategy;
-use Greg\Orm\Clause\WhereClauseStrategy;
-use Greg\Orm\Driver\Mysql\Clause\MysqlFromClause;
-use Greg\Orm\Driver\Mysql\Clause\MysqlGroupByClause;
-use Greg\Orm\Driver\Mysql\Clause\MysqlHavingClause;
-use Greg\Orm\Driver\Mysql\Clause\MysqlJoinClause;
-use Greg\Orm\Driver\Mysql\Clause\MysqlLimitClause;
-use Greg\Orm\Driver\Mysql\Clause\MysqlOrderByClause;
-use Greg\Orm\Driver\Mysql\Clause\MysqlWhereClause;
-use Greg\Orm\Driver\Mysql\Query\MysqlDeleteQuery;
-use Greg\Orm\Driver\Mysql\Query\MysqlInsertQuery;
-use Greg\Orm\Driver\Mysql\Query\MysqlSelectQuery;
-use Greg\Orm\Driver\Mysql\Query\MysqlUpdateQuery;
+use Greg\Orm\DialectStrategy;
 use Greg\Orm\Driver\PdoDriverAbstract;
-use Greg\Orm\Query\DeleteQueryStrategy;
-use Greg\Orm\Query\InsertQueryStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
-use Greg\Orm\Query\UpdateQueryStrategy;
 
 class MysqlDriver extends PdoDriverAbstract
 {
     //private $schema = [];
 
+    /**
+     * @var DialectStrategy|null
+     */
+    private $dialect;
+
+    public function dialect(): DialectStrategy
+    {
+        if (!$this->dialect) {
+            $this->dialect = new MysqlDialect();
+        }
+
+        return $this->dialect;
+    }
+
     public function truncate(string $tableName)
     {
-        $this->exec('TRUNCATE ' . $tableName);
-
-        return $this;
-    }
-
-    public function select(): SelectQueryStrategy
-    {
-        return new MysqlSelectQuery();
-    }
-
-    public function insert(): InsertQueryStrategy
-    {
-        return new MysqlInsertQuery();
-    }
-
-    public function delete(): DeleteQueryStrategy
-    {
-        return new MysqlDeleteQuery();
-    }
-
-    public function update(): UpdateQueryStrategy
-    {
-        return new MysqlUpdateQuery();
-    }
-
-    public function from(): FromClauseStrategy
-    {
-        return new MysqlFromClause();
-    }
-
-    public function join(): JoinClauseStrategy
-    {
-        return new MysqlJoinClause();
-    }
-
-    public function where(): WhereClauseStrategy
-    {
-        return new MysqlWhereClause();
-    }
-
-    public function having(): HavingClauseStrategy
-    {
-        return new MysqlHavingClause();
-    }
-
-    public function orderBy(): OrderByClauseStrategy
-    {
-        return new MysqlOrderByClause();
-    }
-
-    public function groupBy(): GroupByClauseStrategy
-    {
-        return new MysqlGroupByClause();
-    }
-
-    public function limit(): LimitClauseStrategy
-    {
-        return new MysqlLimitClause();
-    }
-
-    public static function quoteLike(string $value, string $escape = '\\'): string
-    {
-        return MysqlDriverUtils::quoteLike($value, $escape);
-    }
-
-    public static function concat(array $values, string $delimiter = ''): string
-    {
-        return MysqlDriverUtils::concat($values, $delimiter);
+        return $this->exec('TRUNCATE ' . $tableName);
     }
 
     /*

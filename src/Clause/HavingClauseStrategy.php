@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-interface HavingClauseStrategy extends ClauseStrategy, HavingClauseTraitStrategy
+interface HavingClauseStrategy extends HavingClauseTraitStrategy
 {
     /**
      * @param bool $useClause

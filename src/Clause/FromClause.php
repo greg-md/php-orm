@@ -2,11 +2,11 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class FromClause implements FromClauseStrategy
+class FromClause extends SqlAbstract implements FromClauseStrategy
 {
-    use FromClauseTrait, WhenTrait;
+    use FromClauseTrait;
 
     /**
      * @param bool $useClause

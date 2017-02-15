@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\DialectStrategy;
 use Greg\Orm\QueryException;
 
 trait OrderByClauseTrait
@@ -29,7 +30,7 @@ trait OrderByClauseTrait
             }
         }
 
-        $this->orderByLogic($this->quoteNameSql($column), $type);
+        $this->orderByLogic($this->dialect()->quoteName($column), $type);
 
         return $this;
     }
@@ -66,7 +67,7 @@ trait OrderByClauseTrait
      */
     public function orderByRaw(string $sql, string ...$params)
     {
-        $this->orderByLogic($this->quoteSql($sql), null, $params);
+        $this->orderByLogic($this->dialect()->quoteSql($sql), null, $params);
 
         return $this;
     }
@@ -141,17 +142,5 @@ trait OrderByClauseTrait
         return $this->orderByToSql()[0];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    abstract protected function quoteNameSql(string $name): string;
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteSql(string $sql): string;
+    abstract public function dialect(): DialectStrategy;
 }

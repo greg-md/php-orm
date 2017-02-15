@@ -2,65 +2,15 @@
 
 namespace Greg\Orm\Tests\Driver\Mysql\Clause;
 
-use Greg\Orm\Driver\Mysql\Clause\MysqlGroupByClause;
-use PHPUnit\Framework\TestCase;
+use Greg\Orm\Clause\GroupByClause;
+use Greg\Orm\Clause\GroupByClauseStrategy;
+use Greg\Orm\Driver\Mysql\MysqlDialect;
+use Greg\Orm\Tests\Clause\GroupByClauseAbstract;
 
-class MysqlGroupByClauseTest extends TestCase
+class MysqlGroupByClauseTest extends GroupByClauseAbstract
 {
-    public function testCanGroupBy()
+    protected function newClause(): GroupByClauseStrategy
     {
-        $query = $this->newGroupBy()->groupBy('Foo');
-
-        $this->assertEquals('GROUP BY `Foo`', $query->toString());
-    }
-
-    public function testCanGroupByRaw()
-    {
-        $query = $this->newGroupBy()->groupByRaw('`Foo`');
-
-        $this->assertEquals('GROUP BY `Foo`', $query->toString());
-    }
-
-    public function testCanDetermineIfExists()
-    {
-        $query = $this->newGroupBy();
-
-        $this->assertFalse($query->hasGroupBy());
-
-        $query->groupBy('Foo');
-
-        $this->assertTrue($query->hasGroupBy());
-    }
-
-    public function testCanGet()
-    {
-        $query = $this->newGroupBy();
-
-        $query->groupBy('Foo');
-
-        $this->assertCount(1, $query->getGroupBy());
-    }
-
-    public function testCanClear()
-    {
-        $query = $this->newGroupBy();
-
-        $query->groupBy('Foo');
-
-        $query->clearGroupBy();
-
-        $this->assertEquals(['', []], $query->toSql());
-    }
-
-    public function testCanTransformToString()
-    {
-        $query = $this->newGroupBy()->groupBy('Foo');
-
-        $this->assertEquals('GROUP BY `Foo`', (string) $query);
-    }
-
-    protected function newGroupBy()
-    {
-        return new MysqlGroupByClause();
+        return new GroupByClause(new MysqlDialect());
     }
 }

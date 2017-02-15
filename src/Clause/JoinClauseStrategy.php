@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-interface JoinClauseStrategy extends ClauseStrategy, JoinClauseTraitStrategy
+interface JoinClauseStrategy extends JoinClauseTraitStrategy
 {
     /**
      * @param string|null $source

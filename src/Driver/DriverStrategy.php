@@ -9,6 +9,7 @@ use Greg\Orm\Clause\JoinClauseStrategy;
 use Greg\Orm\Clause\LimitClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\WhereClauseStrategy;
+use Greg\Orm\DialectStrategy;
 use Greg\Orm\Query\DeleteQueryStrategy;
 use Greg\Orm\Query\InsertQueryStrategy;
 use Greg\Orm\Query\SelectQueryStrategy;
@@ -16,8 +17,6 @@ use Greg\Orm\Query\UpdateQueryStrategy;
 
 interface DriverStrategy
 {
-    public function connection();
-
     public function transaction(callable $callable);
 
     public function inTransaction(): bool;
@@ -42,6 +41,8 @@ interface DriverStrategy
 
     public function fire(string $sql);
 
+    public function dialect(): DialectStrategy;
+
     public function truncate(string $tableName);
 
     public function select(): SelectQueryStrategy;
@@ -65,8 +66,4 @@ interface DriverStrategy
     public function groupBy(): GroupByClauseStrategy;
 
     public function limit(): LimitClauseStrategy;
-
-    public static function quoteLike(string $value, string $escape = '\\'): string;
-
-    public static function concat(array $values, string $delimiter = ''): string;
 }

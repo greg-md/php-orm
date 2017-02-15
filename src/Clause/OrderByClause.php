@@ -2,11 +2,11 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 
-abstract class OrderByClause implements OrderByClauseStrategy
+class OrderByClause extends SqlAbstract implements OrderByClauseStrategy
 {
-    use OrderByClauseTrait, WhenTrait;
+    use OrderByClauseTrait;
 
     /**
      * @return array

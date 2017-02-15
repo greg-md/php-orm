@@ -23,12 +23,33 @@ interface UpdateQueryStrategy extends
     public function table($table, ...$tables);
 
     /**
+     * @return bool
+     */
+    public function hasTables(): bool;
+
+    /**
+     * @return array
+     */
+    public function getTables(): array;
+
+    /**
+     * @return $this
+     */
+    public function clearTables();
+
+    /**
      * @param string $column
      * @param string $value
      *
      * @return $this
      */
     public function set(string $column, string $value);
+
+    /**
+     * @param array $columns
+     * @return $this
+     */
+    public function setMultiple(array $columns);
 
     /**
      * @param string    $raw
@@ -53,4 +74,19 @@ interface UpdateQueryStrategy extends
      * @return $this
      */
     public function decrement(string $column, int $value = 1);
+
+    /**
+     * @return bool
+     */
+    public function hasSet(): bool;
+
+    /**
+     * @return array
+     */
+    public function getSet(): array;
+
+    /**
+     * @return $this
+     */
+    public function clearSet();
 }

@@ -2,12 +2,16 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\Conditions;
+use Greg\Orm\ConditionsStrategy;
+use Greg\Orm\DialectStrategy;
+
 trait HavingClauseTrait
 {
     /**
      * @var ConditionsStrategy|null
      */
-    private $havingConditions;
+    private $havingStrategy;
 
     /**
      * @param $column
@@ -18,7 +22,7 @@ trait HavingClauseTrait
      */
     public function having($column, $operator, $value = null)
     {
-        $this->havingConditions()->column(...func_get_args());
+        $this->havingStrategy()->column(...func_get_args());
 
         return $this;
     }
@@ -32,7 +36,7 @@ trait HavingClauseTrait
      */
     public function orHaving($column, $operator, $value = null)
     {
-        $this->havingConditions()->orColumn(...func_get_args());
+        $this->havingStrategy()->orColumn(...func_get_args());
 
         return $this;
     }
@@ -44,7 +48,7 @@ trait HavingClauseTrait
      */
     public function havingMultiple(array $columns)
     {
-        $this->havingConditions()->columns(...func_get_args());
+        $this->havingStrategy()->columns(...func_get_args());
 
         return $this;
     }
@@ -56,7 +60,7 @@ trait HavingClauseTrait
      */
     public function orHavingMultiple(array $columns)
     {
-        $this->havingConditions()->orColumns(...func_get_args());
+        $this->havingStrategy()->orColumns(...func_get_args());
 
         return $this;
     }
@@ -70,7 +74,7 @@ trait HavingClauseTrait
      */
     public function havingDate($column, $operator, $value = null)
     {
-        $this->havingConditions()->date(...func_get_args());
+        $this->havingStrategy()->date(...func_get_args());
 
         return $this;
     }
@@ -84,7 +88,7 @@ trait HavingClauseTrait
      */
     public function orHavingDate($column, $operator, $value = null)
     {
-        $this->havingConditions()->orDate(...func_get_args());
+        $this->havingStrategy()->orDate(...func_get_args());
 
         return $this;
     }
@@ -98,7 +102,7 @@ trait HavingClauseTrait
      */
     public function havingTime($column, $operator, $value = null)
     {
-        $this->havingConditions()->time(...func_get_args());
+        $this->havingStrategy()->time(...func_get_args());
 
         return $this;
     }
@@ -112,7 +116,7 @@ trait HavingClauseTrait
      */
     public function orHavingTime($column, $operator, $value = null)
     {
-        $this->havingConditions()->orTime(...func_get_args());
+        $this->havingStrategy()->orTime(...func_get_args());
 
         return $this;
     }
@@ -126,7 +130,7 @@ trait HavingClauseTrait
      */
     public function havingYear($column, $operator, $value = null)
     {
-        $this->havingConditions()->year(...func_get_args());
+        $this->havingStrategy()->year(...func_get_args());
 
         return $this;
     }
@@ -140,7 +144,7 @@ trait HavingClauseTrait
      */
     public function orHavingYear($column, $operator, $value = null)
     {
-        $this->havingConditions()->orYear(...func_get_args());
+        $this->havingStrategy()->orYear(...func_get_args());
 
         return $this;
     }
@@ -154,7 +158,7 @@ trait HavingClauseTrait
      */
     public function havingMonth($column, $operator, $value = null)
     {
-        $this->havingConditions()->month(...func_get_args());
+        $this->havingStrategy()->month(...func_get_args());
 
         return $this;
     }
@@ -168,7 +172,7 @@ trait HavingClauseTrait
      */
     public function orHavingMonth($column, $operator, $value = null)
     {
-        $this->havingConditions()->orMonth(...func_get_args());
+        $this->havingStrategy()->orMonth(...func_get_args());
 
         return $this;
     }
@@ -182,7 +186,7 @@ trait HavingClauseTrait
      */
     public function havingDay($column, $operator, $value = null)
     {
-        $this->havingConditions()->day(...func_get_args());
+        $this->havingStrategy()->day(...func_get_args());
 
         return $this;
     }
@@ -196,7 +200,7 @@ trait HavingClauseTrait
      */
     public function orHavingDay($column, $operator, $value = null)
     {
-        $this->havingConditions()->orDay(...func_get_args());
+        $this->havingStrategy()->orDay(...func_get_args());
 
         return $this;
     }
@@ -210,7 +214,7 @@ trait HavingClauseTrait
      */
     public function havingRelation($column1, $operator, $column2 = null)
     {
-        $this->havingConditions()->relation(...func_get_args());
+        $this->havingStrategy()->relation(...func_get_args());
 
         return $this;
     }
@@ -224,7 +228,7 @@ trait HavingClauseTrait
      */
     public function orHavingRelation($column1, $operator, $column2 = null)
     {
-        $this->havingConditions()->orRelation(...func_get_args());
+        $this->havingStrategy()->orRelation(...func_get_args());
 
         return $this;
     }
@@ -236,7 +240,7 @@ trait HavingClauseTrait
      */
     public function havingRelations(array $relations)
     {
-        $this->havingConditions()->relations(...func_get_args());
+        $this->havingStrategy()->relations(...func_get_args());
 
         return $this;
     }
@@ -248,7 +252,7 @@ trait HavingClauseTrait
      */
     public function orHavingRelations(array $relations)
     {
-        $this->havingConditions()->orRelations(...func_get_args());
+        $this->havingStrategy()->orRelations(...func_get_args());
 
         return $this;
     }
@@ -260,7 +264,7 @@ trait HavingClauseTrait
      */
     public function havingIsNull(string $column)
     {
-        $this->havingConditions()->isNull(...func_get_args());
+        $this->havingStrategy()->isNull(...func_get_args());
 
         return $this;
     }
@@ -272,7 +276,7 @@ trait HavingClauseTrait
      */
     public function orHavingIsNull(string $column)
     {
-        $this->havingConditions()->orIsNull(...func_get_args());
+        $this->havingStrategy()->orIsNull(...func_get_args());
 
         return $this;
     }
@@ -284,7 +288,7 @@ trait HavingClauseTrait
      */
     public function havingIsNotNull(string $column)
     {
-        $this->havingConditions()->isNotNull(...func_get_args());
+        $this->havingStrategy()->isNotNull(...func_get_args());
 
         return $this;
     }
@@ -296,7 +300,7 @@ trait HavingClauseTrait
      */
     public function orHavingIsNotNull(string $column)
     {
-        $this->havingConditions()->orIsNotNull(...func_get_args());
+        $this->havingStrategy()->orIsNotNull(...func_get_args());
 
         return $this;
     }
@@ -310,7 +314,7 @@ trait HavingClauseTrait
      */
     public function havingBetween(string $column, int $min, int $max)
     {
-        $this->havingConditions()->between(...func_get_args());
+        $this->havingStrategy()->between(...func_get_args());
 
         return $this;
     }
@@ -324,7 +328,7 @@ trait HavingClauseTrait
      */
     public function orHavingBetween(string $column, int $min, int $max)
     {
-        $this->havingConditions()->orBetween(...func_get_args());
+        $this->havingStrategy()->orBetween(...func_get_args());
 
         return $this;
     }
@@ -338,7 +342,7 @@ trait HavingClauseTrait
      */
     public function havingNotBetween(string $column, int $min, int $max)
     {
-        $this->havingConditions()->notBetween(...func_get_args());
+        $this->havingStrategy()->notBetween(...func_get_args());
 
         return $this;
     }
@@ -352,7 +356,7 @@ trait HavingClauseTrait
      */
     public function orHavingNotBetween(string $column, int $min, int $max)
     {
-        $this->havingConditions()->orNotBetween(...func_get_args());
+        $this->havingStrategy()->orNotBetween(...func_get_args());
 
         return $this;
     }
@@ -364,7 +368,7 @@ trait HavingClauseTrait
      */
     public function havingGroup(callable $callable)
     {
-        $this->havingConditions()->group($callable);
+        $this->havingStrategy()->group($callable);
 
         return $this;
     }
@@ -376,7 +380,7 @@ trait HavingClauseTrait
      */
     public function orHavingGroup(callable $callable)
     {
-        $this->havingConditions()->orGroup($callable);
+        $this->havingStrategy()->orGroup($callable);
 
         return $this;
     }
@@ -386,9 +390,9 @@ trait HavingClauseTrait
      *
      * @return $this
      */
-    public function havingCondition(ConditionsStrategy $strategy)
+    public function havingConditions(ConditionsStrategy $strategy)
     {
-        $this->havingConditions()->condition($strategy);
+        $this->havingStrategy()->conditions($strategy);
 
         return $this;
     }
@@ -398,9 +402,9 @@ trait HavingClauseTrait
      *
      * @return $this
      */
-    public function orHavingCondition(ConditionsStrategy $strategy)
+    public function orHavingConditions(ConditionsStrategy $strategy)
     {
-        $this->havingConditions()->orCondition($strategy);
+        $this->havingStrategy()->orConditions($strategy);
 
         return $this;
     }
@@ -413,7 +417,7 @@ trait HavingClauseTrait
      */
     public function havingRaw(string $sql, string ...$params)
     {
-        $this->havingConditions()->raw($sql, ...$params);
+        $this->havingStrategy()->raw($sql, ...$params);
 
         return $this;
     }
@@ -426,7 +430,7 @@ trait HavingClauseTrait
      */
     public function orHavingRaw(string $sql, string ...$params)
     {
-        $this->havingConditions()->orRaw($sql, ...$params);
+        $this->havingStrategy()->orRaw($sql, ...$params);
 
         return $this;
     }
@@ -440,7 +444,7 @@ trait HavingClauseTrait
      */
     public function havingLogic(string $type, $sql, array $params = [])
     {
-        $this->havingConditions()->logic($type, $sql, $params);
+        $this->havingStrategy()->logic($type, $sql, $params);
 
         return $this;
     }
@@ -450,7 +454,7 @@ trait HavingClauseTrait
      */
     public function hasHaving(): bool
     {
-        return $this->havingConditions()->has();
+        return $this->havingStrategy()->has();
     }
 
     /**
@@ -458,7 +462,7 @@ trait HavingClauseTrait
      */
     public function getHaving(): array
     {
-        return $this->havingConditions()->get();
+        return $this->havingStrategy()->get();
     }
 
     /**
@@ -466,7 +470,7 @@ trait HavingClauseTrait
      */
     public function clearHaving()
     {
-        $this->havingConditions()->clear();
+        $this->havingStrategy()->clear();
 
         return $this;
     }
@@ -474,13 +478,13 @@ trait HavingClauseTrait
     /**
      * @return ConditionsStrategy
      */
-    protected function havingConditions(): ConditionsStrategy
+    protected function havingStrategy(): ConditionsStrategy
     {
-        if (!$this->havingConditions) {
-            $this->havingConditions = $this->newHavingConditions();
+        if (!$this->havingStrategy) {
+            $this->havingStrategy = new Conditions($this->dialect());
         }
 
-        return $this->havingConditions;
+        return $this->havingStrategy;
     }
 
     /**
@@ -490,7 +494,7 @@ trait HavingClauseTrait
      */
     protected function havingToSql($useClause = true): array
     {
-        [$sql, $params] = $this->havingConditions()->toSql();
+        [$sql, $params] = $this->havingStrategy()->toSql();
 
         if ($sql and $useClause) {
             $sql = 'HAVING ' . $sql;
@@ -509,8 +513,5 @@ trait HavingClauseTrait
         return $this->havingToSql($useClause)[0];
     }
 
-    /**
-     * @return ConditionsStrategy
-     */
-    abstract protected function newHavingConditions(): ConditionsStrategy;
+    abstract public function dialect(): DialectStrategy;
 }

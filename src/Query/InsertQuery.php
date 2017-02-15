@@ -3,13 +3,11 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\QueryException;
-use Greg\Orm\WhenTrait;
+use Greg\Orm\SqlAbstract;
 use Greg\Support\Arr;
 
-abstract class InsertQuery implements InsertQueryStrategy
+class InsertQuery extends SqlAbstract implements InsertQueryStrategy
 {
-    use WhenTrait;
-
     /**
      * @var string
      */
@@ -37,7 +35,7 @@ abstract class InsertQuery implements InsertQueryStrategy
      */
     public function into(string $table)
     {
-        $this->into = $this->quoteTableSql($table);
+        $this->into = $this->dialect()->quoteTable($table);
 
         return $this;
     }
@@ -78,7 +76,7 @@ abstract class InsertQuery implements InsertQueryStrategy
         $columns = array_combine($columns, $columns);
 
         foreach ($columns as &$column) {
-            $column = $this->quoteTableSql($column);
+            $column = $this->dialect()->quoteTable($column);
         }
         unset($column);
 
@@ -282,7 +280,7 @@ abstract class InsertQuery implements InsertQueryStrategy
                 $values[] = Arr::get($this->values, $key);
             }
 
-            $sql[] = 'VALUES ' . $this->prepareForBind($values);
+            $sql[] = 'VALUES ' . $this->dialect()->prepareBindKeys($values);
 
             $params = array_merge($params, $values);
         }
@@ -345,26 +343,4 @@ abstract class InsertQuery implements InsertQueryStrategy
 
         return $select;
     }
-
-    /**
-     * @param $name
-     *
-     * @return array
-     */
-    abstract protected function parseAlias($name): array;
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    abstract protected function quoteTableSql(string $sql): string;
-
-    /**
-     * @param $value
-     * @param int|null $rowLength
-     *
-     * @return string
-     */
-    abstract protected function prepareForBind($value, int $rowLength = null): string;
 }
