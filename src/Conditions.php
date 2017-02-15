@@ -878,6 +878,13 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
         return $this;
     }
 
+    /**
+     * @param array $columns
+     * @param null|string $operator
+     * @param array $values
+     * @return $this
+     * @throws QueryException
+     */
     protected function prepareRowLogic(array &$columns, ?string &$operator, array &$values)
     {
         $values = array_values($values);
@@ -896,6 +903,11 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
         return $this;
     }
 
+    /**
+     * @param string $column
+     * @param callable|null $columnCallable
+     * @return string
+     */
     protected function prepareColumn(string $column, callable $columnCallable = null): string
     {
         $column = $this->dialect()->quoteName($column);
@@ -907,6 +919,13 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
         return $column;
     }
 
+    /**
+     * @param null|string $operator
+     * @param $value
+     * @param int $key
+     * @return string
+     * @throws QueryException
+     */
     protected function prepareRowOperator(?string $operator, $value, int $key): string
     {
         if (!$operator) {
@@ -928,6 +947,12 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
         return $operator;
     }
 
+    /**
+     * @param null|string $operator
+     * @param $value
+     * @return string
+     * @throws QueryException
+     */
     protected function prepareOperator(?string $operator, $value): string
     {
         $operator = strtoupper($operator);
@@ -981,6 +1006,11 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
         return '(' . implode(', ', $columns) . ')';
     }
 
+    /**
+     * @param $values
+     * @param callable|null $valueCallable
+     * @return array|string
+     */
     protected function prepareValues($values, callable $valueCallable = null)
     {
         if (is_array($values)) {

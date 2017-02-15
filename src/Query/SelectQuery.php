@@ -40,6 +40,9 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
      */
     private $unions = [];
 
+    /**
+     * @var string
+     */
     private $lock;
 
     /**
@@ -377,6 +380,9 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function lockForUpdate()
     {
         $this->lock = self::LOCK_FOR_UPDATE;
@@ -384,6 +390,9 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function lockInShareMode()
     {
         $this->lock = self::LOCK_IN_SHARE_MORE;

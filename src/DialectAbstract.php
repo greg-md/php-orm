@@ -6,10 +6,20 @@ use Greg\Support\Str;
 
 abstract class DialectAbstract implements DialectStrategy
 {
+    /**
+     * @var string
+     */
     protected static $quoteNameWith = '`';
 
+    /**
+     * @var string
+     */
     protected static $nameRegex = '[a-z0-9_\.\*]+';
 
+    /**
+     * @param string $name
+     * @return string
+     */
     public static function quoteTable(string $name): string
     {
         if (preg_match('#^(' . static::$nameRegex . ')$#i', $name)) {
@@ -19,6 +29,10 @@ abstract class DialectAbstract implements DialectStrategy
         return static::quoteSql($name);
     }
 
+    /**
+     * @param string $name
+     * @return string
+     */
     public static function quoteName(string $name): string
     {
         $sql = explode('.', $name);
@@ -32,6 +46,10 @@ abstract class DialectAbstract implements DialectStrategy
         return $sql;
     }
 
+    /**
+     * @param string $sql
+     * @return string
+     */
     public static function quoteSql(string $sql): string
     {
         $sql = preg_replace_callback('#".*\!' . static::$nameRegex . '.*"|\!(' . static::$nameRegex . ')#i', function ($matches) {
@@ -41,6 +59,11 @@ abstract class DialectAbstract implements DialectStrategy
         return $sql;
     }
 
+    /**
+     * @param $value
+     * @param int|null $rowLength
+     * @return string
+     */
     public static function prepareBindKeys($value, int $rowLength = null): string
     {
         if (is_array($value)) {
@@ -56,16 +79,30 @@ abstract class DialectAbstract implements DialectStrategy
         return '?';
     }
 
+    /**
+     * @param string $sql
+     * @param int $limit
+     * @return string
+     */
     public static function addLimitToSql(string $sql, int $limit): string
     {
         return $sql . ' LIMIT ' . $limit;
     }
 
+    /**
+     * @param string $sql
+     * @param int $limit
+     * @return string
+     */
     public static function addOffsetToSql(string $sql, int $limit): string
     {
         return $sql . ' LIMIT ' . $limit;
     }
 
+    /**
+     * @param $table
+     * @return array
+     */
     public static function parseTable($table): array
     {
         if ($table instanceof TableTraitInterface) {
