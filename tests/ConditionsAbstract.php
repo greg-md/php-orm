@@ -444,7 +444,7 @@ abstract class ConditionsAbstract extends TestCase
      */
     public function testCanSetOrDate($args)
     {
-        /** @var ConditionsStrategy $query */
+        /* @var ConditionsStrategy $query */
         [$query, $date] = $args;
 
         $query->{$this->method('orDate')}('Bar', $date);

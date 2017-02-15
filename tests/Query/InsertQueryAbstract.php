@@ -217,6 +217,6 @@ abstract class InsertQueryAbstract extends TestCase
     }
 
     abstract protected function newQuery(): InsertQueryStrategy;
-    
+
     abstract protected function newSelectQuery(): SelectQueryStrategy;
 }

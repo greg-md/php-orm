@@ -538,7 +538,7 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
      */
     public function group(callable $callable)
     {
-        $conditions = new Conditions($this->dialect());
+        $conditions = new self($this->dialect());
 
         call_user_func_array($callable, [$conditions]);
 
@@ -554,7 +554,7 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
      */
     public function orGroup(callable $callable)
     {
-        $conditions = new Conditions($this->dialect());
+        $conditions = new self($this->dialect());
 
         call_user_func_array($callable, [$conditions]);
 

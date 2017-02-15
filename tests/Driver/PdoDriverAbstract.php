@@ -62,7 +62,7 @@ class PdoDriverAbstract extends DriverAbstract
     {
         $used = false;
 
-        $this->db->onInit(function() use (&$used) {
+        $this->db->onInit(function () use (&$used) {
             $used = true;
         });
 
@@ -140,14 +140,13 @@ class PdoDriverAbstract extends DriverAbstract
         $this->assertEquals(1, $this->db->truncate('Table'));
     }
 
-
     public function testCanListenQueries()
     {
         $this->mockStatements();
 
         $called = false;
 
-        $this->db->listen(function() use (&$called) {
+        $this->db->listen(function () use (&$called) {
             $called = true;
         });
 
@@ -171,7 +170,7 @@ class PdoDriverAbstract extends DriverAbstract
 
         $inTransaction = false;
 
-        $this->db->transaction(function(DriverStrategy $db) use (&$inTransaction) {
+        $this->db->transaction(function (DriverStrategy $db) use (&$inTransaction) {
             $inTransaction = $db->inTransaction();
         });
 
@@ -207,7 +206,7 @@ class PdoDriverAbstract extends DriverAbstract
     {
         $pdoTransaction = false;
 
-        $this->pdoMock->method('beginTransaction')->will($this->returnCallback(function() use (&$pdoTransaction) {
+        $this->pdoMock->method('beginTransaction')->will($this->returnCallback(function () use (&$pdoTransaction) {
             if ($pdoTransaction) {
                 throw new \Exception('Transaction already initialised');
             }
@@ -217,11 +216,11 @@ class PdoDriverAbstract extends DriverAbstract
             return true;
         }));
 
-        $this->pdoMock->method('inTransaction')->will($this->returnCallback(function() use (&$pdoTransaction) {
+        $this->pdoMock->method('inTransaction')->will($this->returnCallback(function () use (&$pdoTransaction) {
             return $pdoTransaction;
         }));
 
-        $this->pdoMock->method('commit')->will($this->returnCallback(function() use (&$pdoTransaction) {
+        $this->pdoMock->method('commit')->will($this->returnCallback(function () use (&$pdoTransaction) {
             if (!$pdoTransaction) {
                 throw new \Exception('Transaction is not initialised');
             }
@@ -231,7 +230,7 @@ class PdoDriverAbstract extends DriverAbstract
             return true;
         }));
 
-        $this->pdoMock->method('rollback')->will($this->returnCallback(function() use (&$pdoTransaction) {
+        $this->pdoMock->method('rollback')->will($this->returnCallback(function () use (&$pdoTransaction) {
             if (!$pdoTransaction) {
                 throw new \Exception('Transaction is not initialised');
             }

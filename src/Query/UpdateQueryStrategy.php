@@ -47,6 +47,7 @@ interface UpdateQueryStrategy extends
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function setMultiple(array $columns);

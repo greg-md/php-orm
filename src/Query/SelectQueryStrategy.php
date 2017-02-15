@@ -216,5 +216,4 @@ interface SelectQueryStrategy extends
      * @return $this
      */
     public function clearLock();
-
 }

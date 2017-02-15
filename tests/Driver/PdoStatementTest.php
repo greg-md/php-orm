@@ -36,11 +36,11 @@ class PdoStatementTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PDOStatement $pdoStatement */
+        /* @var \PDOStatement $pdoStatement */
         $this->pdoStatementMock = $pdoStatement = $this->getMockBuilder(\PDOStatement::class)
             ->getMock();
 
-        /** @var PdoDriverStrategy $driver */
+        /* @var PdoDriverStrategy $driver */
         $this->driver = $driver = $this->getMockBuilder(PdoDriverStrategy::class)
             ->disableOriginalConstructor()
             ->getMock();
