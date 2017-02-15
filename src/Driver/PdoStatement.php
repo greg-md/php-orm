@@ -7,10 +7,20 @@ use Greg\Support\Str;
 
 class PdoStatement implements StatementStrategy
 {
-    protected $stmt = null;
+    /**
+     * @var \PDOStatement
+     */
+    private $stmt;
 
-    protected $driver = null;
+    /**
+     * @var PdoDriverStrategy
+     */
+    private $driver;
 
+    /**
+     * @param \PDOStatement $stmt
+     * @param PdoDriverStrategy $driver
+     */
     public function __construct(\PDOStatement $stmt, PdoDriverStrategy $driver)
     {
         $this->stmt = $stmt;
@@ -18,11 +28,22 @@ class PdoStatement implements StatementStrategy
         $this->driver = $driver;
     }
 
-    public function bindParam($key, $value)
+    /**
+     * @param string $key
+     * @param string $value
+     * @return $this
+     */
+    public function bindParam(string $key, string $value)
     {
-        return $this->stmt->bindValue($key, $value);
+        $this->stmt->bindValue($key, $value);
+
+        return $this;
     }
 
+    /**
+     * @param array $params
+     * @return $this
+     */
     public function bindParams(array $params)
     {
         $k = 1;
@@ -37,25 +58,34 @@ class PdoStatement implements StatementStrategy
     /**
      * @param array $params
      *
-     * @return mixed
+     * @return bool
      */
-    public function execute(array $params = [])
+    public function execute(array $params = []): bool
     {
         $this->driver->fire((string) $this->stmt->queryString);
 
         return $this->tryStatement(__FUNCTION__, func_get_args());
     }
 
+    /**
+     * @return string[]
+     */
     public function fetch()
     {
         return $this->stmt->fetch();
     }
 
+    /**
+     * @return string[][]
+     */
     public function fetchAll()
     {
         return $this->stmt->fetchAll();
     }
 
+    /**
+     * @return \Generator
+     */
     public function fetchYield()
     {
         while ($record = $this->stmt->fetch()) {
@@ -63,16 +93,25 @@ class PdoStatement implements StatementStrategy
         }
     }
 
+    /**
+     * @return string[]
+     */
     public function fetchAssoc()
     {
         return $this->stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @return string[][]
+     */
     public function fetchAssocAll()
     {
         return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @return \Generator
+     */
     public function fetchAssocYield()
     {
         while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -80,7 +119,11 @@ class PdoStatement implements StatementStrategy
         }
     }
 
-    public function fetchColumn($column = 0)
+    /**
+     * @param string $column
+     * @return string
+     */
+    public function fetchColumn(string $column = '0')
     {
         if (Str::isDigit($column)) {
             return $this->stmt->fetchColumn($column);
@@ -91,19 +134,33 @@ class PdoStatement implements StatementStrategy
         return $row ? Arr::get($row, $column) : null;
     }
 
-    public function fetchColumnAll($column = 0)
+    /**
+     * @param string $column
+     * @return string[]
+     */
+    public function fetchColumnAll(string $column = '0')
     {
         return array_column($this->fetchAll(), $column);
     }
 
-    public function fetchPairs($key = 0, $value = 1)
+    /**
+     * @param string $key
+     * @param string $value
+     * @return string[]
+     */
+    public function fetchPairs(string $key = '0', string $value = '1')
     {
         $all = $this->fetchAll();
 
         return Arr::pairs($all, $key, $value);
     }
 
-    protected function tryStatement($method, array $args = [])
+    /**
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    protected function tryStatement(string $method, array $args = [])
     {
         try {
             return $this->callStatement($method, $args);
@@ -117,7 +174,12 @@ class PdoStatement implements StatementStrategy
         }
     }
 
-    protected function callStatement($method, array $args = [])
+    /**
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    protected function callStatement(string $method, array $args = [])
     {
         $result = call_user_func_array([$this->stmt, $method], $args);
 

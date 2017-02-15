@@ -142,5 +142,8 @@ trait OrderByClauseTrait
         return $this->orderByToSql()[0];
     }
 
+    /**
+     * @return DialectStrategy
+     */
     abstract public function dialect(): DialectStrategy;
 }

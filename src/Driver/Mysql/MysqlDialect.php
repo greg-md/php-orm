@@ -6,11 +6,19 @@ use Greg\Orm\DialectAbstract;
 
 class MysqlDialect extends DialectAbstract
 {
+    /**
+     * @param string $sql
+     * @return string
+     */
     public static function lockForUpdateSql(string $sql): string
     {
         return $sql . ' FOR UPDATE';
     }
 
+    /**
+     * @param string $sql
+     * @return string
+     */
     public static function lockInShareMode(string $sql): string
     {
         return $sql . ' LOCK IN SHARE MODE';

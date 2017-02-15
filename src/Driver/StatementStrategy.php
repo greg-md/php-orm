@@ -4,38 +4,72 @@ namespace Greg\Orm\Driver;
 
 interface StatementStrategy
 {
-    public function bindParams(array $params);
+    /**
+     * @param string $key
+     * @param string $value
+     * @return $this
+     */
+    public function bindParam(string $key, string $value);
 
     /**
-     * @param $key
-     * @param $value
-     *
-     * @return mixed
+     * @param array $params
+     * @return $this
      */
-    public function bindParam($key, $value);
+    public function bindParams(array $params);
 
     /**
      * @param array $params
      *
-     * @return mixed
+     * @return bool
      */
-    public function execute(array $params = []);
+    public function execute(array $params = []): bool;
 
+    /**
+     * @return string[]
+     */
     public function fetch();
 
+    /**
+     * @return string[][]
+     */
     public function fetchAll();
 
+    /**
+     * @return \Generator
+     */
     public function fetchYield();
 
+    /**
+     * @return string[]
+     */
     public function fetchAssoc();
 
+    /**
+     * @return string[][]
+     */
     public function fetchAssocAll();
 
+    /**
+     * @return \Generator
+     */
     public function fetchAssocYield();
 
-    public function fetchColumn($column = 0);
+    /**
+     * @param string $column
+     * @return string
+     */
+    public function fetchColumn(string $column = '0');
 
-    public function fetchColumnAll($column = 0);
+    /**
+     * @param string $column
+     * @return string[]
+     */
+    public function fetchColumnAll(string $column = '0');
 
-    public function fetchPairs($key = 0, $value = 1);
+    /**
+     * @param string $key
+     * @param string $value
+     * @return string[]
+     */
+    public function fetchPairs(string $key = '0', string $value = '1');
 }

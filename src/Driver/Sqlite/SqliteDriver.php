@@ -12,6 +12,9 @@ class SqliteDriver extends PdoDriverAbstract
      */
     private $dialect;
 
+    /**
+     * @return DialectStrategy
+     */
     public function dialect(): DialectStrategy
     {
         if (!$this->dialect) {
@@ -21,6 +24,10 @@ class SqliteDriver extends PdoDriverAbstract
         return $this->dialect;
     }
 
+    /**
+     * @param string $tableName
+     * @return int
+     */
     public function truncate(string $tableName)
     {
         return $this->exec('TRUNCATE ' . $tableName);

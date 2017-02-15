@@ -4,6 +4,9 @@ namespace Greg\Orm\Driver;
 
 abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStrategy
 {
+    /**
+     * @var callable[]
+     */
     private $onInit = [];
 
     /**
@@ -16,6 +19,10 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
      */
     private $connection;
 
+    /**
+     * PdoDriverAbstract constructor.
+     * @param PdoConnectorStrategy $strategy
+     */
     public function __construct(PdoConnectorStrategy $strategy)
     {
         $this->connector = $strategy;
@@ -23,6 +30,9 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function connect()
     {
         $this->connection = $this->connector->connect();
@@ -40,6 +50,9 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this;
     }
 
+    /**
+     * @return \PDO
+     */
     public function connection(): \PDO
     {
         if (!$this->connection) {
@@ -49,6 +62,10 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this->connection;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function onInit(callable $callable)
     {
         $this->onInit[] = $callable;
@@ -56,6 +73,10 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function transaction(callable $callable)
     {
         $this->beginTransaction();
@@ -67,26 +88,42 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function inTransaction(): bool
     {
         return $this->connection()->inTransaction();
     }
 
+    /**
+     * @return bool
+     */
     public function beginTransaction(): bool
     {
         return $this->connection()->beginTransaction();
     }
 
+    /**
+     * @return bool
+     */
     public function commit(): bool
     {
         return $this->connection()->commit();
     }
 
+    /**
+     * @return bool
+     */
     public function rollBack(): bool
     {
         return $this->connection()->rollBack();
     }
 
+    /**
+     * @param string $sql
+     * @return StatementStrategy
+     */
     public function prepare(string $sql): StatementStrategy
     {
         $stmt = $this->tryConnection(__FUNCTION__, func_get_args());
@@ -94,6 +131,10 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this->newStatement($stmt);
     }
 
+    /**
+     * @param string $sql
+     * @return StatementStrategy
+     */
     public function query(string $sql): StatementStrategy
     {
         $this->fire($sql);
@@ -103,6 +144,10 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this->newStatement($stmt);
     }
 
+    /**
+     * @param string $sql
+     * @return int
+     */
     public function exec(string $sql): int
     {
         $this->fire($sql);
@@ -110,22 +155,39 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         return $this->tryConnection(__FUNCTION__, func_get_args());
     }
 
+    /**
+     * @param string|null $sequenceId
+     * @return string
+     */
     public function lastInsertId(string $sequenceId = null): string
     {
         return $this->connection()->lastInsertId(...func_get_args());
     }
 
+    /**
+     * @param string $value
+     * @return string
+     */
     public function quote(string $value): string
     {
         return $this->connection()->quote($value);
     }
 
+    /**
+     * @param \PDOStatement $stmt
+     * @return StatementStrategy
+     */
     protected function newStatement(\PDOStatement $stmt): StatementStrategy
     {
         return new PdoStatement($stmt, $this);
     }
 
-    protected function tryConnection($method, array $args = [])
+    /**
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    protected function tryConnection(string $method, array $args = [])
     {
         try {
             return $this->callConnection($method, $args);
@@ -141,7 +203,12 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         }
     }
 
-    protected function callConnection($method, array $args = [])
+    /**
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    protected function callConnection(string $method, array $args = [])
     {
         $result = call_user_func_array([$this->connection(), $method], $args);
 

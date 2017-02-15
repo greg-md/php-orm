@@ -104,5 +104,8 @@ trait GroupByClauseTrait
         return $this->groupByToSql()[0];
     }
 
+    /**
+     * @return DialectStrategy
+     */
     abstract public function dialect(): DialectStrategy;
 }

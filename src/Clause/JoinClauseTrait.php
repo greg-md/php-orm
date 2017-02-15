@@ -398,5 +398,8 @@ trait JoinClauseTrait
         return $join;
     }
 
+    /**
+     * @return DialectStrategy
+     */
     abstract public function dialect(): DialectStrategy;
 }

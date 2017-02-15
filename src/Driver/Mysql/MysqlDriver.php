@@ -14,6 +14,9 @@ class MysqlDriver extends PdoDriverAbstract
      */
     private $dialect;
 
+    /**
+     * @return DialectStrategy
+     */
     public function dialect(): DialectStrategy
     {
         if (!$this->dialect) {
@@ -23,6 +26,10 @@ class MysqlDriver extends PdoDriverAbstract
         return $this->dialect;
     }
 
+    /**
+     * @param string $tableName
+     * @return int
+     */
     public function truncate(string $tableName)
     {
         return $this->exec('TRUNCATE ' . $tableName);

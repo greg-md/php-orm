@@ -513,5 +513,8 @@ trait HavingClauseTrait
         return $this->havingToSql($useClause)[0];
     }
 
+    /**
+     * @return DialectStrategy
+     */
     abstract public function dialect(): DialectStrategy;
 }

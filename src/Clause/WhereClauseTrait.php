@@ -623,5 +623,8 @@ trait WhereClauseTrait
         return $exists;
     }
 
+    /**
+     * @return DialectStrategy
+     */
     abstract protected function dialect(): DialectStrategy;
 }

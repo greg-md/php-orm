@@ -27,8 +27,15 @@ use Greg\Orm\Query\UpdateQueryStrategy;
 
 abstract class DriverAbstract implements DriverStrategy
 {
-    protected $listeners = [];
+    /**
+     * @var callable[]
+     */
+    private $listeners = [];
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function listen(callable $callable)
     {
         $this->listeners[] = $callable;
@@ -36,6 +43,10 @@ abstract class DriverAbstract implements DriverStrategy
         return $this;
     }
 
+    /**
+     * @param string $sql
+     * @return $this
+     */
     public function fire(string $sql)
     {
         foreach ($this->listeners as $listener) {
@@ -45,56 +56,89 @@ abstract class DriverAbstract implements DriverStrategy
         return $this;
     }
 
+    /**
+     * @return SelectQueryStrategy
+     */
     public function select(): SelectQueryStrategy
     {
         return new SelectQuery($this->dialect());
     }
 
+    /**
+     * @return InsertQueryStrategy
+     */
     public function insert(): InsertQueryStrategy
     {
         return new InsertQuery($this->dialect());
     }
 
+    /**
+     * @return DeleteQueryStrategy
+     */
     public function delete(): DeleteQueryStrategy
     {
         return new DeleteQuery($this->dialect());
     }
 
+    /**
+     * @return UpdateQueryStrategy
+     */
     public function update(): UpdateQueryStrategy
     {
         return new UpdateQuery($this->dialect());
     }
 
+    /**
+     * @return FromClauseStrategy
+     */
     public function from(): FromClauseStrategy
     {
         return new FromClause($this->dialect());
     }
 
+    /**
+     * @return JoinClauseStrategy
+     */
     public function join(): JoinClauseStrategy
     {
         return new JoinClause($this->dialect());
     }
 
+    /**
+     * @return WhereClauseStrategy
+     */
     public function where(): WhereClauseStrategy
     {
         return new WhereClause($this->dialect());
     }
 
+    /**
+     * @return HavingClauseStrategy
+     */
     public function having(): HavingClauseStrategy
     {
         return new HavingClause($this->dialect());
     }
 
+    /**
+     * @return OrderByClauseStrategy
+     */
     public function orderBy(): OrderByClauseStrategy
     {
         return new OrderByClause($this->dialect());
     }
 
+    /**
+     * @return GroupByClauseStrategy
+     */
     public function groupBy(): GroupByClauseStrategy
     {
         return new GroupByClause($this->dialect());
     }
 
+    /**
+     * @return LimitClauseStrategy
+     */
     public function limit(): LimitClauseStrategy
     {
         return new LimitClause($this->dialect());
