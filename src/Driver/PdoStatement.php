@@ -18,7 +18,7 @@ class PdoStatement implements StatementStrategy
     private $driver;
 
     /**
-     * @param \PDOStatement $stmt
+     * @param \PDOStatement     $stmt
      * @param PdoDriverStrategy $driver
      */
     public function __construct(\PDOStatement $stmt, PdoDriverStrategy $driver)
@@ -31,6 +31,7 @@ class PdoStatement implements StatementStrategy
     /**
      * @param string $key
      * @param string $value
+     *
      * @return $this
      */
     public function bindParam(string $key, string $value)
@@ -42,6 +43,7 @@ class PdoStatement implements StatementStrategy
 
     /**
      * @param array $params
+     *
      * @return $this
      */
     public function bindParams(array $params)
@@ -121,6 +123,7 @@ class PdoStatement implements StatementStrategy
 
     /**
      * @param string $column
+     *
      * @return string
      */
     public function fetchColumn(string $column = '0')
@@ -136,6 +139,7 @@ class PdoStatement implements StatementStrategy
 
     /**
      * @param string $column
+     *
      * @return string[]
      */
     public function fetchColumnAll(string $column = '0')
@@ -146,6 +150,7 @@ class PdoStatement implements StatementStrategy
     /**
      * @param string $key
      * @param string $value
+     *
      * @return string[]
      */
     public function fetchPairs(string $key = '0', string $value = '1')
@@ -157,7 +162,8 @@ class PdoStatement implements StatementStrategy
 
     /**
      * @param string $method
-     * @param array $args
+     * @param array  $args
+     *
      * @return mixed
      */
     protected function tryStatement(string $method, array $args = [])
@@ -176,7 +182,8 @@ class PdoStatement implements StatementStrategy
 
     /**
      * @param string $method
-     * @param array $args
+     * @param array  $args
+     *
      * @return mixed
      */
     protected function callStatement(string $method, array $args = [])

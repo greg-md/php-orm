@@ -16,6 +16,7 @@ interface PdoDriverStrategy extends DriverStrategy
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function onInit(callable $callable);

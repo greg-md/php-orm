@@ -21,6 +21,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * PdoDriverAbstract constructor.
+     *
      * @param PdoConnectorStrategy $strategy
      */
     public function __construct(PdoConnectorStrategy $strategy)
@@ -64,6 +65,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function onInit(callable $callable)
@@ -75,6 +77,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function transaction(callable $callable)
@@ -122,6 +125,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param string $sql
+     *
      * @return StatementStrategy
      */
     public function prepare(string $sql): StatementStrategy
@@ -133,6 +137,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param string $sql
+     *
      * @return StatementStrategy
      */
     public function query(string $sql): StatementStrategy
@@ -146,6 +151,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param string $sql
+     *
      * @return int
      */
     public function exec(string $sql): int
@@ -157,6 +163,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param string|null $sequenceId
+     *
      * @return string
      */
     public function lastInsertId(string $sequenceId = null): string
@@ -166,6 +173,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param string $value
+     *
      * @return string
      */
     public function quote(string $value): string
@@ -175,6 +183,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param \PDOStatement $stmt
+     *
      * @return StatementStrategy
      */
     protected function newStatement(\PDOStatement $stmt): StatementStrategy
@@ -184,7 +193,8 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param string $method
-     * @param array $args
+     * @param array  $args
+     *
      * @return mixed
      */
     protected function tryConnection(string $method, array $args = [])
@@ -205,7 +215,8 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param string $method
-     * @param array $args
+     * @param array  $args
+     *
      * @return mixed
      */
     protected function callConnection(string $method, array $args = [])

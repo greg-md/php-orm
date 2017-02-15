@@ -34,6 +34,7 @@ abstract class DriverAbstract implements DriverStrategy
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function listen(callable $callable)
@@ -45,6 +46,7 @@ abstract class DriverAbstract implements DriverStrategy
 
     /**
      * @param string $sql
+     *
      * @return $this
      */
     public function fire(string $sql)

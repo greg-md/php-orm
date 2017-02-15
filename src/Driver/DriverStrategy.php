@@ -19,6 +19,7 @@ interface DriverStrategy
 {
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function transaction(callable $callable);
@@ -45,42 +46,49 @@ interface DriverStrategy
 
     /**
      * @param string $sql
+     *
      * @return StatementStrategy
      */
     public function prepare(string $sql): StatementStrategy;
 
     /**
      * @param string $sql
+     *
      * @return StatementStrategy
      */
     public function query(string $sql): StatementStrategy;
 
     /**
      * @param string $sql
+     *
      * @return int
      */
     public function exec(string $sql): int;
 
     /**
      * @param string|null $sequenceId
+     *
      * @return string
      */
     public function lastInsertId(string $sequenceId = null): string;
 
     /**
      * @param string $value
+     *
      * @return string
      */
     public function quote(string $value): string;
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function listen(callable $callable);
 
     /**
      * @param string $sql
+     *
      * @return $this
      */
     public function fire(string $sql);
@@ -92,6 +100,7 @@ interface DriverStrategy
 
     /**
      * @param string $tableName
+     *
      * @return $this
      */
     public function truncate(string $tableName);

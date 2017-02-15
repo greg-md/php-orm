@@ -7,12 +7,14 @@ interface StatementStrategy
     /**
      * @param string $key
      * @param string $value
+     *
      * @return $this
      */
     public function bindParam(string $key, string $value);
 
     /**
      * @param array $params
+     *
      * @return $this
      */
     public function bindParams(array $params);
@@ -56,12 +58,14 @@ interface StatementStrategy
 
     /**
      * @param string $column
+     *
      * @return string
      */
     public function fetchColumn(string $column = '0');
 
     /**
      * @param string $column
+     *
      * @return string[]
      */
     public function fetchColumnAll(string $column = '0');
@@ -69,6 +73,7 @@ interface StatementStrategy
     /**
      * @param string $key
      * @param string $value
+     *
      * @return string[]
      */
     public function fetchPairs(string $key = '0', string $value = '1');

@@ -26,6 +26,7 @@ class SqliteDriver extends PdoDriverAbstract
 
     /**
      * @param string $tableName
+     *
      * @return int
      */
     public function truncate(string $tableName)
