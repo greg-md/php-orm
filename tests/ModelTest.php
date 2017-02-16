@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class MyModel extends Model
 {
-
 }
 
 class ModelTest extends TestCase

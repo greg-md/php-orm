@@ -4,7 +4,7 @@ namespace Greg\Orm;
 
 trait TableTrait
 {
-//    protected $prefix = null;
+    //    protected $prefix = null;
 //
 //    protected $name = null;
 //
