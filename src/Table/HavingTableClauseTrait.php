@@ -17,7 +17,7 @@ trait HavingTableClauseTrait
      */
     private $havingAppliers = [];
 
-    public function assignWhereAppliers(HavingClauseStrategy $strategy)
+    public function assignHavingAppliers(HavingClauseStrategy $strategy)
     {
         if ($items = $strategy->getHaving()) {
             $strategy->clearHaving();

@@ -317,21 +317,69 @@ trait TableSqlTrait
         return $stmt;
     }
 
-    abstract public function getFromClause(): ?FromClause;
+    protected function getFromClause(): ?FromClause
+    {
+        /** @var FromClause $clause */
+        $clause = $this->getClause('FROM');
 
-    abstract public function getJoinClause(): ?JoinClause;
+        return $clause;
+    }
 
-    abstract public function getWhereClause(): ?WhereClause;
+    protected function getJoinClause(): ?JoinClause
+    {
+        /** @var JoinClause $clause */
+        $clause = $this->getClause('JOIN');
 
-    abstract public function getHavingClause(): ?HavingClause;
+        return $clause;
+    }
 
-    abstract public function getOrderByClause(): ?OrderByClause;
+    protected function getWhereClause(): ?WhereClause
+    {
+        /** @var WhereClause $clause */
+        $clause = $this->getClause('WHERE');
 
-    abstract public function getGroupByClause(): ?GroupByClause;
+        return $clause;
+    }
 
-    abstract public function getLimitClause(): ?LimitClause;
+    protected function getHavingClause(): ?HavingClause
+    {
+        /** @var HavingClause $clause */
+        $clause = $this->getClause('HAVING');
 
-    abstract public function getOffsetClause(): ?OffsetClause;
+        return $clause;
+    }
+
+    protected function getOrderByClause(): ?OrderByClause
+    {
+        /** @var OrderByClause $clause */
+        $clause = $this->getClause('ORDER_BY');
+
+        return $clause;
+    }
+
+    protected function getGroupByClause(): ?GroupByClause
+    {
+        /** @var GroupByClause $clause */
+        $clause = $this->getClause('GROUP_BY');
+
+        return $clause;
+    }
+
+    protected function getLimitClause(): ?LimitClause
+    {
+        /** @var LimitClause $clause */
+        $clause = $this->getClause('LIMIT');
+
+        return $clause;
+    }
+
+    protected function getOffsetClause(): ?OffsetClause
+    {
+        /** @var OffsetClause $clause */
+        $clause = $this->getClause('OFFSET');
+
+        return $clause;
+    }
 
     abstract public function assignFromAppliers(FromClauseStrategy $strategy);
 
