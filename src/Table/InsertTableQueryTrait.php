@@ -55,8 +55,9 @@ trait InsertTableQueryTrait
     /**
      * @todo Need to inject columns into raw select
      *
-     * @param string $sql
+     * @param string    $sql
      * @param \string[] ...$params
+     *
      * @return int
      */
     public function insertSelectRaw(string $sql, string ...$params)

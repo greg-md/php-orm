@@ -2,14 +2,14 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Clause\JoinClauseTrait;
 use Greg\Orm\Clause\JoinClauseStrategy;
-use Greg\Orm\Clause\LimitClauseTrait;
+use Greg\Orm\Clause\JoinClauseTrait;
 use Greg\Orm\Clause\LimitClauseStrategy;
-use Greg\Orm\Clause\OrderByClauseTrait;
+use Greg\Orm\Clause\LimitClauseTrait;
 use Greg\Orm\Clause\OrderByClauseStrategy;
-use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
+use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\QueryException;
 use Greg\Orm\SqlAbstract;
 

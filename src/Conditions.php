@@ -1050,7 +1050,7 @@ class Conditions extends SqlAbstract
      */
     protected function prepareCondition(array $condition): array
     {
-        if ($condition['sql'] instanceof Conditions) {
+        if ($condition['sql'] instanceof self) {
             list($sql, $params) = $condition['sql']->toSql();
 
             $condition['sql'] = $sql ? '(' . $sql . ')' : null;

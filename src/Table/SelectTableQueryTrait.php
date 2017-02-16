@@ -265,7 +265,7 @@ trait SelectTableQueryTrait
         return false;
     }
 
-    public function getLock(): string 
+    public function getLock(): string
     {
         if ($query = $this->getSelectQuery()) {
             return $query->getLock();

@@ -2,20 +2,20 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Clause\FromClauseTrait;
 use Greg\Orm\Clause\FromClauseStrategy;
-use Greg\Orm\Clause\GroupByClauseTrait;
+use Greg\Orm\Clause\FromClauseTrait;
 use Greg\Orm\Clause\GroupByClauseStrategy;
-use Greg\Orm\Clause\HavingClauseTrait;
+use Greg\Orm\Clause\GroupByClauseTrait;
 use Greg\Orm\Clause\HavingClauseStrategy;
-use Greg\Orm\Clause\LimitClauseTrait;
+use Greg\Orm\Clause\HavingClauseTrait;
 use Greg\Orm\Clause\LimitClauseStrategy;
-use Greg\Orm\Clause\OffsetClauseTrait;
+use Greg\Orm\Clause\LimitClauseTrait;
 use Greg\Orm\Clause\OffsetClauseStrategy;
-use Greg\Orm\Clause\OrderByClauseTrait;
+use Greg\Orm\Clause\OffsetClauseTrait;
 use Greg\Orm\Clause\OrderByClauseStrategy;
-use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
+use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\SqlAbstract;
 
 class SelectQuery extends SqlAbstract implements
@@ -155,7 +155,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param SelectQuery $column
-     * @param string|null         $alias
+     * @param string|null $alias
      *
      * @return $this
      */
@@ -624,7 +624,7 @@ class SelectQuery extends SqlAbstract implements
      */
     protected function prepareColumn(array $column)
     {
-        if ($column['sql'] instanceof SelectQuery) {
+        if ($column['sql'] instanceof self) {
             [$sql, $params] = $column['sql']->toSql();
 
             $column['sql'] = '(' . $sql . ')';
@@ -678,7 +678,7 @@ class SelectQuery extends SqlAbstract implements
      */
     protected function prepareUnion(array $union)
     {
-        if ($union['sql'] instanceof SelectQuery) {
+        if ($union['sql'] instanceof self) {
             [$sql, $params] = $union['sql']->toSql();
 
             $union['sql'] = $sql;
