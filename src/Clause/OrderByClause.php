@@ -4,7 +4,7 @@ namespace Greg\Orm\Clause;
 
 use Greg\Orm\SqlAbstract;
 
-class OrderByClause extends SqlAbstract implements OrderByClauseStrategy
+class OrderByClause extends SqlAbstract implements ClauseStrategy, OrderByClauseStrategy
 {
     use OrderByClauseTrait;
 

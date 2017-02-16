@@ -3,9 +3,8 @@
 namespace Greg\Orm\Clause;
 
 use Greg\Orm\Conditions;
-use Greg\Orm\ConditionsStrategy;
 use Greg\Orm\DialectStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 
 trait JoinClauseTrait
@@ -31,7 +30,7 @@ trait JoinClauseTrait
 
     /**
      * @param $table
-     * @param callable|ConditionsStrategy $on
+     * @param callable|Conditions $on
      *
      * @return $this
      */
@@ -58,7 +57,7 @@ trait JoinClauseTrait
 
     /**
      * @param $table
-     * @param callable|ConditionsStrategy $on
+     * @param callable|Conditions $on
      *
      * @return $this
      */
@@ -85,7 +84,7 @@ trait JoinClauseTrait
 
     /**
      * @param $table
-     * @param callable|ConditionsStrategy $on
+     * @param callable|Conditions $on
      *
      * @return $this
      */
@@ -126,7 +125,7 @@ trait JoinClauseTrait
     /**
      * @param $source
      * @param $table
-     * @param callable|ConditionsStrategy $on
+     * @param callable|Conditions $on
      *
      * @return $this
      */
@@ -155,7 +154,7 @@ trait JoinClauseTrait
     /**
      * @param $source
      * @param $table
-     * @param callable|ConditionsStrategy $on
+     * @param callable|Conditions $on
      *
      * @return $this
      */
@@ -184,7 +183,7 @@ trait JoinClauseTrait
     /**
      * @param $source
      * @param $table
-     * @param callable|ConditionsStrategy $on
+     * @param callable|Conditions $on
      *
      * @return $this
      */
@@ -238,15 +237,15 @@ trait JoinClauseTrait
     /**
      * @return bool
      */
-    public function hasJoins()
+    public function hasJoins(): bool
     {
         return (bool) $this->joins;
     }
 
     /**
-     * @return array
+     * @return array[]
      */
-    public function getJoins()
+    public function getJoins(): array
     {
         return $this->joins;
     }
@@ -321,7 +320,7 @@ trait JoinClauseTrait
         }
         [$tableAlias, $tableName] = $this->dialect()->parseTable($table);
 
-        if ($tableName instanceof SelectQueryStrategy) {
+        if ($tableName instanceof SelectQuery) {
             if (!$tableAlias) {
                 throw new QueryException('JOIN table should have an alias name.');
             }
@@ -365,7 +364,7 @@ trait JoinClauseTrait
     {
         list($sourceAlias, $sourceName) = $this->dialect()->parseTable($source);
 
-        if (($sourceName instanceof SelectQueryStrategy) and !$sourceAlias) {
+        if (($sourceName instanceof SelectQuery) and !$sourceAlias) {
             throw new QueryException('JOIN source table should have an alias name.');
         }
 
@@ -379,7 +378,7 @@ trait JoinClauseTrait
      */
     protected function prepareJoin(array $join)
     {
-        if ($join['table'] instanceof SelectQueryStrategy) {
+        if ($join['table'] instanceof SelectQuery) {
             [$sql, $params] = $join['table']->toSql();
 
             $join['table'] = '(' . $sql . ')';
@@ -387,7 +386,7 @@ trait JoinClauseTrait
             $join['params'] = $params;
         }
 
-        if ($join['on'] instanceof ConditionsStrategy) {
+        if ($join['on'] instanceof Conditions) {
             [$sql, $params] = $join['on']->toSql();
 
             $join['on'] = $sql;

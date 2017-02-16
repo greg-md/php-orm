@@ -4,7 +4,7 @@ namespace Greg\Orm\Clause;
 
 use Greg\Orm\SqlAbstract;
 
-class JoinClause extends SqlAbstract implements JoinClauseStrategy
+class JoinClause extends SqlAbstract implements ClauseStrategy, JoinClauseStrategy
 {
     use JoinClauseTrait;
 

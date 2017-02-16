@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\Tests\Clause;
 
-use Greg\Orm\Clause\FromClauseStrategy;
-use Greg\Orm\ConditionsStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
+use Greg\Orm\Clause\FromClause;
+use Greg\Orm\Conditions;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 use PHPUnit\Framework\TestCase;
 
@@ -94,7 +94,7 @@ abstract class FromClauseAbstract extends TestCase
     {
         $query = $this->newClause()
             ->from(['t' => $this->newSelectQuery()])
-            ->innerOn('Table', function (ConditionsStrategy $strategy) {
+            ->innerOn('Table', function (Conditions $strategy) {
                 $strategy->isNull('Column');
             });
 
@@ -108,7 +108,7 @@ abstract class FromClauseAbstract extends TestCase
         $this->newClause()->from($this->newSelectQuery());
     }
 
-    abstract protected function newClause(): FromClauseStrategy;
+    abstract protected function newClause(): FromClause;
 
-    abstract protected function newSelectQuery(): SelectQueryStrategy;
+    abstract protected function newSelectQuery(): SelectQuery;
 }

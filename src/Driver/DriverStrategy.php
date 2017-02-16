@@ -2,18 +2,19 @@
 
 namespace Greg\Orm\Driver;
 
-use Greg\Orm\Clause\FromClauseStrategy;
-use Greg\Orm\Clause\GroupByClauseStrategy;
-use Greg\Orm\Clause\HavingClauseStrategy;
-use Greg\Orm\Clause\JoinClauseStrategy;
-use Greg\Orm\Clause\LimitClauseStrategy;
-use Greg\Orm\Clause\OrderByClauseStrategy;
-use Greg\Orm\Clause\WhereClauseStrategy;
+use Greg\Orm\Clause\FromClause;
+use Greg\Orm\Clause\GroupByClause;
+use Greg\Orm\Clause\HavingClause;
+use Greg\Orm\Clause\JoinClause;
+use Greg\Orm\Clause\LimitClause;
+use Greg\Orm\Clause\OffsetClause;
+use Greg\Orm\Clause\OrderByClause;
+use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\DialectStrategy;
-use Greg\Orm\Query\DeleteQueryStrategy;
-use Greg\Orm\Query\InsertQueryStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
-use Greg\Orm\Query\UpdateQueryStrategy;
+use Greg\Orm\Query\DeleteQuery;
+use Greg\Orm\Query\InsertQuery;
+use Greg\Orm\Query\SelectQuery;
+use Greg\Orm\Query\UpdateQuery;
 
 interface DriverStrategy
 {
@@ -106,57 +107,62 @@ interface DriverStrategy
     public function truncate(string $tableName);
 
     /**
-     * @return SelectQueryStrategy
+     * @return SelectQuery
      */
-    public function select(): SelectQueryStrategy;
+    public function select(): SelectQuery;
 
     /**
-     * @return InsertQueryStrategy
+     * @return InsertQuery
      */
-    public function insert(): InsertQueryStrategy;
+    public function insert(): InsertQuery;
 
     /**
-     * @return DeleteQueryStrategy
+     * @return DeleteQuery
      */
-    public function delete(): DeleteQueryStrategy;
+    public function delete(): DeleteQuery;
 
     /**
-     * @return UpdateQueryStrategy
+     * @return UpdateQuery
      */
-    public function update(): UpdateQueryStrategy;
+    public function update(): UpdateQuery;
 
     /**
-     * @return FromClauseStrategy
+     * @return FromClause
      */
-    public function from(): FromClauseStrategy;
+    public function from(): FromClause;
 
     /**
-     * @return JoinClauseStrategy
+     * @return JoinClause
      */
-    public function join(): JoinClauseStrategy;
+    public function join(): JoinClause;
 
     /**
-     * @return WhereClauseStrategy
+     * @return WhereClause
      */
-    public function where(): WhereClauseStrategy;
+    public function where(): WhereClause;
 
     /**
-     * @return HavingClauseStrategy
+     * @return HavingClause
      */
-    public function having(): HavingClauseStrategy;
+    public function having(): HavingClause;
 
     /**
-     * @return OrderByClauseStrategy
+     * @return OrderByClause
      */
-    public function orderBy(): OrderByClauseStrategy;
+    public function orderBy(): OrderByClause;
 
     /**
-     * @return GroupByClauseStrategy
+     * @return GroupByClause
      */
-    public function groupBy(): GroupByClauseStrategy;
+    public function groupBy(): GroupByClause;
 
     /**
-     * @return LimitClauseStrategy
+     * @return LimitClause
      */
-    public function limit(): LimitClauseStrategy;
+    public function limit(): LimitClause;
+
+    /**
+     * @return OffsetClause
+     */
+    public function offset(): OffsetClause;
 }

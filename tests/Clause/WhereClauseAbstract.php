@@ -3,6 +3,7 @@
 namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\WhereClause;
+use Greg\Orm\Conditions;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Tests\ConditionsAbstract;
 
@@ -78,7 +79,7 @@ abstract class WhereClauseAbstract extends ConditionsAbstract
     }
 
     /**
-     * @return WhereClause|\Greg\Orm\ConditionsStrategy
+     * @return WhereClause|Conditions
      */
     protected function newWhereClause()
     {

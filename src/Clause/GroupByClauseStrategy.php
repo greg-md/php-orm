@@ -2,20 +2,43 @@
 
 namespace Greg\Orm\Clause;
 
-interface GroupByClauseStrategy extends GroupByClauseTraitStrategy
+interface GroupByClauseStrategy
 {
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function groupBy(string $column);
+
+    /**
+     * @param string    $sql
+     * @param \string[] ...$params
+     *
+     * @return $this
+     */
+    public function groupByRaw(string $sql, string ...$params);
+
+    /**
+     * @param string $sql
+     * @param array  $params
+     *
+     * @return $this
+     */
+    public function groupByLogic(string $sql, array $params = []);
+
+    /**
+     * @return bool
+     */
+    public function hasGroupBy(): bool;
+
     /**
      * @return array
      */
-    public function toSql(): array;
+    public function getGroupBy(): array;
 
     /**
-     * @return string
+     * @return $this
      */
-    public function toString(): string;
-
-    /**
-     * @return string
-     */
-    public function __toString(): string;
+    public function clearGroupBy();
 }

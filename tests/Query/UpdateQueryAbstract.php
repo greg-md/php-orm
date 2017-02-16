@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\Tests\Query;
 
-use Greg\Orm\ConditionsStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
-use Greg\Orm\Query\UpdateQueryStrategy;
+use Greg\Orm\Conditions;
+use Greg\Orm\Query\SelectQuery;
+use Greg\Orm\Query\UpdateQuery;
 use Greg\Orm\QueryException;
 use PHPUnit\Framework\TestCase;
 
@@ -125,7 +125,7 @@ abstract class UpdateQueryAbstract extends TestCase
     {
         $query = $this->newQuery()
             ->table('Table1 as t')
-            ->innerToOn('t', 'Table2', function (ConditionsStrategy $strategy) {
+            ->innerToOn('t', 'Table2', function (Conditions $strategy) {
                 $strategy->isNull('Column');
             })
             ->inner('Table3')
@@ -154,7 +154,7 @@ abstract class UpdateQueryAbstract extends TestCase
         $this->newQuery()->table($this->newSelectQuery());
     }
 
-    abstract protected function newQuery(): UpdateQueryStrategy;
+    abstract protected function newQuery(): UpdateQuery;
 
-    abstract protected function newSelectQuery(): SelectQueryStrategy;
+    abstract protected function newSelectQuery(): SelectQuery;
 }

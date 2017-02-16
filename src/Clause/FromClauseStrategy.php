@@ -2,24 +2,39 @@
 
 namespace Greg\Orm\Clause;
 
-interface FromClauseStrategy extends FromClauseTraitStrategy
+interface FromClauseStrategy extends JoinClauseStrategy
 {
     /**
-     * @param bool $useClause
+     * @param $table
+     * @param array ...$tables
      *
+     * @return $this
+     */
+    public function from($table, ...$tables);
+
+    /**
+     * @param null|string $alias
+     * @param string      $sql
+     * @param \string[]   ...$params
+     *
+     * @return $this
+     */
+    public function fromRaw(?string $alias, string $sql, string ...$params);
+
+    public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = []);
+
+    /**
+     * @return bool
+     */
+    public function hasFrom(): bool;
+
+    /**
      * @return array
      */
-    public function toSql(bool $useClause = true): array;
+    public function getFrom(): array;
 
     /**
-     * @param bool $useClause
-     *
-     * @return string
+     * @return $this
      */
-    public function toString(bool $useClause = true): string;
-
-    /**
-     * @return string
-     */
-    public function __toString(): string;
+    public function clearFrom();
 }

@@ -68,7 +68,7 @@ interface StatementStrategy
      *
      * @return string[]
      */
-    public function fetchColumnAll(string $column = '0');
+    public function fetchAllColumn(string $column = '0');
 
     /**
      * @param string $key
@@ -77,4 +77,6 @@ interface StatementStrategy
      * @return string[]
      */
     public function fetchPairs(string $key = '0', string $value = '1');
+
+    public function rowCount(): int;
 }

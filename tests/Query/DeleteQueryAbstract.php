@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Tests\Query;
 
-use Greg\Orm\ConditionsStrategy;
-use Greg\Orm\Query\DeleteQueryStrategy;
+use Greg\Orm\Conditions;
+use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\QueryException;
 use PHPUnit\Framework\TestCase;
 
@@ -53,7 +53,7 @@ abstract class DeleteQueryAbstract extends TestCase
     {
         $query = $this->newQuery()
             ->from('Table1')
-            ->innerOn('Table2', function (ConditionsStrategy $strategy) {
+            ->innerOn('Table2', function (Conditions $strategy) {
                 $strategy->isNull('Column');
             })
             ->where('Foo', 'foo')
@@ -83,5 +83,5 @@ abstract class DeleteQueryAbstract extends TestCase
         $query->toSql();
     }
 
-    abstract protected function newQuery(): DeleteQueryStrategy;
+    abstract protected function newQuery(): DeleteQuery;
 }

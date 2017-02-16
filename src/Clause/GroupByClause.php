@@ -4,7 +4,7 @@ namespace Greg\Orm\Clause;
 
 use Greg\Orm\SqlAbstract;
 
-class GroupByClause extends SqlAbstract implements GroupByClauseStrategy
+class GroupByClause extends SqlAbstract implements ClauseStrategy, GroupByClauseStrategy
 {
     use GroupByClauseTrait;
 

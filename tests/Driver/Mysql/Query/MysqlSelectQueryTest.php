@@ -4,12 +4,11 @@ namespace Greg\Orm\Tests\Driver\Mysql\Query;
 
 use Greg\Orm\Driver\Mysql\MysqlDialect;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Query\SelectQueryStrategy;
 use Greg\Orm\Tests\Query\SelectQueryAbstract;
 
 class MysqlSelectQueryTest extends SelectQueryAbstract
 {
-    protected function newQuery(): SelectQueryStrategy
+    protected function newQuery(): SelectQuery
     {
         return new SelectQuery(new MysqlDialect());
     }

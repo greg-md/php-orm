@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Tests\Clause;
 
-use Greg\Orm\Clause\OrderByClauseStrategy;
+use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\QueryException;
 use PHPUnit\Framework\TestCase;
 
@@ -81,5 +81,5 @@ abstract class OrderByClauseAbstract extends TestCase
         $this->assertEquals('ORDER BY `Foo`', (string) $query);
     }
 
-    abstract protected function newClause(): OrderByClauseStrategy;
+    abstract protected function newClause(): OrderByClause;
 }

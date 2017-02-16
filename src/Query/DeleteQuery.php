@@ -3,13 +3,22 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\Clause\FromClauseTrait;
+use Greg\Orm\Clause\FromClauseStrategy;
 use Greg\Orm\Clause\LimitClauseTrait;
+use Greg\Orm\Clause\LimitClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
+use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\QueryException;
 use Greg\Orm\SqlAbstract;
 
-class DeleteQuery extends SqlAbstract implements DeleteQueryStrategy
+class DeleteQuery extends SqlAbstract implements
+    QueryStrategy,
+    FromClauseStrategy,
+    WhereClauseStrategy,
+    OrderByClauseStrategy,
+    LimitClauseStrategy
 {
     use FromClauseTrait,
         WhereClauseTrait,
@@ -86,6 +95,11 @@ class DeleteQuery extends SqlAbstract implements DeleteQueryStrategy
     public function __toString(): string
     {
         return $this->toString();
+    }
+
+    public function __clone()
+    {
+        $this->whereClone();
     }
 
     /**

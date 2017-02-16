@@ -4,7 +4,7 @@ namespace Greg\Orm\Clause;
 
 use Greg\Orm\SqlAbstract;
 
-class HavingClause extends SqlAbstract implements HavingClauseStrategy
+class HavingClause extends SqlAbstract implements ClauseStrategy, HavingClauseStrategy
 {
     use HavingClauseTrait;
 
@@ -34,5 +34,10 @@ class HavingClause extends SqlAbstract implements HavingClauseStrategy
     public function __toString(): string
     {
         return $this->toString();
+    }
+
+    public function __clone()
+    {
+        $this->havingClone();
     }
 }

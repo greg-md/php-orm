@@ -3,15 +3,30 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\Clause\FromClauseTrait;
+use Greg\Orm\Clause\FromClauseStrategy;
 use Greg\Orm\Clause\GroupByClauseTrait;
+use Greg\Orm\Clause\GroupByClauseStrategy;
 use Greg\Orm\Clause\HavingClauseTrait;
+use Greg\Orm\Clause\HavingClauseStrategy;
 use Greg\Orm\Clause\LimitClauseTrait;
+use Greg\Orm\Clause\LimitClauseStrategy;
 use Greg\Orm\Clause\OffsetClauseTrait;
+use Greg\Orm\Clause\OffsetClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
+use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\SqlAbstract;
 
-class SelectQuery extends SqlAbstract implements SelectQueryStrategy
+class SelectQuery extends SqlAbstract implements
+    QueryStrategy,
+    FromClauseStrategy,
+    WhereClauseStrategy,
+    HavingClauseStrategy,
+    OrderByClauseStrategy,
+    GroupByClauseStrategy,
+    LimitClauseStrategy,
+    OffsetClauseStrategy
 {
     use FromClauseTrait,
         WhereClauseTrait,
@@ -139,12 +154,12 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
     }
 
     /**
-     * @param SelectQueryStrategy $column
+     * @param SelectQuery $column
      * @param string|null         $alias
      *
      * @return $this
      */
-    public function columnSelect(SelectQueryStrategy $column, ?string $alias = null)
+    public function columnSelect(SelectQuery $column, ?string $alias = null)
     {
         if ($alias) {
             $alias = $this->dialect()->quoteName($alias);
@@ -280,11 +295,11 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
     }
 
     /**
-     * @param SelectQueryStrategy $query
+     * @param SelectQuery $query
      *
      * @return $this
      */
-    public function union(SelectQueryStrategy $query)
+    public function union(SelectQuery $query)
     {
         $this->unionLogic(null, $query);
 
@@ -292,11 +307,11 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
     }
 
     /**
-     * @param SelectQueryStrategy $query
+     * @param SelectQuery $query
      *
      * @return $this
      */
-    public function unionAll(SelectQueryStrategy $query)
+    public function unionAll(SelectQuery $query)
     {
         $this->unionLogic('ALL', $query);
 
@@ -304,11 +319,11 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
     }
 
     /**
-     * @param SelectQueryStrategy $query
+     * @param SelectQuery $query
      *
      * @return $this
      */
-    public function unionDistinct(SelectQueryStrategy $query)
+    public function unionDistinct(SelectQuery $query)
     {
         $this->unionLogic('DISTINCT', $query);
 
@@ -448,6 +463,13 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
     public function __toString(): string
     {
         return $this->toString();
+    }
+
+    public function __clone()
+    {
+        $this->whereClone();
+
+        $this->havingClone();
     }
 
     /**
@@ -602,7 +624,7 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
      */
     protected function prepareColumn(array $column)
     {
-        if ($column['sql'] instanceof SelectQueryStrategy) {
+        if ($column['sql'] instanceof SelectQuery) {
             [$sql, $params] = $column['sql']->toSql();
 
             $column['sql'] = '(' . $sql . ')';
@@ -656,7 +678,7 @@ class SelectQuery extends SqlAbstract implements SelectQueryStrategy
      */
     protected function prepareUnion(array $union)
     {
-        if ($union['sql'] instanceof SelectQueryStrategy) {
+        if ($union['sql'] instanceof SelectQuery) {
             [$sql, $params] = $union['sql']->toSql();
 
             $union['sql'] = $sql;

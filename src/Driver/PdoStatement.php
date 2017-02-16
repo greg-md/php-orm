@@ -142,7 +142,7 @@ class PdoStatement implements StatementStrategy
      *
      * @return string[]
      */
-    public function fetchColumnAll(string $column = '0')
+    public function fetchAllColumn(string $column = '0')
     {
         return array_column($this->fetchAll(), $column);
     }
@@ -158,6 +158,11 @@ class PdoStatement implements StatementStrategy
         $all = $this->fetchAll();
 
         return Arr::pairs($all, $key, $value);
+    }
+
+    public function rowCount(): int
+    {
+        return $this->stmt->rowCount();
     }
 
     /**

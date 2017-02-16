@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Tests\Clause;
 
-use Greg\Orm\Clause\OffsetClauseStrategy;
+use Greg\Orm\Clause\OffsetClause;
 use PHPUnit\Framework\TestCase;
 
 abstract class OffsetClauseAbstract extends TestCase
@@ -38,5 +38,5 @@ abstract class OffsetClauseAbstract extends TestCase
         $this->assertNull($query->getOffset());
     }
 
-    abstract protected function newClause(): OffsetClauseStrategy;
+    abstract protected function newClause(): OffsetClause;
 }

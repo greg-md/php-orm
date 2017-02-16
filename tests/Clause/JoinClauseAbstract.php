@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\Tests\Clause;
 
-use Greg\Orm\Clause\JoinClauseStrategy;
-use Greg\Orm\ConditionsStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
+use Greg\Orm\Clause\JoinClause;
+use Greg\Orm\Conditions;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 use PHPUnit\Framework\TestCase;
 
@@ -53,7 +53,7 @@ abstract class JoinClauseAbstract extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type . 'On'}('Foo', function (ConditionsStrategy $query) {
+        $query->{$type . 'On'}('Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -112,7 +112,7 @@ abstract class JoinClauseAbstract extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type . 'ToOn'}('bar', 'Foo', function (ConditionsStrategy $query) {
+        $query->{$type . 'ToOn'}('bar', 'Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -203,7 +203,7 @@ abstract class JoinClauseAbstract extends TestCase
         yield ['inner'];
     }
 
-    abstract protected function newClause(): JoinClauseStrategy;
+    abstract protected function newClause(): JoinClause;
 
-    abstract protected function newSelectQuery(): SelectQueryStrategy;
+    abstract protected function newSelectQuery(): SelectQuery;
 }

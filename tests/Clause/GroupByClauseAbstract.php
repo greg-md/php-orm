@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Tests\Clause;
 
-use Greg\Orm\Clause\GroupByClauseStrategy;
+use Greg\Orm\Clause\GroupByClause;
 use PHPUnit\Framework\TestCase;
 
 abstract class GroupByClauseAbstract extends TestCase
@@ -59,5 +59,5 @@ abstract class GroupByClauseAbstract extends TestCase
         $this->assertEquals('GROUP BY `Foo`', (string) $query);
     }
 
-    abstract protected function newClause(): GroupByClauseStrategy;
+    abstract protected function newClause(): GroupByClause;
 }

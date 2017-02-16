@@ -2,35 +2,41 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\TableQuery\DeleteTableQueryTrait;
-use Greg\Orm\TableQuery\FromTableClauseTrait;
-use Greg\Orm\TableQuery\HavingTableClauseTrait;
-use Greg\Orm\TableQuery\InsertTableQueryTrait;
-use Greg\Orm\TableQuery\JoinTableClauseTrait;
-use Greg\Orm\TableQuery\LimitTableClauseTrait;
-use Greg\Orm\TableQuery\OrderByTableClauseTrait;
-use Greg\Orm\TableQuery\SelectTableQueryTrait;
-use Greg\Orm\TableQuery\TableQueryTrait;
-use Greg\Orm\TableQuery\UpdateTableQueryTrait;
-use Greg\Orm\TableQuery\WhereTableClauseTrait;
+use Greg\Orm\Clause\GroupByClauseTrait;
+//use Greg\Orm\Table\DeleteTableQueryTrait;
+//use Greg\Orm\Table\FromTableClauseTrait;
+//use Greg\Orm\Table\HavingTableClauseTrait;
+//use Greg\Orm\Table\InsertTableQueryTrait;
+//use Greg\Orm\Table\JoinTableClauseTrait;
+//use Greg\Orm\Table\LimitTableClauseTrait;
+//use Greg\Orm\Table\OffsetTableClauseTrait;
+//use Greg\Orm\Table\OrderByTableClauseTrait;
+//use Greg\Orm\Table\SelectTableQueryTrait;
+//use Greg\Orm\Table\TableSqlTrait;
+//use Greg\Orm\Table\UpdateTableQueryTrait;
+//use Greg\Orm\Table\WhereTableClauseTrait;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Support\Arr;
 use Greg\Support\DateTime;
 use Greg\Support\Url;
 
 trait TableTrait
 {
-    use TableQueryTrait,
-        InsertTableQueryTrait,
-        UpdateTableQueryTrait,
+    use TableSqlTrait,
+
         DeleteTableQueryTrait,
+        InsertTableQueryTrait,
         SelectTableQueryTrait,
+        UpdateTableQueryTrait,
 
         FromTableClauseTrait,
-        JoinTableClauseTrait,
-        WhereTableClauseTrait,
+        GroupByClauseTrait,
         HavingTableClauseTrait,
+        JoinTableClauseTrait,
+        LimitTableClauseTrait,
+        OffsetTableClauseTrait,
         OrderByTableClauseTrait,
-        LimitTableClauseTrait;
+        WhereTableClauseTrait;
 
     protected $prefix = null;
 
@@ -263,6 +269,188 @@ trait TableTrait
         }
 
         return array_keys($this->getColumns());
+    }
+
+    public function selectKeyValue()
+    {
+        if (!$columnName = $this->getNameColumn()) {
+            throw new QueryException('Undefined column name for table `' . $this->getName() . '`.');
+        }
+
+        $instance = $this->needSelectInstance();
+
+        $instance->getQuery()
+            ->column($this->concat($this->firstUniqueIndex(), ':'), 'key')
+            ->column($columnName, 'value');
+
+        return $instance;
+    }
+
+    public function chunk(int $count, callable $callable, bool $callOneByOne = false)
+    {
+        return $this->chunkQuery($this->selectQueryInstance()->selectQuery(), $count, $callable, $callOneByOne);
+    }
+
+    public function fetch()
+    {
+        return $this->selectQueryInstance()->execute()->fetch();
+    }
+
+    public function fetchOrFail()
+    {
+        if (!$record = $this->fetch()) {
+            throw new QueryException('Row was not found.');
+        }
+
+        return $record;
+    }
+
+    public function fetchAll()
+    {
+        return $this->selectQueryInstance()->execute()->fetchAll();
+    }
+
+    public function fetchYield()
+    {
+        return $this->selectQueryInstance()->execute()->fetchYield();
+    }
+
+    public function assoc()
+    {
+        return $this->selectQueryInstance()->execute()->fetchAssoc();
+    }
+
+    public function assocOrFail()
+    {
+        if (!$record = $this->assoc()) {
+            throw new QueryException('Row was not found.');
+        }
+
+        return $record;
+    }
+
+    public function assocAll()
+    {
+        return $this->selectQueryInstance()->execute()->fetchAssocAll();
+    }
+
+    public function assocYield()
+    {
+        return $this->selectQueryInstance()->execute()->fetchAssocYield();
+    }
+
+    public function fetchColumn(string $column = '0')
+    {
+        return $this->selectQueryInstance()->execute()->fetchColumn($column);
+    }
+
+    public function fetchAllColumn(string $column = '0')
+    {
+        return $this->selectQueryInstance()->execute()->fetchAllColumn($column);
+    }
+
+    public function fetchPairs(string $key = '0', string $value = '1')
+    {
+        return $this->selectQueryInstance()->execute()->fetchPairs($key, $value);
+    }
+
+    public function fetchCount(string $column = '*', string $alias = null)
+    {
+        return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
+    }
+
+    public function fetchMax(string $column, string $alias = null)
+    {
+        return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
+    }
+
+    public function fetchMin(string $column, string $alias = null)
+    {
+        return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
+    }
+
+    public function fetchAvg(string $column, string $alias = null)
+    {
+        return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
+    }
+
+    public function fetchSum(string $column, string $alias = null)
+    {
+        return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
+    }
+
+    public function exists()
+    {
+        return (bool) $this->clearSelect()->selectRaw(1)->fetchColumn();
+    }
+
+    public function update(array $columns = []): int
+    {
+        return $this->setValues($columns)->execute()->rowCount();
+    }
+
+    public function delete($table = null, $_ = null)
+    {
+        $instance = $this->getDeleteQuery();
+
+        if ($args = func_get_args()) {
+            $instance->rowsFrom($args);
+        }
+
+        return $instance->execute()->rowCount();
+    }
+
+    public function truncate()
+    {
+        return $this->driver()->truncate($this->fullName());
+    }
+
+    public function erase($key)
+    {
+        return $this->newDeleteInstance()->whereAre($this->combineFirstUniqueIndex($key))->delete();
+    }
+
+    protected function chunkQuery(SelectQuery $query, int $count, callable $callable, bool $callOneByOne = false)
+    {
+        if ($count < 1) {
+            throw new QueryException('Chunk count should be greater than 0.');
+        }
+
+        $offset = 0;
+
+        while (true) {
+            $stmt = $this->executeQuery($query->limit($count)->offset($offset));
+
+            if ($callOneByOne) {
+                $k = 0;
+
+                foreach ($stmt->fetchAssocYield() as $record) {
+                    if (call_user_func_array($callable, [$record]) === false) {
+                        $k = 0;
+
+                        break;
+                    }
+
+                    ++$k;
+                }
+            } else {
+                $records = $stmt->fetchAssocAll();
+
+                $k = count($records);
+
+                if (call_user_func_array($callable, [$records]) === false) {
+                    $k = 0;
+                }
+            }
+
+            if ($k < $count) {
+                break;
+            }
+
+            $offset += $count;
+        }
+
+        return $this;
     }
 
     protected function combineFirstUniqueIndex($values)

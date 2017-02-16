@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\Query\SelectQueryStrategy;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 
 trait FromClauseTrait
@@ -29,7 +29,7 @@ trait FromClauseTrait
         foreach ($tables as $table) {
             list($tableAlias, $tableName) = $this->dialect()->parseTable($table);
 
-            if ($tableName instanceof SelectQueryStrategy) {
+            if ($tableName instanceof SelectQuery) {
                 if (!$tableAlias) {
                     throw new QueryException('FROM derived table should have an alias name.');
                 }
@@ -102,7 +102,7 @@ trait FromClauseTrait
     }
 
     /**
-     * @return array
+     * @return array[]
      */
     public function getFrom(): array
     {
@@ -206,7 +206,7 @@ trait FromClauseTrait
      */
     protected function prepareFrom(array $from): array
     {
-        if ($from['table'] instanceof SelectQueryStrategy) {
+        if ($from['table'] instanceof SelectQuery) {
             [$sql, $params] = $from['table']->toSql();
 
             $from['table'] = '(' . $sql . ')';

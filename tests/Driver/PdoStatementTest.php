@@ -126,11 +126,11 @@ class PdoStatementTest extends TestCase
         $this->assertEquals(1, $this->stmt->fetchColumn('Id'));
     }
 
-    public function testCanFetchColumnAll()
+    public function testCanFetchAllColumn()
     {
         $this->pdoStatementMock->method('fetchAll')->willReturn([['Id' => 1], ['Id' => 2]]);
 
-        $this->assertEquals([1, 2], $this->stmt->fetchColumnAll('Id'));
+        $this->assertEquals([1, 2], $this->stmt->fetchAllColumn('Id'));
     }
 
     public function testCanFetchPairs()

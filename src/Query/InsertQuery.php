@@ -6,7 +6,7 @@ use Greg\Orm\QueryException;
 use Greg\Orm\SqlAbstract;
 use Greg\Support\Arr;
 
-class InsertQuery extends SqlAbstract implements InsertQueryStrategy
+class InsertQuery extends SqlAbstract implements QueryStrategy
 {
     /**
      * @var string
@@ -174,11 +174,11 @@ class InsertQuery extends SqlAbstract implements InsertQueryStrategy
     }
 
     /**
-     * @param SelectQueryStrategy $strategy
+     * @param SelectQuery $strategy
      *
      * @return $this
      */
-    public function select(SelectQueryStrategy $strategy)
+    public function select(SelectQuery $strategy)
     {
         $this->selectLogic($strategy);
 
@@ -325,7 +325,7 @@ class InsertQuery extends SqlAbstract implements InsertQueryStrategy
      */
     private function prepareSelect(array $select)
     {
-        if ($select['sql'] instanceof SelectQueryStrategy) {
+        if ($select['sql'] instanceof SelectQuery) {
             $columnsCount = count($this->columns);
 
             $selectColumnsCount = count($select['sql']->getColumns());

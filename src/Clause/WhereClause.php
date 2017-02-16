@@ -35,4 +35,9 @@ class WhereClause extends SqlAbstract implements WhereClauseStrategy
     {
         return $this->toString();
     }
+
+    public function __clone()
+    {
+        $this->whereClone();
+    }
 }

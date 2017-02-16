@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Tests\Clause;
 
-use Greg\Orm\Clause\LimitClauseStrategy;
+use Greg\Orm\Clause\LimitClause;
 use PHPUnit\Framework\TestCase;
 
 abstract class LimitClauseAbstract extends TestCase
@@ -38,5 +38,5 @@ abstract class LimitClauseAbstract extends TestCase
         $this->assertNull($query->getLimit());
     }
 
-    abstract protected function newClause(): LimitClauseStrategy;
+    abstract protected function newClause(): LimitClause;
 }

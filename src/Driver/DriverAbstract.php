@@ -3,27 +3,17 @@
 namespace Greg\Orm\Driver;
 
 use Greg\Orm\Clause\FromClause;
-use Greg\Orm\Clause\FromClauseStrategy;
 use Greg\Orm\Clause\GroupByClause;
-use Greg\Orm\Clause\GroupByClauseStrategy;
 use Greg\Orm\Clause\HavingClause;
-use Greg\Orm\Clause\HavingClauseStrategy;
 use Greg\Orm\Clause\JoinClause;
-use Greg\Orm\Clause\JoinClauseStrategy;
 use Greg\Orm\Clause\LimitClause;
-use Greg\Orm\Clause\LimitClauseStrategy;
+use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
-use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Query\DeleteQuery;
-use Greg\Orm\Query\DeleteQueryStrategy;
 use Greg\Orm\Query\InsertQuery;
-use Greg\Orm\Query\InsertQueryStrategy;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Query\SelectQueryStrategy;
 use Greg\Orm\Query\UpdateQuery;
-use Greg\Orm\Query\UpdateQueryStrategy;
 
 abstract class DriverAbstract implements DriverStrategy
 {
@@ -59,90 +49,98 @@ abstract class DriverAbstract implements DriverStrategy
     }
 
     /**
-     * @return SelectQueryStrategy
+     * @return SelectQuery
      */
-    public function select(): SelectQueryStrategy
+    public function select(): SelectQuery
     {
         return new SelectQuery($this->dialect());
     }
 
     /**
-     * @return InsertQueryStrategy
+     * @return InsertQuery
      */
-    public function insert(): InsertQueryStrategy
+    public function insert(): InsertQuery
     {
         return new InsertQuery($this->dialect());
     }
 
     /**
-     * @return DeleteQueryStrategy
+     * @return DeleteQuery
      */
-    public function delete(): DeleteQueryStrategy
+    public function delete(): DeleteQuery
     {
         return new DeleteQuery($this->dialect());
     }
 
     /**
-     * @return UpdateQueryStrategy
+     * @return UpdateQuery
      */
-    public function update(): UpdateQueryStrategy
+    public function update(): UpdateQuery
     {
         return new UpdateQuery($this->dialect());
     }
 
     /**
-     * @return FromClauseStrategy
+     * @return FromClause
      */
-    public function from(): FromClauseStrategy
+    public function from(): FromClause
     {
         return new FromClause($this->dialect());
     }
 
     /**
-     * @return JoinClauseStrategy
+     * @return JoinClause
      */
-    public function join(): JoinClauseStrategy
+    public function join(): JoinClause
     {
         return new JoinClause($this->dialect());
     }
 
     /**
-     * @return WhereClauseStrategy
+     * @return WhereClause
      */
-    public function where(): WhereClauseStrategy
+    public function where(): WhereClause
     {
         return new WhereClause($this->dialect());
     }
 
     /**
-     * @return HavingClauseStrategy
+     * @return HavingClause
      */
-    public function having(): HavingClauseStrategy
+    public function having(): HavingClause
     {
         return new HavingClause($this->dialect());
     }
 
     /**
-     * @return OrderByClauseStrategy
+     * @return OrderByClause
      */
-    public function orderBy(): OrderByClauseStrategy
+    public function orderBy(): OrderByClause
     {
         return new OrderByClause($this->dialect());
     }
 
     /**
-     * @return GroupByClauseStrategy
+     * @return GroupByClause
      */
-    public function groupBy(): GroupByClauseStrategy
+    public function groupBy(): GroupByClause
     {
         return new GroupByClause($this->dialect());
     }
 
     /**
-     * @return LimitClauseStrategy
+     * @return LimitClause
      */
-    public function limit(): LimitClauseStrategy
+    public function limit(): LimitClause
     {
         return new LimitClause($this->dialect());
+    }
+
+    /**
+     * @return OffsetClause
+     */
+    public function offset(): OffsetClause
+    {
+        return new OffsetClause($this->dialect());
     }
 }

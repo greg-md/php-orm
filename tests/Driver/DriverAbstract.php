@@ -2,18 +2,18 @@
 
 namespace Greg\Orm\Tests\Driver;
 
-use Greg\Orm\Clause\FromClauseStrategy;
-use Greg\Orm\Clause\GroupByClauseStrategy;
-use Greg\Orm\Clause\HavingClauseStrategy;
-use Greg\Orm\Clause\JoinClauseStrategy;
-use Greg\Orm\Clause\LimitClauseStrategy;
-use Greg\Orm\Clause\OrderByClauseStrategy;
-use Greg\Orm\Clause\WhereClauseStrategy;
+use Greg\Orm\Clause\FromClause;
+use Greg\Orm\Clause\GroupByClause;
+use Greg\Orm\Clause\HavingClause;
+use Greg\Orm\Clause\JoinClause;
+use Greg\Orm\Clause\LimitClause;
+use Greg\Orm\Clause\OrderByClause;
+use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Driver\DriverStrategy;
-use Greg\Orm\Query\DeleteQueryStrategy;
-use Greg\Orm\Query\InsertQueryStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
-use Greg\Orm\Query\UpdateQueryStrategy;
+use Greg\Orm\Query\DeleteQuery;
+use Greg\Orm\Query\InsertQuery;
+use Greg\Orm\Query\SelectQuery;
+use Greg\Orm\Query\UpdateQuery;
 use PHPUnit\Framework\TestCase;
 
 class DriverAbstract extends TestCase
@@ -38,16 +38,16 @@ class DriverAbstract extends TestCase
 
     public function queries()
     {
-        yield ['select', SelectQueryStrategy::class];
-        yield ['insert', InsertQueryStrategy::class];
-        yield ['delete', DeleteQueryStrategy::class];
-        yield ['update', UpdateQueryStrategy::class];
-        yield ['from', FromClauseStrategy::class];
-        yield ['join', JoinClauseStrategy::class];
-        yield ['where', WhereClauseStrategy::class];
-        yield ['having', HavingClauseStrategy::class];
-        yield ['orderBy', OrderByClauseStrategy::class];
-        yield ['groupBy', GroupByClauseStrategy::class];
-        yield ['limit', LimitClauseStrategy::class];
+        yield ['select', SelectQuery::class];
+        yield ['insert', InsertQuery::class];
+        yield ['delete', DeleteQuery::class];
+        yield ['update', UpdateQuery::class];
+        yield ['from', FromClause::class];
+        yield ['join', JoinClause::class];
+        yield ['where', WhereClause::class];
+        yield ['having', HavingClause::class];
+        yield ['orderBy', OrderByClause::class];
+        yield ['groupBy', GroupByClause::class];
+        yield ['limit', LimitClause::class];
     }
 }

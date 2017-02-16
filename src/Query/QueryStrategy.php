@@ -2,7 +2,9 @@
 
 namespace Greg\Orm\Query;
 
-interface QueryStrategy
+use Greg\Orm\SqlStrategy;
+
+interface QueryStrategy extends SqlStrategy
 {
     /**
      * @return array

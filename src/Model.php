@@ -3,17 +3,9 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Driver\DriverStrategy;
-use Greg\Orm\Driver\WhereClauseInterface;
 use Greg\Support\Obj;
 
-/**
- * Class Table.
- *
- * @method $this where($column, $operator, $value = null)
- * @method $this|null row()
- * @method $this firstOrNew(array $data)
- */
-abstract class Table implements TableInterface
+class Model
 {
     use TableTrait, RowTrait;
 
@@ -95,12 +87,114 @@ abstract class Table implements TableInterface
         return $this->getDriver()->lastInsertId();
     }
 
+//    public function row()
+//    {
+//        if ($record = $this->rowQueryInstance()->assoc()) {
+//            $row = $this->newRowClone();
+//
+//            $row->___appendRowData($record);
+//
+//            return $row;
+//        }
+//
+//        return null;
+//    }
+//
+//    public function rowOrFail()
+//    {
+//        if (!$row = $this->row()) {
+//            throw new QueryException('Row was not found.');
+//        }
+//
+//        return $row;
+//    }
+//
+//    public function rows()
+//    {
+//        $rows = $this->newRowClone();
+//
+//        foreach ($this->rowQueryInstance()->assocYield() as $record) {
+//            $rows->___appendRowData($record);
+//        }
+//
+//        return $rows;
+//    }
+//
+//    public function rowsYield()
+//    {
+//        foreach ($this->rowQueryInstance()->assocYield() as $record) {
+//            yield $this->newRowClone()->___appendRowData($record);
+//        }
+//    }
+
+//    public function chunkRows($count, callable $callable, $callOneByOne = false)
+//    {
+//        $newCallable = function ($record) use ($callable, $callOneByOne) {
+//            if ($callOneByOne) {
+//                $row = $this->newRowClone()->___appendRowData($record);
+//
+//                return call_user_func_array($callable, [$row]);
+//            }
+//
+//            $rows = $this->newRowClone();
+//
+//            foreach ($record as $item) {
+//                $rows->___appendRowData($item);
+//            }
+//
+//            return call_user_func_array($callable, [$rows]);
+//        };
+//
+//        return $this->chunkQuery($this->rowQueryInstance()->selectQuery(), $count, $newCallable, $callOneByOne);
+//    }
+
+//    public function find($key)
+//    {
+//        return $this->selectQueryInstance()->whereAre($this->combineFirstUniqueIndex($key))->row();
+//    }
+//
+//    public function findOrFail($keys)
+//    {
+//        if (!$row = $this->find($keys)) {
+//            throw new QueryException('Row was not found.');
+//        }
+//
+//        return $row;
+//    }
+//
+//    public function firstOrNew(array $data)
+//    {
+//        if (!$row = $this->newSelectInstance()->whereAre($data)->row()) {
+//            $row = $this->create($data);
+//        }
+//
+//        return $row;
+//    }
+//
+//    public function firstOrCreate(array $data)
+//    {
+//        return $this->firstOrNew($data)->save();
+//    }
+//
+//    protected function rowQueryInstance()
+//    {
+//        $instance = $this->selectQueryInstance();
+//
+//        if ($instance->hasSelect()) {
+//            throw new QueryException('You cannot fetch as rows while you have custom SELECT columns.');
+//        }
+//
+//        $instance->selectFrom($this, '*');
+//
+//        return $instance;
+//    }
+
     /**
      * @param $table
      *
      * @throws \Exception
      *
-     * @return Table
+     * @return Model
      */
     protected function getTableInstance($table)
     {

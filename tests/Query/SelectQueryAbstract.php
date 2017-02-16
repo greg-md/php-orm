@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Tests\Query;
 
-use Greg\Orm\ConditionsStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
+use Greg\Orm\Conditions;
+use Greg\Orm\Query\SelectQuery;
 use PHPUnit\Framework\TestCase;
 
 abstract class SelectQueryAbstract extends TestCase
@@ -238,7 +238,7 @@ abstract class SelectQueryAbstract extends TestCase
     {
         $query = $this->newQuery()
             ->from('Table1')
-            ->innerOn('Table2', function (ConditionsStrategy $strategy) {
+            ->innerOn('Table2', function (Conditions $strategy) {
                 $strategy->isNull('Column');
             })
             ->where('Foo', 'foo')
@@ -253,5 +253,5 @@ abstract class SelectQueryAbstract extends TestCase
         $this->assertEquals([$sql, ['foo', 'bar']], $query->toSql());
     }
 
-    abstract protected function newQuery(): SelectQueryStrategy;
+    abstract protected function newQuery(): SelectQuery;
 }

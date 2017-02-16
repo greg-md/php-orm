@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Tests\Query;
 
-use Greg\Orm\Query\InsertQueryStrategy;
-use Greg\Orm\Query\SelectQueryStrategy;
+use Greg\Orm\Query\InsertQuery;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 use PHPUnit\Framework\TestCase;
 
@@ -216,7 +216,7 @@ abstract class InsertQueryAbstract extends TestCase
             ->toSql();
     }
 
-    abstract protected function newQuery(): InsertQueryStrategy;
+    abstract protected function newQuery(): InsertQuery;
 
-    abstract protected function newSelectQuery(): SelectQueryStrategy;
+    abstract protected function newSelectQuery(): SelectQuery;
 }

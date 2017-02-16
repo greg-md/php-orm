@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Tests;
 
-use Greg\Orm\ConditionsStrategy;
+use Greg\Orm\Conditions;
 use Greg\Orm\QueryException;
 use PHPUnit\Framework\TestCase;
 
@@ -138,7 +138,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetColumn
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrColumn($query)
     {
@@ -165,7 +165,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetColumns
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrColumns($query)
     {
@@ -286,7 +286,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetRelation
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrRelation($query)
     {
@@ -313,7 +313,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetRelations
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrRelations($query)
     {
@@ -340,7 +340,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetIsNull
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrIsNull($query)
     {
@@ -365,7 +365,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetIsNotNull
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrIsNotNull($query)
     {
@@ -390,7 +390,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetBetween
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrBetween($query)
     {
@@ -415,7 +415,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetNotBetween
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrNotBetween($query)
     {
@@ -444,7 +444,7 @@ abstract class ConditionsAbstract extends TestCase
      */
     public function testCanSetOrDate($args)
     {
-        /* @var ConditionsStrategy $query */
+        /* @var Conditions $query */
         [$query, $date] = $args;
 
         $query->{$this->method('orDate')}('Bar', $date);
@@ -494,7 +494,7 @@ abstract class ConditionsAbstract extends TestCase
      */
     public function testCanSetOrTime($args)
     {
-        /* @var ConditionsStrategy $query */
+        /* @var Conditions $query */
         [$query, $time] = $args;
 
         $query->{$this->method('orTime')}('Bar', $time);
@@ -518,7 +518,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetYear
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrYear($query)
     {
@@ -543,7 +543,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetMonth
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrMonth($query)
     {
@@ -568,7 +568,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetDay
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrDay($query)
     {
@@ -581,7 +581,7 @@ abstract class ConditionsAbstract extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$this->method('group')}(function (ConditionsStrategy $query) {
+        $query->{$this->method('group')}(function (Conditions $query) {
             $query->column('Foo', 'foo');
         });
 
@@ -595,11 +595,11 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetGroup
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrGroup($query)
     {
-        $query->{$this->method('orGroup')}(function (ConditionsStrategy $query) {
+        $query->{$this->method('orGroup')}(function (Conditions $query) {
             $query->column('Bar', 'bar');
         });
 
@@ -622,7 +622,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetConditions
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrConditions($query)
     {
@@ -647,7 +647,7 @@ abstract class ConditionsAbstract extends TestCase
      *
      * @depends testCanSetRaw
      *
-     * @param ConditionsStrategy $query
+     * @param Conditions $query
      */
     public function testCanSetOrRaw($query)
     {
@@ -711,12 +711,12 @@ abstract class ConditionsAbstract extends TestCase
     }
 
     /**
-     * @return ConditionsStrategy
+     * @return Conditions
      */
     abstract protected function newClause();
 
     /**
-     * @return ConditionsStrategy
+     * @return Conditions
      */
     abstract protected function newConditions();
 }

@@ -2,9 +2,11 @@
 
 namespace Greg\Orm;
 
+use Greg\Orm\Clause\HavingClauseStrategy;
+use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Support\DateTime;
 
-class Conditions extends SqlAbstract implements ConditionsStrategy
+class Conditions extends SqlAbstract
 {
     /**
      * @var array[]
@@ -564,25 +566,25 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
     }
 
     /**
-     * @param ConditionsStrategy $strategy
+     * @param Conditions $conditions
      *
      * @return $this
      */
-    public function conditions(ConditionsStrategy $strategy)
+    public function conditions(Conditions $conditions)
     {
-        $this->logic('AND', $strategy);
+        $this->logic('AND', $conditions);
 
         return $this;
     }
 
     /**
-     * @param ConditionsStrategy $strategy
+     * @param Conditions $conditions
      *
      * @return $this
      */
-    public function orConditions(ConditionsStrategy $strategy)
+    public function orConditions(Conditions $conditions)
     {
-        $this->logic('OR', $strategy);
+        $this->logic('OR', $conditions);
 
         return $this;
     }
@@ -614,16 +616,16 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
     }
 
     /**
-     * @param string $type
+     * @param string $logic
      * @param $sql
      * @param array $params
      *
      * @return $this
      */
-    public function logic(string $type, $sql, array $params = [])
+    public function logic(string $logic, $sql, array $params = [])
     {
         $this->conditions[] = [
-            'logic'  => $type,
+            'logic'  => $logic,
             'sql'    => $sql,
             'params' => $params,
         ];
@@ -1048,8 +1050,24 @@ class Conditions extends SqlAbstract implements ConditionsStrategy
      */
     protected function prepareCondition(array $condition): array
     {
-        if ($condition['sql'] instanceof ConditionsStrategy) {
+        if ($condition['sql'] instanceof Conditions) {
             list($sql, $params) = $condition['sql']->toSql();
+
+            $condition['sql'] = $sql ? '(' . $sql . ')' : null;
+
+            $condition['params'] = $params;
+        }
+
+        if ($condition['sql'] instanceof WhereClauseStrategy) {
+            list($sql, $params) = $condition['sql']->whereToSql(false);
+
+            $condition['sql'] = $sql ? '(' . $sql . ')' : null;
+
+            $condition['params'] = $params;
+        }
+
+        if ($condition['sql'] instanceof HavingClauseStrategy) {
+            list($sql, $params) = $condition['sql']->havingToSql(false);
 
             $condition['sql'] = $sql ? '(' . $sql . ')' : null;
 

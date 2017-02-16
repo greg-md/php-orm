@@ -1,21 +1,19 @@
 <?php
 
-namespace Greg\Orm\Table;
-
-use Greg\Orm\Driver\WhereClauseInterface;
+namespace Greg\Orm;
 
 trait SoftDeleteTrait
 {
     protected $softDeleteColumn = 'DeletedAt';
 
     /**
-     * @var WhereClauseInterface|null
+     * @var Conditions|null
      */
     protected $softDeleteClause = null;
 
     protected function bootSoftDeleteTrait()
     {
-        $this->applyOnWhere(function (WhereClauseInterface $query) {
+        $this->applyOnWhere(function (Conditions $query) {
             $this->softDeleteClause = $query;
 
             $this->loadSoftDeleted();
@@ -25,7 +23,7 @@ trait SoftDeleteTrait
     protected function loadSoftDeleted()
     {
         if ($this->softDeleteClause) {
-            $this->softDeleteClause->clearWhere()->whereIsNull($this->softDeletedColumn());
+            $this->softDeleteClause->clear()->isNull($this->softDeletedColumn());
         }
 
         return $this;
@@ -34,7 +32,7 @@ trait SoftDeleteTrait
     protected function unloadSoftDeleted()
     {
         if ($this->softDeleteClause) {
-            $this->softDeleteClause->clearWhere();
+            $this->softDeleteClause->clear();
         }
 
         return $this;
@@ -43,7 +41,7 @@ trait SoftDeleteTrait
     protected function onlySoftDeleted()
     {
         if ($this->softDeleteClause) {
-            $this->softDeleteClause->clearWhere()->whereIsNotNull($this->softDeletedColumn());
+            $this->softDeleteClause->clear()->isNotNull($this->softDeletedColumn());
         }
 
         return $this;
