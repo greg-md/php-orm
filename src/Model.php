@@ -17,7 +17,7 @@ class Model
 
     final public function __construct(array $data = [], DriverStrategy $driver = null)
     {
-//        if ($data) {
+        //        if ($data) {
 //            $this->___appendRowData($data, true);
 //        }
 
