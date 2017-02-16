@@ -41,7 +41,7 @@ trait DeleteTableQueryTrait
         return [];
     }
 
-    public function clearSetValue()
+    public function clearRowsFrom()
     {
         if ($query = $this->getDeleteQuery()) {
             $query->clearRowsFrom();

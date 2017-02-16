@@ -148,4 +148,12 @@ trait LimitTableClauseTrait
 
         return $this;
     }
+
+    protected function getLimitClause(): ?LimitClause
+    {
+        /** @var LimitClause $clause */
+        $clause = $this->getClause('LIMIT');
+
+        return $clause;
+    }
 }

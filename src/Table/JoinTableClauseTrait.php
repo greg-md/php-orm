@@ -273,4 +273,12 @@ trait JoinTableClauseTrait
 
         return $this;
     }
+
+    protected function getJoinClause(): ?JoinClause
+    {
+        /** @var JoinClause $clause */
+        $clause = $this->getClause('JOIN');
+
+        return $clause;
+    }
 }

@@ -148,4 +148,12 @@ trait OffsetTableClauseTrait
 
         return $this;
     }
+
+    protected function getOffsetClause(): ?OffsetClause
+    {
+        /** @var OffsetClause $clause */
+        $clause = $this->getClause('OFFSET');
+
+        return $clause;
+    }
 }

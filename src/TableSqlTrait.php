@@ -1,36 +1,56 @@
 <?php
 
-namespace Greg\Orm\Table;
+namespace Greg\Orm;
 
 use Greg\Orm\Clause\ClauseStrategy;
-use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Clause\FromClauseStrategy;
-use Greg\Orm\Clause\GroupByClause;
 use Greg\Orm\Clause\GroupByClauseStrategy;
-use Greg\Orm\Clause\HavingClause;
 use Greg\Orm\Clause\HavingClauseStrategy;
-use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Clause\JoinClauseStrategy;
-use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\LimitClauseStrategy;
-use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OffsetClauseStrategy;
-use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\OrderByClauseStrategy;
-use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Driver\StatementStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\Table\DeleteTableQueryTrait;
+use Greg\Orm\Table\FromTableClauseTrait;
+use Greg\Orm\Table\GroupByTableClauseTrait;
+use Greg\Orm\Table\HavingTableClauseTrait;
+use Greg\Orm\Table\InsertTableQueryTrait;
+use Greg\Orm\Table\JoinTableClauseTrait;
+use Greg\Orm\Table\LimitTableClauseTrait;
+use Greg\Orm\Table\OffsetTableClauseTrait;
+use Greg\Orm\Table\OrderByTableClauseTrait;
+use Greg\Orm\Table\SelectTableQueryTrait;
+use Greg\Orm\Table\UpdateTableQueryTrait;
+use Greg\Orm\Table\WhereTableClauseTrait;
 
 trait TableSqlTrait
 {
+    use DeleteTableQueryTrait,
+        InsertTableQueryTrait,
+        SelectTableQueryTrait,
+        UpdateTableQueryTrait,
+
+        FromTableClauseTrait,
+        GroupByTableClauseTrait,
+        HavingTableClauseTrait,
+        JoinTableClauseTrait,
+        LimitTableClauseTrait,
+        OffsetTableClauseTrait,
+        OrderByTableClauseTrait,
+        WhereTableClauseTrait;
+
     /**
      * @var QueryStrategy|null
      */
     private $query;
 
+    /**
+     * @var ClauseStrategy[]
+     */
     private $clauses = [];
 
     public function query(): QueryStrategy
@@ -316,86 +336,6 @@ trait TableSqlTrait
 
         return $stmt;
     }
-
-    protected function getFromClause(): ?FromClause
-    {
-        /** @var FromClause $clause */
-        $clause = $this->getClause('FROM');
-
-        return $clause;
-    }
-
-    protected function getJoinClause(): ?JoinClause
-    {
-        /** @var JoinClause $clause */
-        $clause = $this->getClause('JOIN');
-
-        return $clause;
-    }
-
-    protected function getWhereClause(): ?WhereClause
-    {
-        /** @var WhereClause $clause */
-        $clause = $this->getClause('WHERE');
-
-        return $clause;
-    }
-
-    protected function getHavingClause(): ?HavingClause
-    {
-        /** @var HavingClause $clause */
-        $clause = $this->getClause('HAVING');
-
-        return $clause;
-    }
-
-    protected function getOrderByClause(): ?OrderByClause
-    {
-        /** @var OrderByClause $clause */
-        $clause = $this->getClause('ORDER_BY');
-
-        return $clause;
-    }
-
-    protected function getGroupByClause(): ?GroupByClause
-    {
-        /** @var GroupByClause $clause */
-        $clause = $this->getClause('GROUP_BY');
-
-        return $clause;
-    }
-
-    protected function getLimitClause(): ?LimitClause
-    {
-        /** @var LimitClause $clause */
-        $clause = $this->getClause('LIMIT');
-
-        return $clause;
-    }
-
-    protected function getOffsetClause(): ?OffsetClause
-    {
-        /** @var OffsetClause $clause */
-        $clause = $this->getClause('OFFSET');
-
-        return $clause;
-    }
-
-    abstract public function assignFromAppliers(FromClauseStrategy $strategy);
-
-    abstract public function assignJoinAppliers(JoinClauseStrategy $strategy);
-
-    abstract public function assignWhereAppliers(WhereClauseStrategy $strategy);
-
-    abstract public function assignHavingAppliers(HavingClauseStrategy $strategy);
-
-    abstract public function assignOrderByAppliers(OrderByClauseStrategy $strategy);
-
-    abstract public function assignGroupByAppliers(GroupByClauseStrategy $strategy);
-
-    abstract public function assignLimitAppliers(LimitClauseStrategy $strategy);
-
-    abstract public function assignOffsetAppliers(OffsetClauseStrategy $strategy);
 
     abstract public function driver(): DriverStrategy;
 }

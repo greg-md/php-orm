@@ -441,4 +441,12 @@ trait HavingTableClauseTrait
 
         return $this;
     }
+
+    protected function getHavingClause(): ?HavingClause
+    {
+        /** @var HavingClause $clause */
+        $clause = $this->getClause('HAVING');
+
+        return $clause;
+    }
 }

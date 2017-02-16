@@ -165,4 +165,12 @@ trait FromTableClauseTrait
 
         return $this;
     }
+
+    protected function getFromClause(): ?FromClause
+    {
+        /** @var FromClause $clause */
+        $clause = $this->getClause('FROM');
+
+        return $clause;
+    }
 }

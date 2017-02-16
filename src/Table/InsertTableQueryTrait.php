@@ -92,8 +92,5 @@ trait InsertTableQueryTrait
 
     abstract protected function executeQuery(QueryStrategy $query): StatementStrategy;
 
-    /**
-     * @return DriverStrategy
-     */
-    abstract public function driver();
+    abstract public function driver(): DriverStrategy;
 }

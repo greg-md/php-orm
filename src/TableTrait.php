@@ -2,42 +2,8 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Table\DeleteTableQueryTrait;
-use Greg\Orm\Table\FromTableClauseTrait;
-use Greg\Orm\Table\GroupByTableClauseTrait;
-use Greg\Orm\Table\HavingTableClauseTrait;
-use Greg\Orm\Table\InsertTableQueryTrait;
-use Greg\Orm\Table\JoinTableClauseTrait;
-use Greg\Orm\Table\LimitTableClauseTrait;
-use Greg\Orm\Table\OffsetTableClauseTrait;
-use Greg\Orm\Table\OrderByTableClauseTrait;
-use Greg\Orm\Table\SelectTableQueryTrait;
-use Greg\Orm\Table\TableSqlTrait;
-use Greg\Orm\Table\UpdateTableQueryTrait;
-use Greg\Orm\Table\WhereTableClauseTrait;
-use Greg\Support\Arr;
-use Greg\Support\DateTime;
-use Greg\Support\Str;
-
 trait TableTrait
 {
-    use TableSqlTrait,
-
-        DeleteTableQueryTrait,
-        InsertTableQueryTrait,
-        SelectTableQueryTrait,
-        UpdateTableQueryTrait,
-
-        FromTableClauseTrait,
-        GroupByTableClauseTrait,
-        HavingTableClauseTrait,
-        JoinTableClauseTrait,
-        LimitTableClauseTrait,
-        OffsetTableClauseTrait,
-        OrderByTableClauseTrait,
-        WhereTableClauseTrait;
-
 //    protected $prefix = null;
 //
 //    protected $name = null;

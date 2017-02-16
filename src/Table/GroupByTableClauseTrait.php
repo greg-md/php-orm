@@ -165,4 +165,12 @@ trait GroupByTableClauseTrait
 
         return $this;
     }
+
+    protected function getGroupByClause(): ?GroupByClause
+    {
+        /** @var GroupByClause $clause */
+        $clause = $this->getClause('GROUP_BY');
+
+        return $clause;
+    }
 }

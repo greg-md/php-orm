@@ -183,4 +183,12 @@ trait OrderByTableClauseTrait
 
         return $this;
     }
+
+    protected function getOrderByClause(): ?OrderByClause
+    {
+        /** @var OrderByClause $clause */
+        $clause = $this->getClause('ORDER_BY');
+
+        return $clause;
+    }
 }

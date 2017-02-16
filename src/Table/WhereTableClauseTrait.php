@@ -502,4 +502,12 @@ trait WhereTableClauseTrait
 
         return $this;
     }
+
+    protected function getWhereClause(): ?WhereClause
+    {
+        /** @var WhereClause $clause */
+        $clause = $this->getClause('WHERE');
+
+        return $clause;
+    }
 }

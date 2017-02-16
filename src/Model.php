@@ -4,9 +4,11 @@ namespace Greg\Orm;
 
 use Greg\Orm\Driver\DriverStrategy;
 
-class Model
+abstract class Model
 {
-    use TableTrait;
+    use TableSqlTrait;
+
+    //use TableTrait;
 
     //use RowTrait;
 
@@ -32,7 +34,7 @@ class Model
         return $this;
     }
 
-    public function driver()
+    public function driver(): DriverStrategy
     {
         if (!$this->driver) {
             throw new \Exception('Table driver is not defined.');
