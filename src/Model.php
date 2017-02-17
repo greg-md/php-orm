@@ -7,7 +7,6 @@ use Greg\Orm\Driver\DriverStrategy;
 abstract class Model
 {
     use TableSqlTrait;
-
     use TableTrait;
 
     //use RowTrait;

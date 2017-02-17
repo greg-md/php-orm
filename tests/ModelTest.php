@@ -75,7 +75,7 @@ class ModelTest extends TestCase
     {
         $this->model->selectQuery();
 
-        $callable = function(Model $model) {
+        $callable = function (Model $model) {
             $model->where('Column', 'foo');
         };
 
@@ -128,6 +128,6 @@ class ModelTest extends TestCase
     {
         $query = $this->model->where('Column', 'foo');
 
-        $this->assertEquals('WHERE `Column` = ?', (string)$query);
+        $this->assertEquals('WHERE `Column` = ?', (string) $query);
     }
 }
