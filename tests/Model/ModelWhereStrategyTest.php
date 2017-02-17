@@ -58,7 +58,7 @@ class ModelWhereStrategyTest extends ModelAbstract
 
     public function testCanAssignWhereAppliers()
     {
-        $this->model->setWhereApplier(function(WhereClause $clause) {
+        $this->model->setWhereApplier(function (WhereClause $clause) {
             $clause->where('Column', 'bar');
         });
 
@@ -71,21 +71,24 @@ class ModelWhereStrategyTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasWhereAppliers());
 
-        $this->model->setWhereApplier(function() {});
+        $this->model->setWhereApplier(function () {
+        });
 
         $this->assertTrue($this->model->hasWhereAppliers());
     }
 
     public function testCanGetAppliers()
     {
-        $this->model->setWhereApplier(function() {});
+        $this->model->setWhereApplier(function () {
+        });
 
         $this->assertCount(1, $this->model->getWhereAppliers());
     }
 
     public function testCanClearAppliers()
     {
-        $this->model->setWhereApplier(function() {});
+        $this->model->setWhereApplier(function () {
+        });
 
         $this->model->clearWhereAppliers();
 
