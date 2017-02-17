@@ -1078,7 +1078,7 @@ trait ConditionsTrait
     abstract protected function getMethods(): array;
 
     abstract protected function getPrefix(): ?string;
-    
+
     abstract protected function getDisabledTests(): array;
 
     /**
@@ -1088,6 +1088,6 @@ trait ConditionsTrait
 
     /**
      * @return Conditions
-*/
+     */
     abstract protected function newConditions();
 }

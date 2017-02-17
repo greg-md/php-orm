@@ -36,8 +36,7 @@ abstract class ModelAbstract extends TestCase
 
         $pdoMock = $this->pdoMock;
 
-        $this->driver = new MysqlDriver(new class($pdoMock) implements PdoConnectorStrategy
-        {
+        $this->driver = new MysqlDriver(new class($pdoMock) implements PdoConnectorStrategy {
             private $mock;
 
             public function __construct($mock)
