@@ -2,6 +2,8 @@
 
 namespace Greg\Orm\Tests\Clause;
 
+use Greg\Orm\Clause\HavingClause;
+use Greg\Orm\Conditions;
 use Greg\Orm\Tests\ConditionsAbstract;
 
 abstract class HavingClauseAbstract extends ConditionsAbstract
@@ -46,4 +48,37 @@ abstract class HavingClauseAbstract extends ConditionsAbstract
         'get'          => 'getHaving',
         'clear'        => 'clearHaving',
     ];
+
+    public function testCanSetStrategy()
+    {
+        $query = $this->newHavingClause();
+
+        $query->havingStrategy($this->newHavingClause()->having('Foo', 'foo'));
+
+        $this->assertEquals([$this->prefix() . '(`Foo` = ?)', ['foo']], $query->toSql());
+
+        return $query;
+    }
+
+    /**
+     * @test
+     *
+     * @depends testCanSetStrategy
+     *
+     * @param HavingClause $query
+     */
+    public function testCanSetOrStrategy(HavingClause $query)
+    {
+        $query->orHavingStrategy($this->newHavingClause()->having('Bar', 'bar'));
+
+        $this->assertEquals([$this->prefix() . '(`Foo` = ?) OR (`Bar` = ?)', ['foo', 'bar']], $query->toSql());
+    }
+
+    /**
+     * @return HavingClause|Conditions
+     */
+    protected function newHavingClause()
+    {
+        return $this->newClause();
+    }
 }

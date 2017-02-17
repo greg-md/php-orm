@@ -140,6 +140,13 @@ class PdoStatementTest extends TestCase
         $this->assertEquals([1 => 1, 2 => 2], $this->stmt->fetchPairs('Id', 'Id'));
     }
 
+    public function testCanGetRowCount()
+    {
+        $this->pdoStatementMock->method('rowCount')->willReturn(2);
+
+        $this->assertEquals(2, $this->stmt->rowCount());
+    }
+
     public function testCanReconnectIfConnectionExpired()
     {
         /** @var \PDOException $e */

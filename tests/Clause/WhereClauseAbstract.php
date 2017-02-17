@@ -3,6 +3,7 @@
 namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\WhereClause;
+use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Conditions;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Tests\ConditionsAbstract;
@@ -50,32 +51,88 @@ abstract class WhereClauseAbstract extends ConditionsAbstract
         'clear'        => 'clearWhere',
     ];
 
+    public function testCanSetStrategy()
+    {
+        $query = $this->newWhereClause();
+
+        $query->whereStrategy($this->newWhereClause()->where('Foo', 'foo'));
+
+        $this->assertEquals([$this->prefix() . '(`Foo` = ?)', ['foo']], $query->toSql());
+
+        return $query;
+    }
+
+    /**
+     * @test
+     *
+     * @depends testCanSetStrategy
+     *
+     * @param WhereClause $query
+     */
+    public function testCanSetOrStrategy(WhereClause $query)
+    {
+        $query->orWhereStrategy($this->newWhereClause()->where('Bar', 'bar'));
+
+        $this->assertEquals([$this->prefix() . '(`Foo` = ?) OR (`Bar` = ?)', ['foo', 'bar']], $query->toSql());
+    }
+
     public function testCanSetExists()
     {
         $query = $this->newWhereClause()->whereExists($this->newSelectQuery());
 
-        $this->assertEquals(['WHERE EXISTS (SELECT *)', []], $query->toSql());
+        $this->assertEquals([$this->prefix() . 'EXISTS (SELECT *)', []], $query->toSql());
     }
 
     public function testCanSetNotExists()
     {
         $query = $this->newWhereClause()->whereNotExists($this->newSelectQuery());
 
-        $this->assertEquals(['WHERE NOT EXISTS (SELECT *)', []], $query->toSql());
+        $this->assertEquals([$this->prefix() . 'NOT EXISTS (SELECT *)', []], $query->toSql());
     }
 
     public function testCanSetExistsRaw()
     {
         $query = $this->newWhereClause()->whereExistsRaw('SELECT 1');
 
-        $this->assertEquals(['WHERE EXISTS (SELECT 1)', []], $query->toSql());
+        $this->assertEquals([$this->prefix() . 'EXISTS (SELECT 1)', []], $query->toSql());
     }
 
     public function testCanSetNotExistsRaw()
     {
         $query = $this->newWhereClause()->whereNotExistsRaw('SELECT 1');
 
-        $this->assertEquals(['WHERE NOT EXISTS (SELECT 1)', []], $query->toSql());
+        $this->assertEquals([$this->prefix() . 'NOT EXISTS (SELECT 1)', []], $query->toSql());
+    }
+
+    public function testCanDetermineIfExistsExists()
+    {
+        $query = $this->newWhereClause();
+
+        $this->assertFalse($query->hasExists());
+
+        $query->whereExists($this->newSelectQuery());
+
+        $this->assertTrue($query->hasExists());
+    }
+
+    public function testCanGet()
+    {
+        $query = $this->newWhereClause();
+
+        $query->whereExists($this->newSelectQuery());
+
+        $this->assertNotEmpty($query->getExists());
+    }
+
+    public function testCanClear()
+    {
+        $query = $this->newWhereClause();
+
+        $query->whereExists($this->newSelectQuery());
+
+        $query->clearExists();
+
+        $this->assertNull($query->getExists());
     }
 
     /**

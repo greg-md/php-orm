@@ -2,54 +2,13 @@
 
 namespace Greg\Orm\Tests;
 
-use Greg\Orm\Driver\Mysql\MysqlDriver;
-use Greg\Orm\Driver\PdoConnectorStrategy;
 use Greg\Orm\Driver\StatementStrategy;
 use Greg\Orm\Model;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\QueryException;
-use Greg\Orm\Tests\Utils\PdoMock;
-use PHPUnit\Framework\TestCase;
 
-class MyModel extends Model
+class ModelTest extends ModelAbstract
 {
-    protected $name = 'Table';
-}
-
-class ModelTest extends TestCase
-{
-    use PdoMock;
-
-    /**
-     * @var MyModel
-     */
-    private $model;
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->initPdoMock();
-
-        $pdoMock = $this->pdoMock;
-
-        $driver = new MysqlDriver(new class($pdoMock) implements PdoConnectorStrategy {
-            private $mock;
-
-            public function __construct($mock)
-            {
-                $this->mock = $mock;
-            }
-
-            public function connect(): \PDO
-            {
-                return $this->mock;
-            }
-        });
-
-        $this->model = new MyModel([], $driver);
-    }
-
     public function testCanManageQuery()
     {
         $this->assertFalse($this->model->hasQuery());

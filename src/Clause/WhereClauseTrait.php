@@ -587,7 +587,7 @@ trait WhereClauseTrait
     /**
      * @return array
      */
-    public function getExists(): array
+    public function getExists(): ?array
     {
         return $this->exists;
     }

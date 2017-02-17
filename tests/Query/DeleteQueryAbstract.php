@@ -83,5 +83,16 @@ abstract class DeleteQueryAbstract extends TestCase
         $query->toSql();
     }
 
+    public function testCanClone()
+    {
+        $query = $this->newQuery()->from('Table');
+
+        $query2 = clone $query;
+
+        $query2->where('Column', 'foo');
+
+        $this->assertNotEquals($query->toString(), $query2->toString());
+    }
+
     abstract protected function newQuery(): DeleteQuery;
 }

@@ -154,6 +154,17 @@ abstract class UpdateQueryAbstract extends TestCase
         $this->newQuery()->table($this->newSelectQuery());
     }
 
+    public function testCanClone()
+    {
+        $query = $this->newQuery()->table('Table')->set('Column', 'bar');
+
+        $query2 = clone $query;
+
+        $query2->where('Column', 'foo');
+
+        $this->assertNotEquals($query->toString(), $query2->toString());
+    }
+
     abstract protected function newQuery(): UpdateQuery;
 
     abstract protected function newSelectQuery(): SelectQuery;

@@ -339,7 +339,7 @@ interface WhereClauseStrategy extends ClauseStrategy
 
     public function hasExists(): bool;
 
-    public function getExists(): array;
+    public function getExists(): ?array;
 
     public function clearExists();
 
