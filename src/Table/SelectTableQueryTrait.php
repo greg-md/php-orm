@@ -44,7 +44,7 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function selectColumns(string $column, string ...$columns)
+    public function select(string $column, string ...$columns)
     {
         $instance = $this->selectQueryInstance();
 

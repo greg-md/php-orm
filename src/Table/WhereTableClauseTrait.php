@@ -430,13 +430,13 @@ trait WhereTableClauseTrait
         return false;
     }
 
-    public function getExists(): array
+    public function getExists(): ?array
     {
         if ($clause = $this->getWhereStrategy()) {
             return $clause->getExists();
         }
 
-        return [];
+        return null;
     }
 
     public function clearExists()

@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\Tests\Model;
 
+use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Conditions;
 use Greg\Orm\Tests\ConditionsTrait;
 use Greg\Orm\Tests\ModelAbstract;
@@ -54,6 +55,123 @@ class ModelWhereStrategyTest extends ModelAbstract
     protected $disabledTests = [
         'testCanAddLogic',
     ];
+
+    public function testCanAssignWhereAppliers()
+    {
+        $this->model->setWhereApplier(function(WhereClause $clause) {
+            $clause->where('Column', 'bar');
+        });
+
+        $query = $this->model->where('Column', 'foo');
+
+        $this->assertEquals('WHERE (`Column` = ?) AND (`Column` = ?)', $query->toString());
+    }
+
+    public function testCanDetermineIfAppliersExists()
+    {
+        $this->assertFalse($this->model->hasWhereAppliers());
+
+        $this->model->setWhereApplier(function() {});
+
+        $this->assertTrue($this->model->hasWhereAppliers());
+    }
+
+    public function testCanGetAppliers()
+    {
+        $this->model->setWhereApplier(function() {});
+
+        $this->assertCount(1, $this->model->getWhereAppliers());
+    }
+
+    public function testCanClearAppliers()
+    {
+        $this->model->setWhereApplier(function() {});
+
+        $this->model->clearWhereAppliers();
+
+        $this->assertFalse($this->model->hasWhereAppliers());
+    }
+
+    public function testCanDetermineIfWhereExists()
+    {
+        $this->assertFalse($this->model->hasWhere());
+    }
+
+    public function testCanGetWhere()
+    {
+        $this->assertCount(0, $this->model->getWhere());
+    }
+
+    public function testCanClearWhere()
+    {
+        $this->model->clearWhere();
+
+        $this->assertFalse($this->model->hasWhere());
+    }
+
+    public function testCanSetExists()
+    {
+        $query = $this->model->whereExists($this->driver->select());
+
+        $this->assertEquals([$this->prefix() . 'EXISTS (SELECT *)', []], $query->toSql());
+    }
+
+    public function testCanSetNotExists()
+    {
+        $query = $this->model->whereNotExists($this->driver->select());
+
+        $this->assertEquals([$this->prefix() . 'NOT EXISTS (SELECT *)', []], $query->toSql());
+    }
+
+    public function testCanSetExistsRaw()
+    {
+        $query = $this->model->whereExistsRaw('SELECT 1');
+
+        $this->assertEquals([$this->prefix() . 'EXISTS (SELECT 1)', []], $query->toSql());
+    }
+
+    public function testCanSetNotExistsRaw()
+    {
+        $query = $this->model->whereNotExistsRaw('SELECT 1');
+
+        $this->assertEquals([$this->prefix() . 'NOT EXISTS (SELECT 1)', []], $query->toSql());
+    }
+
+    public function testCanDetermineIfExistsExists()
+    {
+        $this->assertFalse($this->model->hasExists());
+
+        $query = $this->model->select('Column')->whereExists($this->driver->select());
+
+        $this->assertTrue($query->hasExists());
+    }
+
+    public function testCanGetExists()
+    {
+        $query = $this->model->whereExists($this->driver->select());
+
+        $this->assertNotEmpty($query->getExists());
+    }
+
+    public function testCanClearExists()
+    {
+        $this->model->clearExists();
+
+        $this->assertNull($this->model->getExists());
+
+        $query = $this->model->whereExists($this->driver->select());
+
+        $query->clearExists();
+
+        $this->assertNull($this->model->getExists());
+    }
+
+    public function testCanSelectWhere()
+    {
+        $query = $this->model->select('Column')->where('Column', 'foo');
+
+        $this->assertEquals('SELECT `Column` FROM `Table` WHERE `Column` = ?', $query->toString());
+    }
 
     protected function getMethods(): array
     {

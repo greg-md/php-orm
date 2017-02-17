@@ -114,7 +114,7 @@ abstract class WhereClauseAbstract extends ConditionsAbstract
         $this->assertTrue($query->hasExists());
     }
 
-    public function testCanGet()
+    public function testCanGetExists()
     {
         $query = $this->newWhereClause();
 
@@ -123,7 +123,7 @@ abstract class WhereClauseAbstract extends ConditionsAbstract
         $this->assertNotEmpty($query->getExists());
     }
 
-    public function testCanClear()
+    public function testCanClearExists()
     {
         $query = $this->newWhereClause();
 
