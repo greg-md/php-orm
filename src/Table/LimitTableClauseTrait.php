@@ -15,7 +15,7 @@ trait LimitTableClauseTrait
 
     public function assignLimitAppliers(LimitClauseStrategy $strategy)
     {
-        if (!$strategy->hasLimit()) {
+        if ($this->limitAppliers and !$strategy->hasLimit()) {
             foreach ($this->limitAppliers as $applier) {
                 $clause = $this->driver()->limit();
 

@@ -102,7 +102,7 @@ abstract class DialectAbstract implements DialectStrategy
      */
     public static function addOffsetToSql(string $sql, int $limit): string
     {
-        return $sql . ' LIMIT ' . $limit;
+        return $sql . ' OFFSET ' . $limit;
     }
 
     /**
@@ -112,8 +112,8 @@ abstract class DialectAbstract implements DialectStrategy
      */
     public static function parseTable($table): array
     {
-        if ($table instanceof TableTraitInterface) {
-            return [$table->getAlias(), $table->fullName()];
+        if ($table instanceof Model) {
+            return [$table->alias(), $table->fullName()];
         }
 
         if (is_array($table)) {

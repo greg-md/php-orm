@@ -19,7 +19,7 @@ trait HavingTableClauseTrait
 
     public function assignHavingAppliers(HavingClauseStrategy $strategy)
     {
-        if ($items = $strategy->getHaving()) {
+        if ($this->havingAppliers and $items = $strategy->getHaving()) {
             $strategy->clearHaving();
 
             foreach ($this->havingAppliers as $applier) {

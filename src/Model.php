@@ -8,7 +8,7 @@ abstract class Model
 {
     use TableSqlTrait;
 
-    //use TableTrait;
+    use TableTrait;
 
     //use RowTrait;
 

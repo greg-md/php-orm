@@ -88,59 +88,11 @@ trait TableSqlTrait
         return $this;
     }
 
-    public function clause(string $name): ClauseStrategy
-    {
-        if (!isset($this->clauses[$name])) {
-            throw new QueryException('Clause ' . $name . ' was not defined.');
-        }
-
-        return $this->clauses[$name];
-    }
-
-    public function setClause(string $name, ClauseStrategy $query)
-    {
-        $this->clauses[$name] = $query;
-
-        return $this;
-    }
-
-    public function hasClauses(): bool
-    {
-        return (bool) $this->clauses;
-    }
-
-    public function hasClause(string $name): bool
-    {
-        return isset($this->clauses[$name]);
-    }
-
-    public function getClauses(): array
-    {
-        return $this->clauses;
-    }
-
-    public function getClause(string $name): ?ClauseStrategy
-    {
-        return $this->clauses[$name] ?? null;
-    }
-
-    public function clearClauses()
-    {
-        $this->clauses = [];
-
-        return $this;
-    }
-
-    public function clearClause(string $name)
-    {
-        unset($this->clauses[$name]);
-
-        return $this;
-    }
-
     public function when(bool $condition, callable $callable)
     {
-        $this->query()->when($condition, $callable);
+        if ($condition) {
+            call_user_func_array($callable, [$this]);
+        }
 
         return $this;
     }
@@ -208,6 +160,56 @@ trait TableSqlTrait
         return $this->toString();
     }
 
+    protected function clause(string $name): ClauseStrategy
+    {
+        if (!isset($this->clauses[$name])) {
+            throw new QueryException('Clause ' . $name . ' was not defined.');
+        }
+
+        return $this->clauses[$name];
+    }
+
+    protected function setClause(string $name, ClauseStrategy $query)
+    {
+        $this->clauses[$name] = $query;
+
+        return $this;
+    }
+
+    protected function hasClauses(): bool
+    {
+        return (bool) $this->clauses;
+    }
+
+    protected function hasClause(string $name): bool
+    {
+        return isset($this->clauses[$name]);
+    }
+
+    protected function getClauses(): array
+    {
+        return $this->clauses;
+    }
+
+    protected function getClause(string $name): ?ClauseStrategy
+    {
+        return $this->clauses[$name] ?? null;
+    }
+
+    protected function clearClauses()
+    {
+        $this->clauses = [];
+
+        return $this;
+    }
+
+    protected function clearClause(string $name)
+    {
+        unset($this->clauses[$name]);
+
+        return $this;
+    }
+
     protected function clausesToSql()
     {
         $sql = $params = [];
@@ -248,6 +250,18 @@ trait TableSqlTrait
             $params = array_merge($params, $p);
         }
 
+        if ($clause = $this->getGroupByClause()) {
+            $clause = clone $clause;
+
+            $this->assignGroupByAppliers($clause);
+
+            list($s, $p) = $clause->toSql();
+
+            $sql[] = $s;
+
+            $params = array_merge($params, $p);
+        }
+
         if ($clause = $this->getHavingClause()) {
             $clause = clone $clause;
 
@@ -264,18 +278,6 @@ trait TableSqlTrait
             $clause = clone $clause;
 
             $this->assignOrderByAppliers($clause);
-
-            list($s, $p) = $clause->toSql();
-
-            $sql[] = $s;
-
-            $params = array_merge($params, $p);
-        }
-
-        if ($clause = $this->getGroupByClause()) {
-            $clause = clone $clause;
-
-            $this->assignGroupByAppliers($clause);
 
             list($s, $p) = $clause->toSql();
 

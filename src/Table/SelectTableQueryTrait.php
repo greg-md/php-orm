@@ -286,7 +286,7 @@ trait SelectTableQueryTrait
     public function getSelectQuery(): ?SelectQuery
     {
         /** @var SelectQuery $query */
-        if ($query = $this->selectQuery()) {
+        if ($query = $this->getQuery()) {
             $this->needSelectQuery($query);
         }
 
@@ -296,7 +296,7 @@ trait SelectTableQueryTrait
     public function selectQuery(): SelectQuery
     {
         /** @var SelectQuery $query */
-        if ($query = $this->selectQuery()) {
+        if ($query = $this->getQuery()) {
             $this->needSelectQuery($query);
 
             return $query;
@@ -319,7 +319,7 @@ trait SelectTableQueryTrait
 
     protected function selectQueryInstance()
     {
-        if ($query = $this->selectQuery()) {
+        if ($query = $this->getQuery()) {
             $this->needSelectQuery($query);
 
             return $this;
@@ -431,11 +431,11 @@ trait SelectTableQueryTrait
 
     abstract public function getQuery(): ?QueryStrategy;
 
-    abstract public function hasClauses(): bool;
-
-    abstract public function getClauses(): array;
-
     abstract public function driver(): DriverStrategy;
+
+    abstract protected function hasClauses(): bool;
+
+    abstract protected function getClauses(): array;
 
     /**
      * @return $this

@@ -173,11 +173,11 @@ trait DeleteTableQueryTrait
 
     abstract public function getQuery(): ?QueryStrategy;
 
-    abstract public function hasClauses(): bool;
-
-    abstract public function getClauses(): array;
-
     abstract public function driver(): DriverStrategy;
+
+    abstract protected function hasClauses(): bool;
+
+    abstract protected function getClauses(): array;
 
     /**
      * @return $this

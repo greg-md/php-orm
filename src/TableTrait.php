@@ -4,12 +4,31 @@ namespace Greg\Orm;
 
 trait TableTrait
 {
-    //    protected $prefix = null;
-//
-//    protected $name = null;
-//
-//    protected $alias = null;
-//
+    protected $prefix;
+
+    protected $name;
+
+    protected $alias;
+
+    public function alias(): ?string
+    {
+        return $this->alias;
+    }
+
+    public function name(): string
+    {
+        if (!$this->name) {
+            throw new \Exception('Table name is required in model.');
+        }
+
+        return $this->name;
+    }
+
+    public function fullName(): string
+    {
+        return $this->prefix . $this->name();
+    }
+
 //    protected $label = null;
 //
 //    /**
@@ -26,51 +45,6 @@ trait TableTrait
 //    protected $primaryKeys = [];
 //
 //    protected $uniqueKeys = [];
-//
-//    public function setPrefix($name)
-//    {
-//        $this->prefix = (string) $name;
-//
-//        return $this;
-//    }
-//
-//    public function getPrefix()
-//    {
-//        return $this->prefix;
-//    }
-//
-//    public function setName($name)
-//    {
-//        $this->name = (string) $name;
-//
-//        return $this;
-//    }
-//
-//    public function getName()
-//    {
-//        if (!$this->name) {
-//            throw new \Exception('Table name is not defined.');
-//        }
-//
-//        return $this->name;
-//    }
-//
-//    public function fullName()
-//    {
-//        return $this->getPrefix() . $this->getName();
-//    }
-//
-//    public function setAlias($name)
-//    {
-//        $this->alias = (string) $name;
-//
-//        return $this;
-//    }
-//
-//    public function getAlias()
-//    {
-//        return $this->alias;
-//    }
 //
 //    public function setLabel($name)
 //    {

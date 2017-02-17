@@ -15,7 +15,7 @@ trait OffsetTableClauseTrait
 
     public function assignOffsetAppliers(OffsetClauseStrategy $strategy)
     {
-        if (!$strategy->hasOffset()) {
+        if ($this->offsetAppliers and !$strategy->hasOffset()) {
             foreach ($this->offsetAppliers as $applier) {
                 $clause = $this->driver()->offset();
 

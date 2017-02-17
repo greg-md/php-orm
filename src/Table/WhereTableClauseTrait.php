@@ -17,7 +17,7 @@ trait WhereTableClauseTrait
 
     public function assignWhereAppliers(WhereClauseStrategy $strategy)
     {
-        if ($items = $strategy->getWhere()) {
+        if ($this->whereAppliers and $items = $strategy->getWhere()) {
             $strategy->clearWhere();
 
             foreach ($this->whereAppliers as $applier) {

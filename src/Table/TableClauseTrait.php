@@ -10,13 +10,13 @@ trait TableClauseTrait
 {
     abstract public function getQuery(): ?QueryStrategy;
 
-    abstract public function getClause(string $name): ?ClauseStrategy;
-
-    abstract public function setClause(string $name, ClauseStrategy $query);
-
-    abstract public function hasClauses(): bool;
-
     abstract public function driver(): DriverStrategy;
+
+    abstract protected function getClause(string $name): ?ClauseStrategy;
+
+    abstract protected function setClause(string $name, ClauseStrategy $query);
+
+    abstract protected function hasClauses(): bool;
 
     /**
      * @return $this

@@ -6,23 +6,16 @@ use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Driver\PdoConnectorStrategy;
 use Greg\Orm\Driver\PdoDriverStrategy;
 use Greg\Orm\Driver\StatementStrategy;
+use Greg\Orm\Tests\Utils\PdoMock;
 
 class PdoDriverAbstract extends DriverAbstract
 {
+    use PdoMock;
+
     /**
      * @var DriverStrategy
      */
     protected $driver;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $pdoMock;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $pdoStatementMock;
 
     /**
      * @var PdoDriverStrategy
@@ -33,14 +26,9 @@ class PdoDriverAbstract extends DriverAbstract
     {
         parent::setUp();
 
-        $this->pdoMock = $pdoMock = $this->getMockBuilder(\PDO::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->initPdoMock();
 
-        $this->pdoStatementMock = $this->getMockBuilder(\PDOStatement::class)
-            ->getMock();
-
-        $this->db = new $this->driver(new class($pdoMock) implements PdoConnectorStrategy {
+        $this->db = new $this->driver(new class($this->pdoMock) implements PdoConnectorStrategy {
             /**
              * @var
              */
@@ -191,55 +179,5 @@ class PdoDriverAbstract extends DriverAbstract
         $this->mockStatements();
 
         $this->assertInstanceOf(StatementStrategy::class, $this->db->query('SELECT 1'));
-    }
-
-    protected function mockStatements()
-    {
-        $this->pdoMock->method('prepare')->willReturn($this->pdoStatementMock);
-
-        $this->pdoMock->method('query')->willReturn($this->pdoStatementMock);
-
-        return $this;
-    }
-
-    protected function mockTransactions()
-    {
-        $pdoTransaction = false;
-
-        $this->pdoMock->method('beginTransaction')->will($this->returnCallback(function () use (&$pdoTransaction) {
-            if ($pdoTransaction) {
-                throw new \Exception('Transaction already initialised');
-            }
-
-            $pdoTransaction = true;
-
-            return true;
-        }));
-
-        $this->pdoMock->method('inTransaction')->will($this->returnCallback(function () use (&$pdoTransaction) {
-            return $pdoTransaction;
-        }));
-
-        $this->pdoMock->method('commit')->will($this->returnCallback(function () use (&$pdoTransaction) {
-            if (!$pdoTransaction) {
-                throw new \Exception('Transaction is not initialised');
-            }
-
-            $pdoTransaction = false;
-
-            return true;
-        }));
-
-        $this->pdoMock->method('rollback')->will($this->returnCallback(function () use (&$pdoTransaction) {
-            if (!$pdoTransaction) {
-                throw new \Exception('Transaction is not initialised');
-            }
-
-            $pdoTransaction = false;
-
-            return true;
-        }));
-
-        return $this;
     }
 }

@@ -15,7 +15,7 @@ trait JoinTableClauseTrait
 
     public function assignJoinAppliers(JoinClauseStrategy $strategy)
     {
-        if ($items = $strategy->getJoins()) {
+        if ($this->joinAppliers and $items = $strategy->getJoins()) {
             $strategy->clearJoins();
 
             foreach ($this->joinAppliers as $applier) {
