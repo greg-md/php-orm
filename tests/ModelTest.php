@@ -31,7 +31,9 @@ class ModelTest extends TestCase
 
         $this->initPdoMock();
 
-        $driver = new MysqlDriver(new class($this->pdoMock) implements PdoConnectorStrategy {
+        $pdoMock = $this->pdoMock;
+
+        $driver = new MysqlDriver(new class($pdoMock) implements PdoConnectorStrategy {
             private $mock;
 
             public function __construct($mock)
