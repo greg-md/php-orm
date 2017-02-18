@@ -106,7 +106,7 @@ class DeleteQuery extends SqlAbstract implements
 
         $sql = [$sql];
 
-        list($fromSql, $fromParams) = $this->fromToSql();
+        list($fromSql, $fromParams) = $this->fromToSql($this);
 
         if (!$fromSql) {
             throw new QueryException('Undefined DELETE FROM clause.');

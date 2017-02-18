@@ -38,7 +38,7 @@ interface FromClauseStrategy
      */
     public function clearFrom();
 
-    public function fromToSql(bool $useClause = true): array;
+    public function fromToSql(?JoinClauseStrategy $join = null, bool $useClause = true): array;
 
-    public function fromToString(bool $useClause = true): string;
+    public function fromToString(?JoinClauseStrategy $join = null, bool $useClause = true): string;
 }

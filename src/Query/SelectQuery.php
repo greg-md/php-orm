@@ -500,7 +500,7 @@ class SelectQuery extends SqlAbstract implements
 
         $sql = [$sql];
 
-        list($fromSql, $fromParams) = $this->fromToSql();
+        list($fromSql, $fromParams) = $this->fromToSql($this);
 
         if ($fromSql) {
             $sql[] = $fromSql;

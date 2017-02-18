@@ -119,11 +119,11 @@ trait FromClauseTrait
     }
 
     /**
+     * @param JoinClauseStrategy|null $join
      * @param bool $useClause
-     *
      * @return array
      */
-    public function fromToSql(bool $useClause = true): array
+    public function fromToSql(?JoinClauseStrategy $join = null, bool $useClause = true): array
     {
         $params = [];
 
@@ -138,12 +138,14 @@ trait FromClauseTrait
 
             $params = array_merge($params, $from['params']);
 
-            list($joinsSql, $joinsParams) = $this->joinToSql($from['tableKey']);
+            if ($join) {
+                list($joinsSql, $joinsParams) = $join->joinToSql($from['tableKey']);
 
-            if ($joinsSql) {
-                $sqlPart .= ' ' . $joinsSql;
+                if ($joinsSql) {
+                    $sqlPart .= ' ' . $joinsSql;
 
-                $params = array_merge($params, $joinsParams);
+                    $params = array_merge($params, $joinsParams);
+                }
             }
 
             $sql[] = $sqlPart;
@@ -159,13 +161,14 @@ trait FromClauseTrait
     }
 
     /**
+     * @param JoinClauseStrategy|null $join
      * @param bool $useClause
      *
      * @return string
      */
-    public function fromToString(bool $useClause = true): string
+    public function fromToString(?JoinClauseStrategy $join = null, bool $useClause = true): string
     {
-        return $this->fromToSql($useClause)[0];
+        return $this->fromToSql($join, $useClause)[0];
     }
 
     /**
@@ -190,6 +193,4 @@ trait FromClauseTrait
      * @return DialectStrategy
      */
     abstract public function dialect(): DialectStrategy;
-
-    abstract public function joinToSql(string $source = null);
 }
