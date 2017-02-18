@@ -98,6 +98,8 @@ class ModelWhereStrategyTest extends ModelAbstract
     public function testCanDetermineIfWhereExists()
     {
         $this->assertFalse($this->model->hasWhere());
+
+        $this->assertFalse($this->model->select('Column')->hasWhere());
     }
 
     public function testCanGetWhere()
@@ -144,7 +146,7 @@ class ModelWhereStrategyTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasExists());
 
-        $query = $this->model->select('Column')->whereExists($this->driver->select());
+        $query = $this->model->whereExists($this->driver->select());
 
         $this->assertTrue($query->hasExists());
     }

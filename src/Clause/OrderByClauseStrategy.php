@@ -57,4 +57,8 @@ interface OrderByClauseStrategy
      * @return $this
      */
     public function clearOrderBy();
+
+    public function orderByToSql(): array;
+
+    public function orderByToString(): string;
 }

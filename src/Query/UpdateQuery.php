@@ -194,41 +194,7 @@ class UpdateQuery extends SqlAbstract implements
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toSql(): array
-    {
-        return $this->updateToSql();
-    }
-
-    /**
-     * @return string
-     */
-    public function toString(): string
-    {
-        return $this->updateToString();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    public function __clone()
-    {
-        $this->whereClone();
-    }
-
-    /**
-     * @throws QueryException
-     *
-     * @return array
-     */
-    protected function updateClauseToSql()
+    public function updateToSql(): array
     {
         if (!$this->tables) {
             throw new QueryException('Undefined tables in UPDATE statement.');
@@ -259,18 +225,9 @@ class UpdateQuery extends SqlAbstract implements
         return [$sql, $params];
     }
 
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    protected function addLimitToSql(string $sql): string
+    public function updateToString(): string
     {
-        if ($limit = $this->getLimit()) {
-            $sql .= ' LIMIT ' . $limit;
-        }
-
-        return $sql;
+        return $this->updateToSql()[0];
     }
 
     /**
@@ -278,7 +235,7 @@ class UpdateQuery extends SqlAbstract implements
      *
      * @return array
      */
-    protected function setClauseToSql()
+    public function setToSql(): array
     {
         if (!$this->set) {
             throw new QueryException('Undefined SET statement in UPDATE statement.');
@@ -299,12 +256,17 @@ class UpdateQuery extends SqlAbstract implements
         return [$sql, $params];
     }
 
+    public function setToString(): string
+    {
+        return $this->setToSql()[0];
+    }
+
     /**
      * @return array
      */
-    protected function updateToSql(): array
+    public function toSql(): array
     {
-        list($sql, $params) = $this->updateClauseToSql();
+        list($sql, $params) = $this->updateToSql();
 
         $sql = [$sql];
 
@@ -316,7 +278,7 @@ class UpdateQuery extends SqlAbstract implements
             $params = array_merge($params, $joinsParams);
         }
 
-        list($setSql, $setParams) = $this->setClauseToSql();
+        list($setSql, $setParams) = $this->setToSql();
 
         $sql[] = $setSql;
 
@@ -338,7 +300,11 @@ class UpdateQuery extends SqlAbstract implements
             $params = array_merge($params, $orderByParams);
         }
 
-        $sql = $this->addLimitToSql(implode(' ', $sql));
+        $sql = implode(' ', $sql);
+
+        if ($limit = $this->getLimit()) {
+            $sql = $this->dialect()->addLimitToSql($sql, $limit);
+        }
 
         return [$sql, $params];
     }
@@ -346,9 +312,26 @@ class UpdateQuery extends SqlAbstract implements
     /**
      * @return string
      */
-    protected function updateToString(): string
+    public function toString(): string
     {
-        return $this->updateToSql()[0];
+        return $this->toSql()[0];
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        try {
+            return $this->toString();
+        } catch (QueryException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function __clone()
+    {
+        $this->whereClone();
     }
 
     /**

@@ -119,7 +119,7 @@ trait OrderByClauseTrait
     /**
      * @return array
      */
-    protected function orderByToSql(): array
+    public function orderByToSql(): array
     {
         $sql = $params = [];
 
@@ -137,7 +137,7 @@ trait OrderByClauseTrait
     /**
      * @return string
      */
-    protected function orderByToString(): string
+    public function orderByToString(): string
     {
         return $this->orderByToSql()[0];
     }

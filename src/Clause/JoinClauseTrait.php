@@ -265,7 +265,7 @@ trait JoinClauseTrait
      *
      * @return array
      */
-    protected function joinToSql(string $source = null)
+    public function joinToSql(string $source = null)
     {
         $sql = $params = [];
 
@@ -297,7 +297,7 @@ trait JoinClauseTrait
      *
      * @return string
      */
-    protected function joinToString(string $source = null)
+    public function joinToString(string $source = null)
     {
         return $this->joinToSql($source)[0];
     }

@@ -229,32 +229,6 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      */
     public function toSql(): array
     {
-        return $this->insertToSql();
-    }
-
-    /**
-     * @return string
-     */
-    public function toString(): string
-    {
-        return $this->insertToString();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    /**
-     * @throws QueryException
-     *
-     * @return array
-     */
-    protected function insertToSql()
-    {
         if (!$this->into) {
             throw new QueryException('Undefined INSERT table.');
         }
@@ -291,11 +265,23 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    protected function insertToString()
+    public function toString(): string
     {
-        return $this->insertToSql()[0];
+        return $this->toSql()[0];
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        try {
+            return $this->toString();
+        } catch (QueryException $e) {
+            return $e->getMessage();
+        }
     }
 
     /**

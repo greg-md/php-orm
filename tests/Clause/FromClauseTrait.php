@@ -3,12 +3,10 @@
 namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\FromClause;
-use Greg\Orm\Conditions;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
-use PHPUnit\Framework\TestCase;
 
-abstract class FromClauseAbstract extends TestCase
+trait FromClauseTrait
 {
     public function testCanAddFrom()
     {
@@ -62,6 +60,7 @@ abstract class FromClauseAbstract extends TestCase
         $this->assertEquals(['', []], $query->toSql());
     }
 
+    /*
     public function testCanJoin()
     {
         $query = $this->newClause()->from('Foo')->inner('Bar');
@@ -100,6 +99,7 @@ abstract class FromClauseAbstract extends TestCase
 
         $this->assertEquals('FROM (SELECT *) AS `t` INNER JOIN `Table` ON `Column` IS NULL', $query->toString());
     }
+    */
 
     public function testCanThrowExceptionIfDerivedTableNotHaveAlias()
     {
@@ -108,7 +108,10 @@ abstract class FromClauseAbstract extends TestCase
         $this->newClause()->from($this->newSelectQuery());
     }
 
-    abstract protected function newClause(): FromClause;
+    /**
+     * @return FromClause
+     */
+    abstract protected function newClause();
 
     abstract protected function newSelectQuery(): SelectQuery;
 }

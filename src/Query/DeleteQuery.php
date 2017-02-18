@@ -4,6 +4,8 @@ namespace Greg\Orm\Query;
 
 use Greg\Orm\Clause\FromClauseStrategy;
 use Greg\Orm\Clause\FromClauseTrait;
+use Greg\Orm\Clause\JoinClauseStrategy;
+use Greg\Orm\Clause\JoinClauseTrait;
 use Greg\Orm\Clause\LimitClauseStrategy;
 use Greg\Orm\Clause\LimitClauseTrait;
 use Greg\Orm\Clause\OrderByClauseStrategy;
@@ -16,11 +18,13 @@ use Greg\Orm\SqlAbstract;
 class DeleteQuery extends SqlAbstract implements
     QueryStrategy,
     FromClauseStrategy,
+    JoinClauseStrategy,
     WhereClauseStrategy,
     OrderByClauseStrategy,
     LimitClauseStrategy
 {
     use FromClauseTrait,
+        JoinClauseTrait,
         WhereClauseTrait,
         OrderByClauseTrait,
         LimitClauseTrait;
@@ -76,36 +80,7 @@ class DeleteQuery extends SqlAbstract implements
     /**
      * @return array
      */
-    public function toSql(): array
-    {
-        return $this->deleteToSql();
-    }
-
-    /**
-     * @return string
-     */
-    public function toString(): string
-    {
-        return $this->deleteToString();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    public function __clone()
-    {
-        $this->whereClone();
-    }
-
-    /**
-     * @return array
-     */
-    protected function deleteClauseToSql()
+    public function deleteToSql(): array
     {
         $params = [];
 
@@ -120,28 +95,14 @@ class DeleteQuery extends SqlAbstract implements
         return [$sql, $params];
     }
 
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    protected function addLimitToSql(string $sql): string
+    public function deleteToString(): string
     {
-        if ($limit = $this->getLimit()) {
-            $sql .= ' LIMIT ' . $limit;
-        }
-
-        return $sql;
+        return $this->deleteToSql()[0];
     }
 
-    /**
-     * @throws QueryException
-     *
-     * @return array
-     */
-    protected function deleteToSql()
+    public function toSql(): array
     {
-        list($sql, $params) = $this->deleteClauseToSql();
+        list($sql, $params) = $this->deleteToSql();
 
         $sql = [$sql];
 
@@ -154,6 +115,14 @@ class DeleteQuery extends SqlAbstract implements
         $sql[] = $fromSql;
 
         $params = array_merge($params, $fromParams);
+
+        list($joinSql, $joinParams) = $this->joinToSql();
+
+        if ($joinSql) {
+            $sql[] = $joinSql;
+
+            $params = array_merge($params, $joinParams);
+        }
 
         list($whereSql, $whereParams) = $this->whereToSql();
 
@@ -171,16 +140,34 @@ class DeleteQuery extends SqlAbstract implements
             $params = array_merge($params, $orderByParams);
         }
 
-        $sql = $this->addLimitToSql(implode(' ', $sql));
+        $sql = implode(' ', $sql);
+
+        if ($limit = $this->getLimit()) {
+            $sql = $this->dialect()->addLimitToSql($sql, $limit);
+        }
 
         return [$sql, $params];
+    }
+
+    public function toString(): string
+    {
+        return $this->toSql()[0];
     }
 
     /**
      * @return string
      */
-    protected function deleteToString()
+    public function __toString(): string
     {
-        return $this->deleteToSql()[0];
+        try {
+            return $this->toString();
+        } catch (QueryException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function __clone()
+    {
+        $this->whereClone();
     }
 }

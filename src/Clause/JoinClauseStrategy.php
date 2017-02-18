@@ -156,4 +156,8 @@ interface JoinClauseStrategy
      * @return $this
      */
     public function clearJoins();
+
+    public function joinToSql(string $source = null);
+
+    public function joinToString(string $source = null);
 }

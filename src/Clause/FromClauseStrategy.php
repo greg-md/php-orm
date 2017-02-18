@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-interface FromClauseStrategy extends JoinClauseStrategy
+interface FromClauseStrategy
 {
     /**
      * @param $table
@@ -37,4 +37,8 @@ interface FromClauseStrategy extends JoinClauseStrategy
      * @return $this
      */
     public function clearFrom();
+
+    public function fromToSql(bool $useClause = true): array;
+
+    public function fromToString(bool $useClause = true): string;
 }

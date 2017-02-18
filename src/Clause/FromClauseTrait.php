@@ -2,13 +2,12 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\DialectStrategy;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 
 trait FromClauseTrait
 {
-    use JoinClauseTrait;
-
     /**
      * @var array[]
      */
@@ -124,7 +123,7 @@ trait FromClauseTrait
      *
      * @return array
      */
-    protected function fromClauseToSql(bool $useClause = true): array
+    public function fromToSql(bool $useClause = true): array
     {
         $params = [];
 
@@ -161,40 +160,9 @@ trait FromClauseTrait
 
     /**
      * @param bool $useClause
-     *
-     * @throws QueryException
-     *
-     * @return array
-     */
-    protected function fromToSql(bool $useClause = true): array
-    {
-        list($sql, $params) = $this->fromClauseToSql($useClause);
-
-        $sql = $sql ? [$sql] : [];
-
-        list($joinsSql, $joinsParams) = $this->joinToSql();
-
-        if ($joinsSql) {
-            if (!$sql) {
-                throw new QueryException('FROM is required when using JOIN.');
-            }
-
-            $sql[] = $joinsSql;
-
-            $params = array_merge($params, $joinsParams);
-        }
-
-        $sql = implode(' ', $sql);
-
-        return [$sql, $params];
-    }
-
-    /**
-     * @param bool $useClause
-     *
      * @return string
      */
-    protected function fromToString(bool $useClause = true): string
+    public function fromToString(bool $useClause = true): string
     {
         return $this->fromToSql($useClause)[0];
     }
@@ -216,4 +184,11 @@ trait FromClauseTrait
 
         return $from;
     }
+
+    /**
+     * @return DialectStrategy
+     */
+    abstract public function dialect(): DialectStrategy;
+
+    abstract public function joinToSql(string $source = null);
 }

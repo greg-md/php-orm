@@ -41,4 +41,8 @@ interface GroupByClauseStrategy
      * @return $this
      */
     public function clearGroupBy();
+
+    public function groupByToSql(): array;
+
+    public function groupByToString(): string;
 }

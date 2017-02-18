@@ -5,10 +5,13 @@ namespace Greg\Orm\Tests\Driver\Sqlite\Clause;
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Driver\Sqlite\SqliteDialect;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Tests\Clause\FromClauseAbstract;
+use Greg\Orm\Tests\Clause\FromClauseTrait;
+use PHPUnit\Framework\TestCase;
 
-class SqliteFromClauseTest extends FromClauseAbstract
+class SqliteFromClauseTest extends TestCase
 {
+    use FromClauseTrait;
+
     protected function newClause(): FromClause
     {
         return new FromClause(new SqliteDialect());

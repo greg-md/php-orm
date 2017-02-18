@@ -8,6 +8,8 @@ use Greg\Orm\Clause\GroupByClauseStrategy;
 use Greg\Orm\Clause\GroupByClauseTrait;
 use Greg\Orm\Clause\HavingClauseStrategy;
 use Greg\Orm\Clause\HavingClauseTrait;
+use Greg\Orm\Clause\JoinClauseStrategy;
+use Greg\Orm\Clause\JoinClauseTrait;
 use Greg\Orm\Clause\LimitClauseStrategy;
 use Greg\Orm\Clause\LimitClauseTrait;
 use Greg\Orm\Clause\OffsetClauseStrategy;
@@ -16,11 +18,13 @@ use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\QueryException;
 use Greg\Orm\SqlAbstract;
 
 class SelectQuery extends SqlAbstract implements
     QueryStrategy,
     FromClauseStrategy,
+    JoinClauseStrategy,
     WhereClauseStrategy,
     HavingClauseStrategy,
     OrderByClauseStrategy,
@@ -29,6 +33,7 @@ class SelectQuery extends SqlAbstract implements
     OffsetClauseStrategy
 {
     use FromClauseTrait,
+        JoinClauseTrait,
         WhereClauseTrait,
         HavingClauseTrait,
         OrderByClauseTrait,
@@ -444,56 +449,7 @@ class SelectQuery extends SqlAbstract implements
     /**
      * @return array
      */
-    public function toSql(): array
-    {
-        return $this->selectToSql();
-    }
-
-    /**
-     * @return string
-     */
-    public function toString(): string
-    {
-        return $this->selectToString();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    public function __clone()
-    {
-        $this->whereClone();
-
-        $this->havingClone();
-    }
-
-    /**
-     * @param string $sql
-     *
-     * @return string
-     */
-    protected function addSelectLimitToSql(string $sql): string
-    {
-        if ($this->limit) {
-            $sql .= ' LIMIT ' . $this->limit;
-        }
-
-        if ($this->offset) {
-            $sql .= ' OFFSET ' . $this->offset;
-        }
-
-        return $sql;
-    }
-
-    /**
-     * @return array
-     */
-    protected function selectClauseToSql(): array
+    public function selectToSql(): array
     {
         $params = [];
 
@@ -530,12 +486,17 @@ class SelectQuery extends SqlAbstract implements
         return [$sql, $params];
     }
 
+    public function selectToString(): string
+    {
+        return $this->selectToSql()[0];
+    }
+
     /**
      * @return array
      */
-    protected function selectToSql(): array
+    public function toSql(): array
     {
-        list($sql, $params) = $this->selectClauseToSql();
+        list($sql, $params) = $this->selectToSql();
 
         $sql = [$sql];
 
@@ -545,6 +506,14 @@ class SelectQuery extends SqlAbstract implements
             $sql[] = $fromSql;
 
             $params = array_merge($params, $fromParams);
+        }
+
+        list($joinSql, $joinParams) = $this->joinToSql();
+
+        if ($joinSql) {
+            $sql[] = $joinSql;
+
+            $params = array_merge($params, $joinParams);
         }
 
         list($whereSql, $whereParams) = $this->whereToSql();
@@ -579,7 +548,15 @@ class SelectQuery extends SqlAbstract implements
             $params = array_merge($params, $orderByParams);
         }
 
-        $sql = $this->addSelectLimitToSql(implode(' ', $sql));
+        $sql = implode(' ', $sql);
+
+        if ($limit = $this->getLimit()) {
+            $sql = $this->dialect()->addLimitToSql($sql, $limit);
+        }
+
+        if ($offset = $this->getOffset()) {
+            $sql = $this->dialect()->addOffsetToSql($sql, $offset);
+        }
 
         if ($this->unions) {
             $sql = ['(' . $sql . ')'];
@@ -612,9 +589,28 @@ class SelectQuery extends SqlAbstract implements
     /**
      * @return string
      */
-    protected function selectToString()
+    public function toString(): string
     {
-        return $this->selectToSql()[0];
+        return $this->toSql()[0];
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        try {
+            return $this->toString();
+        } catch (QueryException $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function __clone()
+    {
+        $this->whereClone();
+
+        $this->havingClone();
     }
 
     /**

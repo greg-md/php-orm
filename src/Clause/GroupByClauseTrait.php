@@ -81,7 +81,7 @@ trait GroupByClauseTrait
     /**
      * @return array
      */
-    protected function groupByToSql(): array
+    public function groupByToSql(): array
     {
         $sql = $params = [];
 
@@ -99,7 +99,7 @@ trait GroupByClauseTrait
     /**
      * @return string
      */
-    protected function groupByToString(): string
+    public function groupByToString(): string
     {
         return $this->groupByToSql()[0];
     }

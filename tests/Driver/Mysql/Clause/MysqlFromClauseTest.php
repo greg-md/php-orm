@@ -5,10 +5,13 @@ namespace Greg\Orm\Tests\Driver\Mysql\Clause;
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Driver\Mysql\MysqlDialect;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Tests\Clause\FromClauseAbstract;
+use Greg\Orm\Tests\Clause\FromClauseTrait;
+use PHPUnit\Framework\TestCase;
 
-class MysqlFromClauseTest extends FromClauseAbstract
+class MysqlFromClauseTest extends TestCase
 {
+    use FromClauseTrait;
+
     protected function newClause(): FromClause
     {
         return new FromClause(new MysqlDialect());
