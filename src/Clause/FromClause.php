@@ -10,7 +10,7 @@ class FromClause extends SqlAbstract implements ClauseStrategy, FromClauseStrate
 
     /**
      * @param JoinClauseStrategy|null $join
-     * @param bool $useClause
+     * @param bool                    $useClause
      *
      * @return array
      */
@@ -21,7 +21,7 @@ class FromClause extends SqlAbstract implements ClauseStrategy, FromClauseStrate
 
     /**
      * @param JoinClauseStrategy|null $join
-     * @param bool $useClause
+     * @param bool                    $useClause
      *
      * @return string
      */

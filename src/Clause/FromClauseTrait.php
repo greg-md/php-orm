@@ -120,7 +120,8 @@ trait FromClauseTrait
 
     /**
      * @param JoinClauseStrategy|null $join
-     * @param bool $useClause
+     * @param bool                    $useClause
+     *
      * @return array
      */
     public function fromToSql(?JoinClauseStrategy $join = null, bool $useClause = true): array
@@ -162,7 +163,7 @@ trait FromClauseTrait
 
     /**
      * @param JoinClauseStrategy|null $join
-     * @param bool $useClause
+     * @param bool                    $useClause
      *
      * @return string
      */
