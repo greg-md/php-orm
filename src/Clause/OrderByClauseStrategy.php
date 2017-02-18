@@ -58,7 +58,7 @@ interface OrderByClauseStrategy
      */
     public function clearOrderBy();
 
-    public function orderByToSql(): array;
+    public function orderByToSql(bool $useClause = true): array;
 
-    public function orderByToString(): string;
+    public function orderByToString(bool $useClause = true): string;
 }

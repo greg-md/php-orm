@@ -214,7 +214,7 @@ trait TableSqlTrait
     {
         $sql = $params = [];
 
-        if ($clause = $this->getFromClause()) {
+        if ($clause = $this->hasFromAppliers() ? $this->fromClause() : $this->getFromClause()) {
             $clause = clone $clause;
 
             $this->assignFromAppliers($clause);
@@ -226,7 +226,7 @@ trait TableSqlTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->getJoinClause()) {
+        if ($clause = $this->hasJoinAppliers() ? $this->joinClause() : $this->getJoinClause()) {
             $clause = clone $clause;
 
             $this->assignJoinAppliers($clause);
@@ -238,7 +238,7 @@ trait TableSqlTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->getWhereClause()) {
+        if ($clause = $this->hasWhereAppliers() ? $this->whereClause() : $this->getWhereClause()) {
             $clause = clone $clause;
 
             $this->assignWhereAppliers($clause);
@@ -250,7 +250,7 @@ trait TableSqlTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->getGroupByClause()) {
+        if ($clause = $this->hasGroupByAppliers() ? $this->groupByClause() : $this->getGroupByClause()) {
             $clause = clone $clause;
 
             $this->assignGroupByAppliers($clause);
@@ -262,7 +262,7 @@ trait TableSqlTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->getHavingClause()) {
+        if ($clause = $this->hasHavingAppliers() ? $this->havingClause() : $this->getHavingClause()) {
             $clause = clone $clause;
 
             $this->assignHavingAppliers($clause);
@@ -274,7 +274,7 @@ trait TableSqlTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->getOrderByClause()) {
+        if ($clause = $this->hasOrderByAppliers() ? $this->orderByClause() : $this->getOrderByClause()) {
             $clause = clone $clause;
 
             $this->assignOrderByAppliers($clause);
@@ -288,7 +288,7 @@ trait TableSqlTrait
 
         $sql = implode(' ', $sql);
 
-        if ($clause = $this->getLimitClause()) {
+        if ($clause = $this->hasLimitAppliers() ? $this->limitClause() : $this->getLimitClause()) {
             $clause = clone $clause;
 
             $this->assignLimitAppliers($clause);
@@ -296,7 +296,7 @@ trait TableSqlTrait
             $sql = $this->driver()->dialect()->addLimitToSql($sql, $clause->getLimit());
         }
 
-        if ($clause = $this->getOffsetClause()) {
+        if ($clause = $this->hasOffsetAppliers() ? $this->offsetClause() : $this->getOffsetClause()) {
             $clause = clone $clause;
 
             $this->assignOffsetAppliers($clause);

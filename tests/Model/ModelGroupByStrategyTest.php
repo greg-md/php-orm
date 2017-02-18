@@ -69,14 +69,14 @@ class ModelGroupByStrategyTest extends ModelAbstract
 
     public function testCanCombineClauses()
     {
-        $this->assertTrue($this->model->select('Column')->groupBy('Table2')->hasGroupBy());
+        $this->assertTrue($this->model->select('Column')->groupBy('Column')->hasGroupBy());
     }
 
     public function testCanThrowExceptionIfGroupByNotExists()
     {
         $this->expectException(QueryException::class);
 
-        $this->model->updateTable('Column')->groupBy('Table2');
+        $this->model->updateTable('Column')->groupBy('Column');
     }
 
     protected function newClause()

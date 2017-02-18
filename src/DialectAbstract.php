@@ -91,7 +91,7 @@ abstract class DialectAbstract implements DialectStrategy
      */
     public static function addLimitToSql(string $sql, int $limit): string
     {
-        return $sql . ' LIMIT ' . $limit;
+        return ($sql ? $sql . ' ' : '') . 'LIMIT ' . $limit;
     }
 
     /**
@@ -102,7 +102,7 @@ abstract class DialectAbstract implements DialectStrategy
      */
     public static function addOffsetToSql(string $sql, int $limit): string
     {
-        return $sql . ' OFFSET ' . $limit;
+        return ($sql ? $sql . ' ' : '') . 'OFFSET ' . $limit;
     }
 
     /**

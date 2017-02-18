@@ -79,9 +79,10 @@ trait GroupByClauseTrait
     }
 
     /**
+     * @param bool $useClause
      * @return array
      */
-    public function groupByToSql(): array
+    public function groupByToSql(bool $useClause = true): array
     {
         $sql = $params = [];
 
@@ -91,17 +92,22 @@ trait GroupByClauseTrait
             $groupBy['params'] && $params = array_merge($params, $groupBy['params']);
         }
 
-        $sql = $sql ? 'GROUP BY ' . implode(', ', $sql) : '';
+        $sql = implode(', ', $sql);
+
+        if ($sql and $useClause) {
+            $sql = 'GROUP BY ' . $sql;
+        }
 
         return [$sql, $params];
     }
 
     /**
+     * @param bool $useClause
      * @return string
      */
-    public function groupByToString(): string
+    public function groupByToString(bool $useClause = true): string
     {
-        return $this->groupByToSql()[0];
+        return $this->groupByToSql($useClause)[0];
     }
 
     /**

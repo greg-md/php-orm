@@ -117,9 +117,10 @@ trait OrderByClauseTrait
     }
 
     /**
+     * @param bool $useClause
      * @return array
      */
-    public function orderByToSql(): array
+    public function orderByToSql(bool $useClause = true): array
     {
         $sql = $params = [];
 
@@ -129,17 +130,22 @@ trait OrderByClauseTrait
             $orderBy['params'] && $params = array_merge($params, $orderBy['params']);
         }
 
-        $sql = $sql ? 'ORDER BY ' . implode(', ', $sql) : '';
+        $sql = implode(', ', $sql);
+
+        if ($sql and $useClause) {
+            $sql = 'ORDER BY ' . $sql;
+        }
 
         return [$sql, $params];
     }
 
     /**
+     * @param bool $useClause
      * @return string
      */
-    public function orderByToString(): string
+    public function orderByToString(bool $useClause = true): string
     {
-        return $this->orderByToSql()[0];
+        return $this->orderByToSql($useClause)[0];
     }
 
     /**

@@ -42,7 +42,7 @@ interface GroupByClauseStrategy
      */
     public function clearGroupBy();
 
-    public function groupByToSql(): array;
+    public function groupByToSql(bool $useClause = true): array;
 
-    public function groupByToString(): string;
+    public function groupByToString(bool $useClause = true): string;
 }

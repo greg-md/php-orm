@@ -387,6 +387,20 @@ trait HavingTableClauseTrait
         return $this;
     }
 
+    public function havingToSql(bool $useClause = true): array
+    {
+        if ($clause = $this->getHavingStrategy()) {
+            return $clause->havingToSql($useClause);
+        }
+
+        return ['', []];
+    }
+
+    public function havingToString(bool $useClause = true): string
+    {
+        return $this->havingToSql($useClause)[0];
+    }
+
     public function getHavingStrategy(): ?HavingClauseStrategy
     {
         /** @var QueryStrategy|HavingClauseStrategy $query */
@@ -396,10 +410,7 @@ trait HavingTableClauseTrait
             return $query;
         }
 
-        /** @var HavingClause $clause */
-        $clause = $this->getClause('HAVING');
-
-        return $clause;
+        return $this->getHavingClause();
     }
 
     public function havingStrategy(): HavingClauseStrategy
@@ -411,11 +422,7 @@ trait HavingTableClauseTrait
             return $query;
         }
 
-        if (!$clause = $this->getClause('HAVING')) {
-            $this->setClause('HAVING', $clause = $this->driver()->having());
-        }
-
-        return $clause;
+        return $this->havingClause();
     }
 
     protected function havingStrategyInstance()
@@ -446,6 +453,15 @@ trait HavingTableClauseTrait
     {
         /** @var HavingClause $clause */
         $clause = $this->getClause('HAVING');
+
+        return $clause;
+    }
+
+    protected function havingClause(): HavingClause
+    {
+        if (!$clause = $this->getClause('HAVING')) {
+            $this->setClause('HAVING', $clause = $this->driver()->having());
+        }
 
         return $clause;
     }

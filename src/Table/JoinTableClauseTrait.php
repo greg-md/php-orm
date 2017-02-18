@@ -225,16 +225,12 @@ trait JoinTableClauseTrait
             return $clause->joinToSql($source);
         }
 
-        return [];
+        return ['', []];
     }
 
     public function joinToString(string $source = null): string
     {
-        if ($clause = $this->getJoinStrategy()) {
-            return $clause->joinToString($source);
-        }
-
-        return null;
+        return $this->joinToSql($source)[0];
     }
 
     public function getJoinStrategy(): ?JoinClauseStrategy
@@ -246,10 +242,7 @@ trait JoinTableClauseTrait
             return $query;
         }
 
-        /** @var JoinClause $clause */
-        $clause = $this->getClause('JOIN');
-
-        return $clause;
+        return $this->getJoinClause();
     }
 
     public function joinStrategy(): JoinClauseStrategy
@@ -261,11 +254,7 @@ trait JoinTableClauseTrait
             return $query;
         }
 
-        if (!$clause = $this->getClause('JOIN')) {
-            $this->setClause('JOIN', $clause = $this->driver()->join());
-        }
-
-        return $clause;
+        return $this->joinClause();
     }
 
     protected function joinStrategyInstance()
@@ -296,6 +285,15 @@ trait JoinTableClauseTrait
     {
         /** @var JoinClause $clause */
         $clause = $this->getClause('JOIN');
+
+        return $clause;
+    }
+
+    protected function joinClause(): JoinClause
+    {
+        if (!$clause = $this->getClause('JOIN')) {
+            $this->setClause('JOIN', $clause = $this->driver()->join());
+        }
 
         return $clause;
     }

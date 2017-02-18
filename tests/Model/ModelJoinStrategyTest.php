@@ -67,6 +67,16 @@ class ModelJoinStrategyTest extends ModelAbstract
         $this->assertFalse($this->model->hasJoin());
     }
 
+    public function testCanGetJoinString()
+    {
+        $this->assertEquals('INNER JOIN `Table`', $this->model->inner('Table')->joinToString());
+    }
+
+    public function testCanGetEmptyJoinString()
+    {
+        $this->assertEquals('', $this->model->joinToString());
+    }
+
     public function testCanCombineClauses()
     {
         $this->assertTrue($this->model->select('Column')->inner('Table2')->hasJoin());

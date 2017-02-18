@@ -4,6 +4,7 @@ namespace Greg\Orm\Table;
 
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Clause\FromClauseStrategy;
+use Greg\Orm\Clause\JoinClauseStrategy;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\QueryException;
 
@@ -111,6 +112,20 @@ trait FromTableClauseTrait
         return $this;
     }
 
+    public function fromToSql(?JoinClauseStrategy $join = null, bool $useClause = true): array
+    {
+        if ($clause = $this->getFromStrategy()) {
+            return $clause->fromToSql($join, $useClause);
+        }
+
+        return ['', []];
+    }
+
+    public function fromToString(?JoinClauseStrategy $join = null, bool $useClause = true): string
+    {
+        return $this->fromToSql($join, $useClause)[0];
+    }
+
     public function getFromStrategy(): ?FromClauseStrategy
     {
         /** @var QueryStrategy|FromClauseStrategy $query */
@@ -120,10 +135,7 @@ trait FromTableClauseTrait
             return $query;
         }
 
-        /** @var FromClause $clause */
-        $clause = $this->getClause('FROM');
-
-        return $clause;
+        return $this->getFromClause();
     }
 
     public function fromStrategy(): FromClauseStrategy
@@ -135,11 +147,7 @@ trait FromTableClauseTrait
             return $query;
         }
 
-        if (!$clause = $this->getClause('FROM')) {
-            $this->setClause('FROM', $clause = $this->driver()->from());
-        }
-
-        return $clause;
+        return $this->fromClause();
     }
 
     protected function fromStrategyInstance()
@@ -170,6 +178,15 @@ trait FromTableClauseTrait
     {
         /** @var FromClause $clause */
         $clause = $this->getClause('FROM');
+
+        return $clause;
+    }
+
+    protected function fromClause(): FromClause
+    {
+        if (!$clause = $this->getClause('FROM')) {
+            $this->setClause('FROM', $clause = $this->driver()->from());
+        }
 
         return $clause;
     }

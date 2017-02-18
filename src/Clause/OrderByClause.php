@@ -9,19 +9,21 @@ class OrderByClause extends SqlAbstract implements ClauseStrategy, OrderByClause
     use OrderByClauseTrait;
 
     /**
+     * @param bool $useClause
      * @return array
      */
-    public function toSql(): array
+    public function toSql(bool $useClause = true): array
     {
-        return $this->orderByToSql();
+        return $this->orderByToSql($useClause);
     }
 
     /**
+     * @param bool $useClause
      * @return string
      */
-    public function toString(): string
+    public function toString(bool $useClause = true): string
     {
-        return $this->orderByToString();
+        return $this->orderByToString($useClause);
     }
 
     /**

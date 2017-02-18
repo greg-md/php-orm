@@ -111,6 +111,20 @@ trait GroupByTableClauseTrait
         return $this;
     }
 
+    public function groupByToSql(bool $useClause = true): array
+    {
+        if ($clause = $this->getGroupByStrategy()) {
+            return $clause->groupByToSql($useClause);
+        }
+
+        return ['', []];
+    }
+
+    public function groupByToString(bool $useClause = true): string
+    {
+        return $this->groupByToSql($useClause)[0];
+    }
+
     public function getGroupByStrategy(): ?GroupByClauseStrategy
     {
         /** @var QueryStrategy|GroupByClauseStrategy $query */
@@ -120,10 +134,7 @@ trait GroupByTableClauseTrait
             return $query;
         }
 
-        /** @var GroupByClause $clause */
-        $clause = $this->getClause('GROUP_BY');
-
-        return $clause;
+        return $this->getGroupByClause();
     }
 
     public function groupByStrategy(): GroupByClauseStrategy
@@ -135,11 +146,7 @@ trait GroupByTableClauseTrait
             return $query;
         }
 
-        if (!$clause = $this->getClause('GROUP_BY')) {
-            $this->setClause('GROUP_BY', $clause = $this->driver()->groupBy());
-        }
-
-        return $clause;
+        return $this->groupByClause();
     }
 
     protected function groupByStrategyInstance()
@@ -170,6 +177,15 @@ trait GroupByTableClauseTrait
     {
         /** @var GroupByClause $clause */
         $clause = $this->getClause('GROUP_BY');
+
+        return $clause;
+    }
+
+    protected function groupByClause(): GroupByClause
+    {
+        if (!$clause = $this->getClause('GROUP_BY')) {
+            $this->setClause('GROUP_BY', $clause = $this->driver()->groupBy());
+        }
 
         return $clause;
     }
