@@ -3,9 +3,8 @@
 namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\LimitClause;
-use PHPUnit\Framework\TestCase;
 
-abstract class LimitClauseAbstract extends TestCase
+trait LimitClauseTrait
 {
     public function testCanDetermineIfExists()
     {

@@ -6,9 +6,8 @@ use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Conditions;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
-use PHPUnit\Framework\TestCase;
 
-abstract class JoinClauseAbstract extends TestCase
+trait JoinClauseTrait
 {
     /**
      * @test

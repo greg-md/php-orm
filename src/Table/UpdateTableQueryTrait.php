@@ -13,7 +13,7 @@ use Greg\Orm\QueryException;
 
 trait UpdateTableQueryTrait
 {
-    public function table($table, ...$tables)
+    public function updateTable($table, ...$tables)
     {
         $instance = $this->updateQueryInstance();
 
@@ -22,7 +22,7 @@ trait UpdateTableQueryTrait
         return $instance;
     }
 
-    public function hasTables(): bool
+    public function hasUpdateTables(): bool
     {
         if ($query = $this->getUpdateQuery()) {
             return $query->hasTables();
@@ -31,7 +31,7 @@ trait UpdateTableQueryTrait
         return false;
     }
 
-    public function getTables(): array
+    public function getUpdateTables(): array
     {
         if ($query = $this->getUpdateQuery()) {
             return $query->getTables();
@@ -40,7 +40,7 @@ trait UpdateTableQueryTrait
         return [];
     }
 
-    public function clearTables()
+    public function clearUpdateTables()
     {
         if ($query = $this->getUpdateQuery()) {
             $query->clearTables();

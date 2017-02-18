@@ -3,9 +3,8 @@
 namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\OffsetClause;
-use PHPUnit\Framework\TestCase;
 
-abstract class OffsetClauseAbstract extends TestCase
+trait OffsetClauseTrait
 {
     public function testCanDetermineIfExists()
     {

@@ -3,9 +3,8 @@
 namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\GroupByClause;
-use PHPUnit\Framework\TestCase;
 
-abstract class GroupByClauseAbstract extends TestCase
+trait GroupByClauseTrait
 {
     public function testCanGroupBy()
     {

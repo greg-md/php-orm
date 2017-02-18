@@ -126,7 +126,7 @@ class ModelHavingStrategyTest extends ModelAbstract
     {
         $this->expectException(QueryException::class);
 
-        $this->model->table('Table2')->having('Column', 'foo');
+        $this->model->updateTable('Table2')->having('Column', 'foo');
     }
 
     protected function getMethods(): array

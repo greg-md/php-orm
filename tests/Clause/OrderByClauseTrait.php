@@ -4,9 +4,8 @@ namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\QueryException;
-use PHPUnit\Framework\TestCase;
 
-abstract class OrderByClauseAbstract extends TestCase
+trait OrderByClauseTrait
 {
     public function testCanOrderBy()
     {
