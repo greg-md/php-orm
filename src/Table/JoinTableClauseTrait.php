@@ -15,15 +15,15 @@ trait JoinTableClauseTrait
 
     public function assignJoinAppliers(JoinClauseStrategy $strategy)
     {
-        if ($this->joinAppliers and $items = $strategy->getJoins()) {
-            $strategy->clearJoins();
+        if ($this->joinAppliers and $items = $strategy->getJoin()) {
+            $strategy->clearJoin();
 
             foreach ($this->joinAppliers as $applier) {
                 $clause = $this->driver()->join();
 
                 call_user_func_array($applier, [$clause]);
 
-                foreach ($clause->getJoins() as $tableKey => $join) {
+                foreach ($clause->getJoin() as $tableKey => $join) {
                     $strategy->joinLogic($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
                 }
             }
@@ -88,7 +88,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->left($table, $on, ...$params);
+        $instance->joinStrategy()->right($table, $on, ...$params);
 
         return $instance;
     }
@@ -124,7 +124,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->inner($table);
+        $instance->joinStrategy()->cross($table);
 
         return $instance;
     }
@@ -192,31 +192,49 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
-    public function hasJoins(): bool
+    public function hasJoin(): bool
     {
         if ($clause = $this->getJoinStrategy()) {
-            return $clause->hasJoins();
+            return $clause->hasJoin();
         }
 
         return false;
     }
 
-    public function getJoins(): array
+    public function getJoin(): array
     {
         if ($clause = $this->getJoinStrategy()) {
-            return $clause->getJoins();
+            return $clause->getJoin();
         }
 
         return [];
     }
 
-    public function clearJoins()
+    public function clearJoin()
     {
         if ($clause = $this->getJoinStrategy()) {
-            $clause->clearJoins();
+            $clause->clearJoin();
         }
 
         return $this;
+    }
+
+    public function joinToSql(string $source = null): array
+    {
+        if ($clause = $this->getJoinStrategy()) {
+            return $clause->joinToSql($source);
+        }
+
+        return [];
+    }
+
+    public function joinToString(string $source = null): string
+    {
+        if ($clause = $this->getJoinStrategy()) {
+            return $clause->joinToString($source);
+        }
+
+        return null;
     }
 
     public function getJoinStrategy(): ?JoinClauseStrategy

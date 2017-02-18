@@ -209,12 +209,12 @@ class UpdateQuery extends SqlAbstract implements
                 $sqlPart .= ' AS ' . $table['alias'];
             }
 
-            list($joinsSql, $joinsParams) = $this->joinToSql($table['tableKey']);
+            list($joinSql, $joinParams) = $this->joinToSql($table['tableKey']);
 
-            if ($joinsSql) {
-                $sqlPart .= ' ' . $joinsSql;
+            if ($joinSql) {
+                $sqlPart .= ' ' . $joinSql;
 
-                $params = array_merge($params, $joinsParams);
+                $params = array_merge($params, $joinParams);
             }
 
             $sql[] = $sqlPart;
@@ -270,12 +270,12 @@ class UpdateQuery extends SqlAbstract implements
 
         $sql = [$sql];
 
-        list($joinsSql, $joinsParams) = $this->joinToSql();
+        list($joinSql, $joinParams) = $this->joinToSql();
 
-        if ($joinsSql) {
-            $sql[] = $joinsSql;
+        if ($joinSql) {
+            $sql[] = $joinSql;
 
-            $params = array_merge($params, $joinsParams);
+            $params = array_merge($params, $joinParams);
         }
 
         list($setSql, $setParams) = $this->setToSql();

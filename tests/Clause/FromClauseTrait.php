@@ -75,18 +75,11 @@ trait FromClauseTrait
         $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->toString());
     }
 
-    public function testCanNotUseJoinsWithoutFrom()
+    public function testCanNotUseJoinWithoutFrom()
     {
         $this->expectException(QueryException::class);
 
         $this->newClause()->inner('Foo')->toString();
-    }
-
-    public function testCanTransformToString()
-    {
-        $query = $this->newClause()->from('Foo');
-
-        $this->assertEquals('FROM `Foo`', (string) $query);
     }
 
     public function testCanCombineClauses()
@@ -100,6 +93,13 @@ trait FromClauseTrait
         $this->assertEquals('FROM (SELECT *) AS `t` INNER JOIN `Table` ON `Column` IS NULL', $query->toString());
     }
     */
+
+    public function testCanTransformToString()
+    {
+        $query = $this->newClause()->from('Foo');
+
+        $this->assertEquals('FROM `Foo`', (string) $query);
+    }
 
     public function testCanThrowExceptionIfDerivedTableNotHaveAlias()
     {

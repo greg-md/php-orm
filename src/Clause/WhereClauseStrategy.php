@@ -343,7 +343,7 @@ interface WhereClauseStrategy extends ClauseStrategy
 
     public function clearExists();
 
-    public function whereToSql($useClause = true);
+    public function whereToSql($useClause = true): array;
 
-    public function whereToString($useClause = true);
+    public function whereToString($useClause = true): string;
 }

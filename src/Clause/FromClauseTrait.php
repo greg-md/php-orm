@@ -140,12 +140,12 @@ trait FromClauseTrait
             $params = array_merge($params, $from['params']);
 
             if ($join) {
-                list($joinsSql, $joinsParams) = $join->joinToSql($from['tableKey']);
+                list($joinSql, $joinParams) = $join->joinToSql($from['tableKey']);
 
-                if ($joinsSql) {
-                    $sqlPart .= ' ' . $joinsSql;
+                if ($joinSql) {
+                    $sqlPart .= ' ' . $joinSql;
 
-                    $params = array_merge($params, $joinsParams);
+                    $params = array_merge($params, $joinParams);
                 }
             }
 

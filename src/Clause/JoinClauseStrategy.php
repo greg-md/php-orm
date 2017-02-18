@@ -145,19 +145,19 @@ interface JoinClauseStrategy
     /**
      * @return string
      */
-    public function hasJoins();
+    public function hasJoin();
 
     /**
      * @return array
      */
-    public function getJoins();
+    public function getJoin();
 
     /**
      * @return $this
      */
-    public function clearJoins();
+    public function clearJoin();
 
-    public function joinToSql(string $source = null);
+    public function joinToSql(string $source = null): array;
 
-    public function joinToString(string $source = null);
+    public function joinToString(string $source = null): string;
 }

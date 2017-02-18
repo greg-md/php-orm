@@ -306,7 +306,7 @@ interface HavingClauseStrategy
      */
     public function clearHaving();
 
-    public function havingToSql($useClause = true);
+    public function havingToSql($useClause = true): array;
 
-    public function havingToString($useClause = true);
+    public function havingToString($useClause = true): string;
 }

@@ -79,7 +79,7 @@ trait JoinClauseTrait
 
         $query->{$type . 'To'}('bar', 'Foo');
 
-        $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->toString('bar'));
+        $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->joinToString('bar'));
 
         $this->assertEquals('', $query->toString());
     }
@@ -97,7 +97,7 @@ trait JoinClauseTrait
 
         $query->{$type . 'To'}('bar', 'Foo', '`Foo`.`Id` = !Bar.Id');
 
-        $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->toString('bar'));
+        $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->joinToString('bar'));
     }
 
     /**
@@ -115,25 +115,25 @@ trait JoinClauseTrait
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
-        $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->toString('bar'));
+        $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->joinToString('bar'));
     }
 
     public function testCanCrossTo()
     {
         $query = $this->newClause()->crossTo('bar', 'Foo');
 
-        $this->assertEquals('CROSS JOIN `Foo`', $query->toString('bar'));
+        $this->assertEquals('CROSS JOIN `Foo`', $query->joinToString('bar'));
     }
 
-    public function testCanDetermineIfJoinsExists()
+    public function testCanDetermineIfJoinExists()
     {
         $query = $this->newClause();
 
-        $this->assertFalse($query->hasJoins());
+        $this->assertFalse($query->hasJoin());
 
         $query->inner('Foo');
 
-        $this->assertTrue($query->hasJoins());
+        $this->assertTrue($query->hasJoin());
     }
 
     public function testCanGet()
@@ -142,7 +142,7 @@ trait JoinClauseTrait
 
         $query->inner('Foo');
 
-        $this->assertCount(1, $query->getJoins());
+        $this->assertCount(1, $query->getJoin());
     }
 
     public function testCanClear()
@@ -151,7 +151,7 @@ trait JoinClauseTrait
 
         $query->inner('Foo');
 
-        $query->clearJoins();
+        $query->clearJoin();
 
         $this->assertEquals(['', []], $query->toSql());
     }

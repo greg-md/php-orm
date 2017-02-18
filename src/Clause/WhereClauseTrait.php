@@ -607,7 +607,7 @@ trait WhereClauseTrait
      *
      * @return array
      */
-    public function whereToSql($useClause = true)
+    public function whereToSql($useClause = true): array
     {
         if ($this->exists) {
             $exists = $this->prepareExists($this->exists);
@@ -635,7 +635,7 @@ trait WhereClauseTrait
      *
      * @return string
      */
-    public function whereToString($useClause = true)
+    public function whereToString($useClause = true): string
     {
         return $this->whereToSql($useClause)[0];
     }

@@ -12,7 +12,7 @@ trait JoinClauseTrait
     /**
      * @var array[]
      */
-    private $joins = [];
+    private $join = [];
 
     /**
      * @param $table
@@ -220,7 +220,7 @@ trait JoinClauseTrait
      */
     public function joinLogic(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = [])
     {
-        $this->joins[$tableKey] = [
+        $this->join[$tableKey] = [
             'type'   => $type,
             'source' => $source,
 
@@ -237,25 +237,25 @@ trait JoinClauseTrait
     /**
      * @return bool
      */
-    public function hasJoins(): bool
+    public function hasJoin(): bool
     {
-        return (bool) $this->joins;
+        return (bool) $this->join;
     }
 
     /**
      * @return array[]
      */
-    public function getJoins(): array
+    public function getJoin(): array
     {
-        return $this->joins;
+        return $this->join;
     }
 
     /**
      * @return $this
      */
-    public function clearJoins()
+    public function clearJoin()
     {
-        $this->joins = [];
+        $this->join = [];
 
         return $this;
     }
@@ -265,11 +265,11 @@ trait JoinClauseTrait
      *
      * @return array
      */
-    public function joinToSql(string $source = null)
+    public function joinToSql(string $source = null): array
     {
         $sql = $params = [];
 
-        foreach ($this->joins as $join) {
+        foreach ($this->join as $join) {
             $join = $this->prepareJoin($join);
 
             if ($source != $join['source']) {
@@ -297,7 +297,7 @@ trait JoinClauseTrait
      *
      * @return string
      */
-    public function joinToString(string $source = null)
+    public function joinToString(string $source = null): string
     {
         return $this->joinToSql($source)[0];
     }

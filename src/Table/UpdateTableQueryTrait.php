@@ -198,7 +198,7 @@ trait UpdateTableQueryTrait
     {
         foreach ($clauses as $clause) {
             if ($clause instanceof JoinClause) {
-                foreach ($clause->getJoins() as $tableKey => $join) {
+                foreach ($clause->getJoin() as $tableKey => $join) {
                     $query->joinLogic($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
                 }
 
