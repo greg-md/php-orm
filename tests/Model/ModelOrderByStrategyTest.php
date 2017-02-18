@@ -3,7 +3,6 @@
 namespace Greg\Orm\Tests\Model;
 
 use Greg\Orm\Clause\OrderByClause;
-use Greg\Orm\QueryException;
 use Greg\Orm\Tests\Clause\OrderByClauseTrait;
 use Greg\Orm\Tests\ModelAbstract;
 

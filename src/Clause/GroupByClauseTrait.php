@@ -80,6 +80,7 @@ trait GroupByClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return array
      */
     public function groupByToSql(bool $useClause = true): array
@@ -103,6 +104,7 @@ trait GroupByClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return string
      */
     public function groupByToString(bool $useClause = true): string

@@ -10,6 +10,7 @@ class GroupByClause extends SqlAbstract implements ClauseStrategy, GroupByClause
 
     /**
      * @param bool $useClause
+     *
      * @return array
      */
     public function toSql(bool $useClause = true): array
@@ -19,6 +20,7 @@ class GroupByClause extends SqlAbstract implements ClauseStrategy, GroupByClause
 
     /**
      * @param bool $useClause
+     *
      * @return string
      */
     public function toString(bool $useClause = true): string

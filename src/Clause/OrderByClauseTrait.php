@@ -118,6 +118,7 @@ trait OrderByClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return array
      */
     public function orderByToSql(bool $useClause = true): array
@@ -141,6 +142,7 @@ trait OrderByClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return string
      */
     public function orderByToString(bool $useClause = true): string
