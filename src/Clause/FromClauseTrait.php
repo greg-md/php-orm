@@ -160,6 +160,7 @@ trait FromClauseTrait
 
     /**
      * @param bool $useClause
+     *
      * @return string
      */
     public function fromToString(bool $useClause = true): string

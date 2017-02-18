@@ -59,7 +59,7 @@ class ModelHavingStrategyTest extends ModelAbstract
 
     public function testCanAssignHavingAppliers()
     {
-        $this->model->setHavingApplier(function(HavingClause $clause) {
+        $this->model->setHavingApplier(function (HavingClause $clause) {
             $clause->having('Column', 'bar');
         });
 
@@ -72,21 +72,24 @@ class ModelHavingStrategyTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasHavingAppliers());
 
-        $this->model->setHavingApplier(function() {});
+        $this->model->setHavingApplier(function () {
+        });
 
         $this->assertTrue($this->model->hasHavingAppliers());
     }
 
     public function testCanGetAppliers()
     {
-        $this->model->setHavingApplier(function() {});
+        $this->model->setHavingApplier(function () {
+        });
 
         $this->assertCount(1, $this->model->getHavingAppliers());
     }
 
     public function testCanClearAppliers()
     {
-        $this->model->setHavingApplier(function() {});
+        $this->model->setHavingApplier(function () {
+        });
 
         $this->model->clearHavingAppliers();
 
