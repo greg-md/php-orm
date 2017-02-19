@@ -14,6 +14,7 @@ use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Driver\StatementStrategy;
 use Greg\Orm\Query\QueryStrategy;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Table\DeleteTableQueryTrait;
 use Greg\Orm\Table\FromTableClauseTrait;
 use Greg\Orm\Table\GroupByTableClauseTrait;
@@ -136,6 +137,158 @@ trait TableSqlTrait
         unset($this->clauses[$name]);
 
         return $this;
+    }
+
+    public function chunk(int $count, callable $callable, bool $callOneByOne = false)
+    {
+        $this->chunkQuery($this->selectQueryInstance()->selectQuery(), $count, $callable, $callOneByOne);
+
+        return $this;
+    }
+
+    public function fetch(): ?array
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetch();
+    }
+
+    public function fetchOrFail(): array
+    {
+        if (!$record = $this->fetch()) {
+            throw new QueryException('Row was not found.');
+        }
+
+        return $record;
+    }
+
+    public function fetchAll(): array
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchAll();
+    }
+
+    public function fetchYield()
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchYield();
+    }
+
+    public function assoc(): ?array
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchAssoc();
+    }
+
+    public function assocOrFail(): array
+    {
+        if (!$record = $this->assoc()) {
+            throw new QueryException('Row was not found.');
+        }
+
+        return $record;
+    }
+
+    public function assocAll(): array
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchAssocAll();
+    }
+
+    public function assocYield()
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchAssocYield();
+    }
+
+    public function fetchColumn(string $column = '0'): string
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchColumn($column);
+    }
+
+    public function fetchAllColumn(string $column = '0'): array
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchAllColumn($column);
+    }
+
+    public function fetchPairs(string $key = '0', string $value = '1'): array
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery();
+
+        return $instance->execute()->fetchPairs($key, $value);
+    }
+
+    public function fetchCount(string $column = '*', string $alias = null): int
+    {
+        return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
+    }
+
+    public function fetchMax(string $column, string $alias = null): int
+    {
+        return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
+    }
+
+    public function fetchMin(string $column, string $alias = null): int
+    {
+        return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
+    }
+
+    public function fetchAvg(string $column, string $alias = null): float
+    {
+        return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
+    }
+
+    public function fetchSum(string $column, string $alias = null): string
+    {
+        return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
+    }
+
+    public function exists(): bool
+    {
+        return (bool) $this->clearSelect()->selectRaw(1)->fetchColumn();
+    }
+
+    public function update(array $columns = []): int
+    {
+        return $this->setValues($columns)->execute()->rowCount();
+    }
+
+    public function delete(string ...$tables)
+    {
+        $instance = $this->deleteQueryInstance();
+
+        if ($tables) {
+            $instance->rowsFrom(...$tables);
+        }
+
+        return $instance->execute()->rowCount();
     }
 
     public function when(bool $condition, callable $callable)
@@ -337,6 +490,49 @@ trait TableSqlTrait
         $stmt->execute();
 
         return $stmt;
+    }
+
+    protected function chunkQuery(SelectQuery $query, int $count, callable $callable, bool $callOneByOne = false)
+    {
+        if ($count < 1) {
+            throw new QueryException('Chunk count should be greater than 0.');
+        }
+
+        $offset = 0;
+
+        while (true) {
+            $stmt = $this->executeQuery($query->limit($count)->offset($offset));
+
+            if ($callOneByOne) {
+                $k = 0;
+
+                foreach ($stmt->fetchAssocYield() as $record) {
+                    if (call_user_func_array($callable, [$record]) === false) {
+                        $k = 0;
+
+                        break;
+                    }
+
+                    ++$k;
+                }
+            } else {
+                $records = $stmt->fetchAssocAll();
+
+                $k = count($records);
+
+                if (call_user_func_array($callable, [$records]) === false) {
+                    $k = 0;
+                }
+            }
+
+            if ($k < $count) {
+                break;
+            }
+
+            $offset += $count;
+        }
+
+        return $this;
     }
 
     abstract public function driver(): DriverStrategy;

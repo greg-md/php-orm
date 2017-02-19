@@ -18,7 +18,9 @@ trait SelectQueryTrait
     {
         $query = $this->newQuery()->fromTable('Table', 'Column');
 
-        $this->assertEquals(['SELECT `Table`.`Column` FROM `Table`', []], $query->toSql());
+        $this->assertEquals('SELECT `Table`.`Column`', $query->selectToString());
+
+        $this->assertEquals('SELECT `Table`.`Column` FROM `Table`', $query->toString());
     }
 
     public function testCanSetColumnsFrom()
@@ -237,10 +239,15 @@ trait SelectQueryTrait
     {
         $query = $this->newQuery()
             ->from('Table1')
-            ->innerOn('Table2', function (Conditions $strategy) {
-                $strategy->isNull('Column');
+            ->innerOn('Table2', function (Conditions $conditions) {
+                $conditions->isNull('Column');
             })
-            ->where('Foo', 'foo')
+            ->when(true, function(SelectQuery $query) {
+                $query->where('Foo', 'foo');
+            })
+            ->when(false, function(SelectQuery $query) {
+                $query->where('Bar', 'bar');
+            })
             ->having('Bar', 'bar')
             ->groupBy('Foo')
             ->limit(1)

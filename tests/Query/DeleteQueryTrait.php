@@ -14,6 +14,8 @@ trait DeleteQueryTrait
             ->rowsFrom('t1')
             ->from('Table1 as t1', 'Table2');
 
+        $this->assertEquals('DELETE `t1`', $query->deleteToString());
+
         $this->assertEquals('DELETE `t1` FROM `Table1` AS `t1`, `Table2`', $query->toString());
     }
 
@@ -71,6 +73,13 @@ trait DeleteQueryTrait
             ->from('Table1 as t1', 'Table2');
 
         $this->assertEquals('DELETE `t1` FROM `Table1` AS `t1`, `Table2`', (string) $query);
+    }
+
+    public function testCanReturnExceptionStringWhenTransformToString()
+    {
+        $query = $this->newQuery();
+
+        $this->assertEquals('Undefined DELETE FROM clause.', (string) $query);
     }
 
     public function testCanThrowExceptionIfFromWasNotDefined()

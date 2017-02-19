@@ -70,9 +70,11 @@ interface DialectStrategy
      */
     public static function parseTable($name): array;
 
+    public static function parseName(string $name): array;
+
+    public static function concat(array $values, string $delimiter = ''): string;
+
 //    public static function quoteLike(string $value, string $escape = '\\'): string;
-//
-//    public static function concat(array $values, string $delimiter = ''): string;
 //
 //    public static function ifNullSql(string $sql, string $else = '""'): string;
 }

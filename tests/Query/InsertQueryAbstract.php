@@ -216,6 +216,13 @@ abstract class InsertQueryAbstract extends TestCase
             ->toSql();
     }
 
+    public function testCanReturnExceptionStringWhenTransformToString()
+    {
+        $query = $this->newQuery();
+
+        $this->assertEquals('Undefined INSERT table.', (string) $query);
+    }
+
     abstract protected function newQuery(): InsertQuery;
 
     abstract protected function newSelectQuery(): SelectQuery;

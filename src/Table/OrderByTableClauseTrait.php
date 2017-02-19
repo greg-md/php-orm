@@ -167,6 +167,23 @@ trait OrderByTableClauseTrait
         return $this->orderByClause();
     }
 
+    public function getOrderByClause(): ?OrderByClause
+    {
+        /** @var OrderByClause $clause */
+        $clause = $this->getClause('ORDER_BY');
+
+        return $clause;
+    }
+
+    public function orderByClause(): OrderByClause
+    {
+        if (!$clause = $this->getClause('ORDER_BY')) {
+            $this->setClause('ORDER_BY', $clause = $this->driver()->orderBy());
+        }
+
+        return $clause;
+    }
+
     protected function orderByStrategyInstance()
     {
         if ($query = $this->getQuery()) {
@@ -189,22 +206,5 @@ trait OrderByTableClauseTrait
         }
 
         return $this;
-    }
-
-    protected function getOrderByClause(): ?OrderByClause
-    {
-        /** @var OrderByClause $clause */
-        $clause = $this->getClause('ORDER_BY');
-
-        return $clause;
-    }
-
-    protected function orderByClause(): OrderByClause
-    {
-        if (!$clause = $this->getClause('ORDER_BY')) {
-            $this->setClause('ORDER_BY', $clause = $this->driver()->orderBy());
-        }
-
-        return $clause;
     }
 }

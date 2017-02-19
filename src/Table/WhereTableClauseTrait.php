@@ -486,6 +486,23 @@ trait WhereTableClauseTrait
         return $this->whereClause();
     }
 
+    public function getWhereClause(): ?WhereClause
+    {
+        /** @var WhereClause $clause */
+        $clause = $this->getClause('WHERE');
+
+        return $clause;
+    }
+
+    public function whereClause(): WhereClause
+    {
+        if (!$clause = $this->getClause('WHERE')) {
+            $this->setClause('WHERE', $clause = $this->driver()->where());
+        }
+
+        return $clause;
+    }
+
     protected function whereStrategyInstance()
     {
         if ($query = $this->getQuery()) {
@@ -508,22 +525,5 @@ trait WhereTableClauseTrait
         }
 
         return $this;
-    }
-
-    protected function getWhereClause(): ?WhereClause
-    {
-        /** @var WhereClause $clause */
-        $clause = $this->getClause('WHERE');
-
-        return $clause;
-    }
-
-    protected function whereClause(): WhereClause
-    {
-        if (!$clause = $this->getClause('WHERE')) {
-            $this->setClause('WHERE', $clause = $this->driver()->where());
-        }
-
-        return $clause;
     }
 }

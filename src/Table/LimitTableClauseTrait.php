@@ -118,6 +118,23 @@ trait LimitTableClauseTrait
         return $this->limitClause();
     }
 
+    public function getLimitClause(): ?LimitClause
+    {
+        /** @var LimitClause $clause */
+        $clause = $this->getClause('LIMIT');
+
+        return $clause;
+    }
+
+    public function limitClause(): LimitClause
+    {
+        if (!$clause = $this->getClause('LIMIT')) {
+            $this->setClause('LIMIT', $clause = $this->driver()->limit());
+        }
+
+        return $clause;
+    }
+
     protected function limitStrategyInstance()
     {
         if ($query = $this->getQuery()) {
@@ -140,22 +157,5 @@ trait LimitTableClauseTrait
         }
 
         return $this;
-    }
-
-    protected function getLimitClause(): ?LimitClause
-    {
-        /** @var LimitClause $clause */
-        $clause = $this->getClause('LIMIT');
-
-        return $clause;
-    }
-
-    protected function limitClause(): LimitClause
-    {
-        if (!$clause = $this->getClause('LIMIT')) {
-            $this->setClause('LIMIT', $clause = $this->driver()->limit());
-        }
-
-        return $clause;
     }
 }

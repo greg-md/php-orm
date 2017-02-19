@@ -92,9 +92,25 @@ class ModelFromStrategyTest extends ModelAbstract
         $this->model->updateTable('Column')->from('Table2');
     }
 
+    public function testCanJoin()
+    {
+        $join = $this->newJoinClause()->innerTo('Foo', 'Bar');
+
+        $query = $this->newClause()->from('Foo');
+
+        $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->fromToString($join->joinStrategy()));
+    }
+
     protected function newClause()
     {
         $this->model->fromStrategy();
+
+        return $this->model;
+    }
+
+    protected function newJoinClause()
+    {
+        $this->model->joinStrategy();
 
         return $this->model;
     }

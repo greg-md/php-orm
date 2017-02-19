@@ -3,6 +3,7 @@
 namespace Greg\Orm\Tests\Driver\Mysql\Clause;
 
 use Greg\Orm\Clause\FromClause;
+use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Driver\Mysql\MysqlDialect;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Tests\Clause\FromClauseTrait;
@@ -15,6 +16,11 @@ class MysqlFromClauseTest extends TestCase
     protected function newClause(): FromClause
     {
         return new FromClause(new MysqlDialect());
+    }
+
+    protected function newJoinClause(): JoinClause
+    {
+        return new JoinClause(new MysqlDialect());
     }
 
     protected function newSelectQuery(): SelectQuery

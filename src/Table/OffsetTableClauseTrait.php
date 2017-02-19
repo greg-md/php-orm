@@ -118,6 +118,23 @@ trait OffsetTableClauseTrait
         return $this->offsetClause();
     }
 
+    public function getOffsetClause(): ?OffsetClause
+    {
+        /** @var OffsetClause $clause */
+        $clause = $this->getClause('OFFSET');
+
+        return $clause;
+    }
+
+    public function offsetClause(): OffsetClause
+    {
+        if (!$clause = $this->getClause('OFFSET')) {
+            $this->setClause('OFFSET', $clause = $this->driver()->offset());
+        }
+
+        return $clause;
+    }
+
     protected function offsetStrategyInstance()
     {
         if ($query = $this->getQuery()) {
@@ -140,22 +157,5 @@ trait OffsetTableClauseTrait
         }
 
         return $this;
-    }
-
-    protected function getOffsetClause(): ?OffsetClause
-    {
-        /** @var OffsetClause $clause */
-        $clause = $this->getClause('OFFSET');
-
-        return $clause;
-    }
-
-    protected function offsetClause(): OffsetClause
-    {
-        if (!$clause = $this->getClause('OFFSET')) {
-            $this->setClause('OFFSET', $clause = $this->driver()->offset());
-        }
-
-        return $clause;
     }
 }

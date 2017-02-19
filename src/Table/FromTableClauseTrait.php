@@ -150,6 +150,23 @@ trait FromTableClauseTrait
         return $this->fromClause();
     }
 
+    public function getFromClause(): ?FromClause
+    {
+        /** @var FromClause $clause */
+        $clause = $this->getClause('FROM');
+
+        return $clause;
+    }
+
+    public function fromClause(): FromClause
+    {
+        if (!$clause = $this->getClause('FROM')) {
+            $this->setClause('FROM', $clause = $this->driver()->from());
+        }
+
+        return $clause;
+    }
+
     protected function fromStrategyInstance()
     {
         if ($query = $this->getQuery()) {
@@ -172,22 +189,5 @@ trait FromTableClauseTrait
         }
 
         return $this;
-    }
-
-    protected function getFromClause(): ?FromClause
-    {
-        /** @var FromClause $clause */
-        $clause = $this->getClause('FROM');
-
-        return $clause;
-    }
-
-    protected function fromClause(): FromClause
-    {
-        if (!$clause = $this->getClause('FROM')) {
-            $this->setClause('FROM', $clause = $this->driver()->from());
-        }
-
-        return $clause;
     }
 }

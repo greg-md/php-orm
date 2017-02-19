@@ -143,7 +143,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function column(string $column, ?string $alias = null)
     {
-        list($columnAlias, $column) = $this->dialect()->parseTable($column);
+        list($columnAlias, $column) = $this->dialect()->parseName($column);
 
         if (!$alias) {
             $alias = $columnAlias;
@@ -154,6 +154,24 @@ class SelectQuery extends SqlAbstract implements
         }
 
         $this->columnLogic($this->dialect()->quoteName($column), $alias);
+
+        return $this;
+    }
+
+    public function columnConcat(array $columns, string $delimiter = '', ?string $alias = null)
+    {
+        foreach($columns as &$column) {
+            if (!($column instanceof SelectQuery)) {
+                $column = $this->dialect()->quoteName($column);
+            }
+        }
+        unset($column);
+
+        if ($alias) {
+            $alias = $this->dialect()->quoteName($alias);
+        }
+
+        $this->columnLogic($this->dialect()->concat($columns, $delimiter), $alias);
 
         return $this;
     }

@@ -3,6 +3,7 @@
 namespace Greg\Orm\Tests\Clause;
 
 use Greg\Orm\Clause\FromClause;
+use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 
@@ -60,39 +61,21 @@ trait FromClauseTrait
         $this->assertEquals(['', []], $query->toSql());
     }
 
-    /*
     public function testCanJoin()
     {
-        $query = $this->newClause()->from('Foo')->inner('Bar');
+        $join = $this->newJoinClause()->innerTo('Foo', 'Bar');
 
-        $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->toString());
+        $query = $this->newClause()->from('Foo');
+
+        $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->toString($join));
     }
 
-    public function testCanJoinTo()
+    public function testCanFromSelect()
     {
-        $query = $this->newClause()->from('Foo')->innerTo('Foo', 'Bar');
+        $query = $this->newClause()->from(['t' => $this->newSelectQuery()]);
 
-        $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->toString());
+        $this->assertEquals('FROM (SELECT *) AS `t`', $query->toString());
     }
-
-    public function testCanNotUseJoinWithoutFrom()
-    {
-        $this->expectException(QueryException::class);
-
-        $this->newClause()->inner('Foo')->toString();
-    }
-
-    public function testCanCombineClauses()
-    {
-        $query = $this->newClause()
-            ->from(['t' => $this->newSelectQuery()])
-            ->innerOn('Table', function (Conditions $strategy) {
-                $strategy->isNull('Column');
-            });
-
-        $this->assertEquals('FROM (SELECT *) AS `t` INNER JOIN `Table` ON `Column` IS NULL', $query->toString());
-    }
-    */
 
     public function testCanTransformToString()
     {
@@ -112,6 +95,11 @@ trait FromClauseTrait
      * @return FromClause
      */
     abstract protected function newClause();
+
+    /**
+     * @return JoinClause
+     */
+    abstract protected function newJoinClause();
 
     abstract protected function newSelectQuery(): SelectQuery;
 }

@@ -3,6 +3,7 @@
 namespace Greg\Orm\Tests\Driver\Sqlite\Clause;
 
 use Greg\Orm\Clause\FromClause;
+use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Driver\Sqlite\SqliteDialect;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Tests\Clause\FromClauseTrait;
@@ -15,6 +16,11 @@ class SqliteFromClauseTest extends TestCase
     protected function newClause(): FromClause
     {
         return new FromClause(new SqliteDialect());
+    }
+
+    protected function newJoinClause(): JoinClause
+    {
+        return new JoinClause(new SqliteDialect());
     }
 
     protected function newSelectQuery(): SelectQuery

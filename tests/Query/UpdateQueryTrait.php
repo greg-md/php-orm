@@ -13,7 +13,11 @@ trait UpdateQueryTrait
     {
         $query = $this->newQuery()->table('Table')->set('Column', 'foo');
 
-        $this->assertEquals(['UPDATE `Table` SET `Column` = ?', ['foo']], $query->toSql());
+        $this->assertEquals('UPDATE `Table`', $query->updateToString());
+
+        $this->assertEquals('SET `Column` = ?', $query->setToString());
+
+        $this->assertEquals('UPDATE `Table` SET `Column` = ?', $query->toString());
     }
 
     public function testCanDetermineIfTablesExists()
@@ -162,6 +166,13 @@ trait UpdateQueryTrait
         $query2->where('Column', 'foo');
 
         $this->assertNotEquals($query->toString(), $query2->toString());
+    }
+
+    public function testCanReturnExceptionStringWhenTransformToString()
+    {
+        $query = $this->newQuery();
+
+        $this->assertEquals('Undefined UPDATE table.', (string) $query);
     }
 
     abstract protected function newQuery(): UpdateQuery;

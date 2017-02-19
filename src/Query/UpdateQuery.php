@@ -197,7 +197,7 @@ class UpdateQuery extends SqlAbstract implements
     public function updateToSql(): array
     {
         if (!$this->tables) {
-            throw new QueryException('Undefined tables in UPDATE statement.');
+            throw new QueryException('Undefined UPDATE table.');
         }
 
         $sql = $params = [];
@@ -238,7 +238,7 @@ class UpdateQuery extends SqlAbstract implements
     public function setToSql(): array
     {
         if (!$this->set) {
-            throw new QueryException('Undefined SET statement in UPDATE statement.');
+            throw new QueryException('Undefined UPDATE SET columns.');
         }
 
         $sql = $params = [];

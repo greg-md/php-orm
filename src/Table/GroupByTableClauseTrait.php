@@ -149,6 +149,23 @@ trait GroupByTableClauseTrait
         return $this->groupByClause();
     }
 
+    public function getGroupByClause(): ?GroupByClause
+    {
+        /** @var GroupByClause $clause */
+        $clause = $this->getClause('GROUP_BY');
+
+        return $clause;
+    }
+
+    public function groupByClause(): GroupByClause
+    {
+        if (!$clause = $this->getClause('GROUP_BY')) {
+            $this->setClause('GROUP_BY', $clause = $this->driver()->groupBy());
+        }
+
+        return $clause;
+    }
+
     protected function groupByStrategyInstance()
     {
         if ($query = $this->getQuery()) {
@@ -171,22 +188,5 @@ trait GroupByTableClauseTrait
         }
 
         return $this;
-    }
-
-    protected function getGroupByClause(): ?GroupByClause
-    {
-        /** @var GroupByClause $clause */
-        $clause = $this->getClause('GROUP_BY');
-
-        return $clause;
-    }
-
-    protected function groupByClause(): GroupByClause
-    {
-        if (!$clause = $this->getClause('GROUP_BY')) {
-            $this->setClause('GROUP_BY', $clause = $this->driver()->groupBy());
-        }
-
-        return $clause;
     }
 }

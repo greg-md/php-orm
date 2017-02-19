@@ -106,25 +106,39 @@ abstract class DialectAbstract implements DialectStrategy
     }
 
     /**
-     * @param $table
+     * @param $name
      *
      * @return array
      */
-    public static function parseTable($table): array
+    public static function parseTable($name): array
     {
-        if ($table instanceof Model) {
-            return [$table->alias(), $table->fullName()];
+        if ($name instanceof Model) {
+            return [$name->alias(), $name->fullName()];
         }
 
-        if (is_array($table)) {
-            return [key($table), current($table)];
+        if (is_array($name)) {
+            return [key($name), current($name)];
         }
 
-        if (is_scalar($table) and preg_match('#^(.+?)(?:\s+(?:as\s+)?([a-z0-9_]+))?$#i', $table, $matches)) {
+        if (is_scalar($name)) {
+            return static::parseName($name);
+        }
+
+        return [null, $name];
+    }
+
+    public static function parseName(string $name): array
+    {
+        if (preg_match('#^(.+?)(?:\s+(?:as\s+)?([a-z0-9_]+))?$#i', $name, $matches)) {
             return [isset($matches[2]) ? $matches[2] : null, $matches[1]];
         }
 
-        return [null, $table];
+        return [null, $name];
+    }
+
+    public static function concat(array $values, string $delimiter = ''): string
+    {
+        return implode(' + ' . $delimiter . ' + ', $values);
     }
 
 //    public static function quoteLike(string $value, string $escape = '\\'): string
@@ -133,11 +147,6 @@ abstract class DialectAbstract implements DialectStrategy
 //            '_' => $escape . '_',
 //            '%' => $escape . '%',
 //        ]);
-//    }
-//
-//    public static function concat(array $values, string $delimiter = ''): string
-//    {
-//        return implode(' + ' . $delimiter . ' + ', $values);
 //    }
 //
 //    public static function ifNullSql(string $sql, string $else = '""'): string

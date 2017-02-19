@@ -12,6 +12,22 @@ use PHPUnit\Framework\TestCase;
 class MyModel extends Model
 {
     protected $name = 'Table';
+
+    protected $label = 'My Table';
+
+    protected $primary = 'Id';
+
+    protected $autoIncrement = 'Id';
+
+    protected $nameColumn = 'Name';
+
+    protected $unique = [
+        'SystemName',
+    ];
+
+    protected $casts = [
+        'Active' => 'bool',
+    ];
 }
 
 abstract class ModelAbstract extends TestCase
