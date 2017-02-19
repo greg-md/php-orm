@@ -4,9 +4,8 @@ namespace Greg\Orm\Tests\Query;
 
 use Greg\Orm\Conditions;
 use Greg\Orm\Query\SelectQuery;
-use PHPUnit\Framework\TestCase;
 
-abstract class SelectQueryAbstract extends TestCase
+trait SelectQueryTrait
 {
     public function testCanSetDistinct()
     {
@@ -253,5 +252,8 @@ abstract class SelectQueryAbstract extends TestCase
         $this->assertEquals([$sql, ['foo', 'bar']], $query->toSql());
     }
 
-    abstract protected function newQuery(): SelectQuery;
+    /**
+     * @return SelectQuery
+     */
+    abstract protected function newQuery();
 }

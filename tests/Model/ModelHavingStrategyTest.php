@@ -115,6 +115,18 @@ class ModelHavingStrategyTest extends ModelAbstract
         $this->assertFalse($this->model->hasHaving());
     }
 
+    public function testCanGetClauseString()
+    {
+        $query = $this->model->having('Column', 'foo');
+
+        $this->assertEquals('HAVING `Column` = ?', $query->havingToString());
+    }
+
+    public function testCanGetEmptyHaving()
+    {
+        $this->assertEquals('', $this->model->havingToString());
+    }
+
     public function testCanSelectHaving()
     {
         $query = $this->model->select('Column')->having('Column', 'foo');

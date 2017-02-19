@@ -53,6 +53,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    public function selectOnly(string $column, string ...$columns)
+    {
+        return $this->selectFrom($this, $column, ...$columns);
+    }
+
     public function selectColumn(string $column, ?string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -78,11 +83,6 @@ trait SelectTableQueryTrait
         $instance->selectQuery()->columnRaw($sql, ...$params);
 
         return $instance;
-    }
-
-    public function selectOnly(string $column, string ...$columns)
-    {
-        return $this->selectFrom($this, $column, ...$columns);
     }
 
     public function selectCount(string $column = '*', string $alias = null)
@@ -271,7 +271,7 @@ trait SelectTableQueryTrait
             return $query->getLock();
         }
 
-        return [];
+        return '';
     }
 
     public function clearLock()

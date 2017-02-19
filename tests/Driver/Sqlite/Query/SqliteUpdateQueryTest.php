@@ -5,10 +5,13 @@ namespace Greg\Orm\Tests\Driver\Sqlite\Query;
 use Greg\Orm\Driver\Sqlite\SqliteDialect;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
-use Greg\Orm\Tests\Query\UpdateQueryAbstract;
+use Greg\Orm\Tests\Query\UpdateQueryTrait;
+use PHPUnit\Framework\TestCase;
 
-class SqliteUpdateQueryTest extends UpdateQueryAbstract
+class SqliteUpdateQueryTest extends TestCase
 {
+    use UpdateQueryTrait;
+
     protected function newQuery(): UpdateQuery
     {
         return new UpdateQuery(new SqliteDialect());

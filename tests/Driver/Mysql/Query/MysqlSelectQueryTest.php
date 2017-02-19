@@ -4,10 +4,13 @@ namespace Greg\Orm\Tests\Driver\Mysql\Query;
 
 use Greg\Orm\Driver\Mysql\MysqlDialect;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Tests\Query\SelectQueryAbstract;
+use Greg\Orm\Tests\Query\SelectQueryTrait;
+use PHPUnit\Framework\TestCase;
 
-class MysqlSelectQueryTest extends SelectQueryAbstract
+class MysqlSelectQueryTest extends TestCase
 {
+    use SelectQueryTrait;
+
     protected function newQuery(): SelectQuery
     {
         return new SelectQuery(new MysqlDialect());

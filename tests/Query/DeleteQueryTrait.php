@@ -5,9 +5,8 @@ namespace Greg\Orm\Tests\Query;
 use Greg\Orm\Conditions;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\QueryException;
-use PHPUnit\Framework\TestCase;
 
-abstract class DeleteQueryAbstract extends TestCase
+trait DeleteQueryTrait
 {
     public function testCanSetRowsFrom()
     {

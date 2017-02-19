@@ -49,6 +49,11 @@ trait UpdateTableQueryTrait
         return $this;
     }
 
+    /**
+     * @param string $column
+     * @param string $value
+     * @return $this
+     */
     public function setValue(string $column, string $value)
     {
         $instance = $this->updateQueryInstance();
@@ -94,7 +99,7 @@ trait UpdateTableQueryTrait
         return $instance;
     }
 
-    public function hasSetValue(): bool
+    public function hasSetValues(): bool
     {
         if ($query = $this->getUpdateQuery()) {
             return $query->hasSet();
@@ -103,7 +108,7 @@ trait UpdateTableQueryTrait
         return false;
     }
 
-    public function getSetValue(): array
+    public function getSetValues(): array
     {
         if ($query = $this->getUpdateQuery()) {
             return $query->getSet();
@@ -112,7 +117,7 @@ trait UpdateTableQueryTrait
         return [];
     }
 
-    public function clearSetValue()
+    public function clearSetValues()
     {
         if ($query = $this->getUpdateQuery()) {
             $query->clearSet();

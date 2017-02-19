@@ -68,6 +68,18 @@ class ModelFromStrategyTest extends ModelAbstract
         $this->assertFalse($this->model->hasFrom());
     }
 
+    public function testCanGetStringClause()
+    {
+        $query = $this->model->from('Table');
+
+        $this->assertEquals('FROM `Table`', $query->fromToString());
+    }
+
+    public function testCanGetEmptyClause()
+    {
+        $this->assertEquals('', $this->model->fromToString());
+    }
+
     public function testCanCombineClauses()
     {
         $this->assertTrue($this->model->select('Column')->from('Table2')->hasFrom());

@@ -118,28 +118,33 @@ class ModelWhereStrategyTest extends ModelAbstract
     {
         $query = $this->model->whereExists($this->driver->select());
 
-        $this->assertEquals([$this->prefix() . 'EXISTS (SELECT *)', []], $query->toSql());
+        $this->assertEquals($this->prefix() . 'EXISTS (SELECT *)', $query->whereToString());
     }
 
     public function testCanSetNotExists()
     {
         $query = $this->model->whereNotExists($this->driver->select());
 
-        $this->assertEquals([$this->prefix() . 'NOT EXISTS (SELECT *)', []], $query->toSql());
+        $this->assertEquals($this->prefix() . 'NOT EXISTS (SELECT *)', $query->whereToString());
     }
 
     public function testCanSetExistsRaw()
     {
         $query = $this->model->whereExistsRaw('SELECT 1');
 
-        $this->assertEquals([$this->prefix() . 'EXISTS (SELECT 1)', []], $query->toSql());
+        $this->assertEquals($this->prefix() . 'EXISTS (SELECT 1)', $query->whereToString());
     }
 
     public function testCanSetNotExistsRaw()
     {
         $query = $this->model->whereNotExistsRaw('SELECT 1');
 
-        $this->assertEquals([$this->prefix() . 'NOT EXISTS (SELECT 1)', []], $query->toSql());
+        $this->assertEquals($this->prefix() . 'NOT EXISTS (SELECT 1)', $query->whereToString());
+    }
+
+    public function testCanWhereBeNull()
+    {
+        $this->assertEmpty($this->model->whereToString());
     }
 
     public function testCanDetermineIfExistsExists()

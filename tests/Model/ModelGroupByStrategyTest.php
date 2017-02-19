@@ -67,6 +67,18 @@ class ModelGroupByStrategyTest extends ModelAbstract
         $this->assertFalse($this->model->hasGroupBy());
     }
 
+    public function testCanGetStringClause()
+    {
+        $query = $this->model->groupBy('Column');
+
+        $this->assertEquals('GROUP BY `Column`', $query->groupByToString());
+    }
+
+    public function testCanGetEmptyClause()
+    {
+        $this->assertEquals('', $this->model->groupByToString());
+    }
+
     public function testCanCombineClauses()
     {
         $this->assertTrue($this->model->select('Column')->groupBy('Column')->hasGroupBy());

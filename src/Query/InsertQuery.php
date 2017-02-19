@@ -29,13 +29,17 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     private $select = [];
 
     /**
-     * @param string $table
+     * @param $table
      *
      * @return $this
      */
-    public function into(string $table)
+    public function into($table)
     {
-        $this->into = $this->dialect()->quoteTable($table);
+        [$tableAlias, $tableName] = $this->dialect()->parseTable($table);
+
+        unset($tableAlias);
+
+        $this->into = $this->dialect()->quoteTable($tableName);
 
         return $this;
     }
@@ -233,7 +237,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
             throw new QueryException('Undefined INSERT table.');
         }
 
-        if (!$this->columns) {
+        if (!$this->columns and !$this->select) {
             throw new QueryException('Undefined INSERT columns.');
         }
 

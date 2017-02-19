@@ -30,7 +30,7 @@ trait InsertTableQueryTrait
         return $this->executeQuery($this->newInsertQuery()->data($data))->rowCount();
     }
 
-    public function insertColumns(array $columns, array $values)
+    public function insertValues(array $columns, array $values)
     {
         $columns = array_unique(array_merge($columns, array_keys($this->defaults)));
 
@@ -39,8 +39,10 @@ trait InsertTableQueryTrait
         return $this->executeQuery($this->newInsertQuery()->columns($columns)->values($values))->rowCount();
     }
 
-    public function insertSelect(SelectQuery $query)
+    public function insertSelect(array $columns, SelectQuery $query)
     {
+        $columns = array_unique(array_merge($columns, array_keys($this->defaults)));
+
         if ($this->defaults) {
             $query = clone $query;
 
@@ -49,23 +51,25 @@ trait InsertTableQueryTrait
             }
         }
 
-        return $this->executeQuery($this->newInsertQuery()->select($query))->rowCount();
+        return $this->executeQuery($this->newInsertQuery()->columns($columns)->select($query))->rowCount();
     }
 
     /**
      * @todo Need to inject columns into raw select
      *
-     * @param string    $sql
+     * @param array $columns
+     * @param string $sql
      * @param \string[] ...$params
-     *
      * @return int
      */
-    public function insertSelectRaw(string $sql, string ...$params)
+    public function insertSelectRaw(array $columns, string $sql, string ...$params)
     {
-        return $this->executeQuery($this->newInsertQuery()->selectRaw($sql, ...$params))->rowCount();
+        $columns = array_unique(array_merge($columns, array_keys($this->defaults)));
+
+        return $this->executeQuery($this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params))->rowCount();
     }
 
-    public function insertForEach(string $column, array $values, array $data)
+    public function insertForEach(string $column, array $values, array $data = [])
     {
         foreach ($values as $value) {
             $this->insert($data + [$column => $value]);

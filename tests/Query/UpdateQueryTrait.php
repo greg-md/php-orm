@@ -6,9 +6,8 @@ use Greg\Orm\Conditions;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 use Greg\Orm\QueryException;
-use PHPUnit\Framework\TestCase;
 
-abstract class UpdateQueryAbstract extends TestCase
+trait UpdateQueryTrait
 {
     public function testCanSetColumn()
     {
