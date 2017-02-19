@@ -76,7 +76,7 @@ trait TableTrait
         $keys = (array) $this->unique;
 
         foreach ($keys as &$key) {
-            $key = (array)$key;
+            $key = (array) $key;
         }
         unset($key);
 

@@ -105,16 +105,6 @@ trait RowTrait
         return $this->firstOrNew($data)->save();
     }
 
-
-
-
-
-
-
-
-
-
-
     public function create(array $record = [])
     {
         //$record = array_merge($this->defaultRowData(), $record);
@@ -163,8 +153,8 @@ trait RowTrait
     public function appendRecord(array $record, bool $isNew = false, array $modified = [])
     {
         $this->rows[] = [
-            'record' => $record,
-            'isNew' => $isNew,
+            'record'   => $record,
+            'isNew'    => $isNew,
             'modified' => $modified,
         ];
 
@@ -174,8 +164,8 @@ trait RowTrait
     public function appendRecordRef(array &$record, bool &$isNew = false, array &$modified = [])
     {
         $this->rows[] = [
-            'record' => &$record,
-            'isNew' => &$isNew,
+            'record'   => &$record,
+            'isNew'    => &$isNew,
             'modified' => &$modified,
         ];
 
@@ -434,6 +424,7 @@ trait RowTrait
 
     /**
      * @param callable|null $callable
+     *
      * @return $this|null
      */
     public function first(callable $callable = null)

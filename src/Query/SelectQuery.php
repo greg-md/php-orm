@@ -160,8 +160,8 @@ class SelectQuery extends SqlAbstract implements
 
     public function columnConcat(array $columns, string $delimiter = '', ?string $alias = null)
     {
-        foreach($columns as &$column) {
-            if (!($column instanceof SelectQuery)) {
+        foreach ($columns as &$column) {
+            if (!($column instanceof self)) {
                 $column = $this->dialect()->quoteName($column);
             }
         }

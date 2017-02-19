@@ -242,10 +242,10 @@ trait SelectQueryTrait
             ->innerOn('Table2', function (Conditions $conditions) {
                 $conditions->isNull('Column');
             })
-            ->when(true, function(SelectQuery $query) {
+            ->when(true, function (SelectQuery $query) {
                 $query->where('Foo', 'foo');
             })
-            ->when(false, function(SelectQuery $query) {
+            ->when(false, function (SelectQuery $query) {
                 $query->where('Bar', 'bar');
             })
             ->having('Bar', 'bar')

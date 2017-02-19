@@ -10,7 +10,6 @@ use Greg\Orm\QueryException;
 
 class CustomModel extends Model
 {
-
 }
 
 class ModelTest extends ModelAbstract
