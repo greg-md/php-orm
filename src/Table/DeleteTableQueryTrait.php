@@ -15,8 +15,9 @@ use Greg\Orm\QueryException;
 trait DeleteTableQueryTrait
 {
     /**
-     * @param string $table
+     * @param string    $table
      * @param \string[] ...$tables
+     *
      * @return $this
      */
     public function rowsFrom(string $table, string ...$tables)

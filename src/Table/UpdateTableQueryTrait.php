@@ -52,6 +52,7 @@ trait UpdateTableQueryTrait
     /**
      * @param string $column
      * @param string $value
+     *
      * @return $this
      */
     public function setValue(string $column, string $value)
