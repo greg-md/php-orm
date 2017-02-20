@@ -47,11 +47,19 @@ A better ORM(Object-Relational Mapping) for web-artisans.
 
 # Driver Strategy
 
+Full documentation you can find [here](docs/DriverStrategy.md)
+
 # Query Builder
+
+Full documentation you can find [here](docs/QueryBuilder.md)
 
 # Model
 
+Full documentation you can find [here](docs/Model.md)
+
 # Migrations
+
+_Under construction_
 
 # License
 
