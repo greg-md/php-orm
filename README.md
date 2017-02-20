@@ -61,7 +61,7 @@ Full documentation you can find [here](docs/Model.md)
 
 # Migrations
 
-_Under construction_
+_Under construction..._
 
 # License
 
