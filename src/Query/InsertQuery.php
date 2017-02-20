@@ -228,9 +228,6 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toSql(): array
     {
         if (!$this->into) {

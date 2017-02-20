@@ -5,33 +5,183 @@ A better query builder for web-artisans.
 # Table of Contents:
 
 * **Queries**
-    * [Select](#select)
-    * [Update](#update)
-    * [Delete](#delete)
-    * [Insert](#insert)
+    * [Select](#select-query) - `SELECT` query;
+    * [Update](#update-query) - `UPDATE` query;
+    * [Delete](#delete-query) - `DELETE` query;
+    * [Insert](#insert-query) - `INSERT` query.
 * **Clauses**
-    * [From](#from)
-    * [Join](#join)
-    * [Where](#where)
-    * [Group By](#group-by)
-    * [Having](#having)
-    * [Order By](#order-by)
-    * [Limit](#limit)
-    * [Offset](#offset)
+    * [From](#from-clause) - `FROM` clause;
+    * [Join](#join-clause) - `JOIN` clause;
+    * [Where](#where-clause) - `WHERE` clause;
+    * [Group By](#group-by-clause) - `GROUP BY` clause;
+    * [Having](#having-clause) - `HAVING` clause;
+    * [Order By](#order-by-clause) - `ORDER BY` clause;
+    * [Limit](#limit-clause) - `LIMIT` clause;
+    * [Offset](#offset-clause) - `OFFSET` clause.
 
-# Select
+# Select Query
 
 `SELECT` query.
 
-# From
+List of **supported clauses**:
 
-`FROM` clause.
+* [From](#from-clause) - `FROM` clause;
+* [Join](#join-clause) - `JOIN` clause;
+* [Where](#where-clause) - `WHERE` clause;
+* [Group By](#group-by-clause) - `GROUP BY` clause;
+* [Having](#having-clause) - `HAVING` clause;
+* [Order By](#order-by-clause) - `ORDER BY` clause;
+* [Limit](#limit-clause) - `LIMIT` clause;
+* [Offset](#offset-clause) - `OFFSET` clause.
 
-Below is a list of **magic methods**:
+List of **magic methods**:
+
+* [__toString](#__tostring)
+* [__clone](#__clone)
+
+List of **supported methods**:
+
+* [distinct](#distinct)
+* [fromTable](#fromtable)
+* [columnsFrom](#columnsfrom)
+* [columns](#columns)
+* [column](#column)
+* [columnConcat](#columnconcat)
+* [columnSelect](#columnselect)
+* [columnRaw](#columnraw)
+* [count](#count)
+* [max](#max)
+* [min](#min)
+* [avg](#avg)
+* [sum](#sum)
+* [hasColumns](#hascolumns)
+* [getColumns](#getcolumns)
+* [clearColumns](#clearcolumns)
+* [union](#union)
+* [unionAll](#unionall)
+* [unionDistinct](#uniondistinct)
+* [unionRaw](#unionraw)
+* [unionAllRaw](#unionallraw)
+* [unionDistinctRaw](#uniondistinctraw)
+* [hasUnions](#hasunions)
+* [getUnions](#getunions)
+* [clearUnions](#clearunions)
+* [lockForUpdate](#lockforupdate)
+* [lockInShareMode](#lockinsharemode)
+* [hasLock](#haslock)
+* [getLock](#getlock)
+* [clearLock](#clearlock)
+* [selectToSql](#selecttosql)
+* [selectToString](#selecttostring)
+* [toSql](#tosql)
+* [toString](#tostring)
+
+# Update Query
+
+`UPDATE` query.
+
+List of **supported clauses**:
+
+* [Join](#join-clause) - `JOIN` clause;
+* [Where](#where-clause) - `WHERE` clause;
+* [Order By](#order-by-clause) - `ORDER BY` clause;
+* [Limit](#limit-clause) - `LIMIT` clause;
+
+List of **magic methods**:
+
+* [__toString](#__tostring)
+* [__clone](#__clone)
+
+List of **supported methods**:
+
+* [table](#table)
+* [hasTables](#hastables)
+* [getTables](#gettables)
+* [clearTables](#cleartables)
+* [set](#set)
+* [setMultiple](#setmultiple)
+* [setRaw](#setraw)
+* [increment](#increment)
+* [decrement](#decrement)
+* [hasSet](#hasset)
+* [getSet](#getset)
+* [clearSet](#clearset)
+* [updateToSql](#updatetosql)
+* [updateToString](#updatetostring)
+* [setToSql](#settosql)
+* [setToString](#settostring)
+* [toSql](#tosql)
+* [toString](#tostring)
+
+# Delete Query
+
+`DELETE` query.
+
+List of **supported clauses**:
+
+* [From](#from-clause) - `FROM` clause;
+* [Join](#join-clause) - `JOIN` clause;
+* [Where](#where-clause) - `WHERE` clause;
+* [Order By](#order-by-clause) - `ORDER BY` clause;
+* [Limit](#limit-clause) - `LIMIT` clause;
+
+List of **magic methods**:
+
+* [__toString](#__tostring)
+* [__clone](#__clone)
+
+List of **supported methods**:
+
+* [rowsFrom](#rowsfrom)
+* [hasRowsFrom](#hasrowsfrom)
+* [getRowsFrom](#getrowsfrom)
+* [clearRowsFrom](#clearrowsfrom)
+* [deleteToSql](#deletetosql)
+* [deleteToString](#deletetostring)
+* [toSql](#tosql)
+* [toString](#tostring)
+
+# Insert Query
+
+`INSERT` query.
+
+List of **magic methods**:
 
 * [__toString](#__tostring)
 
-Below is a list of **supported methods**:
+List of **supported methods**:
+
+* [into](#into)
+* [hasInto](#hasinto)
+* [getInto](#getinto)
+* [clearInto](#clearinto)
+* [columns](#columns)
+* [hasColumns](#hascolumns)
+* [getColumns](#getcolumns)
+* [clearColumns](#clearcolumns)
+* [values](#values)
+* [hasValues](#hasvalues)
+* [getValues](#getvalues)
+* [clearValues](#clearvalues)
+* [data](#data)
+* [clearData](#cleardata)
+* [select](#select)
+* [selectRaw](#selectraw)
+* [hasSelect](#hasselect)
+* [getSelect](#getselect)
+* [clearSelect](#clearselect)
+* [toSql](#tosql)
+* [toString](#tostring)
+
+# From Clause
+
+`FROM` clause.
+
+List of **magic methods**:
+
+* [__toString](#__tostring)
+
+List of **supported methods**:
 
 * [from](#from)
 * [fromRaw](#fromraw)
@@ -44,209 +194,209 @@ Below is a list of **supported methods**:
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Join
+# Join Clause
 
 `JOIN` clause.
 
-Below is a list of **magic methods**:
+List of **magic methods**:
 
 * [__toString](#__tostring)
 
-Below is a list of **supported methods**:
+List of **supported methods**:
 
 * [left](#left)
-* [leftOn](#leftOn)
+* [leftOn](#lefton)
 * [right](#right)
-* [rightOn](#rightOn)
+* [rightOn](#righton)
 * [inner](#inner)
-* [innerOn](#innerOn)
+* [innerOn](#inneron)
 * [cross](#cross)
-* [leftTo](#leftTo)
-* [leftToOn](#leftToOn)
-* [rightTo](#rightTo)
-* [rightToOn](#rightToOn)
-* [innerTo](#innerTo)
-* [innerToOn](#innerToOn)
-* [crossTo](#crossTo)
-* [joinLogic](#joinLogic)
-* [hasJoin](#hasJoin)
-* [getJoin](#getJoin)
-* [clearJoin](#clearJoin)
-* [joinToSql](#joinToSql)
-* [joinToString](#joinToString)
+* [leftTo](#leftto)
+* [leftToOn](#lefttoon)
+* [rightTo](#rightto)
+* [rightToOn](#righttoon)
+* [innerTo](#innerto)
+* [innerToOn](#innertoon)
+* [crossTo](#crossto)
+* [joinLogic](#joinlogic)
+* [hasJoin](#hasjoin)
+* [getJoin](#getjoin)
+* [clearJoin](#clearjoin)
+* [joinToSql](#jointosql)
+* [joinToString](#jointostring)
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Where
+# Where Clause
 
 `WHERE` clause.
 
-Below is a list of **magic methods**:
+List of **magic methods**:
 
 * [__toString](#__tostring)
 * [__clone](#__clone)
 
-Below is a list of **supported methods**:
+List of **supported methods**:
 
 * [where](#where)
-* [orWhere](#orWhere)
-* [whereMultiple](#whereMultiple)
-* [orWhereMultiple](#orWhereMultiple)
-* [whereDate](#whereDate)
-* [orWhereDate](#orWhereDate)
-* [whereTime](#whereTime)
-* [orWhereTime](#orWhereTime)
-* [whereYear](#whereYear)
-* [orWhereYear](#orWhereYear)
-* [whereMonth](#whereMonth)
-* [orWhereMonth](#orWhereMonth)
-* [whereDay](#whereDay)
-* [orWhereDay](#orWhereDay)
-* [whereRelation](#whereRelation)
-* [orWhereRelation](#orWhereRelation)
-* [whereRelations](#whereRelations)
-* [orWhereRelations](#orWhereRelations)
-* [whereIsNull](#whereIsNull)
-* [orWhereIsNull](#orWhereIsNull)
-* [whereIsNotNull](#whereIsNotNull)
-* [orWhereIsNotNull](#orWhereIsNotNull)
-* [whereBetween](#whereBetween)
-* [orWhereBetween](#orWhereBetween)
-* [whereNotBetween](#whereNotBetween)
-* [orWhereNotBetween](#orWhereNotBetween)
-* [whereGroup](#whereGroup)
-* [orWhereGroup](#orWhereGroup)
-* [whereConditions](#whereConditions)
-* [orWhereConditions](#orWhereConditions)
-* [whereStrategy](#whereStrategy)
-* [orWhereStrategy](#orWhereStrategy)
-* [whereRaw](#whereRaw)
-* [orWhereRaw](#orWhereRaw)
-* [whereLogic](#whereLogic)
-* [hasWhere](#hasWhere)
-* [getWhere](#getWhere)
-* [clearWhere](#clearWhere)
-* [whereToSql](#whereToSql)
-* [whereToString](#whereToString)
+* [orWhere](#orwhere)
+* [whereMultiple](#wheremultiple)
+* [orWhereMultiple](#orwheremultiple)
+* [whereDate](#wheredate)
+* [orWhereDate](#orwheredate)
+* [whereTime](#wheretime)
+* [orWhereTime](#orwheretime)
+* [whereYear](#whereyear)
+* [orWhereYear](#orwhereyear)
+* [whereMonth](#wheremonth)
+* [orWhereMonth](#orwheremonth)
+* [whereDay](#whereday)
+* [orWhereDay](#orwhereday)
+* [whereRelation](#whererelation)
+* [orWhereRelation](#orwhererelation)
+* [whereRelations](#whererelations)
+* [orWhereRelations](#orwhererelations)
+* [whereIsNull](#whereisnull)
+* [orWhereIsNull](#orwhereisnull)
+* [whereIsNotNull](#whereisnotnull)
+* [orWhereIsNotNull](#orwhereisnotnull)
+* [whereBetween](#wherebetween)
+* [orWhereBetween](#orwherebetween)
+* [whereNotBetween](#wherenotbetween)
+* [orWhereNotBetween](#orwherenotbetween)
+* [whereGroup](#wheregroup)
+* [orWhereGroup](#orwheregroup)
+* [whereConditions](#whereconditions)
+* [orWhereConditions](#orwhereconditions)
+* [whereStrategy](#wherestrategy)
+* [orWhereStrategy](#orwherestrategy)
+* [whereRaw](#whereraw)
+* [orWhereRaw](#orwhereraw)
+* [whereLogic](#wherelogic)
+* [hasWhere](#haswhere)
+* [getWhere](#getwhere)
+* [clearWhere](#clearwhere)
+* [whereToSql](#wheretosql)
+* [whereToString](#wheretostring)
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Group By
+# Group By Clause
 
 `GROUP BY` clause.
 
-Below is a list of **magic methods**:
+List of **magic methods**:
 
 * [__toString](#__tostring)
 
-Below is a list of **supported methods**:
+List of **supported methods**:
 
 * [groupBy](#groupby)
 * [groupByRaw](#groupbyraw)
 * [groupByLogic](#groupbylogic)
-* [hasGroupBy](#hasGroupBy)
-* [getGroupBy](#getGroupBy)
-* [clearGroupBy](#clearGroupBy)
-* [groupByToSql](#groupByToSql)
-* [groupByToString](#groupByToString)
+* [hasGroupBy](#hasgroupby)
+* [getGroupBy](#getgroupby)
+* [clearGroupBy](#cleargroupby)
+* [groupByToSql](#groupbytosql)
+* [groupByToString](#groupbytostring)
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Having
+# Having Clause
 
 `HAVING` clause.
 
-Below is a list of **magic methods**:
+List of **magic methods**:
 
 * [__toString](#__tostring)
 * [__clone](#__clone)
 
-Below is a list of **supported methods**:
+List of **supported methods**:
 
 * [having](#having)
-* [orHaving](#orHaving)
-* [havingMultiple](#havingMultiple)
-* [orHavingMultiple](#orHavingMultiple)
-* [havingDate](#havingDate)
-* [orHavingDate](#orHavingDate)
-* [havingTime](#havingTime)
-* [orHavingTime](#orHavingTime)
-* [havingYear](#havingYear)
-* [orHavingYear](#orHavingYear)
-* [havingMonth](#havingMonth)
-* [orHavingMonth](#orHavingMonth)
-* [havingDay](#havingDay)
-* [orHavingDay](#orHavingDay)
-* [havingRelation](#havingRelation)
-* [orHavingRelation](#orHavingRelation)
-* [havingRelations](#havingRelations)
-* [orHavingRelations](#orHavingRelations)
-* [havingIsNull](#havingIsNull)
-* [orHavingIsNull](#orHavingIsNull)
-* [havingIsNotNull](#havingIsNotNull)
-* [orHavingIsNotNull](#orHavingIsNotNull)
-* [havingBetween](#havingBetween)
-* [orHavingBetween](#orHavingBetween)
-* [havingNotBetween](#havingNotBetween)
-* [orHavingNotBetween](#orHavingNotBetween)
-* [havingGroup](#havingGroup)
-* [orHavingGroup](#orHavingGroup)
-* [havingConditions](#havingConditions)
-* [orHavingConditions](#orHavingConditions)
-* [havingStrategy](#havingStrategy)
-* [orHavingStrategy](#orHavingStrategy)
-* [havingRaw](#havingRaw)
-* [orHavingRaw](#orHavingRaw)
-* [havingLogic](#havingLogic)
-* [hasHaving](#hasHaving)
-* [getHaving](#getHaving)
-* [clearHaving](#clearHaving)
-* [havingToSql](#havingToSql)
-* [havingToString](#havingToString)
+* [orHaving](#orhaving)
+* [havingMultiple](#havingmultiple)
+* [orHavingMultiple](#orhavingmultiple)
+* [havingDate](#havingdate)
+* [orHavingDate](#orhavingdate)
+* [havingTime](#havingtime)
+* [orHavingTime](#orhavingtime)
+* [havingYear](#havingyear)
+* [orHavingYear](#orhavingyear)
+* [havingMonth](#havingmonth)
+* [orHavingMonth](#orhavingmonth)
+* [havingDay](#havingday)
+* [orHavingDay](#orhavingday)
+* [havingRelation](#havingrelation)
+* [orHavingRelation](#orhavingrelation)
+* [havingRelations](#havingrelations)
+* [orHavingRelations](#orhavingrelations)
+* [havingIsNull](#havingisnull)
+* [orHavingIsNull](#orhavingisnull)
+* [havingIsNotNull](#havingisnotnull)
+* [orHavingIsNotNull](#orhavingisnotnull)
+* [havingBetween](#havingbetween)
+* [orHavingBetween](#orhavingbetween)
+* [havingNotBetween](#havingnotbetween)
+* [orHavingNotBetween](#orhavingnotbetween)
+* [havingGroup](#havinggroup)
+* [orHavingGroup](#orhavinggroup)
+* [havingConditions](#havingconditions)
+* [orHavingConditions](#orhavingconditions)
+* [havingStrategy](#havingstrategy)
+* [orHavingStrategy](#orhavingstrategy)
+* [havingRaw](#havingraw)
+* [orHavingRaw](#orhavingraw)
+* [havingLogic](#havinglogic)
+* [hasHaving](#hashaving)
+* [getHaving](#gethaving)
+* [clearHaving](#clearhaving)
+* [havingToSql](#havingtosql)
+* [havingToString](#havingtostring)
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Group By
+# Order By Clause
 
 `ORDER BY` clause.
 
-Below is a list of **magic methods**:
+List of **magic methods**:
 
 * [__toString](#__tostring)
 
-Below is a list of **supported methods**:
+List of **supported methods**:
 
 * [orderBy](#orderby)
-* [orderAsc](#orderAsc)
-* [orderDesc](#orderDesc)
+* [orderAsc](#orderasc)
+* [orderDesc](#orderdesc)
 * [orderByRaw](#orderbyraw)
 * [orderByLogic](#orderbylogic)
-* [hasOrderBy](#hasOrderBy)
-* [getOrderBy](#getOrderBy)
-* [clearOrderBy](#clearOrderBy)
-* [orderByToSql](#orderByToSql)
-* [orderByToString](#orderByToString)
+* [hasOrderBy](#hasorderby)
+* [getOrderBy](#getorderby)
+* [clearOrderBy](#clearorderby)
+* [orderByToSql](#orderbytosql)
+* [orderByToString](#orderbytostring)
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Limit
+# Limit Clause
 
 `LIMIT` clause.
 
-Below is a list of **supported methods**:
+List of **supported methods**:
 
 * [limit](#limit)
-* [hasLimit](#hasLimit)
-* [getLimit](#getLimit)
-* [clearLimit](#clearLimit)
+* [hasLimit](#haslimit)
+* [getLimit](#getlimit)
+* [clearLimit](#clearlimit)
 
-# Offset
+# Offset Clause
 
 `OFFSET` clause.
 
-Below is a list of **supported methods**:
+List of **supported methods**:
 
 * [offset](#offset)
-* [hasOffset](#hasOffset)
-* [getOffset](#getOffset)
-* [clearOffset](#clearOffset)
+* [hasOffset](#hasoffset)
+* [getOffset](#getoffset)
+* [clearOffset](#clearoffset)

@@ -29,11 +29,18 @@ A better ORM(Object-Relational Mapping) for web-artisans.
 
 # Documentation
 
-* [Query Builder](docs/QueryBuilder.md)
+* [Query Builder](#query-builder)
 * [Driver](#driver)
 * [Model](#model)
-* [Schema Builder](#schema-builder)
 * [Migrations](#migrations)
+
+# Query Builder
+
+# Driver
+
+# Model
+
+# Migrations
 
 # License
 
