@@ -664,30 +664,6 @@ class Conditions extends SqlAbstract
      */
     public function toSql(): array
     {
-        return $this->conditionsToSql();
-    }
-
-    /**
-     * @return string
-     */
-    public function toString(): string
-    {
-        return $this->conditionsToString();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    /**
-     * @return array
-     */
-    protected function conditionsToSql(): array
-    {
         $sql = $params = [];
 
         foreach ($this->conditions as $condition) {
@@ -706,9 +682,17 @@ class Conditions extends SqlAbstract
     /**
      * @return string
      */
-    protected function conditionsToString(): string
+    public function toString(): string
     {
-        return $this->conditionsToSql()[0];
+        return $this->toSql()[0];
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
     }
 
     /**

@@ -400,3 +400,52 @@ List of **supported methods**:
 * [hasOffset](#hasoffset)
 * [getOffset](#getoffset)
 * [clearOffset](#clearoffset)
+
+# Conditions
+
+Conditions.
+
+List of **magic methods**:
+
+* [__toString](#__tostring)
+
+List of **supported methods**:
+
+* [column](#column)
+* [orColumn](#orcolumn)
+* [columns](#columns)
+* [orColumns](#orcolumns)
+* [date](#date)
+* [orDate](#ordate)
+* [time](#time)
+* [orTime](#ortime)
+* [year](#year)
+* [orYear](#oryear)
+* [month](#month)
+* [orMonth](#ormonth)
+* [day](#day)
+* [orDay](#orday)
+* [relation](#relation)
+* [orRelation](#orrelation)
+* [relations](#relations)
+* [orRelations](#orrelations)
+* [isNull](#isnull)
+* [orIsNull](#orisnull)
+* [isNotNull](#isnotnull)
+* [orIsNotNull](#orisnotnull)
+* [between](#between)
+* [orBetween](#orbetween)
+* [notBetween](#notbetween)
+* [orNotBetween](#ornotbetween)
+* [group](#group)
+* [orGroup](#orgroup)
+* [conditions](#conditions)
+* [orConditions](#orconditions)
+* [raw](#raw)
+* [orRaw](#orraw)
+* [logic](#logic)
+* [has](#has)
+* [get](#get)
+* [clear](#clear)
+* [toSql](#tosql)
+* [toString](#tostring)
