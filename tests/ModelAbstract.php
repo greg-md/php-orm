@@ -9,15 +9,29 @@ use Greg\Orm\Model;
 use Greg\Orm\Tests\Utils\PdoMock;
 use PHPUnit\Framework\TestCase;
 
+trait BootTrait
+{
+    protected function bootBootTrait()
+    {
+
+    }
+}
+
+trait BootedTrait
+{
+    protected function bootedBootedTrait()
+    {
+
+    }
+}
+
 class MyModel extends Model
 {
+    use BootTrait, BootedTrait;
+
     protected $name = 'Table';
 
     protected $label = 'My Table';
-
-    protected $primary = 'Id';
-
-    protected $autoIncrement = 'Id';
 
     protected $nameColumn = 'Name';
 

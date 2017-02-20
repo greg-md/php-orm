@@ -286,7 +286,7 @@ trait JoinTableClauseTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needJoinStrategyInQuery(QueryStrategy $query)

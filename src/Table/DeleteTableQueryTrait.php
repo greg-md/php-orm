@@ -102,7 +102,7 @@ trait DeleteTableQueryTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needDeleteQuery(QueryStrategy $query)
@@ -188,5 +188,5 @@ trait DeleteTableQueryTrait
     /**
      * @return $this
      */
-    abstract protected function sqlClone();
+    abstract protected function cleanClone();
 }

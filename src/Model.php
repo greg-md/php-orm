@@ -25,9 +25,11 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
             $this->driver = $driver;
         }
 
+        $this->bootTraits();
+
         $this->boot();
 
-        $this->bootTraits();
+        $this->bootedTraits();
 
         return $this;
     }
@@ -106,9 +108,11 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function __wakeup()
     {
+        $this->bootTraits();
+
         $this->boot();
 
-        $this->bootTraits();
+        $this->bootedTraits();
     }
 
     protected function boot()
@@ -120,6 +124,17 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
     {
         foreach (Obj::usesRecursive(static::class, self::class) as $trait) {
             if (method_exists($this, $method = 'boot' . Obj::baseName($trait))) {
+                call_user_func_array([$this, $method], []);
+            }
+        }
+
+        return $this;
+    }
+
+    protected function bootedTraits()
+    {
+        foreach (Obj::usesRecursive(static::class, self::class) as $trait) {
+            if (method_exists($this, $method = 'booted' . Obj::baseName($trait))) {
                 call_user_func_array([$this, $method], []);
             }
         }

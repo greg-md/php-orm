@@ -17,6 +17,8 @@ use Greg\Orm\Query\UpdateQuery;
 
 abstract class DriverAbstract implements DriverStrategy
 {
+    private $descriptions = [];
+
     /**
      * @var callable[]
      */
@@ -46,6 +48,15 @@ abstract class DriverAbstract implements DriverStrategy
         }
 
         return $this;
+    }
+
+    public function describe(string $tableName, bool $force = false): array
+    {
+        if ($force or !array_key_exists($tableName, $this->descriptions)) {
+            $this->descriptions[$tableName] = $this->describeTable($tableName);
+        }
+
+        return $this->descriptions[$tableName];
     }
 
     /**
@@ -143,4 +154,6 @@ abstract class DriverAbstract implements DriverStrategy
     {
         return new OffsetClause($this->dialect());
     }
+
+    abstract protected function describeTable(string $tableName): array;
 }

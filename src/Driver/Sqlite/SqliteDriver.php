@@ -33,4 +33,16 @@ class SqliteDriver extends PdoDriverAbstract
     {
         return $this->exec('TRUNCATE ' . $tableName);
     }
+
+    protected function describeTable(string $tableName): array
+    {
+        // @todo PRAGMA table_info(table1);
+
+        $columns = $primary = [];
+
+        return [
+            'columns' => $columns,
+            'primary' => $primary,
+        ];
+    }
 }

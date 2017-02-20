@@ -3,27 +3,25 @@
 namespace Greg\Orm;
 
 use Greg\Support\Arr;
+use Greg\Support\DateTime;
+use Greg\Support\Str;
 
 trait RowTrait
 {
     use TableTrait;
 
-    protected $rows = [];
+    private $rows = [];
 
-    protected $rowsTotal = 0;
+    private $rowsTotal = 0;
 
-    protected $rowsOffset = 0;
+    private $rowsOffset = 0;
 
-    protected $rowsLimit = 0;
+    private $rowsLimit = 0;
 
     public function row()
     {
         if ($record = $this->rowQueryInstance()->assoc()) {
-            $row = $this->emptyClone();
-
-            $row->appendRecord($record);
-
-            return $row;
+            return $this->cleanClone()->appendRecord($record);
         }
 
         return null;
@@ -40,7 +38,7 @@ trait RowTrait
 
     public function rows()
     {
-        $rows = $this->emptyClone();
+        $rows = $this->cleanClone();
 
         foreach ($this->rowQueryInstance()->assocYield() as $record) {
             $rows->appendRecord($record);
@@ -52,7 +50,7 @@ trait RowTrait
     public function rowsYield()
     {
         foreach ($this->rowQueryInstance()->assocYield() as $record) {
-            yield $this->emptyClone()->appendRecord($record);
+            yield $this->cleanClone()->appendRecord($record);
         }
     }
 
@@ -60,12 +58,10 @@ trait RowTrait
     {
         $newCallable = function ($record) use ($callable, $callOneByOne) {
             if ($callOneByOne) {
-                $row = $this->emptyClone()->appendRecord($record);
-
-                return call_user_func_array($callable, [$row]);
+                return call_user_func_array($callable, [$this->cleanClone()->appendRecord($record)]);
             }
 
-            $rows = $this->emptyClone();
+            $rows = $this->cleanClone();
 
             foreach ($record as $item) {
                 $rows->appendRecord($item);
@@ -107,11 +103,11 @@ trait RowTrait
 
     public function create(array $record = [])
     {
-        //$record = array_merge($this->defaultRowData(), $record);
+        $record = array_merge($this->defaultRecord(), $record);
 
-        //$record = $this->fixValuesTypes($record);
+        $record = $this->prepareRecord($record);
 
-        return $this->emptyClone()->appendRecord($record, true);
+        return $this->cleanClone()->appendRecord($record, true);
     }
 
     public function save(array $values = [])
@@ -172,6 +168,17 @@ trait RowTrait
         return $this;
     }
 
+    public function cleanup()
+    {
+        $this->rows = [];
+
+        $this->query = null;
+
+        $this->clauses = [];
+
+        return $this;
+    }
+
     public function rowsTotal(): int
     {
         return $this->rowsTotal;
@@ -216,12 +223,14 @@ trait RowTrait
 
     public function set(string $column, $value)
     {
+        $this->column($column);
+
         if (($this->fillable !== '*' and !in_array($column, (array) $this->fillable))
             or ($this->guarded === '*' or in_array($column, (array) $this->guarded))) {
             throw new \Exception('Column `' . $column . '` is not fillable in the row.');
         }
 
-        //$value = $this->fixValueType($column, $value);
+        $value = $this->prepareValue($column, $value);
 
         foreach ($this->rows as &$row) {
             $recordValue = &Arr::getRef($row['record'], $column);
@@ -288,8 +297,19 @@ trait RowTrait
     public function getIterator()
     {
         foreach ($this->rows as $key => &$row) {
-            yield $this->emptyClone()->appendRecordRef($row);
+            yield $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified']);
         }
+    }
+
+    public function getRowsIterator()
+    {
+        $rows = [];
+
+        foreach ($this->rows as $row) {
+            $rows[] = $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified']);
+        }
+
+        return $rows;
     }
 
     public function count()
@@ -405,8 +425,7 @@ trait RowTrait
     public function original()
     {
         if ($record = $this->firstRecord()) {
-            //return $this->fixValuesTypes($record['record'], true, true);
-            return $record['record'];
+            return $this->prepareRecord($record['record'], true);
         }
 
         return [];
@@ -415,8 +434,7 @@ trait RowTrait
     public function originalModified()
     {
         if ($record = $this->firstRecord()) {
-            //return $this->fixValuesTypes($record['modified'], true, true);
-            return $record['modified'];
+            return $this->prepareRecord($record['modified'], true);
         }
 
         return [];
@@ -424,12 +442,13 @@ trait RowTrait
 
     /**
      * @param callable|null $callable
+     * @param bool $yield
      *
      * @return $this|null
      */
-    public function first(callable $callable = null)
+    public function first(callable $callable = null, bool $yield = true)
     {
-        foreach ($this as $key => $row) {
+        foreach ($yield ? $this->getIterator() : $this->getRowsIterator() as $key => $row) {
             if ($callable !== null) {
                 if (call_user_func_array($callable, [$row, $key])) {
                     return $row;
@@ -544,10 +563,11 @@ trait RowTrait
         return Arr::firstRef($this->rows);
     }
 
-    protected function emptyClone()
+    protected function cleanClone()
     {
-        // @todo remove rows
         $cloned = clone $this;
+
+        $cloned->cleanup();
 
         return $cloned;
     }
@@ -565,15 +585,79 @@ trait RowTrait
         return $instance;
     }
 
-//    protected function defaultRowData()
-//    {
-//        $record = [];
-//
-//        foreach ($this->getColumns() as $column) {
-//            $record[$column->getName()] = $column->getDefaultValue();
-//        }
-//
-//        return $record;
-//    }
-//
+    protected function defaultRecord()
+    {
+        $record = [];
+
+        foreach ($this->columns() as $column) {
+            $record[$column['name']] = $column['default'];
+        }
+
+        return $record;
+    }
+
+    protected function prepareRecord(array $record, $reverse = false)
+    {
+        foreach ($record as $columnName => &$value) {
+            $value = $this->prepareValue($columnName, $value, $reverse);
+        }
+        unset($value);
+
+        return $record;
+    }
+
+    protected function prepareValue(string $columnName, $value, bool $reverse = false)
+    {
+        $column = $this->column($columnName);
+
+        if ($value === '') {
+            $value = null;
+        }
+
+        if (!$column['null']) {
+            $value = (string) $value;
+        }
+
+        if ($value === null) {
+            return $value;
+        }
+
+        if ($column['extra']['isInt'] and (!$column['null'] or $value !== null)) {
+            $value = (int) $value;
+        }
+
+        if ($column['extra']['isFloat'] and (!$column['null'] or $value !== null)) {
+            $value = (float) $value;
+        }
+
+        switch ($this->cast($columnName)) {
+            case 'datetime':
+            case 'timestamp':
+                $value = DateTime::dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+
+                break;
+            case 'date':
+                $value = DateTime::dateString($value);
+
+                break;
+            case 'time':
+                $value = DateTime::timeString($value);
+
+                break;
+            case 'systemName':
+                $value = $reverse ? Str::systemName($value) : $value;
+
+                break;
+            case 'boolean':
+                $value = (bool) $value;
+
+                break;
+            case 'array':
+                $value = $reverse ? json_encode($value) : json_decode($value, true);
+
+                break;
+        }
+
+        return $value;
+    }
 }

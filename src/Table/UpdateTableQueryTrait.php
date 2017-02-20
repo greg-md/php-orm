@@ -173,7 +173,7 @@ trait UpdateTableQueryTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needUpdateQuery(QueryStrategy $query)
@@ -250,5 +250,5 @@ trait UpdateTableQueryTrait
     /**
      * @return $this
      */
-    abstract protected function sqlClone();
+    abstract protected function cleanClone();
 }

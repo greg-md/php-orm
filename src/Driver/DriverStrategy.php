@@ -106,6 +106,8 @@ interface DriverStrategy
      */
     public function truncate(string $tableName);
 
+    public function describe(string $tableName, bool $force = false): array;
+
     /**
      * @return SelectQuery
      */

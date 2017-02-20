@@ -1,6 +1,8 @@
 <?php
 
-namespace Greg\Orm;
+namespace Greg\Orm\Model;
+
+use Greg\Orm\Conditions;
 
 trait SoftDeleteTrait
 {

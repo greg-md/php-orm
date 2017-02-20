@@ -454,7 +454,7 @@ trait HavingTableClauseTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needHavingStrategyInQuery(QueryStrategy $query)

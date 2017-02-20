@@ -147,7 +147,7 @@ trait OffsetTableClauseTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needOffsetStrategyInQuery(QueryStrategy $query)

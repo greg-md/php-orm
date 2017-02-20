@@ -139,9 +139,9 @@ trait TableSqlTrait
         return $this;
     }
 
-    public function chunk(int $count, callable $callable, bool $callOneByOne = false)
+    public function chunk(int $count, callable $callable, bool $callOneByOne = false, bool $yield = true)
     {
-        $this->chunkQuery($this->selectQueryInstance()->selectQuery(), $count, $callable, $callOneByOne);
+        $this->chunkQuery($this->selectQueryInstance()->selectQuery(), $count, $callable, $callOneByOne, $yield);
 
         return $this;
     }
@@ -283,6 +283,8 @@ trait TableSqlTrait
     public function delete(string ...$tables)
     {
         $instance = $this->deleteQueryInstance();
+
+        $instance->deleteQuery();
 
         if ($tables) {
             $instance->rowsFrom(...$tables);
@@ -460,16 +462,6 @@ trait TableSqlTrait
         return [$sql, $params];
     }
 
-    /**
-     * @todo Need to reset rows.
-     *
-     * @return $this
-     */
-    protected function sqlClone()
-    {
-        return clone $this;
-    }
-
     protected function prepareQuery(QueryStrategy $query): StatementStrategy
     {
         list($sql, $params) = $query->toSql();
@@ -492,7 +484,7 @@ trait TableSqlTrait
         return $stmt;
     }
 
-    protected function chunkQuery(SelectQuery $query, int $count, callable $callable, bool $callOneByOne = false)
+    protected function chunkQuery(SelectQuery $query, int $count, callable $callable, bool $callOneByOne = false, bool $yield = true)
     {
         if ($count < 1) {
             throw new QueryException('Chunk count should be greater than 0.');
@@ -506,7 +498,7 @@ trait TableSqlTrait
             if ($callOneByOne) {
                 $k = 0;
 
-                foreach ($stmt->fetchAssocYield() as $record) {
+                foreach ($yield ? $stmt->fetchAssocYield() : $stmt->fetchAssocAll() as $record) {
                     if (call_user_func_array($callable, [$record]) === false) {
                         $k = 0;
 
@@ -520,7 +512,7 @@ trait TableSqlTrait
 
                 $k = count($records);
 
-                if (call_user_func_array($callable, [$records]) === false) {
+                if ($records and call_user_func_array($callable, [$records]) === false) {
                     $k = 0;
                 }
             }

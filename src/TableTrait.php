@@ -16,17 +16,17 @@ trait TableTrait
 
     protected $label;
 
-    protected $columns = [];
+    protected $columns = false;
 
     protected $fillable = '*';
 
     protected $guarded = [];
 
-    protected $primary;
+    protected $primary = false;
 
     protected $unique;
 
-    protected $autoIncrement;
+    protected $autoIncrement = false;
 
     protected $nameColumn;
 
@@ -56,6 +56,37 @@ trait TableTrait
         return $this->label;
     }
 
+    public function columns(): array
+    {
+        if ($this->columns === false) {
+            $this->loadSchema();
+        }
+
+        return (array) $this->columns;
+    }
+
+    public function hasColumn(string $name): bool
+    {
+        if ($this->columns === false) {
+            $this->loadSchema();
+        }
+
+        return isset($this->columns[$name]);
+    }
+
+    public function column(string $name): array
+    {
+        if ($this->columns === false) {
+            $this->loadSchema();
+        }
+
+        if (!isset($this->columns[$name])) {
+            throw new \Exception('Column `' . $name . '` not found in table `' . $this->name() . '`.');
+        }
+
+        return $this->columns[$name];
+    }
+
     public function fillable()
     {
         return $this->fillable === '*' ? $this->fillable : (array) $this->fillable;
@@ -68,6 +99,10 @@ trait TableTrait
 
     public function primary(): array
     {
+        if ($this->primary === false) {
+            $this->loadSchema();
+        }
+
         return (array) $this->primary;
     }
 
@@ -102,6 +137,10 @@ trait TableTrait
 
     public function autoIncrement(): ?string
     {
+        if ($this->autoIncrement === false) {
+            $this->loadSchema();
+        }
+
         return $this->autoIncrement;
     }
 
@@ -150,6 +189,11 @@ trait TableTrait
         return $this->driver()->lastInsertId();
     }
 
+    public function describe()
+    {
+        return $this->driver()->describe($this->fullName());
+    }
+
     protected function combineFirstUnique($value)
     {
         $value = (array) $value;
@@ -163,71 +207,43 @@ trait TableTrait
         return array_combine($keys, $value);
     }
 
-//    protected function fixValuesTypes(array $data, $clear = false, $reverse = false)
-//    {
-//        foreach ($data as $columnName => &$value) {
-//            if (!($column = $this->getColumn($columnName))) {
-//                if ($clear) {
-//                    unset($data[$columnName]);
-//                }
-//
-//                continue;
-//            }
-//
-//            if ($value === '') {
-//                $value = null;
-//            }
-//
-//            if (!$column->allowNull()) {
-//                $value = (string) $value;
-//            }
-//
-//            if ($column->isInt() and (!$column->allowNull() or $value !== null)) {
-//                $value = (int) $value;
-//            }
-//
-//            if ($column->isFloat() and (!$column->allowNull() or $value !== null)) {
-//                $value = (float) $value;
-//            }
-//
-//            switch ($this->getColumnType($columnName)) {
-//                case Column::TYPE_DATETIME:
-//                case Column::TYPE_TIMESTAMP:
-//                    if ($value) {
-//                        $value = DateTime::dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
-//                    }
-//
-//                    break;
-//                case Column::TYPE_DATE:
-//                    if ($value) {
-//                        $value = DateTime::dateString($value);
-//                    }
-//
-//                    break;
-//                case Column::TYPE_TIME:
-//                    if ($value) {
-//                        $value = DateTime::timeString($value);
-//                    }
-//
-//                    break;
-//                case 'sys_name':
-//                    if ($reverse && $value) {
-//                        $value = Str::systemName($value);
-//                    }
-//
-//                    break;
-//                case 'boolean':
-//                    $value = (bool) $value;
-//
-//                    break;
-//                case 'json':
-//                    $value = $reverse ? json_encode($value) : json_decode($value, true);
-//
-//                    break;
-//            }
-//        }
-//        unset($value);
-//
-//        return $data;
-//    }
+    protected function setColumn(string $name, string $type, bool $allowNull = false, ?string $default = null, array $extra = [])
+    {
+        $this->columns[$name] = [
+            'name' => $name,
+            'type' => $type,
+            'allowNull' => $allowNull,
+            'default' => $default,
+            'extra' => $extra,
+        ];
+
+        return $this;
+    }
+
+    protected function loadSchema()
+    {
+        $schema = $this->describe();
+
+        if ($this->columns === false) {
+            $this->columns = $schema['columns'];
+        }
+
+        if ($this->primary === false) {
+            $this->primary = $schema['primary'];
+        }
+
+        if ($this->autoIncrement === false) {
+            $this->autoIncrement = null;
+
+            foreach ($schema['columns'] as $column) {
+                if ($column['extra']['autoIncrement'] ?? false) {
+                    $this->autoIncrement = $column['name'];
+
+                    break;
+                }
+            }
+        }
+
+        return $this;
+    }
 }

@@ -329,7 +329,7 @@ trait SelectTableQueryTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needSelectQuery(QueryStrategy $query)
@@ -440,5 +440,5 @@ trait SelectTableQueryTrait
     /**
      * @return $this
      */
-    abstract protected function sqlClone();
+    abstract protected function cleanClone();
 }

@@ -147,7 +147,7 @@ trait LimitTableClauseTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needLimitStrategyInQuery(QueryStrategy $query)

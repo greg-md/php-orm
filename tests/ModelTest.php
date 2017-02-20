@@ -159,6 +159,8 @@ class ModelTest extends ModelAbstract
 
     public function testCanGetPrimary()
     {
+        $this->mockDescribe();
+
         $this->assertEquals(['Id'], $this->model->primary());
     }
 
@@ -169,11 +171,15 @@ class ModelTest extends ModelAbstract
 
     public function testCanGetFirstUnique()
     {
+        $this->mockDescribe();
+
         $this->assertEquals(['Id'], $this->model->firstUnique());
     }
 
     public function testCanGetAutoIncrement()
     {
+        $this->mockDescribe();
+
         $this->assertEquals('Id', $this->model->autoIncrement());
     }
 
@@ -194,6 +200,8 @@ class ModelTest extends ModelAbstract
 
     public function testCanSelectPairs()
     {
+        $this->mockDescribe();
+
         $query = $this->model->selectPairs();
 
         $this->assertEquals('SELECT `Id` AS `key`, `Name` AS `value` FROM `Table`', $query->toString());
@@ -204,5 +212,371 @@ class ModelTest extends ModelAbstract
         $this->expectException(\Exception::class);
 
         (new CustomModel())->selectPairs();
+    }
+
+    public function testCanCreateNewRow()
+    {
+        $row = new MyModel([
+            'Id' => 1,
+        ]);
+
+        $this->assertEquals(1, $row['Id']);
+    }
+
+    public function testCanGetFirstByCallable()
+    {
+        $rows = new MyModel();
+
+        $rows->appendRecord([
+                'Id' => 1,
+            ])
+            ->appendRecord([
+                'Id' => 2,
+            ]);
+
+        $row = $rows->first(function(MyModel $row) {
+            return $row['Id'] === 2;
+        }, false);
+
+        $this->assertEquals(2, $row['Id']);
+    }
+
+    public function testCanChunk()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+            [
+                ['Id' => 1],
+                ['Id' => 2],
+            ],
+            [
+                ['Id' => 3],
+                ['Id' => 4],
+            ],
+            [
+
+            ]
+        ));
+
+        $count = 0;
+
+        $this->model->chunk(2, function($records) use (&$count) {
+            ++$count;
+
+            $this->assertCount(2, $records);
+        });
+
+        $this->assertEquals(2, $count);
+    }
+
+    public function testCanChunkOneByOne()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+            [
+                ['Id' => 1],
+                ['Id' => 2],
+            ],
+            [
+                ['Id' => 3],
+                ['Id' => 4],
+            ],
+            [
+
+            ]
+        ));
+
+        $count = 0;
+
+        $this->model->chunk(2, function($records) use (&$count) {
+            ++$count;
+
+            $this->assertCount(1, $records);
+        }, true, false);
+
+        $this->assertEquals(4, $count);
+    }
+
+    public function testCanStopChunk()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchAll')->will($this->onConsecutiveCalls(
+            [
+                ['Id' => 1],
+                ['Id' => 2],
+            ]
+        ));
+
+        $count = 0;
+
+        $this->model->chunk(2, function() use (&$count) {
+            ++$count;
+
+            return false;
+        });
+
+        $this->assertEquals(1, $count);
+    }
+
+    public function testCanStopChunk1By1()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchAll')->will($this->onConsecutiveCalls(
+            [
+                ['Id' => 1],
+                ['Id' => 2],
+            ]
+        ));
+
+        $count = 0;
+
+        $this->model->chunk(2, function() use (&$count) {
+            ++$count;
+
+            return false;
+        }, true, false);
+
+        $this->assertEquals(1, $count);
+    }
+
+    public function testCanFetch()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetch')->willReturn(['Id' => 1]);
+
+        $this->assertEquals(['Id' => 1], $this->model->fetch());
+    }
+
+    public function testCanFetchOrFail()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetch')->willReturn(['Id' => 1]);
+
+        $this->assertEquals(['Id' => 1], $this->model->fetchOrFail());
+    }
+
+    public function testCanThrowExceptionIfFetchFail()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetch')->willReturn(null);
+
+        $this->expectException(\Exception::class);
+
+        $this->model->fetchOrFail();
+    }
+
+    public function testCanFetchAll()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchAll')->willReturn([['Id' => 1]]);
+
+        $this->assertCount(1, $this->model->fetchAll());
+    }
+
+    public function testCanFetchAssoc()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetch')->willReturn(['Id' => 1]);
+
+        $this->assertEquals(['Id' => 1], $this->model->assoc());
+    }
+
+    public function testCanFetchAssocOrFail()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetch')->willReturn(['Id' => 1]);
+
+        $this->assertEquals(['Id' => 1], $this->model->assocOrFail());
+    }
+
+    public function testCanThrowExceptionIfFetchAssocFail()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetch')->willReturn(null);
+
+        $this->expectException(\Exception::class);
+
+        $this->model->assocOrFail();
+    }
+
+    public function testCanFetchAssocAll()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchAll')->willReturn([['Id' => 1]]);
+
+        $this->assertCount(1, $this->model->assocAll());
+    }
+
+    public function testCanFetchColumn()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->fetchColumn());
+    }
+
+    public function testCanFetchAllColumn()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchAll')->willReturn([[1], [2]]);
+
+        $this->assertEquals([1, 2], $this->model->fetchAllColumn());
+    }
+
+    public function testCanFetchPairs()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchAll')->willReturn([[1, 1], [2, 2]]);
+
+        $this->assertEquals([1 => 1, 2 => 2], $this->model->fetchPairs());
+    }
+
+    public function testCanFetchCount()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->fetchCount());
+    }
+
+    public function testCanFetchMax()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->fetchMax('Column'));
+    }
+
+    public function testCanFetchMin()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->fetchMin('Column'));
+    }
+
+    public function testCanFetchAvg()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->fetchAvg('Column'));
+    }
+
+    public function testCanFetchSum()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->fetchSum('Column'));
+    }
+
+    public function testCanFetchExists()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
+
+        $this->assertTrue($this->model->exists());
+    }
+
+    public function testCanUpdate()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('rowCount')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->update(['Column' => 'foo']));
+    }
+
+    public function testCanDelete()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('rowCount')->willReturn(1);
+
+        $this->assertEquals(1, $this->model->delete());
+
+        $this->assertEquals(1, $this->model->delete('Table2'));
+    }
+
+    public function testThrowExceptionIfChunkCountIsLessThanZero()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->model->chunk(-1, function() {});
+    }
+
+    public function testCanGetColumns()
+    {
+        $this->mockDescribe();
+
+        $this->assertCount(1, $this->model->columns());
+    }
+
+    public function testCanGetDetermineIfColumnExists()
+    {
+        $this->mockDescribe();
+
+        $this->assertTrue($this->model->hasColumn('Id'));
+
+        $this->assertFalse($this->model->hasColumn('Undefined'));
+    }
+
+    public function testCanGetColumn()
+    {
+        $this->mockDescribe();
+
+        $this->assertNotEmpty($this->model->column('Id'));
+    }
+
+    public function testCanThrowExceptionIfColumnNotFound()
+    {
+        $this->mockDescribe();
+
+        $this->expectException(\Exception::class);
+
+        $this->model->column('Undefined');
+    }
+
+    public function testCanGetGuarded()
+    {
+        $this->assertEquals([], $this->model->guarded());
+    }
+
+    protected function mockDescribe()
+    {
+        $this->mockStatements();
+
+        $this->pdoStatementMock->method('fetchAll')->willReturn([
+            [
+                'Field' => 'Id',
+                'Type' => 'int(10) unsigned',
+                'Null' => 'NO',
+                'Key' => 'PRI',
+                'Default' => '',
+                'Extra' => 'auto_increment',
+            ]
+        ]);
     }
 }

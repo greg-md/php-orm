@@ -21,5 +21,5 @@ trait TableClauseTrait
     /**
      * @return $this
      */
-    abstract protected function sqlClone();
+    abstract protected function cleanClone();
 }

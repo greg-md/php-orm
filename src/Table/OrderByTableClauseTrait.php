@@ -196,7 +196,7 @@ trait OrderByTableClauseTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needOrderByStrategyInQuery(QueryStrategy $query)

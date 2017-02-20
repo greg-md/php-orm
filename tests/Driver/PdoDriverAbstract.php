@@ -28,7 +28,9 @@ class PdoDriverAbstract extends DriverAbstract
 
         $this->initPdoMock();
 
-        $this->db = new $this->driver(new class($this->pdoMock) implements PdoConnectorStrategy {
+        $pdoMock = $this->pdoMock;
+
+        $this->db = new $this->driver(new class($pdoMock) implements PdoConnectorStrategy {
             /**
              * @var
              */

@@ -7,8 +7,6 @@ use Greg\Orm\Driver\PdoDriverAbstract;
 
 class MysqlDriver extends PdoDriverAbstract
 {
-    //private $schema = [];
-
     /**
      * @var DialectStrategy|null
      */
@@ -36,6 +34,54 @@ class MysqlDriver extends PdoDriverAbstract
         return $this->exec('TRUNCATE ' . $tableName);
     }
 
+    protected function describeTable(string $tableName): array
+    {
+        $stmt = $this->query('DESCRIBE `' . $tableName . '`');
+
+        $rows = $stmt->fetchAssocAll();
+
+        $columns = $primary = [];
+
+        foreach ($rows as $row) {
+            if ($row['Key'] == 'PRI') {
+                $primary[] = $row['Field'];
+            }
+
+            preg_match("#^(?'type'[a-z]+)(?:\((?'length'.+?)\))?(?: (?'unsigned'unsigned))?#i", $row['Type'], $matches);
+
+            $extra = [
+                'isInt' => in_array($matches['type'], ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'bool', 'boolean']),
+                'isFloat' => in_array($matches['type'], ['float', 'double', 'double precision', 'real', 'decimal']),
+            ];
+
+            if ($row['Extra'] == 'auto_increment') {
+                $extra['autoIncrement'] = true;
+            }
+
+            if ($length = $matches['length'] ?? null) {
+                if (in_array($matches['type'], ['enum', 'set'])) {
+                    $extra['values'] = str_getcsv($length, ',', "'");
+                } else {
+                    $extra['length'] = $length;
+                }
+            }
+
+            if (($matches['unsigned'] ?? null) === 'unsigned') {
+                $extra['unsigned'] = true;
+            }
+
+            $columns[$row['Field']] = [
+                'name' => $row['Field'],
+                'type' => $matches['type'],
+                'null' => $row['Null'] === 'YES',
+                'default' => $row['Default'] === '' ? null : $row['Default'],
+                'extra' => $extra,
+            ];
+        }
+
+        return compact('columns', 'primary');
+    }
+
     /*
     public function dnName(): string
     {
@@ -44,19 +90,6 @@ class MysqlDriver extends PdoDriverAbstract
         }
 
         return $name;
-    }
-
-    public function tableInfo(string $tableName, bool $save = true): array
-    {
-        if (!$save) {
-            return $this->fetchTableInfo($tableName);
-        }
-
-        if (!array_key_exists($tableName, $this->schema)) {
-            $this->schema[$tableName] = $this->fetchTableInfo($tableName);
-        }
-
-        return $this->schema[$tableName];
     }
 
     public function tableReferences(string $tableName): array
@@ -111,37 +144,6 @@ class MysqlDriver extends PdoDriverAbstract
         $records = $this->prepare($query->toSql())->fetchAssocAll();
 
         return $this->parseTableRelationshipsAsArray($records, $withRules);
-    }
-
-    protected function fetchTableInfo(string $tableName): array
-    {
-        $stmt = $this->query('Describe `' . $tableName . '`');
-
-        $columnsInfo = $stmt->fetchAssocAll();
-
-        $primaryKeys = [];
-
-        $autoIncrement = null;
-
-        $columns = [];
-
-        foreach ($columnsInfo as $info) {
-            if ($info['Key'] == 'PRI') {
-                $primaryKeys[] = $info['Field'];
-            }
-
-            if ($info['Extra'] == 'auto_increment') {
-                $autoIncrement = $info['Field'];
-            }
-
-            $columns[] = $this->newColumnInfo($info);
-        }
-
-        return [
-            'columns'       => $columns,
-            'primaryKeys'   => $primaryKeys,
-            'autoIncrement' => $autoIncrement,
-        ];
     }
 
     protected function newColumnInfo(array $info): Column

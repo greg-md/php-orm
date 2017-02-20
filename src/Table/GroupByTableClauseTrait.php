@@ -178,7 +178,7 @@ trait GroupByTableClauseTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needGroupByStrategyInQuery(QueryStrategy $query)

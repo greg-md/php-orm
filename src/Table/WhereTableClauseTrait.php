@@ -515,7 +515,7 @@ trait WhereTableClauseTrait
             return $this;
         }
 
-        return $this->sqlClone();
+        return $this->cleanClone();
     }
 
     protected function needWhereStrategyInQuery(QueryStrategy $query)
