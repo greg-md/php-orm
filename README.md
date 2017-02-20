@@ -29,7 +29,7 @@ A better ORM(Object-Relational Mapping) for web-artisans.
 
 # Documentation
 
-* [Query Builder](#query-builder)
+* [Query Builder](docs/QueryBuilder.md)
 * [Driver](#driver)
 * [Model](#model)
 * [Schema Builder](#schema-builder)
