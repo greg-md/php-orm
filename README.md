@@ -21,6 +21,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 * **Powerful Migrations**
 * **Easy to extend**
 * **Multiple drivers support**
+* **It just makes your life better**
 
 # Table of Contents:
 
