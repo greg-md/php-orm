@@ -381,44 +381,6 @@ class ModelTest extends ModelAbstract
         $this->assertCount(1, $this->model->fetchAll());
     }
 
-    public function testCanFetchAssoc()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock->method('fetch')->willReturn(['Id' => 1]);
-
-        $this->assertEquals(['Id' => 1], $this->model->assoc());
-    }
-
-    public function testCanFetchAssocOrFail()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock->method('fetch')->willReturn(['Id' => 1]);
-
-        $this->assertEquals(['Id' => 1], $this->model->assocOrFail());
-    }
-
-    public function testCanThrowExceptionIfFetchAssocFail()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock->method('fetch')->willReturn(null);
-
-        $this->expectException(\Exception::class);
-
-        $this->model->assocOrFail();
-    }
-
-    public function testCanFetchAssocAll()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock->method('fetchAll')->willReturn([['Id' => 1]]);
-
-        $this->assertCount(1, $this->model->assocAll());
-    }
-
     public function testCanFetchColumn()
     {
         $this->mockStatements();
@@ -432,9 +394,9 @@ class ModelTest extends ModelAbstract
     {
         $this->mockStatements();
 
-        $this->pdoStatementMock->method('fetchAll')->willReturn([[1], [2]]);
+        $this->pdoStatementMock->method('fetchColumn')->will($this->onConsecutiveCalls(1, 2));
 
-        $this->assertEquals([1, 2], $this->model->fetchAllColumn());
+        $this->assertEquals([1, 2], $this->model->fetchColumnAll());
     }
 
     public function testCanFetchPairs()

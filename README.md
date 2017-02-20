@@ -9,6 +9,17 @@
 
 A better ORM(Object-Relational Mapping) for web-artisans.
 
+# Why you should use it?
+
+* **Easy to use**
+* **Fully IntelliSense**
+* **Best Performance with Big Data**
+* **Minimum Memory Usage**
+* **Powerful Query Builder**
+* **Powerful Model**
+* **Powerful Migrations**
+* **Lightweight Package**
+
 # Table of Contents:
 
 * [Requirements](#requirements)
@@ -29,8 +40,8 @@ A better ORM(Object-Relational Mapping) for web-artisans.
 
 # Documentation
 
+* [Driver Strategy](#driver-strategy)
 * [Query Builder](#query-builder)
-* [Driver](#driver)
 * [Model](#model)
 * [Migrations](#migrations)
 

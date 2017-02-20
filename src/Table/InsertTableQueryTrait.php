@@ -27,7 +27,7 @@ trait InsertTableQueryTrait
     {
         $data = array_merge($data, $this->defaults);
 
-        return $this->executeQuery($this->newInsertQuery()->data($data))->rowCount();
+        return $this->executeQuery($this->newInsertQuery()->data($data))->affectedRows();
     }
 
     public function insertValues(array $columns, array $values)
@@ -36,7 +36,7 @@ trait InsertTableQueryTrait
 
         $values = array_merge($values, $this->defaults);
 
-        return $this->executeQuery($this->newInsertQuery()->columns($columns)->values($values))->rowCount();
+        return $this->executeQuery($this->newInsertQuery()->columns($columns)->values($values))->affectedRows();
     }
 
     public function insertSelect(array $columns, SelectQuery $query)
@@ -51,7 +51,7 @@ trait InsertTableQueryTrait
             }
         }
 
-        return $this->executeQuery($this->newInsertQuery()->columns($columns)->select($query))->rowCount();
+        return $this->executeQuery($this->newInsertQuery()->columns($columns)->select($query))->affectedRows();
     }
 
     /**
@@ -67,7 +67,7 @@ trait InsertTableQueryTrait
     {
         $columns = array_unique(array_merge($columns, array_keys($this->defaults)));
 
-        return $this->executeQuery($this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params))->rowCount();
+        return $this->executeQuery($this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params))->affectedRows();
     }
 
     public function insertForEach(string $column, array $values, array $data = [])

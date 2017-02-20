@@ -34,7 +34,7 @@ class PdoStatement implements StatementStrategy
      *
      * @return $this
      */
-    public function bindParam(string $key, string $value)
+    public function bind(string $key, string $value)
     {
         $this->stmt->bindValue($key, $value);
 
@@ -46,12 +46,12 @@ class PdoStatement implements StatementStrategy
      *
      * @return $this
      */
-    public function bindParams(array $params)
+    public function bindMultiple(array $params)
     {
         $k = 1;
 
         foreach ($params as $key => $param) {
-            $this->bindParam(is_int($key) ? $k++ : $key, $param);
+            $this->bind(is_int($key) ? $k++ : $key, $param);
         }
 
         return $this;
@@ -74,7 +74,7 @@ class PdoStatement implements StatementStrategy
      */
     public function fetch()
     {
-        return $this->stmt->fetch();
+        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -82,39 +82,13 @@ class PdoStatement implements StatementStrategy
      */
     public function fetchAll()
     {
-        return $this->stmt->fetchAll();
-    }
-
-    /**
-     * @return \Generator
-     */
-    public function fetchYield()
-    {
-        while ($record = $this->stmt->fetch()) {
-            yield $record;
-        }
-    }
-
-    /**
-     * @return string[]
-     */
-    public function fetchAssoc()
-    {
-        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function fetchAssocAll()
-    {
         return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
      * @return \Generator
      */
-    public function fetchAssocYield()
+    public function fetchYield()
     {
         while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
             yield $record;
@@ -126,15 +100,15 @@ class PdoStatement implements StatementStrategy
      *
      * @return string
      */
-    public function fetchColumn(string $column = '0')
+    public function column(string $column = '0')
     {
         if (Str::isDigit($column)) {
             return $this->stmt->fetchColumn($column);
         }
 
-        $row = $this->fetchAssoc();
+        $record = $this->fetch();
 
-        return $row ? Arr::get($row, $column) : null;
+        return $record ? Arr::get($record, $column) : null;
     }
 
     /**
@@ -142,9 +116,38 @@ class PdoStatement implements StatementStrategy
      *
      * @return string[]
      */
-    public function fetchAllColumn(string $column = '0')
+    public function columnAll(string $column = '0')
     {
-        return array_column($this->fetchAll(), $column);
+        if (Str::isDigit($column)) {
+            $values = [];
+
+            while ($value = $this->stmt->fetchColumn($column)) {
+                $values[] = $value;
+            }
+
+            return $values;
+        }
+
+        $values = [];
+
+        while ($record = $this->stmt->fetch()) {
+            $values[] = $record[$column] ?? null;
+        }
+
+        return $values;
+    }
+
+    public function columnYield(string $column = '0')
+    {
+        if (Str::isDigit($column)) {
+            while ($value = $this->stmt->fetchColumn($column)) {
+                yield $value;
+            }
+        } else {
+            while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
+                yield $record[$column] ?? null;
+            }
+        }
     }
 
     /**
@@ -153,14 +156,21 @@ class PdoStatement implements StatementStrategy
      *
      * @return string[]
      */
-    public function fetchPairs(string $key = '0', string $value = '1')
+    public function pairs(string $key = '0', string $value = '1')
     {
         $all = $this->fetchAll();
 
         return Arr::pairs($all, $key, $value);
     }
 
-    public function rowCount(): int
+    public function pairsYield(string $key = '0', string $value = '1')
+    {
+        while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
+            yield $record[$key] ?? null => $record[$value] ?? null;
+        }
+    }
+
+    public function affectedRows(): int
     {
         return $this->stmt->rowCount();
     }

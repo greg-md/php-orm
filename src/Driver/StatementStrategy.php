@@ -10,14 +10,14 @@ interface StatementStrategy
      *
      * @return $this
      */
-    public function bindParam(string $key, string $value);
+    public function bind(string $key, string $value);
 
     /**
      * @param array $params
      *
      * @return $this
      */
-    public function bindParams(array $params);
+    public function bindMultiple(array $params);
 
     /**
      * @param array $params
@@ -42,33 +42,20 @@ interface StatementStrategy
     public function fetchYield();
 
     /**
-     * @return string[]
-     */
-    public function fetchAssoc();
-
-    /**
-     * @return string[][]
-     */
-    public function fetchAssocAll();
-
-    /**
-     * @return \Generator
-     */
-    public function fetchAssocYield();
-
-    /**
      * @param string $column
      *
      * @return string
      */
-    public function fetchColumn(string $column = '0');
+    public function column(string $column = '0');
 
     /**
      * @param string $column
      *
      * @return string[]
      */
-    public function fetchAllColumn(string $column = '0');
+    public function columnAll(string $column = '0');
+
+    public function columnYield(string $column = '0');
 
     /**
      * @param string $key
@@ -76,7 +63,9 @@ interface StatementStrategy
      *
      * @return string[]
      */
-    public function fetchPairs(string $key = '0', string $value = '1');
+    public function pairs(string $key = '0', string $value = '1');
 
-    public function rowCount(): int;
+    public function pairsYield(string $key = '0', string $value = '1');
+
+    public function affectedRows(): int;
 }

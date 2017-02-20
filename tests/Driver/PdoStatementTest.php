@@ -52,14 +52,14 @@ class PdoStatementTest extends TestCase
     {
         $this->pdoStatementMock->expects($this->once())->method('bindValue');
 
-        $this->stmt->bindParam('foo', 'bar');
+        $this->stmt->bind('foo', 'bar');
     }
 
     public function testCanBindParams()
     {
         $this->pdoStatementMock->expects($this->exactly(2))->method('bindValue');
 
-        $this->stmt->bindParams([
+        $this->stmt->bindMultiple([
             'Foo' => 'foo',
             'Bar' => 'bar',
         ]);
@@ -93,58 +93,39 @@ class PdoStatementTest extends TestCase
         $this->assertInstanceOf(\Generator::class, $this->stmt->fetchYield());
     }
 
-    public function testCanFetchAssoc()
-    {
-        $this->pdoStatementMock->method('fetch')->with(\PDO::FETCH_ASSOC)->willReturn('foo');
-
-        $this->assertEquals('foo', $this->stmt->fetchAssoc());
-    }
-
-    public function testCanFetchAssocAll()
-    {
-        $this->pdoStatementMock->method('fetchAll')->with(\PDO::FETCH_ASSOC)->willReturn(['foo', 'bar']);
-
-        $this->assertEquals(['foo', 'bar'], $this->stmt->fetchAssocAll());
-    }
-
-    public function testCanFetchAssocYield()
-    {
-        $this->assertInstanceOf(\Generator::class, $this->stmt->fetchAssocYield());
-    }
-
     public function testCanFetchColumn()
     {
         $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
 
-        $this->assertEquals(1, $this->stmt->fetchColumn());
+        $this->assertEquals(1, $this->stmt->column());
     }
 
     public function testCanFetchColumnAssoc()
     {
         $this->pdoStatementMock->method('fetch')->with(\PDO::FETCH_ASSOC)->willReturn(['Id' => 1]);
 
-        $this->assertEquals(1, $this->stmt->fetchColumn('Id'));
+        $this->assertEquals(1, $this->stmt->column('Id'));
     }
 
     public function testCanFetchAllColumn()
     {
-        $this->pdoStatementMock->method('fetchAll')->willReturn([['Id' => 1], ['Id' => 2]]);
+        $this->pdoStatementMock->method('fetch')->will($this->onConsecutiveCalls(['Id' => 1], ['Id' => 2]));
 
-        $this->assertEquals([1, 2], $this->stmt->fetchAllColumn('Id'));
+        $this->assertEquals([1, 2], $this->stmt->columnAll('Id'));
     }
 
     public function testCanFetchPairs()
     {
         $this->pdoStatementMock->method('fetchAll')->willReturn([['Id' => 1], ['Id' => 2]]);
 
-        $this->assertEquals([1 => 1, 2 => 2], $this->stmt->fetchPairs('Id', 'Id'));
+        $this->assertEquals([1 => 1, 2 => 2], $this->stmt->pairs('Id', 'Id'));
     }
 
     public function testCanGetRowCount()
     {
         $this->pdoStatementMock->method('rowCount')->willReturn(2);
 
-        $this->assertEquals(2, $this->stmt->rowCount());
+        $this->assertEquals(2, $this->stmt->affectedRows());
     }
 
     public function testCanReconnectIfConnectionExpired()

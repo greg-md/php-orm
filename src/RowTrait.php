@@ -20,7 +20,7 @@ trait RowTrait
 
     public function row()
     {
-        if ($record = $this->rowQueryInstance()->assoc()) {
+        if ($record = $this->rowQueryInstance()->fetch()) {
             return $this->cleanClone()->appendRecord($record);
         }
 
@@ -40,7 +40,7 @@ trait RowTrait
     {
         $rows = $this->cleanClone();
 
-        foreach ($this->rowQueryInstance()->assocYield() as $record) {
+        foreach ($this->rowQueryInstance()->fetchYield() as $record) {
             $rows->appendRecord($record);
         }
 
@@ -49,7 +49,7 @@ trait RowTrait
 
     public function rowsYield()
     {
-        foreach ($this->rowQueryInstance()->assocYield() as $record) {
+        foreach ($this->rowQueryInstance()->fetchYield() as $record) {
             yield $this->cleanClone()->appendRecord($record);
         }
     }

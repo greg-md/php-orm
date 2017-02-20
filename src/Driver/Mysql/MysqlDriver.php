@@ -38,7 +38,7 @@ class MysqlDriver extends PdoDriverAbstract
     {
         $stmt = $this->query('DESCRIBE `' . $tableName . '`');
 
-        $rows = $stmt->fetchAssocAll();
+        $rows = $stmt->fetchAll();
 
         $columns = $primary = [];
 
@@ -86,7 +86,7 @@ class MysqlDriver extends PdoDriverAbstract
     public function dnName(): string
     {
         if (!$name = $this->dsn('dbname')) {
-            $name = $this->query('select database()')->fetchColumn();
+            $name = $this->query('select database()')->column();
         }
 
         return $name;
@@ -141,7 +141,7 @@ class MysqlDriver extends PdoDriverAbstract
 
         $query->where('KCU.REFERENCED_TABLE_NAME', $tableName);
 
-        $records = $this->prepare($query->toSql())->fetchAssocAll();
+        $records = $this->prepare($query->toSql())->fetchAll();
 
         return $this->parseTableRelationshipsAsArray($records, $withRules);
     }

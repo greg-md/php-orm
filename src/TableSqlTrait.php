@@ -182,58 +182,22 @@ trait TableSqlTrait
         return $instance->execute()->fetchYield();
     }
 
-    public function assoc(): ?array
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetchAssoc();
-    }
-
-    public function assocOrFail(): array
-    {
-        if (!$record = $this->assoc()) {
-            throw new QueryException('Row was not found.');
-        }
-
-        return $record;
-    }
-
-    public function assocAll(): array
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetchAssocAll();
-    }
-
-    public function assocYield()
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetchAssocYield();
-    }
-
     public function fetchColumn(string $column = '0'): string
     {
         $instance = $this->selectQueryInstance();
 
         $instance->selectQuery();
 
-        return $instance->execute()->fetchColumn($column);
+        return $instance->execute()->column($column);
     }
 
-    public function fetchAllColumn(string $column = '0'): array
+    public function fetchColumnAll(string $column = '0'): array
     {
         $instance = $this->selectQueryInstance();
 
         $instance->selectQuery();
 
-        return $instance->execute()->fetchAllColumn($column);
+        return $instance->execute()->columnAll($column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
@@ -242,7 +206,7 @@ trait TableSqlTrait
 
         $instance->selectQuery();
 
-        return $instance->execute()->fetchPairs($key, $value);
+        return $instance->execute()->pairs($key, $value);
     }
 
     public function fetchCount(string $column = '*', string $alias = null): int
@@ -277,7 +241,7 @@ trait TableSqlTrait
 
     public function update(array $columns = []): int
     {
-        return $this->setValues($columns)->execute()->rowCount();
+        return $this->setValues($columns)->execute()->affectedRows();
     }
 
     public function delete(string ...$tables)
@@ -290,7 +254,7 @@ trait TableSqlTrait
             $instance->rowsFrom(...$tables);
         }
 
-        return $instance->execute()->rowCount();
+        return $instance->execute()->affectedRows();
     }
 
     public function when(bool $condition, callable $callable)
@@ -469,7 +433,7 @@ trait TableSqlTrait
         $stmt = $this->driver()->prepare($sql);
 
         if ($params) {
-            $stmt->bindParams($params);
+            $stmt->bindMultiple($params);
         }
 
         return $stmt;
@@ -498,7 +462,7 @@ trait TableSqlTrait
             if ($callOneByOne) {
                 $k = 0;
 
-                foreach ($yield ? $stmt->fetchAssocYield() : $stmt->fetchAssocAll() as $record) {
+                foreach ($yield ? $stmt->fetchYield() : $stmt->fetchAll() as $record) {
                     if (call_user_func_array($callable, [$record]) === false) {
                         $k = 0;
 
@@ -508,7 +472,7 @@ trait TableSqlTrait
                     ++$k;
                 }
             } else {
-                $records = $stmt->fetchAssocAll();
+                $records = $stmt->fetchAll();
 
                 $k = count($records);
 
