@@ -27,9 +27,13 @@ A better ORM(Object-Relational Mapping) for web-artisans.
 - **Mysql**
 - **Sqlite**
 
-# How It Works
-
 # Documentation
+
+* [Query Builder](#query-builder)
+* [Driver](#driver)
+* [Model](#model)
+* [Schema Builder](#schema-builder)
+* [Migrations](#migrations)
 
 # License
 
