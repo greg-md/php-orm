@@ -15,20 +15,20 @@ class MysqlDriverTest extends PdoDriverAbstract
 
         $this->pdoStatementMock->method('fetchAll')->willReturn([
             [
-                'Field' => 'Id',
-                'Type' => 'int(10) unsigned',
-                'Null' => 'NO',
-                'Key' => 'PRI',
+                'Field'   => 'Id',
+                'Type'    => 'int(10) unsigned',
+                'Null'    => 'NO',
+                'Key'     => 'PRI',
                 'Default' => '',
-                'Extra' => 'auto_increment',
+                'Extra'   => 'auto_increment',
             ],
             [
-                'Field' => 'Gender',
-                'Type' => 'enum(\'male\',\'female\')',
-                'Null' => 'YES',
-                'Key' => '',
+                'Field'   => 'Gender',
+                'Type'    => 'enum(\'male\',\'female\')',
+                'Null'    => 'YES',
+                'Key'     => '',
                 'Default' => '',
-                'Extra' => '',
+                'Extra'   => '',
             ],
         ]);
 
@@ -37,27 +37,27 @@ class MysqlDriverTest extends PdoDriverAbstract
         $this->assertEquals([
             'columns' => [
                 'Id' => [
-                    'name' => 'Id',
-                    'type' => 'int',
-                    'null' => false,
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
                     'default' => null,
-                    'extra' => [
-                        'isInt' => true,
-                        'isFloat' => false,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
                         'autoIncrement' => true,
-                        'length' => 10,
-                        'unsigned' => true,
+                        'length'        => 10,
+                        'unsigned'      => true,
                     ],
                 ],
                 'Gender' => [
-                    'name' => 'Gender',
-                    'type' => 'enum',
-                    'null' => true,
+                    'name'    => 'Gender',
+                    'type'    => 'enum',
+                    'null'    => true,
                     'default' => null,
-                    'extra' => [
-                        'isInt' => false,
+                    'extra'   => [
+                        'isInt'   => false,
                         'isFloat' => false,
-                        'values' => ['male', 'female'],
+                        'values'  => ['male', 'female'],
                     ],
                 ],
             ],

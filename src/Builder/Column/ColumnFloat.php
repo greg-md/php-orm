@@ -17,8 +17,8 @@ class ColumnFloat extends ColumnAbstract
     const BYTES_DECIMAL = 8;
 
     const BYTES = [
-        self::TYPE_FLOAT => self::BYTES_FLOAT,
-        self::TYPE_DOUBLE => self::BYTES_DOUBLE,
+        self::TYPE_FLOAT   => self::BYTES_FLOAT,
+        self::TYPE_DOUBLE  => self::BYTES_DOUBLE,
         self::TYPE_DECIMAL => self::BYTES_DECIMAL,
     ];
 

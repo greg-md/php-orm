@@ -13,7 +13,6 @@ trait BootTrait
 {
     protected function bootBootTrait()
     {
-
     }
 }
 
@@ -21,7 +20,6 @@ trait BootedTrait
 {
     protected function bootedBootedTrait()
     {
-
     }
 }
 

@@ -442,7 +442,7 @@ trait RowTrait
 
     /**
      * @param callable|null $callable
-     * @param bool $yield
+     * @param bool          $yield
      *
      * @return $this|null
      */

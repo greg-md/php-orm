@@ -50,7 +50,7 @@ class MysqlDriver extends PdoDriverAbstract
             preg_match("#^(?'type'[a-z]+)(?:\((?'length'.+?)\))?(?: (?'unsigned'unsigned))?#i", $row['Type'], $matches);
 
             $extra = [
-                'isInt' => in_array($matches['type'], ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'bool', 'boolean']),
+                'isInt'   => in_array($matches['type'], ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'bool', 'boolean']),
                 'isFloat' => in_array($matches['type'], ['float', 'double', 'double precision', 'real', 'decimal']),
             ];
 
@@ -71,11 +71,11 @@ class MysqlDriver extends PdoDriverAbstract
             }
 
             $columns[$row['Field']] = [
-                'name' => $row['Field'],
-                'type' => $matches['type'],
-                'null' => $row['Null'] === 'YES',
+                'name'    => $row['Field'],
+                'type'    => $matches['type'],
+                'null'    => $row['Null'] === 'YES',
                 'default' => $row['Default'] === '' ? null : $row['Default'],
-                'extra' => $extra,
+                'extra'   => $extra,
             ];
         }
 

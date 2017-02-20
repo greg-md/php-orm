@@ -210,11 +210,11 @@ trait TableTrait
     protected function setColumn(string $name, string $type, bool $allowNull = false, ?string $default = null, array $extra = [])
     {
         $this->columns[$name] = [
-            'name' => $name,
-            'type' => $type,
+            'name'      => $name,
+            'type'      => $type,
             'allowNull' => $allowNull,
-            'default' => $default,
-            'extra' => $extra,
+            'default'   => $default,
+            'extra'     => $extra,
         ];
 
         return $this;

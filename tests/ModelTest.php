@@ -234,7 +234,7 @@ class ModelTest extends ModelAbstract
                 'Id' => 2,
             ]);
 
-        $row = $rows->first(function(MyModel $row) {
+        $row = $rows->first(function (MyModel $row) {
             return $row['Id'] === 2;
         }, false);
 
@@ -261,7 +261,7 @@ class ModelTest extends ModelAbstract
 
         $count = 0;
 
-        $this->model->chunk(2, function($records) use (&$count) {
+        $this->model->chunk(2, function ($records) use (&$count) {
             ++$count;
 
             $this->assertCount(2, $records);
@@ -290,7 +290,7 @@ class ModelTest extends ModelAbstract
 
         $count = 0;
 
-        $this->model->chunk(2, function($records) use (&$count) {
+        $this->model->chunk(2, function ($records) use (&$count) {
             ++$count;
 
             $this->assertCount(1, $records);
@@ -312,7 +312,7 @@ class ModelTest extends ModelAbstract
 
         $count = 0;
 
-        $this->model->chunk(2, function() use (&$count) {
+        $this->model->chunk(2, function () use (&$count) {
             ++$count;
 
             return false;
@@ -334,7 +334,7 @@ class ModelTest extends ModelAbstract
 
         $count = 0;
 
-        $this->model->chunk(2, function() use (&$count) {
+        $this->model->chunk(2, function () use (&$count) {
             ++$count;
 
             return false;
@@ -524,7 +524,8 @@ class ModelTest extends ModelAbstract
     {
         $this->expectException(\Exception::class);
 
-        $this->model->chunk(-1, function() {});
+        $this->model->chunk(-1, function () {
+        });
     }
 
     public function testCanGetColumns()
@@ -570,13 +571,13 @@ class ModelTest extends ModelAbstract
 
         $this->pdoStatementMock->method('fetchAll')->willReturn([
             [
-                'Field' => 'Id',
-                'Type' => 'int(10) unsigned',
-                'Null' => 'NO',
-                'Key' => 'PRI',
+                'Field'   => 'Id',
+                'Type'    => 'int(10) unsigned',
+                'Null'    => 'NO',
+                'Key'     => 'PRI',
                 'Default' => '',
-                'Extra' => 'auto_increment',
-            ]
+                'Extra'   => 'auto_increment',
+            ],
         ]);
     }
 }
