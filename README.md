@@ -45,9 +45,9 @@ A better ORM(Object-Relational Mapping) for web-artisans.
 * [Model](#model)
 * [Migrations](#migrations)
 
-# Query Builder
+# Driver Strategy
 
-# Driver
+# Query Builder
 
 # Model
 
