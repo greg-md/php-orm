@@ -15,10 +15,12 @@ A better ORM(Object-Relational Mapping) for web-artisans.
 * **Fully IntelliSense**
 * **Best Performance with Big Data**
 * **Minimum Memory Usage**
+* **Lightweight Package**
 * **Powerful Query Builder**
 * **Powerful Model**
 * **Powerful Migrations**
-* **Lightweight Package**
+* **Easy to extend**
+* **Multiple drivers support**
 
 # Table of Contents:
 
