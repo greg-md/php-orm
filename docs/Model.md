@@ -1,6 +1,6 @@
 # Model
 
-A better database model for web-artisans.
+A powerful database model for web-artisans.
 
 **Implements:** [\IteratorAggregate](http://php.net/manual/en/class.iteratoraggregate.php),
                 [\Countable](http://php.net/manual/en/class.countable.php),

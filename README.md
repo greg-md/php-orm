@@ -7,7 +7,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/greg-md/php-orm/v/unstable.svg)](https://packagist.org/packages/greg-md/php-orm)
 [![License](https://poser.pugx.org/greg-md/php-orm/license.svg)](https://packagist.org/packages/greg-md/php-orm)
 
-A better ORM(Object-Relational Mapping) for web-artisans.
+A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 # Why you should use it?
 
