@@ -84,9 +84,7 @@ class ModelJoinStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->joinStrategy();
-
-        return $this->model;
+        return $this->model->setClause('JOIN', $this->model->driver()->join());
     }
 
     protected function newSelectQuery(): SelectQuery

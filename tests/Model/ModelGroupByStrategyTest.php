@@ -93,8 +93,6 @@ class ModelGroupByStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->groupByStrategy();
-
-        return $this->model;
+        return $this->model->setClause('GROUP_BY', $this->model->driver()->groupBy());
     }
 }

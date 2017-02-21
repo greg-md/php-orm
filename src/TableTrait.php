@@ -169,11 +169,7 @@ trait TableTrait
 
     public function fetch(): ?array
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetch();
+        return $this->selectQueryInstance()->execute()->fetch();
     }
 
     public function fetchOrFail(): array
@@ -187,65 +183,37 @@ trait TableTrait
 
     public function fetchAll(): array
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetchAll();
+        return $this->selectQueryInstance()->execute()->fetchAll();
     }
 
     public function fetchYield()
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetchYield();
+        return $this->selectQueryInstance()->execute()->fetchYield();
     }
 
     public function fetchColumn(string $column = '0'): string
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->column($column);
+        return $this->selectQueryInstance()->execute()->column($column);
     }
 
     public function fetchColumnAll(string $column = '0'): array
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->columnAll($column);
+        return $this->selectQueryInstance()->execute()->columnAll($column);
     }
 
     public function fetchColumnYield(string $column = '0'): array
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->columnYield($column);
+        return $this->selectQueryInstance()->execute()->columnYield($column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->pairs($key, $value);
+        return $this->selectQueryInstance()->execute()->pairs($key, $value);
     }
 
     public function fetchPairsYield(string $key = '0', string $value = '1'): array
     {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->pairsYield($key, $value);
+        return $this->selectQueryInstance()->execute()->pairsYield($key, $value);
     }
 
     public function fetchRow()
@@ -464,8 +432,6 @@ trait TableTrait
     {
         $instance = $this->deleteQueryInstance();
 
-        $instance->deleteQuery();
-
         if ($tables) {
             $instance->rowsFrom(...$tables);
         }
@@ -564,6 +530,8 @@ trait TableTrait
         }
 
         $offset = 0;
+
+        $query = clone $query;
 
         while (true) {
             $stmt = $this->executeQuery($query->limit($count)->offset($offset));

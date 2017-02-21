@@ -6,13 +6,14 @@ use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\UpdateQuery;
 use Greg\Orm\QueryException;
 
 trait UpdateTableQueryTrait
 {
+    use TableQueryTrait;
+
     public function updateTable($table, ...$tables)
     {
         $instance = $this->updateQueryInstance();
@@ -127,6 +128,16 @@ trait UpdateTableQueryTrait
         return $this;
     }
 
+    public function updateQuery(): UpdateQuery
+    {
+        /** @var UpdateQuery $query */
+        $query = $this->getQuery();
+
+        $this->needUpdateQuery($query);
+
+        return $query;
+    }
+
     public function getUpdateQuery(): ?UpdateQuery
     {
         /** @var UpdateQuery $query */
@@ -137,24 +148,11 @@ trait UpdateTableQueryTrait
         return $query;
     }
 
-    public function updateQuery(): UpdateQuery
+    public function newUpdateQuery(): UpdateQuery
     {
-        /** @var UpdateQuery $query */
-        if ($query = $this->getQuery()) {
-            $this->needUpdateQuery($query);
+        $query = $this->driver()->update();
 
-            return $query;
-        }
-
-        $query = $this->newUpdateQuery();
-
-        $clauses = $this->getClauses();
-
-        $this->needUpdateClauses($clauses);
-
-        $this->assignClausesToUpdateQuery($query, $clauses);
-
-        $this->setQuery($query);
+        $query->table($this);
 
         return $query;
     }
@@ -167,14 +165,22 @@ trait UpdateTableQueryTrait
             return $this;
         }
 
-        if ($this->hasClauses()) {
+        $query = $this->newUpdateQuery();
+
+        if ($clauses = $this->getClauses()) {
+            $this->needUpdateClauses($clauses);
+
+            $this->assignClausesToUpdateQuery($query, $clauses);
+
+            $this->setQuery($query);
+
             return $this;
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setQuery($query);
     }
 
-    protected function needUpdateQuery(QueryStrategy $query)
+    protected function needUpdateQuery(?QueryStrategy $query)
     {
         if (!($query instanceof UpdateQuery)) {
             throw new QueryException('Current query is not an UPDATE statement.');
@@ -234,23 +240,4 @@ trait UpdateTableQueryTrait
 
         return $this;
     }
-
-    protected function newUpdateQuery(): UpdateQuery
-    {
-        $query = $this->driver()->update();
-
-        $query->table($this);
-
-        return $query;
-    }
-
-    abstract public function setQuery(QueryStrategy $query);
-
-    abstract public function getQuery(): ?QueryStrategy;
-
-    abstract public function driver(): DriverStrategy;
-
-    abstract public function hasClauses(): bool;
-
-    abstract public function getClauses(): array;
 }

@@ -102,7 +102,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasSelect());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->assertFalse($this->model->hasSelect());
 
@@ -115,7 +115,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertCount(0, $this->model->getSelect());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->model->select('Column');
 
@@ -126,7 +126,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasSelect());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->model->select('Column');
 
@@ -181,7 +181,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasUnions());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->assertFalse($this->model->hasUnions());
 
@@ -194,7 +194,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertCount(0, $this->model->getUnions());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->model->union($this->model->selectQuery());
 
@@ -205,7 +205,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasUnions());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->model->union($this->model->selectQuery());
 
@@ -232,7 +232,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasLock());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->assertFalse($this->model->hasLock());
 
@@ -245,7 +245,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertEmpty($this->model->getLock());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->model->lockForUpdate();
 
@@ -256,7 +256,7 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasLock());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->model->lockForUpdate();
 

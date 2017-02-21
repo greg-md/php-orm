@@ -401,16 +401,20 @@ trait HavingTableClauseTrait
         return $this->havingToSql($useClause)[0];
     }
 
-    public function getHavingStrategy(): ?HavingClauseStrategy
+    public function havingClause(): HavingClause
     {
-        /** @var QueryStrategy|HavingClauseStrategy $query */
-        if ($query = $this->getQuery()) {
-            $this->needHavingStrategyInQuery($query);
+        /** @var HavingClause $clause */
+        $clause = $this->clause('HAVING');
 
-            return $query;
-        }
+        return $clause;
+    }
 
-        return $this->getHavingClause();
+    public function getHavingClause(): ?HavingClause
+    {
+        /** @var HavingClause $clause */
+        $clause = $this->getClause('HAVING');
+
+        return $clause;
     }
 
     public function havingStrategy(): HavingClauseStrategy
@@ -425,21 +429,25 @@ trait HavingTableClauseTrait
         return $this->havingClause();
     }
 
-    public function getHavingClause(): ?HavingClause
+    public function getHavingStrategy(): ?HavingClauseStrategy
     {
-        /** @var HavingClause $clause */
-        $clause = $this->getClause('HAVING');
+        /** @var QueryStrategy|HavingClauseStrategy $query */
+        if ($query = $this->getQuery()) {
+            $this->needHavingStrategyInQuery($query);
 
-        return $clause;
-    }
-
-    public function havingClause(): HavingClause
-    {
-        if (!$clause = $this->getClause('HAVING')) {
-            $this->setClause('HAVING', $clause = $this->driver()->having());
+            return $query;
         }
 
-        return $clause;
+        return $this->getHavingClause();
+    }
+
+    protected function intoHavingStrategy()
+    {
+        if (!$this->hasClause('HAVING')) {
+            $this->setClause('HAVING', $this->driver()->having());
+        }
+
+        return $this;
     }
 
     protected function havingStrategyInstance()
@@ -451,10 +459,10 @@ trait HavingTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoHavingStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('HAVING', $this->driver()->having());
     }
 
     protected function needHavingStrategyInQuery(QueryStrategy $query)

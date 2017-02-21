@@ -10,13 +10,14 @@ use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\QueryException;
 
 trait SelectTableQueryTrait
 {
+    use TableQueryTrait;
+
     public function distinct(bool $value = true)
     {
         $instance = $this->selectQueryInstance();
@@ -298,6 +299,16 @@ trait SelectTableQueryTrait
         return $this;
     }
 
+    public function selectQuery(): SelectQuery
+    {
+        /** @var SelectQuery $query */
+        $query = $this->getQuery();
+
+        $this->needSelectQuery($query);
+
+        return $query;
+    }
+
     public function getSelectQuery(): ?SelectQuery
     {
         /** @var SelectQuery $query */
@@ -308,28 +319,9 @@ trait SelectTableQueryTrait
         return $query;
     }
 
-    public function selectQuery(): SelectQuery
+    public function newSelectQuery(): SelectQuery
     {
-        /** @var SelectQuery $query */
-        if ($query = $this->getQuery()) {
-            $this->needSelectQuery($query);
-
-            return $query;
-        }
-
-        $query = $this->driver()->select();
-
-        $query->from($this);
-
-        $clauses = $this->getClauses();
-
-        $this->needSelectClauses($clauses);
-
-        $this->assignClausesToSelectQuery($query, $clauses);
-
-        $this->setQuery($query);
-
-        return $query;
+        return $this->driver()->select()->from($this);
     }
 
     protected function selectQueryInstance()
@@ -340,14 +332,22 @@ trait SelectTableQueryTrait
             return $this;
         }
 
-        if ($this->hasClauses()) {
+        $query = $this->newSelectQuery();
+
+        if ($clauses = $this->getClauses()) {
+            $this->needSelectClauses($clauses);
+
+            $this->assignClausesToSelectQuery($query, $clauses);
+
+            $this->setQuery($query);
+
             return $this;
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setQuery($query);
     }
 
-    protected function needSelectQuery(QueryStrategy $query)
+    protected function needSelectQuery(?QueryStrategy $query)
     {
         if (!($query instanceof SelectQuery)) {
             throw new QueryException('Current query is not a SELECT statement.');
@@ -441,14 +441,4 @@ trait SelectTableQueryTrait
 
         return $this;
     }
-
-    abstract public function setQuery(QueryStrategy $query);
-
-    abstract public function getQuery(): ?QueryStrategy;
-
-    abstract public function driver(): DriverStrategy;
-
-    abstract public function hasClauses(): bool;
-
-    abstract public function getClauses(): array;
 }

@@ -462,16 +462,20 @@ trait WhereTableClauseTrait
         return $this->whereToSql($useClause)[0];
     }
 
-    public function getWhereStrategy(): ?WhereClauseStrategy
+    public function whereClause(): WhereClause
     {
-        /** @var QueryStrategy|WhereClauseStrategy $query */
-        if ($query = $this->getQuery()) {
-            $this->needWhereStrategyInQuery($query);
+        /** @var WhereClause $clause */
+        $clause = $this->clause('WHERE');
 
-            return $query;
-        }
+        return $clause;
+    }
 
-        return $this->getWhereClause();
+    public function getWhereClause(): ?WhereClause
+    {
+        /** @var WhereClause $clause */
+        $clause = $this->getClause('WHERE');
+
+        return $clause;
     }
 
     public function whereStrategy(): WhereClauseStrategy
@@ -486,21 +490,25 @@ trait WhereTableClauseTrait
         return $this->whereClause();
     }
 
-    public function getWhereClause(): ?WhereClause
+    public function getWhereStrategy(): ?WhereClauseStrategy
     {
-        /** @var WhereClause $clause */
-        $clause = $this->getClause('WHERE');
+        /** @var QueryStrategy|WhereClauseStrategy $query */
+        if ($query = $this->getQuery()) {
+            $this->needWhereStrategyInQuery($query);
 
-        return $clause;
-    }
-
-    public function whereClause(): WhereClause
-    {
-        if (!$clause = $this->getClause('WHERE')) {
-            $this->setClause('WHERE', $clause = $this->driver()->where());
+            return $query;
         }
 
-        return $clause;
+        return $this->getWhereClause();
+    }
+
+    protected function intoWhereStrategy()
+    {
+        if (!$this->hasClause('WHERE')) {
+            $this->setClause('WHERE', $this->driver()->where());
+        }
+
+        return $this;
     }
 
     protected function whereStrategyInstance()
@@ -512,10 +520,10 @@ trait WhereTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoWhereStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('WHERE', $this->driver()->where());
     }
 
     protected function needWhereStrategyInQuery(QueryStrategy $query)

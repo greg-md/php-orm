@@ -233,16 +233,20 @@ trait JoinTableClauseTrait
         return $this->joinToSql($source)[0];
     }
 
-    public function getJoinStrategy(): ?JoinClauseStrategy
+    public function joinClause(): JoinClause
     {
-        /** @var QueryStrategy|JoinClauseStrategy $query */
-        if ($query = $this->getQuery()) {
-            $this->needJoinStrategyInQuery($query);
+        /** @var JoinClause $clause */
+        $clause = $this->clause('JOIN');
 
-            return $query;
-        }
+        return $clause;
+    }
 
-        return $this->getJoinClause();
+    public function getJoinClause(): ?JoinClause
+    {
+        /** @var JoinClause $clause */
+        $clause = $this->getClause('JOIN');
+
+        return $clause;
     }
 
     public function joinStrategy(): JoinClauseStrategy
@@ -257,21 +261,25 @@ trait JoinTableClauseTrait
         return $this->joinClause();
     }
 
-    public function getJoinClause(): ?JoinClause
+    public function getJoinStrategy(): ?JoinClauseStrategy
     {
-        /** @var JoinClause $clause */
-        $clause = $this->getClause('JOIN');
+        /** @var QueryStrategy|JoinClauseStrategy $query */
+        if ($query = $this->getQuery()) {
+            $this->needJoinStrategyInQuery($query);
 
-        return $clause;
-    }
-
-    public function joinClause(): JoinClause
-    {
-        if (!$clause = $this->getClause('JOIN')) {
-            $this->setClause('JOIN', $clause = $this->driver()->join());
+            return $query;
         }
 
-        return $clause;
+        return $this->getJoinClause();
+    }
+
+    protected function intoJoinStrategy()
+    {
+        if (!$this->hasClause('JOIN')) {
+            $this->setClause('JOIN', $this->driver()->join());
+        }
+
+        return $this;
     }
 
     protected function joinStrategyInstance()
@@ -283,10 +291,10 @@ trait JoinTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoJoinStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('JOIN', $this->driver()->join());
     }
 
     protected function needJoinStrategyInQuery(QueryStrategy $query)

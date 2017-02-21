@@ -7,19 +7,14 @@ use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\QueryException;
 
 trait DeleteTableQueryTrait
 {
-    /**
-     * @param string    $table
-     * @param \string[] ...$tables
-     *
-     * @return $this
-     */
+    use TableQueryTrait;
+
     public function rowsFrom(string $table, string ...$tables)
     {
         $instance = $this->deleteQueryInstance();
@@ -56,6 +51,16 @@ trait DeleteTableQueryTrait
         return $this;
     }
 
+    public function deleteQuery(): DeleteQuery
+    {
+        /** @var DeleteQuery $query */
+        $query = $this->getQuery();
+
+        $this->needDeleteQuery($query);
+
+        return $query;
+    }
+
     public function getDeleteQuery(): ?DeleteQuery
     {
         /** @var DeleteQuery $query */
@@ -66,24 +71,11 @@ trait DeleteTableQueryTrait
         return $query;
     }
 
-    public function deleteQuery(): DeleteQuery
+    public function newDeleteQuery(): DeleteQuery
     {
-        /** @var DeleteQuery $query */
-        if ($query = $this->getQuery()) {
-            $this->needDeleteQuery($query);
+        $query = $this->driver()->delete();
 
-            return $query;
-        }
-
-        $query = $this->newDeleteQuery();
-
-        $clauses = $this->getClauses();
-
-        $this->needDeleteClauses($clauses);
-
-        $this->assignClausesToDeleteQuery($query, $clauses);
-
-        $this->setQuery($query);
+        $query->from($this);
 
         return $query;
     }
@@ -96,14 +88,22 @@ trait DeleteTableQueryTrait
             return $this;
         }
 
-        if ($this->hasClauses()) {
+        $query = $this->newDeleteQuery();
+
+        if ($clauses = $this->getClauses()) {
+            $this->needDeleteClauses($clauses);
+
+            $this->assignClausesToDeleteQuery($query, $clauses);
+
+            $this->setQuery($query);
+
             return $this;
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setQuery($query);
     }
 
-    protected function needDeleteQuery(QueryStrategy $query)
+    protected function needDeleteQuery(?QueryStrategy $query)
     {
         if (!($query instanceof DeleteQuery)) {
             throw new QueryException('Current query is not a DELETE statement.');
@@ -172,23 +172,4 @@ trait DeleteTableQueryTrait
 
         return $this;
     }
-
-    protected function newDeleteQuery(): DeleteQuery
-    {
-        $query = $this->driver()->delete();
-
-        $query->from($this);
-
-        return $query;
-    }
-
-    abstract public function setQuery(QueryStrategy $query);
-
-    abstract public function getQuery(): ?QueryStrategy;
-
-    abstract public function driver(): DriverStrategy;
-
-    abstract public function hasClauses(): bool;
-
-    abstract public function getClauses(): array;
 }

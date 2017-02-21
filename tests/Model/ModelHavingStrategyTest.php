@@ -158,9 +158,7 @@ class ModelHavingStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->havingStrategy();
-
-        return $this->model;
+        return $this->model->setClause('HAVING', $this->model->driver()->having());
     }
 
     protected function newConditions()

@@ -94,16 +94,20 @@ trait LimitTableClauseTrait
         return $this;
     }
 
-    public function getLimitStrategy(): ?LimitClauseStrategy
+    public function limitClause(): LimitClause
     {
-        /** @var QueryStrategy|LimitClauseStrategy $query */
-        if ($query = $this->getQuery()) {
-            $this->needLimitStrategyInQuery($query);
+        /** @var LimitClause $clause */
+        $clause = $this->clause('LIMIT');
 
-            return $query;
-        }
+        return $clause;
+    }
 
-        return $this->getLimitClause();
+    public function getLimitClause(): ?LimitClause
+    {
+        /** @var LimitClause $clause */
+        $clause = $this->getClause('LIMIT');
+
+        return $clause;
     }
 
     public function limitStrategy(): LimitClauseStrategy
@@ -118,21 +122,25 @@ trait LimitTableClauseTrait
         return $this->limitClause();
     }
 
-    public function getLimitClause(): ?LimitClause
+    public function getLimitStrategy(): ?LimitClauseStrategy
     {
-        /** @var LimitClause $clause */
-        $clause = $this->getClause('LIMIT');
+        /** @var QueryStrategy|LimitClauseStrategy $query */
+        if ($query = $this->getQuery()) {
+            $this->needLimitStrategyInQuery($query);
 
-        return $clause;
-    }
-
-    public function limitClause(): LimitClause
-    {
-        if (!$clause = $this->getClause('LIMIT')) {
-            $this->setClause('LIMIT', $clause = $this->driver()->limit());
+            return $query;
         }
 
-        return $clause;
+        return $this->getLimitClause();
+    }
+
+    protected function intoLimitStrategy()
+    {
+        if (!$this->hasClause('LIMIT')) {
+            $this->setClause('LIMIT', $this->driver()->limit());
+        }
+
+        return $this;
     }
 
     protected function limitStrategyInstance()
@@ -144,10 +152,10 @@ trait LimitTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoLimitStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('LIMIT', $this->driver()->limit());
     }
 
     protected function needLimitStrategyInQuery(QueryStrategy $query)

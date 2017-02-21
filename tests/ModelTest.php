@@ -20,7 +20,7 @@ class ModelTest extends ModelAbstract
 
         $this->assertEmpty($this->model->getQuery());
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->assertTrue($this->model->hasQuery());
 
@@ -39,7 +39,7 @@ class ModelTest extends ModelAbstract
 
     public function testCanUseWhen()
     {
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $callable = function (Model $model) {
             $model->where('Column', 'foo');
@@ -58,7 +58,9 @@ class ModelTest extends ModelAbstract
     {
         $this->mockStatements();
 
-        $this->model->selectQuery()->where('Column', 'foo');
+        $this->model->setQuery($this->model->newSelectQuery());
+
+        $this->model->where('Column', 'foo');
 
         $this->assertInstanceOf(StatementStrategy::class, $this->model->prepare());
     }
@@ -67,7 +69,7 @@ class ModelTest extends ModelAbstract
     {
         $this->mockStatements();
 
-        $this->model->selectQuery();
+        $this->model->setQuery($this->model->newSelectQuery());
 
         $this->assertInstanceOf(StatementStrategy::class, $this->model->execute());
     }

@@ -83,8 +83,6 @@ class ModelOrderByStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->orderByStrategy();
-
-        return $this->model;
+        return $this->model->setClause('ORDER_BY', $this->model->driver()->orderBy());
     }
 }

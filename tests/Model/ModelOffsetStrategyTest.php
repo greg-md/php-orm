@@ -86,9 +86,7 @@ class ModelOffsetStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->offsetStrategy();
-
-        return $this->model;
+        return $this->model->setClause('OFFSET', $this->model->driver()->offset());
     }
 
     protected function newSelectQuery(): SelectQuery

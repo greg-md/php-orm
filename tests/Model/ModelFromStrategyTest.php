@@ -103,16 +103,12 @@ class ModelFromStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->fromStrategy();
-
-        return $this->model;
+        return $this->model->setClause('FROM', $this->model->driver()->from());
     }
 
     protected function newJoinClause()
     {
-        $this->model->joinStrategy();
-
-        return $this->model;
+        return $this->model->setClause('JOIN', $this->model->driver()->join());
     }
 
     protected function newSelectQuery(): SelectQuery

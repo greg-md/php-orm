@@ -126,16 +126,20 @@ trait FromTableClauseTrait
         return $this->fromToSql($join, $useClause)[0];
     }
 
-    public function getFromStrategy(): ?FromClauseStrategy
+    public function fromClause(): FromClause
     {
-        /** @var QueryStrategy|FromClauseStrategy $query */
-        if ($query = $this->getQuery()) {
-            $this->needFromStrategyInQuery($query);
+        /** @var FromClause $clause */
+        $clause = $this->clause('FROM');
 
-            return $query;
-        }
+        return $clause;
+    }
 
-        return $this->getFromClause();
+    public function getFromClause(): ?FromClause
+    {
+        /** @var FromClause $clause */
+        $clause = $this->getClause('FROM');
+
+        return $clause;
     }
 
     public function fromStrategy(): FromClauseStrategy
@@ -150,21 +154,25 @@ trait FromTableClauseTrait
         return $this->fromClause();
     }
 
-    public function getFromClause(): ?FromClause
+    public function getFromStrategy(): ?FromClauseStrategy
     {
-        /** @var FromClause $clause */
-        $clause = $this->getClause('FROM');
+        /** @var QueryStrategy|FromClauseStrategy $query */
+        if ($query = $this->getQuery()) {
+            $this->needFromStrategyInQuery($query);
 
-        return $clause;
-    }
-
-    public function fromClause(): FromClause
-    {
-        if (!$clause = $this->getClause('FROM')) {
-            $this->setClause('FROM', $clause = $this->driver()->from());
+            return $query;
         }
 
-        return $clause;
+        return $this->getFromClause();
+    }
+
+    protected function intoFromStrategy()
+    {
+        if (!$this->hasClause('FROM')) {
+            $this->setClause('FROM', $this->driver()->from());
+        }
+
+        return $this;
     }
 
     protected function fromStrategyInstance()
@@ -176,10 +184,10 @@ trait FromTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoFromStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('FROM', $this->driver()->from());
     }
 
     protected function needFromStrategyInQuery(QueryStrategy $query)

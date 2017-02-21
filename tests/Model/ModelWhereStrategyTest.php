@@ -200,9 +200,7 @@ class ModelWhereStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->whereStrategy();
-
-        return $this->model;
+        return $this->model->setClause('WHERE', $this->model->driver()->where());
     }
 
     protected function newConditions()

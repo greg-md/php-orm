@@ -7,7 +7,7 @@ use Greg\Orm\Query\InsertQuery;
 
 trait InsertTableQueryTrait
 {
-    protected function newInsertQuery(): InsertQuery
+    public function newInsertQuery(): InsertQuery
     {
         $query = $this->driver()->insert();
 

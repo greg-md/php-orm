@@ -18,7 +18,7 @@ class ModelUpdateQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasUpdateTables());
 
-        $this->model->updateQuery();
+        $this->model->setQuery($this->model->newUpdateQuery());
 
         $this->assertTrue($this->model->hasUpdateTables());
 
@@ -31,7 +31,7 @@ class ModelUpdateQueryTest extends ModelAbstract
     {
         $this->assertCount(0, $this->model->getUpdateTables());
 
-        $this->model->updateQuery();
+        $this->model->setQuery($this->model->newUpdateQuery());
 
         $this->model->updateTable('Table');
 
@@ -40,7 +40,7 @@ class ModelUpdateQueryTest extends ModelAbstract
 
     public function testCanClearTables()
     {
-        $this->model->updateQuery();
+        $this->model->setQuery($this->model->newUpdateQuery());
 
         $this->model->updateTable('Table');
 
@@ -81,7 +81,7 @@ class ModelUpdateQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasSetValues());
 
-        $this->model->updateQuery();
+        $this->model->setQuery($this->model->newUpdateQuery());
 
         $this->assertFalse($this->model->hasSetValues());
 
@@ -94,7 +94,7 @@ class ModelUpdateQueryTest extends ModelAbstract
     {
         $this->assertCount(0, $this->model->getSetValues());
 
-        $this->model->updateQuery();
+        $this->model->setQuery($this->model->newUpdateQuery());
 
         $this->model->setValue('Column', 'foo');
 
@@ -103,7 +103,7 @@ class ModelUpdateQueryTest extends ModelAbstract
 
     public function testCanClearSet()
     {
-        $this->model->updateQuery();
+        $this->model->setQuery($this->model->newUpdateQuery());
 
         $this->model->setValue('Column', 'foo');
 

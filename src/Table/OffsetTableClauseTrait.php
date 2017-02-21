@@ -94,16 +94,20 @@ trait OffsetTableClauseTrait
         return $this;
     }
 
-    public function getOffsetStrategy(): ?OffsetClauseStrategy
+    public function offsetClause(): OffsetClause
     {
-        /** @var QueryStrategy|OffsetClauseStrategy $query */
-        if ($query = $this->getQuery()) {
-            $this->needOffsetStrategyInQuery($query);
+        /** @var OffsetClause $clause */
+        $clause = $this->clause('OFFSET');
 
-            return $query;
-        }
+        return $clause;
+    }
 
-        return $this->getOffsetClause();
+    public function getOffsetClause(): ?OffsetClause
+    {
+        /** @var OffsetClause $clause */
+        $clause = $this->getClause('OFFSET');
+
+        return $clause;
     }
 
     public function offsetStrategy(): OffsetClauseStrategy
@@ -118,21 +122,25 @@ trait OffsetTableClauseTrait
         return $this->offsetClause();
     }
 
-    public function getOffsetClause(): ?OffsetClause
+    public function getOffsetStrategy(): ?OffsetClauseStrategy
     {
-        /** @var OffsetClause $clause */
-        $clause = $this->getClause('OFFSET');
+        /** @var QueryStrategy|OffsetClauseStrategy $query */
+        if ($query = $this->getQuery()) {
+            $this->needOffsetStrategyInQuery($query);
 
-        return $clause;
-    }
-
-    public function offsetClause(): OffsetClause
-    {
-        if (!$clause = $this->getClause('OFFSET')) {
-            $this->setClause('OFFSET', $clause = $this->driver()->offset());
+            return $query;
         }
 
-        return $clause;
+        return $this->getOffsetClause();
+    }
+
+    protected function intoOffsetStrategy()
+    {
+        if (!$this->hasClause('OFFSET')) {
+            $this->setClause('OFFSET', $this->driver()->offset());
+        }
+
+        return $this;
     }
 
     protected function offsetStrategyInstance()
@@ -144,10 +152,10 @@ trait OffsetTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoOffsetStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('OFFSET', $this->driver()->offset());
     }
 
     protected function needOffsetStrategyInQuery(QueryStrategy $query)

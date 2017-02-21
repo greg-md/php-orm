@@ -22,7 +22,7 @@ class ModelDeleteQueryTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasRowsFrom());
 
-        $this->model->deleteQuery();
+        $this->model->setQuery($this->model->newDeleteQuery());
 
         $this->assertFalse($this->model->hasRowsFrom());
 
@@ -35,7 +35,7 @@ class ModelDeleteQueryTest extends ModelAbstract
     {
         $this->assertCount(0, $this->model->getRowsFrom());
 
-        $this->model->deleteQuery();
+        $this->model->setQuery($this->model->newDeleteQuery());
 
         $this->model->rowsFrom('Column');
 
@@ -44,7 +44,7 @@ class ModelDeleteQueryTest extends ModelAbstract
 
     public function testCanClearRowsFrom()
     {
-        $this->model->deleteQuery();
+        $this->model->setQuery($this->model->newDeleteQuery());
 
         $this->model->rowsFrom('Column');
 

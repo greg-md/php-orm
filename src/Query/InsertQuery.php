@@ -77,7 +77,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      */
     public function columns(array $columns)
     {
-        $columns = array_combine($columns, $columns);
+        $columns = array_unique($columns);
 
         foreach ($columns as &$column) {
             $column = $this->dialect()->quoteTable($column);
@@ -124,7 +124,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     {
         $this->select = [];
 
-        $this->values = $values;
+        $this->values = array_values($values);
 
         return $this;
     }
@@ -162,7 +162,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      */
     public function data(array $data)
     {
-        $this->columns(array_keys($data))->values($data);
+        $this->columns(array_keys($data))->values(array_values($data));
 
         return $this;
     }
@@ -249,15 +249,18 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
 
             $params = array_merge($params, $select['params']);
         } else {
-            $values = [];
+            $columnsCount = count($this->columns);
 
-            foreach ($this->columns as $key => $column) {
-                $values[] = Arr::get($this->values, $key);
+            $valuesCount = count($this->values);
+
+            if ($columnsCount !== $valuesCount) {
+                throw new QueryException('INSERT values count does not match.'
+                    . ' Expected ' . $columnsCount . ', got ' . $valuesCount . '.');
             }
 
-            $sql[] = 'VALUES ' . $this->dialect()->prepareBindKeys($values);
+            $sql[] = 'VALUES ' . $this->dialect()->prepareBindKeys($this->values);
 
-            $params = array_merge($params, $values);
+            $params = array_merge($params, $this->values);
         }
 
         $sql = implode(' ', $sql);

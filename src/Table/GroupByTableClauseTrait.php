@@ -125,16 +125,20 @@ trait GroupByTableClauseTrait
         return $this->groupByToSql($useClause)[0];
     }
 
-    public function getGroupByStrategy(): ?GroupByClauseStrategy
+    public function groupByClause(): GroupByClause
     {
-        /** @var QueryStrategy|GroupByClauseStrategy $query */
-        if ($query = $this->getQuery()) {
-            $this->needGroupByStrategyInQuery($query);
+        /** @var GroupByClause $clause */
+        $clause = $this->clause('GROUP_BY');
 
-            return $query;
-        }
+        return $clause;
+    }
 
-        return $this->getGroupByClause();
+    public function getGroupByClause(): ?GroupByClause
+    {
+        /** @var GroupByClause $clause */
+        $clause = $this->getClause('GROUP_BY');
+
+        return $clause;
     }
 
     public function groupByStrategy(): GroupByClauseStrategy
@@ -149,21 +153,25 @@ trait GroupByTableClauseTrait
         return $this->groupByClause();
     }
 
-    public function getGroupByClause(): ?GroupByClause
+    public function getGroupByStrategy(): ?GroupByClauseStrategy
     {
-        /** @var GroupByClause $clause */
-        $clause = $this->getClause('GROUP_BY');
+        /** @var QueryStrategy|GroupByClauseStrategy $query */
+        if ($query = $this->getQuery()) {
+            $this->needGroupByStrategyInQuery($query);
 
-        return $clause;
-    }
-
-    public function groupByClause(): GroupByClause
-    {
-        if (!$clause = $this->getClause('GROUP_BY')) {
-            $this->setClause('GROUP_BY', $clause = $this->driver()->groupBy());
+            return $query;
         }
 
-        return $clause;
+        return $this->getGroupByClause();
+    }
+
+    protected function intoGroupByStrategy()
+    {
+        if (!$this->hasClause('GROUP_BY')) {
+            $this->setClause('GROUP_BY', $this->driver()->groupBy());
+        }
+
+        return $this;
     }
 
     protected function groupByStrategyInstance()
@@ -175,10 +183,10 @@ trait GroupByTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoGroupByStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('GROUP_BY', $this->driver()->groupBy());
     }
 
     protected function needGroupByStrategyInQuery(QueryStrategy $query)

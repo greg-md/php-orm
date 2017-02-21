@@ -78,9 +78,7 @@ class ModelLimitStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        $this->model->limitStrategy();
-
-        return $this->model;
+        return $this->model->setClause('LIMIT', $this->model->driver()->limit());
     }
 
     protected function newSelectQuery(): SelectQuery

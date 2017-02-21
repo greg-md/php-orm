@@ -60,6 +60,11 @@ trait QueryBuilderTrait
         return $this->query;
     }
 
+    public function hasQuery(): bool
+    {
+        return (bool) $this->query;
+    }
+
     public function setQuery(QueryStrategy $query)
     {
         $this->query = $query;
@@ -67,11 +72,6 @@ trait QueryBuilderTrait
         $this->clearClauses();
 
         return $this;
-    }
-
-    public function hasQuery(): bool
-    {
-        return (bool) $this->query;
     }
 
     public function getQuery(): ?QueryStrategy
@@ -95,9 +95,26 @@ trait QueryBuilderTrait
         return $this->clauses[$name];
     }
 
+    public function hasClause(string $name): bool
+    {
+        return isset($this->clauses[$name]);
+    }
+
     public function setClause(string $name, ClauseStrategy $query)
     {
         $this->clauses[$name] = $query;
+
+        return $this;
+    }
+
+    public function getClause(string $name): ?ClauseStrategy
+    {
+        return $this->clauses[$name] ?? null;
+    }
+
+    public function clearClause(string $name)
+    {
+        unset($this->clauses[$name]);
 
         return $this;
     }
@@ -107,31 +124,14 @@ trait QueryBuilderTrait
         return (bool) $this->clauses;
     }
 
-    public function hasClause(string $name): bool
-    {
-        return isset($this->clauses[$name]);
-    }
-
     public function getClauses(): array
     {
         return $this->clauses;
     }
 
-    public function getClause(string $name): ?ClauseStrategy
-    {
-        return $this->clauses[$name] ?? null;
-    }
-
     public function clearClauses()
     {
         $this->clauses = [];
-
-        return $this;
-    }
-
-    public function clearClause(string $name)
-    {
-        unset($this->clauses[$name]);
 
         return $this;
     }
@@ -202,7 +202,7 @@ trait QueryBuilderTrait
     {
         $sql = $params = [];
 
-        if ($clause = $this->hasFromAppliers() ? $this->fromClause() : $this->getFromClause()) {
+        if ($clause = $this->hasFromAppliers() ? $this->intoFromStrategy()->getFromClause() : $this->getFromClause()) {
             $clause = clone $clause;
 
             $this->assignFromAppliers($clause);
@@ -214,7 +214,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasJoinAppliers() ? $this->joinClause() : $this->getJoinClause()) {
+        if ($clause = $this->hasJoinAppliers() ? $this->intoJoinStrategy()->joinClause() : $this->getJoinClause()) {
             $clause = clone $clause;
 
             $this->assignJoinAppliers($clause);
@@ -226,7 +226,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasWhereAppliers() ? $this->whereClause() : $this->getWhereClause()) {
+        if ($clause = $this->hasWhereAppliers() ? $this->intoWhereStrategy()->whereClause() : $this->getWhereClause()) {
             $clause = clone $clause;
 
             $this->assignWhereAppliers($clause);
@@ -238,7 +238,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasGroupByAppliers() ? $this->groupByClause() : $this->getGroupByClause()) {
+        if ($clause = $this->hasGroupByAppliers() ? $this->intoGroupByStrategy()->groupByClause() : $this->getGroupByClause()) {
             $clause = clone $clause;
 
             $this->assignGroupByAppliers($clause);
@@ -250,7 +250,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasHavingAppliers() ? $this->havingClause() : $this->getHavingClause()) {
+        if ($clause = $this->hasHavingAppliers() ? $this->intoHavingStrategy()->havingClause() : $this->getHavingClause()) {
             $clause = clone $clause;
 
             $this->assignHavingAppliers($clause);
@@ -262,7 +262,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasOrderByAppliers() ? $this->orderByClause() : $this->getOrderByClause()) {
+        if ($clause = $this->hasOrderByAppliers() ? $this->intoOrderByStrategy()->orderByClause() : $this->getOrderByClause()) {
             $clause = clone $clause;
 
             $this->assignOrderByAppliers($clause);
@@ -276,7 +276,7 @@ trait QueryBuilderTrait
 
         $sql = implode(' ', $sql);
 
-        if ($clause = $this->hasLimitAppliers() ? $this->limitClause() : $this->getLimitClause()) {
+        if ($clause = $this->hasLimitAppliers() ? $this->intoLimitStrategy()->limitClause() : $this->getLimitClause()) {
             $clause = clone $clause;
 
             $this->assignLimitAppliers($clause);
@@ -284,7 +284,7 @@ trait QueryBuilderTrait
             $sql = $this->driver()->dialect()->addLimitToSql($sql, $clause->getLimit());
         }
 
-        if ($clause = $this->hasOffsetAppliers() ? $this->offsetClause() : $this->getOffsetClause()) {
+        if ($clause = $this->hasOffsetAppliers() ? $this->intoOffsetStrategy()->offsetClause() : $this->getOffsetClause()) {
             $clause = clone $clause;
 
             $this->assignOffsetAppliers($clause);
@@ -294,9 +294,4 @@ trait QueryBuilderTrait
 
         return [$sql, $params];
     }
-
-    /**
-     * @return $this
-     */
-    abstract protected function cleanClone();
 }

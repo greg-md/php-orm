@@ -143,6 +143,22 @@ trait OrderByTableClauseTrait
         return $this->orderByToSql($useClause)[0];
     }
 
+    public function orderByClause(): OrderByClause
+    {
+        /** @var OrderByClause $clause */
+        $clause = $this->clause('ORDER_BY');
+
+        return $clause;
+    }
+
+    public function getOrderByClause(): ?OrderByClause
+    {
+        /** @var OrderByClause $clause */
+        $clause = $this->getClause('ORDER_BY');
+
+        return $clause;
+    }
+
     public function getOrderByStrategy(): ?OrderByClauseStrategy
     {
         /** @var QueryStrategy|OrderByClauseStrategy $query */
@@ -167,21 +183,13 @@ trait OrderByTableClauseTrait
         return $this->orderByClause();
     }
 
-    public function getOrderByClause(): ?OrderByClause
+    protected function intoOrderByStrategy()
     {
-        /** @var OrderByClause $clause */
-        $clause = $this->getClause('ORDER_BY');
-
-        return $clause;
-    }
-
-    public function orderByClause(): OrderByClause
-    {
-        if (!$clause = $this->getClause('ORDER_BY')) {
-            $this->setClause('ORDER_BY', $clause = $this->driver()->orderBy());
+        if (!$this->hasClause('ORDER_BY')) {
+            $this->setClause('ORDER_BY', $this->driver()->orderBy());
         }
 
-        return $clause;
+        return $this;
     }
 
     protected function orderByStrategyInstance()
@@ -193,10 +201,10 @@ trait OrderByTableClauseTrait
         }
 
         if ($this->hasClauses()) {
-            return $this;
+            return $this->intoOrderByStrategy();
         }
 
-        return $this->cleanClone();
+        return $this->cleanClone()->setClause('ORDER_BY', $this->driver()->orderBy());
     }
 
     protected function needOrderByStrategyInQuery(QueryStrategy $query)
