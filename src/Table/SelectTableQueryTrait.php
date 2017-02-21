@@ -59,8 +59,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string           $column
      * @param null|string|null $alias
+     *
      * @return $this
      */
     public function selectColumn(string $column, ?string $alias = null)
