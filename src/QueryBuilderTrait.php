@@ -198,7 +198,7 @@ trait QueryBuilderTrait
         return $this->toString();
     }
 
-    protected function clausesToSql()
+    protected function clausesToSql(): array
     {
         $sql = $params = [];
 

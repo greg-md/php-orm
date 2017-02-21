@@ -211,7 +211,7 @@ trait RowsTrait
         return $this;
     }
 
-    public function toArray($full = false)
+    public function toArray(bool $full = false): array
     {
         if ($full) {
             return $this->rows;
@@ -357,6 +357,9 @@ trait RowsTrait
         }
     }
 
+    /**
+     * @return $this[]
+     */
     public function getRowsIterator()
     {
         $rows = [];
@@ -368,7 +371,7 @@ trait RowsTrait
         return $rows;
     }
 
-    protected function hasInRow(array &$row, string $column)
+    protected function hasInRow(array &$row, string $column): bool
     {
         return !array_key_exists($column, $row['record']);
     }
@@ -437,7 +440,7 @@ trait RowsTrait
         return $this;
     }
 
-    protected function prepareRecord(array $record, $reverse = false)
+    protected function prepareRecord(array $record, $reverse = false): array
     {
         foreach ($record as $columnName => &$value) {
             $value = $this->prepareValue($columnName, $value, $reverse);
@@ -502,7 +505,7 @@ trait RowsTrait
         return $value;
     }
 
-    protected function defaultRecord()
+    protected function defaultRecord(): array
     {
         $record = [];
 

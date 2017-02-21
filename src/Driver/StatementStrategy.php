@@ -37,7 +37,7 @@ interface StatementStrategy
     public function fetchAll();
 
     /**
-     * @return \Generator
+     * @return string[][]
      */
     public function fetchYield();
 

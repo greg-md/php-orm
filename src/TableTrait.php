@@ -152,12 +152,12 @@ trait TableTrait
         return $this;
     }
 
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return $this->defaults;
     }
 
-    public function describe()
+    public function describe(): array
     {
         return $this->driver()->describe($this->fullName());
     }
@@ -188,7 +188,7 @@ trait TableTrait
 
     public function fetchYield()
     {
-        return $this->selectQueryInstance()->execute()->fetchYield();
+        yield from $this->selectQueryInstance()->execute()->fetchYield();
     }
 
     public function fetchColumn(string $column = '0'): string
@@ -201,9 +201,9 @@ trait TableTrait
         return $this->selectQueryInstance()->execute()->columnAll($column);
     }
 
-    public function fetchColumnYield(string $column = '0'): array
+    public function fetchColumnYield(string $column = '0')
     {
-        return $this->selectQueryInstance()->execute()->columnYield($column);
+        yield from $this->selectQueryInstance()->execute()->columnYield($column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
@@ -211,9 +211,9 @@ trait TableTrait
         return $this->selectQueryInstance()->execute()->pairs($key, $value);
     }
 
-    public function fetchPairsYield(string $key = '0', string $value = '1'): array
+    public function fetchPairsYield(string $key = '0', string $value = '1')
     {
-        return $this->selectQueryInstance()->execute()->pairsYield($key, $value);
+        yield from $this->selectQueryInstance()->execute()->pairsYield($key, $value);
     }
 
     public function fetchRow()
