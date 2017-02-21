@@ -4,7 +4,6 @@ namespace Greg\Orm\Query;
 
 use Greg\Orm\QueryException;
 use Greg\Orm\SqlAbstract;
-use Greg\Support\Arr;
 
 class InsertQuery extends SqlAbstract implements QueryStrategy
 {
