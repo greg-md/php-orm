@@ -11,7 +11,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 # Why you should use it?
 
-* **Easy to use**
+* **Easy to understand and use**
 * **Fully IntelliSense**
 * **Best Performance with Big Data**
 * **Minimum Memory Usage**
