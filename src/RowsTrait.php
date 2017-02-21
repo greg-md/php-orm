@@ -327,7 +327,7 @@ trait RowsTrait
 
         $values = $this->get($tableKey);
 
-        return $referenceTable->where($referenceTableKey, $values)->row();
+        return $referenceTable->where($referenceTableKey, $values)->fetchRow();
 
         /*
         $referenceTable->applyOnWhere(function (WhereClauseInterface $query) use ($referenceTableKey, $values) {

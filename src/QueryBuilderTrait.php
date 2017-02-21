@@ -294,4 +294,9 @@ trait QueryBuilderTrait
 
         return [$sql, $params];
     }
+
+    /**
+     * @return $this
+     */
+    abstract protected function cleanClone();
 }
