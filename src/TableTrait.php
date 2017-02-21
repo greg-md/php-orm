@@ -589,9 +589,4 @@ trait TableTrait
 
         return $stmt;
     }
-
-    /**
-     * @return Model
-     */
-    abstract public function cleanClone();
 }
