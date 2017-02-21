@@ -2,25 +2,21 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Driver\DriverStrategy;
+use Greg\Support\Arr;
 use Greg\Support\Obj;
 
 abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 {
-    use RowTrait;
+    use RowsTrait;
 
     /**
      * @var DriverStrategy|null
      */
-    protected $driver = null;
+    private $driver = null;
 
-    final public function __construct(array $record = [], DriverStrategy $driver = null)
+    public function __construct(array $record = [], DriverStrategy $driver = null)
     {
-        if ($record) {
-            $this->appendRecord($record, true);
-        }
-
         if ($driver) {
             $this->driver = $driver;
         }
@@ -31,7 +27,23 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 
         $this->bootedTraits();
 
+        if ($record) {
+            $this->appendRecord($record, true);
+        }
+
         return $this;
+    }
+
+    public function setDriver(DriverStrategy $driver)
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    public function getDriver()
+    {
+        return $this->driver;
     }
 
     public function driver(): DriverStrategy
@@ -43,60 +55,125 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         return $this->driver;
     }
 
-    public function hasMany($relationshipTable, $relationshipKey, $tableKey = null)
+    public function getAutoIncrement()
     {
-        $relationshipTable = $this->getTableInstance($relationshipTable);
-
-        if ($this->count()) {
-            $relationshipKey = (array) $relationshipKey;
-
-            if (!$tableKey) {
-                $tableKey = $this->primary();
-            }
-
-            $tableKey = (array) $tableKey;
-
-            $values = $this->get($tableKey);
-
-            $relationshipTable->setWhereApplier(function (WhereClause $query) use ($relationshipKey, $values) {
-                $query->where($relationshipKey, $values);
-            });
-
-            $filters = array_combine($relationshipKey, $this->getFirst($tableKey));
-
-            $relationshipTable->setDefaults($filters);
+        if ($key = $this->autoIncrement()) {
+            return $this[$key];
         }
 
-        return $relationshipTable;
+        return null;
     }
 
-    public function belongsTo($referenceTable, $tableKey, $referenceTableKey = null)
+    public function setAutoIncrement(int $value)
     {
-        $referenceTable = $this->getTableInstance($referenceTable);
-
-        $tableKey = (array) $tableKey;
-
-        if (!$referenceTableKey) {
-            $referenceTableKey = $referenceTable->primary();
+        if (!$key = $this->autoIncrement()) {
+            throw new \Exception('Autoincrement not defined for table `' . $this->name() . '`.');
         }
 
-        $referenceTableKey = (array) $referenceTableKey;
+        $this[$key] = $value;
 
-        $values = $this->get($tableKey);
+        return $this;
+    }
 
-        return $referenceTable->where($referenceTableKey, $values)->row();
+    public function getPrimary()
+    {
+        $keys = [];
 
-        /*
-        $referenceTable->applyOnWhere(function (WhereClauseInterface $query) use ($referenceTableKey, $values) {
-            $query->where($referenceTableKey, $values);
-        });
+        foreach ($this->primary() as $key) {
+            $keys[$key] = $this[$key];
+        }
 
-        $filters = array_combine($referenceTableKey, $this->getFirst($tableKey));
+        return $keys;
+    }
 
-        $referenceTable->setDefaults($filters);
+    public function setPrimary($value)
+    {
+        if (!$keys = $this->primary()) {
+            throw new \Exception('Primary keys not defined for table `' . $this->name() . '`');
+        }
 
-        return $referenceTable;
-        */
+        if (!$value) {
+            $value = array_combine([current($keys)], [$value]);
+        }
+
+        foreach ($keys as $key) {
+            $this[$key] = $value[$key];
+        }
+
+        return $this;
+    }
+
+    public function getUnique()
+    {
+        $allValues = [];
+
+        foreach ($this->unique() as $name => $keys) {
+            $values = [];
+
+            foreach ($keys as $key) {
+                $values[$key] = $this[$key];
+            }
+
+            $allValues[] = $values;
+        }
+
+        return $allValues;
+    }
+
+    public function getFirstUnique()
+    {
+        $keys = [];
+
+        foreach ($this->firstUnique() as $key) {
+            $keys[$key] = $this[$key];
+        }
+
+        return $keys;
+    }
+
+    public function isNew()
+    {
+        return $this->firstRow()['isNew'];
+    }
+
+    public function original()
+    {
+        return $this->prepareRecord($this->firstRow()['record'], true);
+    }
+
+    public function originalModified()
+    {
+        return $this->prepareRecord($this->firstRow()['modified'], true);
+    }
+
+    public function offsetExists($offset)
+    {
+        return $this->hasFirst($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        return $this->setFirst($offset, $value);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->getFirst($offset);
+    }
+
+    public function offsetUnset($offset)
+    {
+        throw new \Exception('You cannot unset column `' . $offset . '` from the model row.');
+    }
+
+    public function __get($name)
+    {
+        return $this->getFirst($name);
+    }
+
+    public function __set($name, $value)
+    {
+        return $this->setFirst($name, $value);
     }
 
     public function __sleep()
@@ -142,23 +219,35 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         return $this;
     }
 
-    /**
-     * @param $table
-     *
-     * @throws \Exception
-     *
-     * @return $this
-     */
-    protected function getTableInstance($table)
+    protected function &firstRow()
     {
-        if (is_scalar($table)) {
-            if (!is_subclass_of($table, self::class)) {
-                throw new \Exception('`' . $table . '` is not an instance of `' . self::class . '`.');
-            }
-
-            $table = new $table([], $this->driver());
+        if (!$row = &Arr::firstRef($this->rows)) {
+            throw new \Exception('Model row is not found.');
         }
 
-        return $table;
+        return $row;
+    }
+
+    protected function hasFirst(string $column)
+    {
+        return $this->hasInRow($this->firstRow(), $column);
+    }
+
+    protected function setFirst(string $column, string $value)
+    {
+        $this->validateFillableColumn($column);
+
+        $value = $this->prepareValue($column, $value);
+
+        $this->setInRow($this->firstRow(), $column, $value);
+
+        return $this;
+    }
+
+    protected function getFirst(string $column)
+    {
+        $this->validateColumn($column);
+
+        return $this->getFromRow($this->firstRow(), $column);
     }
 }

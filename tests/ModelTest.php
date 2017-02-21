@@ -216,16 +216,20 @@ class ModelTest extends ModelAbstract
 
     public function testCanCreateNewRow()
     {
+        $this->mockDescribe();
+
         $row = new MyModel([
             'Id' => 1,
-        ]);
+        ], $this->driver);
 
         $this->assertEquals(1, $row['Id']);
     }
 
     public function testCanGetFirstByCallable()
     {
-        $rows = new MyModel();
+        $this->mockDescribe();
+
+        $rows = new MyModel([], $this->driver);
 
         $rows->appendRecord([
                 'Id' => 1,

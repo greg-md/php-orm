@@ -76,13 +76,7 @@ trait TableTrait
 
     public function column(string $name): array
     {
-        if ($this->columns === false) {
-            $this->loadSchema();
-        }
-
-        if (!isset($this->columns[$name])) {
-            throw new \Exception('Column `' . $name . '` not found in table `' . $this->name() . '`.');
-        }
+        $this->validateColumn($name);
 
         return $this->columns[$name];
     }
@@ -192,6 +186,19 @@ trait TableTrait
     public function describe()
     {
         return $this->driver()->describe($this->fullName());
+    }
+
+    protected function validateColumn(string $name)
+    {
+        if ($this->columns === false) {
+            $this->loadSchema();
+        }
+
+        if (!isset($this->columns[$name])) {
+            throw new \Exception('Column `' . $name . '` not found in table `' . $this->name() . '`.');
+        }
+
+        return $this;
     }
 
     protected function combineFirstUnique($value)
