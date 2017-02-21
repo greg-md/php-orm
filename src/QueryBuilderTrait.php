@@ -11,10 +11,7 @@ use Greg\Orm\Clause\LimitClauseStrategy;
 use Greg\Orm\Clause\OffsetClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\WhereClauseStrategy;
-use Greg\Orm\Driver\DriverStrategy;
-use Greg\Orm\Driver\StatementStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Table\DeleteTableQueryTrait;
 use Greg\Orm\Table\FromTableClauseTrait;
 use Greg\Orm\Table\GroupByTableClauseTrait;
@@ -28,7 +25,7 @@ use Greg\Orm\Table\SelectTableQueryTrait;
 use Greg\Orm\Table\UpdateTableQueryTrait;
 use Greg\Orm\Table\WhereTableClauseTrait;
 
-trait TableSqlTrait
+trait QueryBuilderTrait
 {
     use DeleteTableQueryTrait,
         InsertTableQueryTrait,
@@ -139,124 +136,6 @@ trait TableSqlTrait
         return $this;
     }
 
-    public function chunk(int $count, callable $callable, bool $callOneByOne = false, bool $yield = true)
-    {
-        $this->chunkQuery($this->selectQueryInstance()->selectQuery(), $count, $callable, $callOneByOne, $yield);
-
-        return $this;
-    }
-
-    public function fetch(): ?array
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetch();
-    }
-
-    public function fetchOrFail(): array
-    {
-        if (!$record = $this->fetch()) {
-            throw new QueryException('Row was not found.');
-        }
-
-        return $record;
-    }
-
-    public function fetchAll(): array
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetchAll();
-    }
-
-    public function fetchYield()
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->fetchYield();
-    }
-
-    public function fetchColumn(string $column = '0'): string
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->column($column);
-    }
-
-    public function fetchColumnAll(string $column = '0'): array
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->columnAll($column);
-    }
-
-    public function fetchPairs(string $key = '0', string $value = '1'): array
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery();
-
-        return $instance->execute()->pairs($key, $value);
-    }
-
-    public function fetchCount(string $column = '*', string $alias = null): int
-    {
-        return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
-    }
-
-    public function fetchMax(string $column, string $alias = null): int
-    {
-        return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
-    }
-
-    public function fetchMin(string $column, string $alias = null): int
-    {
-        return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
-    }
-
-    public function fetchAvg(string $column, string $alias = null): float
-    {
-        return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
-    }
-
-    public function fetchSum(string $column, string $alias = null): string
-    {
-        return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
-    }
-
-    public function exists(): bool
-    {
-        return (bool) $this->clearSelect()->selectRaw(1)->fetchColumn();
-    }
-
-    public function update(array $columns = []): int
-    {
-        return $this->setValues($columns)->execute()->affectedRows();
-    }
-
-    public function delete(string ...$tables)
-    {
-        $instance = $this->deleteQueryInstance();
-
-        $instance->deleteQuery();
-
-        if ($tables) {
-            $instance->rowsFrom(...$tables);
-        }
-
-        return $instance->execute()->affectedRows();
-    }
-
     public function when(bool $condition, callable $callable)
     {
         if ($condition) {
@@ -264,16 +143,6 @@ trait TableSqlTrait
         }
 
         return $this;
-    }
-
-    public function prepare(): StatementStrategy
-    {
-        return $this->prepareQuery($this->query());
-    }
-
-    public function execute(): StatementStrategy
-    {
-        return $this->executeQuery($this->query());
     }
 
     public function toSql(): array
@@ -425,71 +294,4 @@ trait TableSqlTrait
 
         return [$sql, $params];
     }
-
-    protected function prepareQuery(QueryStrategy $query): StatementStrategy
-    {
-        list($sql, $params) = $query->toSql();
-
-        $stmt = $this->driver()->prepare($sql);
-
-        if ($params) {
-            $stmt->bindMultiple($params);
-        }
-
-        return $stmt;
-    }
-
-    protected function executeQuery(QueryStrategy $query): StatementStrategy
-    {
-        $stmt = $this->prepareQuery($query);
-
-        $stmt->execute();
-
-        return $stmt;
-    }
-
-    protected function chunkQuery(SelectQuery $query, int $count, callable $callable, bool $callOneByOne = false, bool $yield = true)
-    {
-        if ($count < 1) {
-            throw new QueryException('Chunk count should be greater than 0.');
-        }
-
-        $offset = 0;
-
-        while (true) {
-            $stmt = $this->executeQuery($query->limit($count)->offset($offset));
-
-            if ($callOneByOne) {
-                $k = 0;
-
-                foreach ($yield ? $stmt->fetchYield() : $stmt->fetchAll() as $record) {
-                    if (call_user_func_array($callable, [$record]) === false) {
-                        $k = 0;
-
-                        break;
-                    }
-
-                    ++$k;
-                }
-            } else {
-                $records = $stmt->fetchAll();
-
-                $k = count($records);
-
-                if ($records and call_user_func_array($callable, [$records]) === false) {
-                    $k = 0;
-                }
-            }
-
-            if ($k < $count) {
-                break;
-            }
-
-            $offset += $count;
-        }
-
-        return $this;
-    }
-
-    abstract public function driver(): DriverStrategy;
 }

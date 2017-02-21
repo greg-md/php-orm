@@ -3,17 +3,16 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Driver\DriverStrategy;
-use Greg\Support\Arr;
 use Greg\Support\Obj;
 
 abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 {
-    use RowsTrait;
+    use RowTrait;
 
     /**
      * @var DriverStrategy|null
      */
-    private $driver = null;
+    private $driver;
 
     public function __construct(array $record = [], DriverStrategy $driver = null)
     {
@@ -41,7 +40,7 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         return $this;
     }
 
-    public function getDriver()
+    public function getDriver(): ?DriverStrategy
     {
         return $this->driver;
     }
@@ -55,125 +54,15 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         return $this->driver;
     }
 
-    public function getAutoIncrement()
+    public function cleanup()
     {
-        if ($key = $this->autoIncrement()) {
-            return $this[$key];
-        }
+        $this->rows = [];
 
-        return null;
-    }
+        $this->query = null;
 
-    public function setAutoIncrement(int $value)
-    {
-        if (!$key = $this->autoIncrement()) {
-            throw new \Exception('Autoincrement not defined for table `' . $this->name() . '`.');
-        }
-
-        $this[$key] = $value;
+        $this->clauses = [];
 
         return $this;
-    }
-
-    public function getPrimary()
-    {
-        $keys = [];
-
-        foreach ($this->primary() as $key) {
-            $keys[$key] = $this[$key];
-        }
-
-        return $keys;
-    }
-
-    public function setPrimary($value)
-    {
-        if (!$keys = $this->primary()) {
-            throw new \Exception('Primary keys not defined for table `' . $this->name() . '`');
-        }
-
-        if (!$value) {
-            $value = array_combine([current($keys)], [$value]);
-        }
-
-        foreach ($keys as $key) {
-            $this[$key] = $value[$key];
-        }
-
-        return $this;
-    }
-
-    public function getUnique()
-    {
-        $allValues = [];
-
-        foreach ($this->unique() as $name => $keys) {
-            $values = [];
-
-            foreach ($keys as $key) {
-                $values[$key] = $this[$key];
-            }
-
-            $allValues[] = $values;
-        }
-
-        return $allValues;
-    }
-
-    public function getFirstUnique()
-    {
-        $keys = [];
-
-        foreach ($this->firstUnique() as $key) {
-            $keys[$key] = $this[$key];
-        }
-
-        return $keys;
-    }
-
-    public function isNew()
-    {
-        return $this->firstRow()['isNew'];
-    }
-
-    public function original()
-    {
-        return $this->prepareRecord($this->firstRow()['record'], true);
-    }
-
-    public function originalModified()
-    {
-        return $this->prepareRecord($this->firstRow()['modified'], true);
-    }
-
-    public function offsetExists($offset)
-    {
-        return $this->hasFirst($offset);
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        return $this->setFirst($offset, $value);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->getFirst($offset);
-    }
-
-    public function offsetUnset($offset)
-    {
-        throw new \Exception('You cannot unset column `' . $offset . '` from the model row.');
-    }
-
-    public function __get($name)
-    {
-        return $this->getFirst($name);
-    }
-
-    public function __set($name, $value)
-    {
-        return $this->setFirst($name, $value);
     }
 
     public function __sleep()
@@ -219,35 +108,12 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         return $this;
     }
 
-    protected function &firstRow()
+    protected function cleanClone()
     {
-        if (!$row = &Arr::firstRef($this->rows)) {
-            throw new \Exception('Model row is not found.');
-        }
+        $cloned = clone $this;
 
-        return $row;
-    }
+        $cloned->cleanup();
 
-    protected function hasFirst(string $column)
-    {
-        return $this->hasInRow($this->firstRow(), $column);
-    }
-
-    protected function setFirst(string $column, string $value)
-    {
-        $this->validateFillableColumn($column);
-
-        $value = $this->prepareValue($column, $value);
-
-        $this->setInRow($this->firstRow(), $column, $value);
-
-        return $this;
-    }
-
-    protected function getFirst(string $column)
-    {
-        $this->validateColumn($column);
-
-        return $this->getFromRow($this->firstRow(), $column);
+        return $cloned;
     }
 }

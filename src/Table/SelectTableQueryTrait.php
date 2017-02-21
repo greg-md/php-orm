@@ -58,11 +58,25 @@ trait SelectTableQueryTrait
         return $this->selectFrom($this, $column, ...$columns);
     }
 
+    /**
+     * @param string $column
+     * @param null|string|null $alias
+     * @return $this
+     */
     public function selectColumn(string $column, ?string $alias = null)
     {
         $instance = $this->selectQueryInstance();
 
         $instance->selectQuery()->column($column, $alias);
+
+        return $instance;
+    }
+
+    public function selectConcat(array $columns, string $delimiter = '', ?string $alias = null)
+    {
+        $instance = $this->selectQueryInstance();
+
+        $instance->selectQuery()->columnConcat($columns, $delimiter, $alias);
 
         return $instance;
     }
@@ -436,9 +450,4 @@ trait SelectTableQueryTrait
     abstract public function hasClauses(): bool;
 
     abstract public function getClauses(): array;
-
-    /**
-     * @return $this
-     */
-    abstract protected function cleanClone();
 }

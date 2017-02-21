@@ -24,15 +24,6 @@ class ModelInsertQueryTest extends ModelAbstract
         $this->assertEquals(1, $this->model->insert(['Column' => 'foo']));
     }
 
-    public function testCanInsertColumns()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock->method('rowCount')->willReturn(1);
-
-        $this->assertEquals(1, $this->model->insertValues(['Column'], ['Column' => 'foo']));
-    }
-
     public function testCanInsertSelectWithDefaults()
     {
         $this->mockStatements();
@@ -71,16 +62,5 @@ class ModelInsertQueryTest extends ModelAbstract
         $this->pdoStatementMock->expects($this->exactly(2))->method('execute');
 
         $this->model->insertForEach('Column', ['foo', 'bar']);
-    }
-
-    public function testCanInsertAndGetId()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock->method('rowCount')->willReturn(1);
-
-        $this->pdoMock->method('lastInsertId')->willReturn(1);
-
-        $this->assertEquals(1, $this->model->insertAndGetId(['Column' => 'foo']));
     }
 }

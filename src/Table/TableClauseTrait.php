@@ -17,9 +17,4 @@ trait TableClauseTrait
     abstract public function setClause(string $name, ClauseStrategy $query);
 
     abstract public function hasClauses(): bool;
-
-    /**
-     * @return $this
-     */
-    abstract protected function cleanClone();
 }

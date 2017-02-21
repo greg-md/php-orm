@@ -75,9 +75,7 @@ trait DeleteTableQueryTrait
             return $query;
         }
 
-        $query = $this->driver()->delete();
-
-        $query->from($this);
+        $query = $this->newDeleteQuery();
 
         $clauses = $this->getClauses();
 
@@ -175,6 +173,15 @@ trait DeleteTableQueryTrait
         return $this;
     }
 
+    protected function newDeleteQuery(): DeleteQuery
+    {
+        $query = $this->driver()->delete();
+
+        $query->from($this);
+
+        return $query;
+    }
+
     abstract public function setQuery(QueryStrategy $query);
 
     abstract public function getQuery(): ?QueryStrategy;
@@ -184,9 +191,4 @@ trait DeleteTableQueryTrait
     abstract public function hasClauses(): bool;
 
     abstract public function getClauses(): array;
-
-    /**
-     * @return $this
-     */
-    abstract protected function cleanClone();
 }

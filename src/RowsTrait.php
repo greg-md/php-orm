@@ -11,6 +11,10 @@ trait RowsTrait
 {
     use TableTrait;
 
+    protected $fillable = '*';
+
+    protected $guarded = [];
+
     private $rows = [];
 
     private $rowsTotal = 0;
@@ -19,169 +23,14 @@ trait RowsTrait
 
     private $rowsLimit = 0;
 
-    public function row()
+    public function fillable()
     {
-        if ($record = $this->rowsQueryInstance()->fetch()) {
-            return $this->cleanClone()->appendRecord($record);
-        }
-
-        return null;
+        return $this->fillable === '*' ? $this->fillable : (array) $this->fillable;
     }
 
-    public function rowOrFail()
+    public function guarded()
     {
-        if (!$row = $this->row()) {
-            throw new QueryException('Row was not found.');
-        }
-
-        return $row;
-    }
-
-    public function rows()
-    {
-        $rows = $this->cleanClone();
-
-        foreach ($this->rowsQueryInstance()->fetchYield() as $record) {
-            $rows->appendRecord($record);
-        }
-
-        return $rows;
-    }
-
-    public function rowsYield()
-    {
-        foreach ($this->rowsQueryInstance()->fetchYield() as $record) {
-            yield $this->cleanClone()->appendRecord($record);
-        }
-    }
-
-    public function chunkRows($count, callable $callable, $callOneByOne = false)
-    {
-        $newCallable = function ($record) use ($callable, $callOneByOne) {
-            if ($callOneByOne) {
-                return call_user_func_array($callable, [$this->cleanClone()->appendRecord($record)]);
-            }
-
-            $rows = $this->cleanClone();
-
-            foreach ($record as $item) {
-                $rows->appendRecord($item);
-            }
-
-            return call_user_func_array($callable, [$rows]);
-        };
-
-        return $this->chunkQuery($this->rowsQueryInstance()->selectQuery(), $count, $newCallable, $callOneByOne);
-    }
-
-    public function find($key)
-    {
-        return $this->whereMultiple($this->combineFirstUnique($key))->row();
-    }
-
-    public function findOrFail($keys)
-    {
-        if (!$row = $this->find($keys)) {
-            throw new QueryException('Row was not found.');
-        }
-
-        return $row;
-    }
-
-    public function firstOrNew(array $values)
-    {
-        if (!$row = $this->whereMultiple($values)->row()) {
-            $row = $this->create($values);
-        }
-
-        return $row;
-    }
-
-    public function firstOrCreate(array $data)
-    {
-        return $this->firstOrNew($data)->save();
-    }
-
-    public function create(array $record = [])
-    {
-        return $this->cleanClone()->appendRecord($record, true);
-    }
-
-    public function save(array $values = [])
-    {
-        $this->setMultiple($values);
-
-        foreach ($this->getIterator() as $row) {
-            if ($row->isNew()) {
-                $this->insert($row->original());
-
-                if ($column = $this->getAutoIncrement()) {
-                    $row[$column] = (int) $this->lastInsertId();
-                }
-
-                $row->markAsOld();
-            } elseif ($record = $row->originalModified()) {
-                $this->whereMultiple($this->getFirstUnique())->update($record);
-            }
-        }
-
-        return $this;
-    }
-
-    public function destroy()
-    {
-        $keys = [];
-
-        foreach ($this->getIterator() as $row) {
-            $keys[] = $row->firstUnique();
-
-            $row->markAsNew();
-        }
-
-        $this->where($this->firstUnique(), $keys)->delete();
-
-        return $this;
-    }
-
-    public function appendRecord(array $record, bool $isNew = false, array $modified = [])
-    {
-        $record = array_merge($this->defaultRecord(), $record);
-
-        $record = $this->prepareRecord($record);
-
-        $this->rows[] = [
-            'record'   => $record,
-            'isNew'    => $isNew,
-            'modified' => $modified,
-        ];
-
-        return $this;
-    }
-
-    public function appendRecordRef(array &$record, bool &$isNew = false, array &$modified = [])
-    {
-        $record = array_merge($this->defaultRecord(), $record);
-
-        $record = $this->prepareRecord($record);
-
-        $this->rows[] = [
-            'record'   => &$record,
-            'isNew'    => &$isNew,
-            'modified' => &$modified,
-        ];
-
-        return $this;
-    }
-
-    public function cleanup()
-    {
-        $this->rows = [];
-
-        $this->query = null;
-
-        $this->clauses = [];
-
-        return $this;
+        return $this->guarded === '*' ? $this->guarded : (array) $this->guarded;
     }
 
     public function rowsTotal(): int
@@ -197,6 +46,44 @@ trait RowsTrait
     public function rowsLimit(): int
     {
         return $this->rowsLimit;
+    }
+
+    public function appendRecord(array $record, bool $isNew = false, array $modified = [], bool $isTrusted = false)
+    {
+        if (!$isTrusted) {
+            $record = array_merge($this->defaultRecord(), $record);
+
+            $record = $this->prepareRecord($record);
+
+            $modified = $this->prepareRecord($modified);
+        }
+
+        $this->rows[] = [
+            'record'   => $record,
+            'isNew'    => $isNew,
+            'modified' => $modified,
+        ];
+
+        return $this;
+    }
+
+    public function appendRecordRef(array &$record, bool &$isNew = false, array &$modified = [], bool $isTrusted = false)
+    {
+        if (!$isTrusted) {
+            $record = array_merge($this->defaultRecord(), $record);
+
+            $record = $this->prepareRecord($record);
+
+            $modified = $this->prepareRecord($modified);
+        }
+
+        $this->rows[] = [
+            'record'   => &$record,
+            'isNew'    => &$isNew,
+            'modified' => &$modified,
+        ];
+
+        return $this;
     }
 
     public function has(string $column): bool
@@ -274,6 +161,56 @@ trait RowsTrait
         return $values;
     }
 
+    public function save(array $values = [])
+    {
+        $this->setMultiple($values);
+
+        foreach ($this->rows as &$row) {
+            if ($row['isNew']) {
+                $record = $this->prepareRecord($row['record'], true);
+
+                $query = $this->newInsertQuery()->data($record);
+
+                $this->executeQuery($query);
+
+                if ($column = $this->autoIncrement()) {
+                    $row['record'][$column] = (int) $this->driver()->lastInsertId();
+                }
+
+                $row['isNew'] = false;
+            } elseif ($modified = $this->prepareRecord($row['modified'], true)) {
+                $query = $this->newUpdateQuery()
+                    ->setMultiple($modified)
+                    ->whereMultiple($this->rowFirstUnique($row));
+
+                $this->executeQuery($query);
+            }
+
+            $row['modified'] = [];
+        }
+        unset($row);
+
+        return $this;
+    }
+
+    public function destroy()
+    {
+        $keys = [];
+
+        foreach ($this->rows as &$row) {
+            $keys[] = $this->rowFirstUnique($row);
+
+            $this->markRowAsNew($row);
+        }
+        unset($row);
+
+        $query = $this->newDeleteQuery()->where($this->firstUnique(), $keys);
+
+        $this->executeQuery($query);
+
+        return $this;
+    }
+
     public function toArray($full = false)
     {
         if ($full) {
@@ -283,36 +220,10 @@ trait RowsTrait
         return array_column($this->rows, 'record');
     }
 
-    /**
-     * @return \Generator|$this[]
-     */
-    public function getIterator()
-    {
-        foreach ($this->rows as $key => &$row) {
-            yield $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified']);
-        }
-    }
-
-    public function getRowsIterator()
-    {
-        $rows = [];
-
-        foreach ($this->rows as $row) {
-            $rows[] = $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified']);
-        }
-
-        return $rows;
-    }
-
-    public function count()
-    {
-        return count($this->rows);
-    }
-
     public function markAsNew()
     {
         foreach ($this->rows as &$row) {
-            $row['isNew'] = true;
+            $this->markRowAsNew($row);
         }
         unset($row);
 
@@ -335,7 +246,7 @@ trait RowsTrait
      *
      * @return $this|null
      */
-    public function first(callable $callable = null, bool $yield = true)
+    public function search(callable $callable = null, bool $yield = true)
     {
         foreach ($yield ? $this->getIterator() : $this->getRowsIterator() as $key => $row) {
             if ($callable !== null) {
@@ -350,7 +261,7 @@ trait RowsTrait
         return null;
     }
 
-    public function firstWhere(string $column, $operator, $value = null)
+    public function searchWhere(string $column, $operator, $value = null)
     {
         if (func_num_args() < 3) {
             $value = $operator;
@@ -358,7 +269,7 @@ trait RowsTrait
             $operator = null;
         }
 
-        return $this->first(function ($item) use ($column, $operator, $value) {
+        return $this->search(function ($item) use ($column, $operator, $value) {
             if ($operator === '>') {
                 return $item[$column] > $value;
             }
@@ -379,10 +290,8 @@ trait RowsTrait
         });
     }
 
-    public function hasMany($relationshipTable, $relationshipKey, $tableKey = null)
+    public function hasMany(Model $relationshipTable, $relationshipKey, $tableKey = null)
     {
-        $relationshipTable = $this->getTableInstance($relationshipTable);
-
         if ($this->count()) {
             $relationshipKey = (array) $relationshipKey;
 
@@ -406,10 +315,8 @@ trait RowsTrait
         return $relationshipTable;
     }
 
-    public function belongsTo($referenceTable, $tableKey, $referenceTableKey = null)
+    public function belongsTo(Model $referenceTable, $tableKey, $referenceTableKey = null)
     {
-        $referenceTable = $this->getTableInstance($referenceTable);
-
         $tableKey = (array) $tableKey;
 
         if (!$referenceTableKey) {
@@ -433,6 +340,32 @@ trait RowsTrait
 
         return $referenceTable;
         */
+    }
+
+    public function count()
+    {
+        return count($this->rows);
+    }
+
+    /**
+     * @return \Generator|$this[]
+     */
+    public function getIterator()
+    {
+        foreach ($this->rows as $key => &$row) {
+            yield $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified'], true);
+        }
+    }
+
+    public function getRowsIterator()
+    {
+        $rows = [];
+
+        foreach ($this->rows as $row) {
+            $rows[] = $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified'], true);
+        }
+
+        return $rows;
     }
 
     protected function hasInRow(array &$row, string $column)
@@ -470,6 +403,28 @@ trait RowsTrait
         return null;
     }
 
+    protected function rowFirstUnique(array &$row)
+    {
+        $keys = [];
+
+        foreach ($this->firstUnique() as $key) {
+            $keys[$key] = $row['record'][$key];
+        }
+
+        return $keys;
+    }
+
+    protected function markRowAsNew(array &$row)
+    {
+        $row['isNew'] = true;
+
+        $row['record'] = array_merge($row['record'], $row['modified']);
+
+        $row['modified'] = [];
+
+        return $this;
+    }
+
     protected function validateFillableColumn(string $column)
     {
         $this->validateColumn($column);
@@ -480,39 +435,6 @@ trait RowsTrait
         }
 
         return $this;
-    }
-
-    protected function cleanClone()
-    {
-        $cloned = clone $this;
-
-        $cloned->cleanup();
-
-        return $cloned;
-    }
-
-    protected function rowsQueryInstance()
-    {
-        $instance = $this->selectQueryInstance();
-
-        if ($instance->hasSelect()) {
-            throw new QueryException('You cannot fetch as rows while you have custom SELECT columns.');
-        }
-
-        $instance->selectFrom($this, '*');
-
-        return $instance;
-    }
-
-    protected function defaultRecord()
-    {
-        $record = [];
-
-        foreach ($this->columns() as $column) {
-            $record[$column['name']] = $column['default'];
-        }
-
-        return $record;
     }
 
     protected function prepareRecord(array $record, $reverse = false)
@@ -580,23 +502,14 @@ trait RowsTrait
         return $value;
     }
 
-    /**
-     * @param $table
-     *
-     * @throws \Exception
-     *
-     * @return $this
-     */
-    protected function getTableInstance($table)
+    protected function defaultRecord()
     {
-        if (is_scalar($table)) {
-            if (!is_subclass_of($table, self::class)) {
-                throw new \Exception('`' . $table . '` is not an instance of `' . self::class . '`.');
-            }
+        $record = [];
 
-            $table = new $table([], $this->driver());
+        foreach ($this->columns() as $column) {
+            $record[$column['name']] = $column['default'];
         }
 
-        return $table;
+        return $record;
     }
 }

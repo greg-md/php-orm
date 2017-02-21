@@ -146,9 +146,7 @@ trait UpdateTableQueryTrait
             return $query;
         }
 
-        $query = $this->driver()->update();
-
-        $query->table($this);
+        $query = $this->newUpdateQuery();
 
         $clauses = $this->getClauses();
 
@@ -237,6 +235,15 @@ trait UpdateTableQueryTrait
         return $this;
     }
 
+    protected function newUpdateQuery(): UpdateQuery
+    {
+        $query = $this->driver()->update();
+
+        $query->table($this);
+
+        return $query;
+    }
+
     abstract public function setQuery(QueryStrategy $query);
 
     abstract public function getQuery(): ?QueryStrategy;
@@ -246,9 +253,4 @@ trait UpdateTableQueryTrait
     abstract public function hasClauses(): bool;
 
     abstract public function getClauses(): array;
-
-    /**
-     * @return $this
-     */
-    abstract protected function cleanClone();
 }

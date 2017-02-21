@@ -131,7 +131,7 @@ class PdoStatement implements StatementStrategy
         $values = [];
 
         while ($record = $this->stmt->fetch()) {
-            $values[] = $record[$column] ?? null;
+            $values[] = Arr::get($record, $column);
         }
 
         return $values;
@@ -144,8 +144,8 @@ class PdoStatement implements StatementStrategy
                 yield $value;
             }
         } else {
-            while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
-                yield $record[$column] ?? null;
+            while ($record = $this->stmt->fetch()) {
+                yield Arr::get($record, $column);
             }
         }
     }
@@ -158,15 +158,19 @@ class PdoStatement implements StatementStrategy
      */
     public function pairs(string $key = '0', string $value = '1')
     {
-        $all = $this->fetchAll();
+        $pairs = [];
 
-        return Arr::pairs($all, $key, $value);
+        while ($record = $this->stmt->fetch()) {
+            $pairs[Arr::get($record, $key)] = Arr::get($record, $value);
+        }
+
+        return $pairs;
     }
 
     public function pairsYield(string $key = '0', string $value = '1')
     {
-        while ($record = $this->stmt->fetch(\PDO::FETCH_ASSOC)) {
-            yield $record[$key] ?? null => $record[$value] ?? null;
+        while ($record = $this->stmt->fetch()) {
+            yield Arr::get($record, $key) => Arr::get($record, $value);
         }
     }
 

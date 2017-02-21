@@ -202,16 +202,16 @@ class ModelTest extends ModelAbstract
     {
         $this->mockDescribe();
 
-        $query = $this->model->selectPairs();
+        $this->pdoStatementMock->method('fetch')->willReturn([1, 1], [2, 2]);
 
-        $this->assertEquals('SELECT `Id` AS `key`, `Name` AS `value` FROM `Table`', $query->toString());
+        $this->assertEquals([1 => 1, 2 => 2], $this->model->pairs());
     }
 
     public function testCanThrowExceptionIfCanNotSelectPairs()
     {
         $this->expectException(\Exception::class);
 
-        (new CustomModel())->selectPairs();
+        (new CustomModel())->pairs();
     }
 
     public function testCanCreateNewRow()
@@ -238,7 +238,7 @@ class ModelTest extends ModelAbstract
                 'Id' => 2,
             ]);
 
-        $row = $rows->first(function (MyModel $row) {
+        $row = $rows->search(function (MyModel $row) {
             return $row['Id'] === 2;
         }, false);
 
@@ -407,7 +407,7 @@ class ModelTest extends ModelAbstract
     {
         $this->mockStatements();
 
-        $this->pdoStatementMock->method('fetchAll')->willReturn([[1, 1], [2, 2]]);
+        $this->pdoStatementMock->method('fetch')->willReturn([1, 1], [2, 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->model->fetchPairs());
     }

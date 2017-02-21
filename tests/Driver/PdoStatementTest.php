@@ -88,11 +88,6 @@ class PdoStatementTest extends TestCase
         $this->assertEquals(['foo', 'bar'], $this->stmt->fetchAll());
     }
 
-    public function testCanFetchYield()
-    {
-        $this->assertInstanceOf(\Generator::class, $this->stmt->fetchYield());
-    }
-
     public function testCanFetchColumn()
     {
         $this->pdoStatementMock->method('fetchColumn')->willReturn(1);
@@ -102,7 +97,7 @@ class PdoStatementTest extends TestCase
 
     public function testCanFetchColumnAssoc()
     {
-        $this->pdoStatementMock->method('fetch')->with(\PDO::FETCH_ASSOC)->willReturn(['Id' => 1]);
+        $this->pdoStatementMock->method('fetch')->with()->willReturn(['Id' => 1]);
 
         $this->assertEquals(1, $this->stmt->column('Id'));
     }
@@ -116,7 +111,7 @@ class PdoStatementTest extends TestCase
 
     public function testCanFetchPairs()
     {
-        $this->pdoStatementMock->method('fetchAll')->willReturn([['Id' => 1], ['Id' => 2]]);
+        $this->pdoStatementMock->method('fetch')->willReturn(['Id' => 1], ['Id' => 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->stmt->pairs('Id', 'Id'));
     }
