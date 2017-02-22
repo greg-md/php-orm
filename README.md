@@ -23,14 +23,11 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 * **Multiple drivers support**
 * **It just makes your life better**
 
-# Installation
-
-`composer require greg-md/php-orm`
-
 # Table of Contents:
 
 * [Requirements](#requirements)
 * [Supported Drivers](#supported-drivers)
+* [Installation](#installation)
 * [Documentation](#documentation)
 * [License](#license)
 * _[Huuuge Quote](#huuuge-quote)_
@@ -43,6 +40,10 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 - **Mysql**
 - **Sqlite**
+
+# Installation
+
+`composer require greg-md/php-orm`
 
 # Documentation
 
