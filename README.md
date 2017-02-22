@@ -27,7 +27,6 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 * [Requirements](#requirements)
 * [Supported Drivers](#supported-drivers)
-* [How It Works](#how-it-works)
 * [Documentation](#documentation)
 * [License](#license)
 * [Huuuge Quote](#huuuge-quote)
@@ -50,15 +49,55 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 # Driver Strategy
 
-Full documentation you can find [here](docs/DriverStrategy.md)
+A driver works directly with the database. Full documentation you can find [here](docs/DriverStrategy.md).
+
+Next, you will find some examples of how to work with them.
+
+**First of all** you have to instantiate the driver.
+
+_Examples:_
+
+**Mysql Driver**
+
+Mysql use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
+
+Let say you have a database named `example_db` on `127.0.0.1` with username `john` and password `doe`.
+All you have to do is to initialize the driver with a `PDO` connector.
+
+```php
+$driver = new \Greg\Orm\Driver\Mysql\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+{
+    public function connect(): \PDO
+    {
+        return new \PDO('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe');
+    }
+});
+```
+
+**Sqlite Driver**
+
+Sqlite use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
+
+Let say your database is in `/var/db/example_db.sqlite`.
+All you have to do is to initialize the driver with a `PDO` connector.
+
+```php
+$driver = new \Greg\Orm\Driver\Sqlite\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+{
+    public function connect(): \PDO
+    {
+        return new \PDO('sqlite:/var/db/example_db.sqlite');
+    }
+});
+```
 
 # Query Builder
 
-Full documentation you can find [here](docs/QueryBuilder.md)
+Full documentation you can find [here](docs/QueryBuilder.md).
 
 # Model
 
-Full documentation you can find [here](docs/Model.md)
+Full documentation you can find [here](docs/Model.md).
 
 # Migrations
 
