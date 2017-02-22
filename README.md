@@ -111,6 +111,6 @@ _Under construction..._
 
 MIT © [Grigorii Duca](http://greg.md)
 
-# Huuuge Quote
+# _Huuuge Quote_
 
 ![I fear not the man who has practiced 10,000 programming languages once, but I fear the man who has practiced one programming language 10,000 times. &copy; #horrorsquad](http://greg.md/huuuge-quote-fb.jpg)
