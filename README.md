@@ -47,7 +47,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 # Documentation
 
-* [Driver Strategy](#driver-strategy)
+* [Driver Strategy](#driver-strategy) - A driver works directly with the database. [Full Documentation](docs/DriverStrategy.md).
 * [Query Builder](#query-builder)
 * [Model](#model)
 * [Migrations](#migrations)
