@@ -27,6 +27,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 * [Requirements](#requirements)
 * [Supported Drivers](#supported-drivers)
+* [Install](#install)
 * [Documentation](#documentation)
 * [License](#license)
 * [Huuuge Quote](#huuuge-quote)
@@ -39,6 +40,10 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 - **Mysql**
 - **Sqlite**
+
+# Install
+
+`composer require greg-md/php-orm`
 
 # Documentation
 
