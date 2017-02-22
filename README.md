@@ -52,7 +52,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 * [Model](#model)
 * [Migrations](#migrations)
 
-# Driver Strategy
+## Driver Strategy
 
 A driver works directly with the database. Full documentation you can find [here](docs/DriverStrategy.md).
 
@@ -96,15 +96,15 @@ $driver = new \Greg\Orm\Driver\Sqlite\SqliteDriver(new class implements \Greg\Or
 });
 ```
 
-# Query Builder
+## Query Builder
 
 Full documentation you can find [here](docs/QueryBuilder.md).
 
-# Model
+## Model
 
 Full documentation you can find [here](docs/Model.md).
 
-# Migrations
+## Migrations
 
 _Under construction..._
 
