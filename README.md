@@ -56,11 +56,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 A driver works directly with the database. [Full Documentation](docs/Migrations.md).
 
-**First of all** you have to instantiate the driver.
-
-### Examples:
-
-**Mysql Driver**
+### Mysql Driver
 
 Mysql use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
 
@@ -77,7 +73,7 @@ $driver = new \Greg\Orm\Driver\Mysql\MysqlDriver(new class implements \Greg\Orm\
 });
 ```
 
-**Sqlite Driver**
+### Sqlite Driver
 
 Sqlite use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
 
