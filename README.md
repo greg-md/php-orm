@@ -33,7 +33,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 * [Supported Drivers](#supported-drivers)
 * [Documentation](#documentation)
 * [License](#license)
-* [Huuuge Quote](#huuuge-quote)
+* _[Huuuge Quote](#huuuge-quote)_
 
 # Requirements
 
