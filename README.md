@@ -54,13 +54,11 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 ## Driver Strategy
 
-A driver works directly with the database. Full documentation you can find [here](docs/DriverStrategy.md).
-
-Next, you will find some examples of how to work with them.
+A driver works directly with the database. [Full Documentation](docs/Migrations.md).
 
 **First of all** you have to instantiate the driver.
 
-_Examples:_
+### Examples:
 
 **Mysql Driver**
 
