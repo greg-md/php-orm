@@ -1,15 +1,36 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Clause\LimitClause;
-use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\Tests\Clause\LimitClauseTrait;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ModelTestingAbstract;
 
-class ModelLimitStrategyTest extends ModelAbstract
+class ModelLimitStrategyTest extends ModelTestingAbstract
 {
-    use LimitClauseTrait;
+    public function testCanDetermineIfExists()
+    {
+        $this->assertFalse($this->model->hasLimit());
+
+        $query = $this->model->limit(10);
+
+        $this->assertTrue($query->hasLimit());
+    }
+
+    public function testCanGet()
+    {
+        $query = $this->model->limit(10);
+
+        $this->assertEquals(10, $query->getLimit());
+    }
+
+    public function testCanClear()
+    {
+        $query = $this->model->limit(10);
+
+        $query->clearLimit();
+
+        $this->assertNull($query->getLimit());
+    }
 
     public function testCanAssignLimitAppliers()
     {
@@ -75,14 +96,20 @@ class ModelLimitStrategyTest extends ModelAbstract
     {
         $this->assertTrue($this->model->select('Column')->limit(1)->hasLimit());
     }
-
-    protected function newClause()
+    
+    public function testCanDetermineIfClauseExists()
     {
-        return $this->model->setClause('LIMIT', $this->model->driver()->limit());
+        $this->assertFalse($this->model->hasLimitClause());
+
+        $this->model->intoLimitStrategy();
+
+        $this->assertTrue($this->model->hasLimitClause());
     }
 
-    protected function newSelectQuery(): SelectQuery
+    public function testCanCombineClauses2()
     {
-        return $this->driver->select();
+        $query = $this->model->offset(10)->limit(10);
+
+        $this->assertEquals('LIMIT 10 OFFSET 10', $query->toString());
     }
 }

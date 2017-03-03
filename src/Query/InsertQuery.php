@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 use Greg\Orm\SqlAbstract;
 
 class InsertQuery extends SqlAbstract implements QueryStrategy
@@ -230,11 +230,11 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     public function toSql(): array
     {
         if (!$this->into) {
-            throw new QueryException('Undefined INSERT table.');
+            throw new SqlException('Undefined INSERT table.');
         }
 
         if (!$this->columns and !$this->select) {
-            throw new QueryException('Undefined INSERT columns.');
+            throw new SqlException('Undefined INSERT columns.');
         }
 
         $params = [];
@@ -253,11 +253,11 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
             $valuesCount = count($this->values);
 
             if ($columnsCount !== $valuesCount) {
-                throw new QueryException('INSERT values count does not match.'
+                throw new SqlException('INSERT values count does not match.'
                     . ' Expected ' . $columnsCount . ', got ' . $valuesCount . '.');
             }
 
-            $sql[] = 'VALUES ' . $this->dialect()->prepareBindKeys($this->values);
+            $sql[] = 'VALUES ' . $this->prepareBindKeys($this->values);
 
             $params = array_merge($params, $this->values);
         }
@@ -282,7 +282,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     {
         try {
             return $this->toString();
-        } catch (QueryException $e) {
+        } catch (SqlException $e) {
             return $e->getMessage();
         }
     }
@@ -308,11 +308,11 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     /**
      * @param array $select
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return array
      */
-    private function prepareSelect(array $select)
+    protected function prepareSelect(array $select)
     {
         if ($select['sql'] instanceof SelectQuery) {
             $columnsCount = count($this->columns);
@@ -320,7 +320,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
             $selectColumnsCount = count($select['sql']->getColumns());
 
             if ($selectColumnsCount and $selectColumnsCount !== $columnsCount) {
-                throw new QueryException('INSERT select columns count does not match.'
+                throw new SqlException('INSERT select columns count does not match.'
                                         . ' Expected ' . $columnsCount . ', got ' . $selectColumnsCount);
             }
             [$sql, $params] = $select['sql']->toSql();
@@ -331,5 +331,15 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
         }
 
         return $select;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    protected function prepareBindKeys(array $value): string
+    {
+        return '(' . implode(', ', array_fill(0, count($value), '?')) . ')';
     }
 }

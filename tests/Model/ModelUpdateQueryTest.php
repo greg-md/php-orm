@@ -1,11 +1,11 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
-use Greg\Orm\QueryException;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\SqlException;
 
-class ModelUpdateQueryTest extends ModelAbstract
+class ModelUpdateQueryTest extends ModelTestingAbstract
 {
     public function testCanSetColumn()
     {
@@ -126,7 +126,7 @@ class ModelUpdateQueryTest extends ModelAbstract
 
     public function testCanThrowExceptionIfQueryNotSupported()
     {
-        $this->expectException(QueryException::class);
+        $this->expectException(SqlException::class);
 
         $this->model->select('Foo', 'foo')->setValue('Column', 'foo');
     }

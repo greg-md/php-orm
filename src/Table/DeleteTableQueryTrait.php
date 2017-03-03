@@ -9,12 +9,17 @@ use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait DeleteTableQueryTrait
 {
     use TableQueryTrait;
 
+    /**
+     * @param string $table
+     * @param \string[] ...$tables
+     * @return $this
+     */
     public function rowsFrom(string $table, string ...$tables)
     {
         $instance = $this->deleteQueryInstance();
@@ -106,7 +111,7 @@ trait DeleteTableQueryTrait
     protected function needDeleteQuery(?QueryStrategy $query)
     {
         if (!($query instanceof DeleteQuery)) {
-            throw new QueryException('Current query is not a DELETE statement.');
+            throw new SqlException('Current query is not a DELETE statement.');
         }
 
         return $this;
@@ -121,7 +126,7 @@ trait DeleteTableQueryTrait
                 and !($clause instanceof OrderByClause)
                 and !($clause instanceof LimitClause)
             ) {
-                throw new QueryException('Current query is not a DELETE statement.');
+                throw new SqlException('Current query is not a DELETE statement.');
             }
         }
 

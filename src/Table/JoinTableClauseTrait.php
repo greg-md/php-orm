@@ -5,7 +5,7 @@ namespace Greg\Orm\Table;
 use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Clause\JoinClauseStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait JoinTableClauseTrait
 {
@@ -165,6 +165,13 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $source
+     * @param $table
+     * @param string|null $on
+     * @param \string[] ...$params
+     * @return $this
+     */
     public function innerTo($source, $table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
@@ -241,6 +248,11 @@ trait JoinTableClauseTrait
         return $clause;
     }
 
+    public function hasJoinClause(): bool
+    {
+        return $this->hasClause('JOIN');
+    }
+
     public function getJoinClause(): ?JoinClause
     {
         /** @var JoinClause $clause */
@@ -273,7 +285,7 @@ trait JoinTableClauseTrait
         return $this->getJoinClause();
     }
 
-    protected function intoJoinStrategy()
+    public function intoJoinStrategy()
     {
         if (!$this->hasClause('JOIN')) {
             $this->setClause('JOIN', $this->driver()->join());
@@ -300,7 +312,7 @@ trait JoinTableClauseTrait
     protected function needJoinStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof JoinClauseStrategy)) {
-            throw new QueryException('Current query does not have a JOIN clause.');
+            throw new SqlException('Current query does not have a JOIN clause.');
         }
 
         return $this;

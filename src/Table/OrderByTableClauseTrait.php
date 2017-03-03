@@ -5,7 +5,7 @@ namespace Greg\Orm\Table;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait OrderByTableClauseTrait
 {
@@ -151,6 +151,11 @@ trait OrderByTableClauseTrait
         return $clause;
     }
 
+    public function hasOrderByClause(): bool
+    {
+        return $this->hasClause('ORDER_BY');
+    }
+
     public function getOrderByClause(): ?OrderByClause
     {
         /** @var OrderByClause $clause */
@@ -183,7 +188,7 @@ trait OrderByTableClauseTrait
         return $this->orderByClause();
     }
 
-    protected function intoOrderByStrategy()
+    public function intoOrderByStrategy()
     {
         if (!$this->hasClause('ORDER_BY')) {
             $this->setClause('ORDER_BY', $this->driver()->orderBy());
@@ -210,7 +215,7 @@ trait OrderByTableClauseTrait
     protected function needOrderByStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof OrderByClauseStrategy)) {
-            throw new QueryException('Current query does not have an ORDER BY clause.');
+            throw new SqlException('Current query does not have an ORDER BY clause.');
         }
 
         return $this;

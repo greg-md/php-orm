@@ -12,7 +12,7 @@ use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait SelectTableQueryTrait
 {
@@ -324,12 +324,30 @@ trait SelectTableQueryTrait
         return $this->driver()->select()->from($this);
     }
 
+    public function intoSelectQuery()
+    {
+        if ($query = $this->needNewSelectQuery()) {
+            return $this->setQuery($query);
+        }
+
+        return $this;
+    }
+
     protected function selectQueryInstance()
+    {
+        if ($query = $this->needNewSelectQuery()) {
+            return $this->cleanClone()->setQuery($query);
+        }
+
+        return $this;
+    }
+
+    protected function needNewSelectQuery()
     {
         if ($query = $this->getQuery()) {
             $this->needSelectQuery($query);
 
-            return $this;
+            return false;
         }
 
         $query = $this->newSelectQuery();
@@ -341,16 +359,16 @@ trait SelectTableQueryTrait
 
             $this->setQuery($query);
 
-            return $this;
+            return false;
         }
 
-        return $this->cleanClone()->setQuery($query);
+        return $query;
     }
 
     protected function needSelectQuery(?QueryStrategy $query)
     {
         if (!($query instanceof SelectQuery)) {
-            throw new QueryException('Current query is not a SELECT statement.');
+            throw new SqlException('Current query is not a SELECT statement.');
         }
 
         return $this;
@@ -368,7 +386,7 @@ trait SelectTableQueryTrait
                 and !($clause instanceof LimitClause)
                 and !($clause instanceof OffsetClause)
             ) {
-                throw new QueryException('Current query is not a SELECT statement.');
+                throw new SqlException('Current query is not a SELECT statement.');
             }
         }
 

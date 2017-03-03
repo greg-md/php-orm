@@ -6,7 +6,7 @@ use Greg\Orm\Clause\HavingClause;
 use Greg\Orm\Clause\HavingClauseStrategy;
 use Greg\Orm\Conditions;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait HavingTableClauseTrait
 {
@@ -441,7 +441,7 @@ trait HavingTableClauseTrait
         return $this->getHavingClause();
     }
 
-    protected function intoHavingStrategy()
+    public function intoHavingStrategy()
     {
         if (!$this->hasClause('HAVING')) {
             $this->setClause('HAVING', $this->driver()->having());
@@ -468,7 +468,7 @@ trait HavingTableClauseTrait
     protected function needHavingStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof HavingClauseStrategy)) {
-            throw new QueryException('Current query does not have a HAVING clause.');
+            throw new SqlException('Current query does not have a HAVING clause.');
         }
 
         return $this;

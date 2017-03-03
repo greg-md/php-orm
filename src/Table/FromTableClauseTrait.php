@@ -6,7 +6,7 @@ use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Clause\FromClauseStrategy;
 use Greg\Orm\Clause\JoinClauseStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait FromTableClauseTrait
 {
@@ -67,6 +67,11 @@ trait FromTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param $table
+     * @param array ...$tables
+     * @return $this
+     */
     public function from($table, ...$tables)
     {
         $instance = $this->fromStrategyInstance();
@@ -134,6 +139,11 @@ trait FromTableClauseTrait
         return $clause;
     }
 
+    public function hasFromClause(): bool
+    {
+        return $this->hasClause('FROM');
+    }
+
     public function getFromClause(): ?FromClause
     {
         /** @var FromClause $clause */
@@ -166,7 +176,7 @@ trait FromTableClauseTrait
         return $this->getFromClause();
     }
 
-    protected function intoFromStrategy()
+    public function intoFromStrategy()
     {
         if (!$this->hasClause('FROM')) {
             $this->setClause('FROM', $this->driver()->from());
@@ -193,7 +203,7 @@ trait FromTableClauseTrait
     protected function needFromStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof FromClauseStrategy)) {
-            throw new QueryException('Current query does not have a FROM clause.');
+            throw new SqlException('Current query does not have a FROM clause.');
         }
 
         return $this;

@@ -17,12 +17,12 @@ use Greg\Orm\Query\UpdateQuery;
 
 abstract class DriverAbstract implements DriverStrategy
 {
-    private $descriptions = [];
-
     /**
      * @var callable[]
      */
     private $listeners = [];
+
+    private $descriptions = [];
 
     /**
      * @param callable $callable
@@ -32,20 +32,6 @@ abstract class DriverAbstract implements DriverStrategy
     public function listen(callable $callable)
     {
         $this->listeners[] = $callable;
-
-        return $this;
-    }
-
-    /**
-     * @param string $sql
-     *
-     * @return $this
-     */
-    public function fire(string $sql)
-    {
-        foreach ($this->listeners as $listener) {
-            call_user_func_array($listener, [$sql]);
-        }
 
         return $this;
     }
@@ -153,6 +139,21 @@ abstract class DriverAbstract implements DriverStrategy
     public function offset(): OffsetClause
     {
         return new OffsetClause($this->dialect());
+    }
+
+    /**
+     * @param string $sql
+     *
+     * @param array $params
+     * @return $this
+     */
+    protected function fire(string $sql, array $params = [])
+    {
+        foreach ($this->listeners as $listener) {
+            call_user_func_array($listener, [$sql, $params]);
+        }
+
+        return $this;
     }
 
     abstract protected function describeTable(string $tableName): array;

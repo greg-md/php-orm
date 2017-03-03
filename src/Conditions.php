@@ -703,7 +703,7 @@ class Conditions extends SqlAbstract
      * @param callable|null $columnCallable
      * @param callable|null $valueCallable
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -713,15 +713,15 @@ class Conditions extends SqlAbstract
         $this->prepareRowLogic($columns, $operator, $values);
 
         if ($operator == 'IN') {
-            $valuesSql = $this->dialect()->prepareBindKeys($values, count($columns));
+            $valuesSql = $this->prepareBindKeys($values, count($columns));
 
             $values = array_merge(...$values);
         } else {
             if (count($values) !== count($columns)) {
-                throw new QueryException('Wrong row values count in condition. Expected ' . count($columns) . ', got ' . count($values));
+                throw new SqlException('Wrong row values count in condition. Expected ' . count($columns) . ', got ' . count($values));
             }
 
-            $valuesSql = $this->dialect()->prepareBindKeys($values);
+            $valuesSql = $this->prepareBindKeys($values);
         }
 
         //$sql = $this->prepareColumns($columns, $columnCallable, true) . ' ' . $operator . ' ' . $valuesSql;
@@ -742,7 +742,7 @@ class Conditions extends SqlAbstract
      * @param callable|null $columnCallable
      * @param callable|null $valueCallable
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -761,7 +761,7 @@ class Conditions extends SqlAbstract
 
         $operator = $this->prepareOperator($operator, $value);
 
-        $sql = $this->prepareColumn($column, $columnCallable) . ' ' . $operator . ' ' . $this->dialect()->prepareBindKeys($value);
+        $sql = $this->prepareColumn($column, $columnCallable) . ' ' . $operator . ' ' . $this->prepareBindKeys($value);
 
         $this->logic($type, $sql, (array) $this->prepareValues($value, $valueCallable));
 
@@ -774,7 +774,7 @@ class Conditions extends SqlAbstract
      * @param null|string $operator
      * @param array       $columns2
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -793,24 +793,24 @@ class Conditions extends SqlAbstract
 
             if ($operator === 'IN' and !is_array($column2)) {
                 if ($key !== 0) {
-                    throw new QueryException('Second row column should be an array in relation on key #' . $key . '.');
+                    throw new SqlException('Second row column should be an array in relation on key #' . $key . '.');
                 }
 
                 $operator = '=';
             }
 
             if ($operator !== 'IN' and is_array($column2)) {
-                throw new QueryException('Second row column could not be an array in relation on key #' . $key . ' for operator `' . $operator . '`.');
+                throw new SqlException('Second row column could not be an array in relation on key #' . $key . ' for operator `' . $operator . '`.');
             }
 
             if ($operator === 'IN' and count($column2) !== count($columns2)) {
-                throw new QueryException('Wrong second row column count in relation on key #' . $key . '.');
+                throw new SqlException('Wrong second row column count in relation on key #' . $key . '.');
             }
         }
         unset($value);
 
         if ($operator !== 'IN' and count($columns2) !== count($columns1)) {
-            throw new QueryException('Wrong second row columns count in relation. Expected ' . count($columns1) . ', got ' . count($columns2));
+            throw new SqlException('Wrong second row columns count in relation. Expected ' . count($columns1) . ', got ' . count($columns2));
         }
 
         //$sql = $this->prepareColumns($columns1, true) . ' ' . $operator . ' ' . $this->prepareColumns($columns2, true);
@@ -827,7 +827,7 @@ class Conditions extends SqlAbstract
      * @param null|string $operator
      * @param $column2
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -852,7 +852,7 @@ class Conditions extends SqlAbstract
         }
 
         if ($operator !== 'IN' and is_array($column2)) {
-            throw new QueryException('Second column could not be an array in relation for operator `' . $operator . '`.');
+            throw new SqlException('Second column could not be an array in relation for operator `' . $operator . '`.');
         }
 
         $column2 = is_array($column2) ? $this->prepareColumns($column2) : $this->dialect()->quoteName($column2);
@@ -869,7 +869,7 @@ class Conditions extends SqlAbstract
      * @param null|string $operator
      * @param array       $values
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -883,7 +883,7 @@ class Conditions extends SqlAbstract
             $operator = $this->prepareRowOperator($operator, $value, $key);
 
             if ($operator === 'IN' and count($value) !== count($columns)) {
-                throw new QueryException('Wrong row value count in condition on key #' . $key . '.');
+                throw new SqlException('Wrong row value count in condition on key #' . $key . '.');
             }
         }
         unset($value);
@@ -913,7 +913,7 @@ class Conditions extends SqlAbstract
      * @param $value
      * @param int $key
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return string
      */
@@ -925,14 +925,14 @@ class Conditions extends SqlAbstract
 
         if ($operator === 'IN' and !is_array($value)) {
             if ($key !== 0) {
-                throw new QueryException('Row value should be an array in condition on key #' . $key . '.');
+                throw new SqlException('Row value should be an array in condition on key #' . $key . '.');
             }
 
             $operator = '=';
         }
 
         if ($operator !== 'IN' and is_array($value)) {
-            throw new QueryException('Row value could not be an array in condition on key #' . $key . ' for operator `' . $operator . '`.');
+            throw new SqlException('Row value could not be an array in condition on key #' . $key . ' for operator `' . $operator . '`.');
         }
 
         return $operator;
@@ -942,7 +942,7 @@ class Conditions extends SqlAbstract
      * @param null|string $operator
      * @param $value
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return string
      */
@@ -959,7 +959,7 @@ class Conditions extends SqlAbstract
         }
 
         if ($operator !== 'IN' and is_array($value)) {
-            throw new QueryException('Value could not be an array in condition for operator `' . $operator . '`.');
+            throw new SqlException('Value could not be an array in condition for operator `' . $operator . '`.');
         }
 
         return $operator;
@@ -1059,5 +1059,26 @@ class Conditions extends SqlAbstract
         }
 
         return $condition;
+    }
+
+    /**
+     * @param $value
+     * @param int|null $rowLength
+     *
+     * @return string
+     */
+    protected function prepareBindKeys($value, int $rowLength = null): string
+    {
+        if (is_array($value)) {
+            $result = '(' . implode(', ', array_fill(0, count($value), '?')) . ')';
+
+            if ($rowLength) {
+                $result = '(' . implode(', ', array_fill(0, $rowLength, $result)) . ')';
+            }
+
+            return $result;
+        }
+
+        return '?';
     }
 }

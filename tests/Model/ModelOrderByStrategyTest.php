@@ -1,14 +1,79 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Clause\OrderByClause;
-use Greg\Orm\Tests\Clause\OrderByClauseTrait;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\SqlException;
 
-class ModelOrderByStrategyTest extends ModelAbstract
+class ModelOrderByStrategyTest extends ModelTestingAbstract
 {
-    use OrderByClauseTrait;
+    public function testCanOrderBy()
+    {
+        $query = $this->model->orderBy('Foo');
+
+        $this->assertEquals('ORDER BY `Foo`', $query->toString());
+    }
+
+    public function testCanOrderByAsc()
+    {
+        $query = $this->model->orderAsc('Foo');
+
+        $this->assertEquals('ORDER BY `Foo` ASC', $query->toString());
+    }
+
+    public function testCanOrderByDesc()
+    {
+        $query = $this->model->orderDesc('Foo');
+
+        $this->assertEquals('ORDER BY `Foo` DESC', $query->toString());
+    }
+
+    public function testCanThrowExceptionIfUndefinedType()
+    {
+        $this->expectException(SqlException::class);
+
+        $this->model->orderBy('Foo', 'undefined');
+    }
+
+    public function testCanGroupByRaw()
+    {
+        $query = $this->model->orderByRaw('`Foo`');
+
+        $this->assertEquals('ORDER BY `Foo`', $query->toString());
+    }
+
+    public function testCanDetermineIfExists()
+    {
+        $this->assertFalse($this->model->hasOrderBy());
+
+        $query = $this->model->orderBy('Foo');
+
+        $this->assertTrue($query->hasOrderBy());
+    }
+
+    public function testCanGet()
+    {
+        $query = $this->model->orderBy('Foo');
+
+        $this->assertCount(1, $query->getOrderBy());
+    }
+
+    public function testCanClear()
+    {
+        $query = $this->model->orderBy('Foo');
+
+        $query->clearOrderBy();
+
+        $this->assertEquals(['', []], $query->toSql());
+    }
+
+    public function testCanTransformToString()
+    {
+        $query = $this->model->orderBy('Foo');
+
+        $this->assertEquals('ORDER BY `Foo`', (string) $query);
+    }
 
     public function testCanAssignOrderByAppliers()
     {
@@ -81,8 +146,19 @@ class ModelOrderByStrategyTest extends ModelAbstract
         $this->assertEquals('', $this->model->orderByToString());
     }
 
-    protected function newClause()
+    public function testCanDetermineIfClauseExists()
     {
-        return $this->model->setClause('ORDER_BY', $this->model->driver()->orderBy());
+        $this->assertFalse($this->model->hasOrderByClause());
+
+        $this->model->intoOrderByStrategy();
+
+        $this->assertTrue($this->model->hasOrderByClause());
+    }
+
+    public function testCanCombineClauses2()
+    {
+        $query = $this->model->from('Table')->orderBy('Column');
+
+        $this->assertEquals('FROM `Table` ORDER BY `Column`', $query->toString());
     }
 }

@@ -1,16 +1,80 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Clause\FromClause;
+use Greg\Orm\ModelTestingAbstract;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\QueryException;
-use Greg\Orm\Tests\Clause\FromClauseTrait;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\SqlException;
 
-class ModelFromStrategyTest extends ModelAbstract
+class ModelFromStrategyTest extends ModelTestingAbstract
 {
-    use FromClauseTrait;
+    public function testCanAddFrom()
+    {
+        $query = $this->model->from('Foo');
+
+        $this->assertEquals('FROM `Foo`', $query->toString());
+    }
+
+    public function testCanAddFromWithAlias()
+    {
+        $query = $this->model->from(['f' => 'Foo']);
+
+        $this->assertEquals('FROM `Foo` AS `f`', $query->toString());
+    }
+
+    public function testCanAddFromRaw()
+    {
+        $query = $this->model->fromRaw('f', '`Foo`');
+
+        $this->assertEquals('FROM `Foo` AS `f`', $query->toString());
+    }
+
+    public function testCanDetermineIfExists()
+    {
+        $this->assertFalse($this->model->hasFrom());
+
+        $query = $this->model->from('Foo');
+
+        $this->assertTrue($query->hasFrom());
+    }
+
+    public function testCanGet()
+    {
+        $query = $this->model->from('Foo');
+
+        $this->assertCount(1, $query->getFrom());
+    }
+
+    public function testCanClear()
+    {
+        $query = $this->model->from('Foo');
+
+        $query->clearFrom();
+
+        $this->assertEquals(['', []], $query->toSql());
+    }
+
+    public function testCanFromSelect()
+    {
+        $query = $this->model->from(['t' => new SelectQuery()]);
+
+        $this->assertEquals('FROM (SELECT *) AS `t`', $query->toString());
+    }
+
+    public function testCanTransformToString()
+    {
+        $query = $this->model->from('Foo');
+
+        $this->assertEquals('FROM `Foo`', (string) $query);
+    }
+
+    public function testCanThrowExceptionIfDerivedTableNotHaveAlias()
+    {
+        $this->expectException(SqlException::class);
+
+        $this->model->from(new SelectQuery());
+    }
 
     public function testCanAssignFromAppliers()
     {
@@ -87,32 +151,17 @@ class ModelFromStrategyTest extends ModelAbstract
 
     public function testCanThrowExceptionIfFromNotExists()
     {
-        $this->expectException(QueryException::class);
+        $this->expectException(SqlException::class);
 
         $this->model->updateTable('Column')->from('Table2');
     }
 
     public function testCanJoin()
     {
-        $join = $this->newJoinClause()->innerTo('Foo', 'Bar');
+        $query = $this->model
+            ->innerTo('Foo', 'Bar')
+            ->from('Foo');
 
-        $query = $this->newClause()->from('Foo');
-
-        $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->fromToString($join->joinStrategy()));
-    }
-
-    protected function newClause()
-    {
-        return $this->model->setClause('FROM', $this->model->driver()->from());
-    }
-
-    protected function newJoinClause()
-    {
-        return $this->model->setClause('JOIN', $this->model->driver()->join());
-    }
-
-    protected function newSelectQuery(): SelectQuery
-    {
-        return $this->driver->select();
+        $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->fromToString($query->joinStrategy()));
     }
 }

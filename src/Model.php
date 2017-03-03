@@ -14,7 +14,7 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     private $driver;
 
-    public function __construct(array $record = [], DriverStrategy $driver = null)
+    public function __construct(?array $record = [], ?DriverStrategy $driver = null)
     {
         if ($driver) {
             $this->driver = $driver;

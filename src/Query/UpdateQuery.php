@@ -10,7 +10,7 @@ use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 use Greg\Orm\SqlAbstract;
 
 class UpdateQuery extends SqlAbstract implements
@@ -39,7 +39,7 @@ class UpdateQuery extends SqlAbstract implements
      * @param $table
      * @param array ...$tables
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -51,7 +51,7 @@ class UpdateQuery extends SqlAbstract implements
             list($tableAlias, $tableName) = $this->dialect()->parseTable($table);
 
             if (!is_scalar($tableName)) {
-                throw new QueryException('Derived tables are not supported in UPDATE statement.');
+                throw new SqlException('Derived tables are not supported in UPDATE statement.');
             }
 
             $tableKey = $tableAlias ?: $tableName;
@@ -197,7 +197,7 @@ class UpdateQuery extends SqlAbstract implements
     public function updateToSql(): array
     {
         if (!$this->tables) {
-            throw new QueryException('Undefined UPDATE table.');
+            throw new SqlException('Undefined UPDATE table.');
         }
 
         $sql = $params = [];
@@ -231,14 +231,14 @@ class UpdateQuery extends SqlAbstract implements
     }
 
     /**
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return array
      */
     public function setToSql(): array
     {
         if (!$this->set) {
-            throw new QueryException('Undefined UPDATE SET columns.');
+            throw new SqlException('Undefined UPDATE SET columns.');
         }
 
         $sql = $params = [];
@@ -324,7 +324,7 @@ class UpdateQuery extends SqlAbstract implements
     {
         try {
             return $this->toString();
-        } catch (QueryException $e) {
+        } catch (SqlException $e) {
             return $e->getMessage();
         }
     }

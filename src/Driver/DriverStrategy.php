@@ -10,7 +10,7 @@ use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\DialectStrategy;
+use Greg\Orm\Dialect\DialectStrategy;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
@@ -48,23 +48,10 @@ interface DriverStrategy
     /**
      * @param string $sql
      *
-     * @return StatementStrategy
-     */
-    public function prepare(string $sql): StatementStrategy;
-
-    /**
-     * @param string $sql
-     *
-     * @return StatementStrategy
-     */
-    public function query(string $sql): StatementStrategy;
-
-    /**
-     * @param string $sql
-     *
+     * @param array $params
      * @return int
      */
-    public function exec(string $sql): int;
+    public function execute(string $sql, array $params = []): int;
 
     /**
      * @param string|null $sequenceId
@@ -81,18 +68,67 @@ interface DriverStrategy
     public function quote(string $value): string;
 
     /**
-     * @param callable $callable
-     *
-     * @return $this
+     * @param string $sql
+     * @param array $params
+     * @return \string[]
      */
-    public function listen(callable $callable);
+    public function fetch(string $sql, array $params = []);
 
     /**
      * @param string $sql
-     *
-     * @return $this
+     * @param array $params
+     * @return \string[][]
      */
-    public function fire(string $sql);
+    public function fetchAll(string $sql, array $params = []);
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @return \string[][]
+     */
+    public function fetchYield(string $sql, array $params = []);
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $column
+     * @return string
+     */
+    public function column(string $sql, array $params = [], string $column = '0');
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $column
+     * @return \string[]
+     */
+    public function columnAll(string $sql, array $params = [], string $column = '0');
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $column
+     * @return mixed
+     */
+    public function columnYield(string $sql, array $params = [], string $column = '0');
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $key
+     * @param string $value
+     * @return \string[]
+     */
+    public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1');
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $key
+     * @param string $value
+     * @return mixed
+     */
+    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1');
 
     /**
      * @return DialectStrategy
@@ -106,6 +142,18 @@ interface DriverStrategy
      */
     public function truncate(string $tableName);
 
+    /**
+     * @param callable $callable
+     *
+     * @return $this
+     */
+    public function listen(callable $callable);
+
+    /**
+     * @param string $tableName
+     * @param bool $force
+     * @return array
+     */
     public function describe(string $tableName, bool $force = false): array;
 
     /**

@@ -5,7 +5,7 @@ namespace Greg\Orm\Table;
 use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\LimitClauseStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait LimitTableClauseTrait
 {
@@ -102,6 +102,11 @@ trait LimitTableClauseTrait
         return $clause;
     }
 
+    public function hasLimitClause(): bool
+    {
+        return $this->hasClause('LIMIT');
+    }
+
     public function getLimitClause(): ?LimitClause
     {
         /** @var LimitClause $clause */
@@ -134,7 +139,7 @@ trait LimitTableClauseTrait
         return $this->getLimitClause();
     }
 
-    protected function intoLimitStrategy()
+    public function intoLimitStrategy()
     {
         if (!$this->hasClause('LIMIT')) {
             $this->setClause('LIMIT', $this->driver()->limit());
@@ -161,7 +166,7 @@ trait LimitTableClauseTrait
     protected function needLimitStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof LimitClauseStrategy)) {
-            throw new QueryException('Current query does not have a LIMIT clause.');
+            throw new SqlException('Current query does not have a LIMIT clause.');
         }
 
         return $this;

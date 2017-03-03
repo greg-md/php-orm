@@ -2,17 +2,12 @@
 
 namespace Greg\Orm\Driver;
 
-abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStrategy
-{
-    /**
-     * @var callable[]
-     */
-    private $onInit = [];
+use Greg\Support\Arr;
+use Greg\Support\Str;
 
-    /**
-     * @var PdoConnectorStrategy
-     */
-    private $connector;
+abstract class PdoDriverAbstract extends DriverAbstract
+{
+    private const ERROR_CONNECTION_EXPIRED = 2006;
 
     /**
      * @var \PDO
@@ -20,23 +15,16 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
     private $connection;
 
     /**
-     * PdoDriverAbstract constructor.
-     *
-     * @param PdoConnectorStrategy $strategy
+     * @var callable[]
      */
-    public function __construct(PdoConnectorStrategy $strategy)
-    {
-        $this->connector = $strategy;
-
-        return $this;
-    }
+    private $onInit = [];
 
     /**
      * @return $this
      */
     public function connect()
     {
-        $this->connection = $this->connector->connect();
+        $this->connection = $this->connector()->connect();
 
         $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
@@ -77,16 +65,22 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
     /**
      * @param callable $callable
-     *
      * @return $this
+     * @throws \Exception
      */
     public function transaction(callable $callable)
     {
         $this->beginTransaction();
 
-        call_user_func_array($callable, [$this]);
+        try {
+            call_user_func_array($callable, [$this]);
 
-        $this->commit();
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+
+            throw $e;
+        }
 
         return $this;
     }
@@ -96,7 +90,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
      */
     public function inTransaction(): bool
     {
-        return $this->connection()->inTransaction();
+        return $this->tryConnection(__FUNCTION__);
     }
 
     /**
@@ -104,7 +98,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
      */
     public function beginTransaction(): bool
     {
-        return $this->connection()->beginTransaction();
+        return $this->tryConnection(__FUNCTION__);
     }
 
     /**
@@ -112,7 +106,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
      */
     public function commit(): bool
     {
-        return $this->connection()->commit();
+        return $this->tryConnection(__FUNCTION__);
     }
 
     /**
@@ -120,45 +114,18 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
      */
     public function rollBack(): bool
     {
-        return $this->connection()->rollBack();
+        return $this->tryConnection(__FUNCTION__);
     }
 
     /**
      * @param string $sql
      *
-     * @return StatementStrategy
-     */
-    public function prepare(string $sql): StatementStrategy
-    {
-        $stmt = $this->tryConnection(__FUNCTION__, func_get_args());
-
-        return $this->newStatement($stmt);
-    }
-
-    /**
-     * @param string $sql
-     *
-     * @return StatementStrategy
-     */
-    public function query(string $sql): StatementStrategy
-    {
-        $this->fire($sql);
-
-        $stmt = $this->tryConnection(__FUNCTION__, func_get_args());
-
-        return $this->newStatement($stmt);
-    }
-
-    /**
-     * @param string $sql
-     *
+     * @param array $params
      * @return int
      */
-    public function exec(string $sql): int
+    public function execute(string $sql, array $params = []): int
     {
-        $this->fire($sql);
-
-        return $this->tryConnection(__FUNCTION__, func_get_args());
+        return $this->prepare($sql, $params)->rowCount();
     }
 
     /**
@@ -168,7 +135,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
      */
     public function lastInsertId(string $sequenceId = null): string
     {
-        return $this->connection()->lastInsertId(...func_get_args());
+        return $this->tryConnection(__FUNCTION__, func_get_args());
     }
 
     /**
@@ -178,17 +145,159 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
      */
     public function quote(string $value): string
     {
-        return $this->connection()->quote($value);
+        return $this->tryConnection(__FUNCTION__, [$value]);
     }
 
     /**
-     * @param \PDOStatement $stmt
-     *
-     * @return StatementStrategy
+     * @param string $sql
+     * @param array $params
+     * @return \string[]
      */
-    protected function newStatement(\PDOStatement $stmt): StatementStrategy
+    public function fetch(string $sql, array $params = [])
     {
-        return new PdoStatement($stmt, $this);
+        return $this->prepare($sql, $params)->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @return \string[][]
+     */
+    public function fetchAll(string $sql, array $params = [])
+    {
+        return $this->prepare($sql, $params)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @return \Generator
+     */
+    public function fetchYield(string $sql, array $params = [])
+    {
+        $stmt = $this->prepare($sql, $params);
+
+        while ($record = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            yield $record;
+        }
+    }
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $column
+     * @return string
+     */
+    public function column(string $sql, array $params = [], string $column = '0')
+    {
+        $stmt = $this->prepare($sql, $params);
+
+        if (Str::isDigit($column)) {
+            return $stmt->fetchColumn($column);
+        }
+
+        $record = $stmt->fetch();
+
+        return $record ? Arr::get($record, $column) : null;
+    }
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $column
+     * @return \string[]
+     */
+    public function columnAll(string $sql, array $params = [], string $column = '0')
+    {
+        $stmt = $this->prepare($sql, $params);
+
+        if (Str::isDigit($column)) {
+            $values = [];
+
+            while (($value = $stmt->fetchColumn($column)) !== false) {
+                $values[] = $value;
+            }
+
+            return $values;
+        }
+
+        $values = [];
+
+        while ($record = $stmt->fetch()) {
+            $values[] = Arr::get($record, $column);
+        }
+
+        return $values;
+    }
+
+    public function columnYield(string $sql, array $params = [], string $column = '0')
+    {
+        $stmt = $this->prepare($sql, $params);
+
+        if (Str::isDigit($column)) {
+            while (($value = $stmt->fetchColumn($column)) !== false) {
+                yield $value;
+            }
+        } else {
+            while ($record = $stmt->fetch()) {
+                yield Arr::get($record, $column);
+            }
+        }
+    }
+
+    /**
+     * @param string $sql
+     * @param array $params
+     * @param string $key
+     * @param string $value
+     * @return \string[]
+     */
+    public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1')
+    {
+        $stmt = $this->prepare($sql, $params);
+
+        $pairs = [];
+
+        while ($record = $stmt->fetch()) {
+            $pairs[Arr::get($record, $key)] = Arr::get($record, $value);
+        }
+
+        return $pairs;
+    }
+
+    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1')
+    {
+        $stmt = $this->prepare($sql, $params);
+
+        while ($record = $stmt->fetch()) {
+            yield Arr::get($record, $key) => Arr::get($record, $value);
+        }
+    }
+
+    /**
+     * @param string $sql
+     *
+     * @param array $params
+     * @return \PDOStatement
+     */
+    protected function prepare(string $sql, array $params = []): \PDOStatement
+    {
+        /** @var \PDOStatement $stmt */
+        $stmt = $this->tryConnection(__FUNCTION__, [$sql, $params]);
+
+        if ($params) {
+            $k = 1;
+
+            foreach ($params as $key => $value) {
+                $stmt->bindValue(is_int($key) ? $k++ : $key, $value);
+            }
+        }
+
+        $this->fire($sql, $params);
+
+        $stmt->execute();
+
+        return $stmt;
     }
 
     /**
@@ -202,8 +311,7 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
         try {
             return $this->callConnection($method, $args);
         } catch (\PDOException $e) {
-            // If connection expired, reconnect.
-            if ($e->errorInfo[1] == 2006) {
+            if ($e->errorInfo[1] == self::ERROR_CONNECTION_EXPIRED) {
                 $this->connect();
 
                 return $this->callConnection($method, $args);
@@ -223,14 +331,9 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
     {
         $result = call_user_func_array([$this->connection(), $method], $args);
 
-        if ($result === false) {
-            $errorInfo = $this->connection()->errorInfo();
+        $errorInfo = $this->connection()->errorInfo();
 
-            // Exclude: Bind or column index out of range. It shouldn't be an exception.
-//        if ($errorInfo[1] == 25) {
-//            return $this;
-//        }
-
+        if ($errorInfo[1]) {
             $e = new \PDOException($errorInfo[2], $errorInfo[1]);
 
             $e->errorInfo = $errorInfo;
@@ -240,4 +343,6 @@ abstract class PdoDriverAbstract extends DriverAbstract implements PdoDriverStra
 
         return $result;
     }
+
+    abstract protected function connector(): PdoConnectorStrategy;
 }

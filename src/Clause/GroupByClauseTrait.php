@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\DialectStrategy;
+use Greg\Orm\Dialect\DialectStrategy;
 
 trait GroupByClauseTrait
 {

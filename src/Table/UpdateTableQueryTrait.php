@@ -8,7 +8,7 @@ use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\UpdateQuery;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait UpdateTableQueryTrait
 {
@@ -183,7 +183,7 @@ trait UpdateTableQueryTrait
     protected function needUpdateQuery(?QueryStrategy $query)
     {
         if (!($query instanceof UpdateQuery)) {
-            throw new QueryException('Current query is not an UPDATE statement.');
+            throw new SqlException('Current query is not an UPDATE statement.');
         }
 
         return $this;
@@ -197,7 +197,7 @@ trait UpdateTableQueryTrait
                 and !($clause instanceof OrderByClause)
                 and !($clause instanceof LimitClause)
             ) {
-                throw new QueryException('Current query is not an UPDATE statement.');
+                throw new SqlException('Current query is not an UPDATE statement.');
             }
         }
 

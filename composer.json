@@ -23,7 +23,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Greg\\Orm\\Tests\\": "tests/"
+      "Greg\\Orm\\": "tests/"
     }
   }
 }

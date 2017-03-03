@@ -18,7 +18,7 @@ use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 use Greg\Orm\SqlAbstract;
 
 class SelectQuery extends SqlAbstract implements
@@ -171,7 +171,7 @@ class SelectQuery extends SqlAbstract implements
             $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnLogic($this->dialect()->concat($columns, $delimiter), $alias);
+        $this->columnLogic($this->dialect()->concat($columns, '?'), $alias, [$delimiter]);
 
         return $this;
     }
@@ -617,11 +617,12 @@ class SelectQuery extends SqlAbstract implements
      */
     public function __toString(): string
     {
-        try {
-            return $this->toString();
-        } catch (QueryException $e) {
-            return $e->getMessage();
-        }
+        return $this->toString();
+//        try {
+//            return $this->toString();
+//        } catch (SqlException $e) {
+//            return $e->getMessage();
+//        }
     }
 
     public function __clone()

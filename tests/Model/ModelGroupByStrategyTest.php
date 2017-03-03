@@ -1,15 +1,58 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Clause\GroupByClause;
-use Greg\Orm\QueryException;
-use Greg\Orm\Tests\Clause\GroupByClauseTrait;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\SqlException;
 
-class ModelGroupByStrategyTest extends ModelAbstract
+class ModelGroupByStrategyTest extends ModelTestingAbstract
 {
-    use GroupByClauseTrait;
+    public function testCanGroupBy()
+    {
+        $query = $this->model->groupBy('Foo');
+
+        $this->assertEquals('GROUP BY `Foo`', $query->toString());
+    }
+
+    public function testCanGroupByRaw()
+    {
+        $query = $this->model->groupByRaw('`Foo`');
+
+        $this->assertEquals('GROUP BY `Foo`', $query->toString());
+    }
+
+    public function testCanDetermineIfExists()
+    {
+        $this->assertFalse($this->model->hasGroupBy());
+
+        $query = $this->model->groupBy('Foo');
+
+        $this->assertTrue($query->hasGroupBy());
+    }
+
+    public function testCanGet()
+    {
+        $query = $this->model->groupBy('Foo');
+
+        $this->assertCount(1, $query->getGroupBy());
+    }
+
+    public function testCanClear()
+    {
+        $query = $this->model->groupBy('Foo');
+
+        $query->clearGroupBy();
+
+        $this->assertEquals(['', []], $query->toSql());
+    }
+
+    public function testCanTransformToString()
+    {
+        $query = $this->model->groupBy('Foo');
+
+        $this->assertEquals('GROUP BY `Foo`', (string) $query);
+    }
 
     public function testCanAssignGroupByAppliers()
     {
@@ -86,13 +129,8 @@ class ModelGroupByStrategyTest extends ModelAbstract
 
     public function testCanThrowExceptionIfGroupByNotExists()
     {
-        $this->expectException(QueryException::class);
+        $this->expectException(SqlException::class);
 
         $this->model->updateTable('Column')->groupBy('Column');
-    }
-
-    protected function newClause()
-    {
-        return $this->model->setClause('GROUP_BY', $this->model->driver()->groupBy());
     }
 }

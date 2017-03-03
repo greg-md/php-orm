@@ -5,7 +5,7 @@ namespace Greg\Orm\Table;
 use Greg\Orm\Clause\GroupByClause;
 use Greg\Orm\Clause\GroupByClauseStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait GroupByTableClauseTrait
 {
@@ -133,6 +133,11 @@ trait GroupByTableClauseTrait
         return $clause;
     }
 
+    public function hasGroupByClause(): bool
+    {
+        return $this->hasClause('GROUP_BY');
+    }
+
     public function getGroupByClause(): ?GroupByClause
     {
         /** @var GroupByClause $clause */
@@ -165,7 +170,7 @@ trait GroupByTableClauseTrait
         return $this->getGroupByClause();
     }
 
-    protected function intoGroupByStrategy()
+    public function intoGroupByStrategy()
     {
         if (!$this->hasClause('GROUP_BY')) {
             $this->setClause('GROUP_BY', $this->driver()->groupBy());
@@ -192,7 +197,7 @@ trait GroupByTableClauseTrait
     protected function needGroupByStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof GroupByClauseStrategy)) {
-            throw new QueryException('Current query does not have a GROUP BY clause.');
+            throw new SqlException('Current query does not have a GROUP BY clause.');
         }
 
         return $this;

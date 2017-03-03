@@ -5,7 +5,7 @@ namespace Greg\Orm\Table;
 use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OffsetClauseStrategy;
 use Greg\Orm\Query\QueryStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait OffsetTableClauseTrait
 {
@@ -102,6 +102,11 @@ trait OffsetTableClauseTrait
         return $clause;
     }
 
+    public function hasOffsetClause(): bool
+    {
+        return $this->hasClause('OFFSET');
+    }
+
     public function getOffsetClause(): ?OffsetClause
     {
         /** @var OffsetClause $clause */
@@ -134,7 +139,7 @@ trait OffsetTableClauseTrait
         return $this->getOffsetClause();
     }
 
-    protected function intoOffsetStrategy()
+    public function intoOffsetStrategy()
     {
         if (!$this->hasClause('OFFSET')) {
             $this->setClause('OFFSET', $this->driver()->offset());
@@ -161,7 +166,7 @@ trait OffsetTableClauseTrait
     protected function needOffsetStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof OffsetClauseStrategy)) {
-            throw new QueryException('Current query does not have an OFFSET clause.');
+            throw new SqlException('Current query does not have an OFFSET clause.');
         }
 
         return $this;

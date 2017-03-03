@@ -1,16 +1,15 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Clause\HavingClause;
-use Greg\Orm\Conditions;
-use Greg\Orm\QueryException;
-use Greg\Orm\Tests\ConditionsTrait;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ConditionsTestingTrait;
+use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\SqlException;
 
-class ModelHavingStrategyTest extends ModelAbstract
+class ModelHavingStrategyTest extends ModelTestingAbstract
 {
-    use ConditionsTrait;
+    use ConditionsTestingTrait;
 
     protected $prefix = 'HAVING ';
 
@@ -136,7 +135,7 @@ class ModelHavingStrategyTest extends ModelAbstract
 
     public function testCanThrowExceptionIfNotHavingStrategy()
     {
-        $this->expectException(QueryException::class);
+        $this->expectException(SqlException::class);
 
         $this->model->updateTable('Table2')->having('Column', 'foo');
     }
@@ -158,11 +157,6 @@ class ModelHavingStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        return $this->model->setClause('HAVING', $this->model->driver()->having());
-    }
-
-    protected function newConditions()
-    {
-        return new Conditions($this->driver->dialect());
+        return $this->model->intoHavingStrategy();
     }
 }

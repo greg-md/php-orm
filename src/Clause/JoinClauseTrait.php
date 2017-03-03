@@ -3,9 +3,9 @@
 namespace Greg\Orm\Clause;
 
 use Greg\Orm\Conditions;
-use Greg\Orm\DialectStrategy;
+use Greg\Orm\Dialect\DialectStrategy;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait JoinClauseTrait
 {
@@ -309,7 +309,7 @@ trait JoinClauseTrait
      * @param $on
      * @param array $params
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -318,11 +318,12 @@ trait JoinClauseTrait
         if ($source) {
             $source = $this->getSourceName($source);
         }
+
         [$tableAlias, $tableName] = $this->dialect()->parseTable($table);
 
         if ($tableName instanceof SelectQuery) {
             if (!$tableAlias) {
-                throw new QueryException('JOIN table should have an alias name.');
+                throw new SqlException('JOIN table should have an alias name.');
             }
 
             $tableKey = $tableAlias;
@@ -356,7 +357,7 @@ trait JoinClauseTrait
     /**
      * @param $source
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return string
      */
@@ -365,7 +366,7 @@ trait JoinClauseTrait
         list($sourceAlias, $sourceName) = $this->dialect()->parseTable($source);
 
         if (($sourceName instanceof SelectQuery) and !$sourceAlias) {
-            throw new QueryException('JOIN source table should have an alias name.');
+            throw new SqlException('JOIN source table should have an alias name.');
         }
 
         return $sourceAlias ?: $sourceName;

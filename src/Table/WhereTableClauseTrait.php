@@ -7,7 +7,7 @@ use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Conditions;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait WhereTableClauseTrait
 {
@@ -470,6 +470,11 @@ trait WhereTableClauseTrait
         return $clause;
     }
 
+    public function hasWhereClause(): bool
+    {
+        return $this->hasClause('WHERE');
+    }
+
     public function getWhereClause(): ?WhereClause
     {
         /** @var WhereClause $clause */
@@ -502,7 +507,7 @@ trait WhereTableClauseTrait
         return $this->getWhereClause();
     }
 
-    protected function intoWhereStrategy()
+    public function intoWhereStrategy()
     {
         if (!$this->hasClause('WHERE')) {
             $this->setClause('WHERE', $this->driver()->where());
@@ -529,7 +534,7 @@ trait WhereTableClauseTrait
     protected function needWhereStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof WhereClauseStrategy)) {
-            throw new QueryException('Current query does not have a WHERE clause.');
+            throw new SqlException('Current query does not have a WHERE clause.');
         }
 
         return $this;

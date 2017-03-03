@@ -3,7 +3,6 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Clause\WhereClause;
-use Greg\Support\Arr;
 use Greg\Support\DateTime;
 use Greg\Support\Str;
 
@@ -82,6 +81,41 @@ trait RowsTrait
             'isNew'    => &$isNew,
             'modified' => &$modified,
         ];
+
+        return $this;
+    }
+
+    public function pagination(int $limit = 20, int $offset = 0, ?callable $calculateTotal = null)
+    {
+        $query = clone $this->selectQueryInstance();
+
+        return $query->paginate($limit, $offset, $calculateTotal);
+    }
+
+    public function paginate(int $limit = 20, int $offset = 0, ?callable $calculateTotal = null)
+    {
+        $this->rowsLimit = $limit;
+
+        $this->rowsOffset = $offset;
+
+        foreach ($this->limit($limit)->offset($offset)->fetchYield() as $record) {
+            $record = $this->prepareRecord($record);
+
+            $this->appendRecord($record, false, [], true);
+        }
+
+        if ($calculateTotal) {
+            $query = $this->newSelectQuery();
+        } else {
+            $query = clone $this->getSelectQuery();
+
+            $query->clearLimit();
+            $query->clearOffset();
+        }
+
+        [$sql, $params] = $query->clearColumns()->count()->toSql();
+
+        $this->rowsTotal = $this->driver()->column($sql, $params);
 
         return $this;
     }
@@ -352,8 +386,13 @@ trait RowsTrait
      */
     public function getIterator()
     {
-        foreach ($this->rows as $key => &$row) {
-            yield $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified'], true);
+        foreach (array_keys($this->rows) as $key) {
+            yield $this->cleanClone()->appendRecordRef(
+                $this->rows[$key]['record'],
+                $this->rows[$key]['isNew'],
+                $this->rows[$key]['modified'],
+                true
+            );
         }
     }
 
@@ -378,11 +417,9 @@ trait RowsTrait
 
     protected function setInRow(array &$row, string $column, string $value)
     {
-        $recordValue = &Arr::getRef($row['record'], $column);
-
-        if ($recordValue !== $value) {
+        if ($row['record'][$column] !== $value) {
             if ($row['isNew']) {
-                $recordValue = $value;
+                $row['record'][$column] = $value;
             } else {
                 $row['modified'][$column] = $value;
             }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Conditions;
-use Greg\Orm\QueryException;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\SqlException;
 
-class ModelDeleteQueryTest extends ModelAbstract
+class ModelDeleteQueryTest extends ModelTestingAbstract
 {
     public function testCanSetRowsFrom()
     {
@@ -72,7 +72,7 @@ class ModelDeleteQueryTest extends ModelAbstract
 
     public function testCanThrowExceptionIfQueryNotSupported()
     {
-        $this->expectException(QueryException::class);
+        $this->expectException(SqlException::class);
 
         $this->model->select('Foo', 'foo')->rowsFrom('Table2');
     }

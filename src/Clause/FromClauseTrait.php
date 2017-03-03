@@ -2,9 +2,9 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\DialectStrategy;
+use Greg\Orm\Dialect\DialectStrategy;
 use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 
 trait FromClauseTrait
 {
@@ -17,7 +17,7 @@ trait FromClauseTrait
      * @param $table
      * @param array ...$tables
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -30,7 +30,7 @@ trait FromClauseTrait
 
             if ($tableName instanceof SelectQuery) {
                 if (!$tableAlias) {
-                    throw new QueryException('FROM derived table should have an alias name.');
+                    throw new SqlException('FROM derived table should have an alias name.');
                 }
 
                 $tableKey = $tableAlias;

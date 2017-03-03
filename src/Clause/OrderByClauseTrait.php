@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\DialectStrategy;
-use Greg\Orm\QueryException;
+use Greg\Orm\Dialect\DialectStrategy;
+use Greg\Orm\SqlException;
 
 trait OrderByClauseTrait
 {
@@ -16,7 +16,7 @@ trait OrderByClauseTrait
      * @param string      $column
      * @param string|null $type
      *
-     * @throws QueryException
+     * @throws SqlException
      *
      * @return $this
      */
@@ -26,7 +26,7 @@ trait OrderByClauseTrait
             $type = strtoupper($type);
 
             if (!in_array($type, ['ASC', 'DESC'])) {
-                throw new QueryException('Wrong ORDER type for statement.');
+                throw new SqlException('Wrong ORDER type for statement.');
             }
         }
 

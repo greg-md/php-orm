@@ -2,7 +2,6 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Driver\StatementStrategy;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Support\Arr;
@@ -25,7 +24,7 @@ trait TableTrait
 
     private $autoIncrement = false;
 
-    protected $unique;
+    protected $unique = [];
 
     protected $nameColumn;
 
@@ -169,13 +168,15 @@ trait TableTrait
 
     public function fetch(): ?array
     {
-        return $this->selectQueryInstance()->execute()->fetch();
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        return $this->driver()->fetch($sql, $params);
     }
 
     public function fetchOrFail(): array
     {
         if (!$record = $this->fetch()) {
-            throw new QueryException('Row was not found.');
+            throw new SqlException('Row was not found.');
         }
 
         return $record;
@@ -183,37 +184,51 @@ trait TableTrait
 
     public function fetchAll(): array
     {
-        return $this->selectQueryInstance()->execute()->fetchAll();
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        return $this->driver()->fetchAll($sql, $params);
     }
 
     public function fetchYield()
     {
-        yield from $this->selectQueryInstance()->execute()->fetchYield();
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        yield from $this->driver()->fetchYield($sql, $params);
     }
 
     public function fetchColumn(string $column = '0'): string
     {
-        return $this->selectQueryInstance()->execute()->column($column);
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        return $this->driver()->column($sql, $params, $column);
     }
 
     public function fetchColumnAll(string $column = '0'): array
     {
-        return $this->selectQueryInstance()->execute()->columnAll($column);
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        return $this->driver()->columnAll($sql, $params, $column);
     }
 
     public function fetchColumnYield(string $column = '0')
     {
-        yield from $this->selectQueryInstance()->execute()->columnYield($column);
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        yield from $this->driver()->columnYield($sql, $params, $column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
     {
-        return $this->selectQueryInstance()->execute()->pairs($key, $value);
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        return $this->driver()->pairs($sql, $params, $key, $value);
     }
 
     public function fetchPairsYield(string $key = '0', string $value = '1')
     {
-        yield from $this->selectQueryInstance()->execute()->pairsYield($key, $value);
+        [$sql, $params] = $this->selectQueryInstance()->toSql();
+
+        yield from $this->driver()->pairsYield($sql, $params, $key, $value);
     }
 
     public function fetchRow()
@@ -230,7 +245,7 @@ trait TableTrait
     public function fetchRowOrFail()
     {
         if (!$row = $this->fetchRow()) {
-            throw new QueryException('Row was not found.');
+            throw new SqlException('Row was not found.');
         }
 
         return $row;
@@ -291,7 +306,7 @@ trait TableTrait
     public function findOrFail($primary)
     {
         if (!$row = $this->find($primary)) {
-            throw new QueryException('Row was not found.');
+            throw new SqlException('Row was not found.');
         }
 
         return $row;
@@ -305,7 +320,7 @@ trait TableTrait
     public function firstOrFail(array $data)
     {
         if (!$row = $this->first($data)) {
-            throw new QueryException('Row was not found.');
+            throw new SqlException('Row was not found.');
         }
 
         return $row;
@@ -328,11 +343,11 @@ trait TableTrait
     public function pairs()
     {
         if (!$columnName = $this->nameColumn()) {
-            throw new QueryException('Undefined column name for table `' . $this->name() . '`.');
+            throw new SqlException('Undefined column name for table `' . $this->name() . '`.');
         }
 
         if ($this->hasSelect()) {
-            throw new QueryException('You cannot select table pairs while you have custom SELECT columns.');
+            throw new SqlException('You cannot select table pairs while you have custom SELECT columns.');
         }
 
         return $this
@@ -376,14 +391,18 @@ trait TableTrait
 
     public function update(array $columns = []): int
     {
-        return $this->setValues($columns)->execute()->affectedRows();
+        [$sql, $params] = $this->setValues($columns)->toSql();
+
+        return $this->driver()->execute($sql, $params);
     }
 
     public function insert(array $data): int
     {
         $data = array_merge($data, $this->defaults);
 
-        return $this->executeQuery($this->newInsertQuery()->data($data))->affectedRows();
+        [$sql, $params] = $this->newInsertQuery()->data($data)->toSql();
+
+        return $this->driver()->execute($sql, $params);
     }
 
     public function insertSelect(array $columns, SelectQuery $query): int
@@ -398,7 +417,9 @@ trait TableTrait
             }
         }
 
-        return $this->executeQuery($this->newInsertQuery()->columns($columns)->select($query))->affectedRows();
+        [$sql, $params] = $this->newInsertQuery()->columns($columns)->select($query)->toSql();
+
+        return $this->driver()->execute($sql, $params);
     }
 
     /**
@@ -414,7 +435,9 @@ trait TableTrait
     {
         $columns = array_unique(array_merge($columns, array_keys($this->defaults)));
 
-        return $this->executeQuery($this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params))->affectedRows();
+        [$sql, $params] = $this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params)->toSql();
+
+        return $this->driver()->execute($sql, $params);
     }
 
     public function insertForEach(string $column, array $values, array $data = []): int
@@ -436,29 +459,23 @@ trait TableTrait
             $instance->rowsFrom(...$tables);
         }
 
-        return $instance->execute()->affectedRows();
+        [$sql, $params] = $instance->toSql();
+
+        return $this->driver()->execute($sql, $params);
     }
 
     public function erase($primary)
     {
         $query = $this->newDeleteQuery()->whereMultiple($this->combinePrimary($primary));
 
-        return $this->executeQuery($query);
+        [$sql, $params] = $query->toSql();
+
+        return $this->driver()->execute($sql, $params);
     }
 
     public function truncate()
     {
         return $this->driver()->truncate($this->fullName());
-    }
-
-    public function prepare(): StatementStrategy
-    {
-        return $this->prepareQuery($this->query());
-    }
-
-    public function execute(): StatementStrategy
-    {
-        return $this->executeQuery($this->query());
     }
 
     protected function validateColumn(string $name)
@@ -517,7 +534,7 @@ trait TableTrait
     protected function rowsQueryInstance()
     {
         if ($this->hasSelect()) {
-            throw new QueryException('You cannot fetch as rows while you have custom SELECT columns.');
+            throw new SqlException('You cannot fetch as rows while you have custom SELECT columns.');
         }
 
         return $this->selectOnly('*');
@@ -526,7 +543,7 @@ trait TableTrait
     protected function chunkQuery(SelectQuery $query, int $count, callable $callable, bool $callOneByOne = false, bool $yield = true)
     {
         if ($count < 1) {
-            throw new QueryException('Chunk count should be greater than 0.');
+            throw new SqlException('Chunk count should be greater than 0.');
         }
 
         $offset = 0;
@@ -534,12 +551,16 @@ trait TableTrait
         $query = clone $query;
 
         while (true) {
-            $stmt = $this->executeQuery($query->limit($count)->offset($offset));
+            [$sql, $params] = $query->limit($count)->offset($offset)->toSql();
 
             if ($callOneByOne) {
+                $records = $yield
+                    ? $this->driver()->fetchYield($sql, $params)
+                    : $this->driver()->fetchAll($sql, $params);
+
                 $k = 0;
 
-                foreach ($yield ? $stmt->fetchYield() : $stmt->fetchAll() as $record) {
+                foreach ($records as $record) {
                     if (call_user_func_array($callable, [$record]) === false) {
                         $k = 0;
 
@@ -549,7 +570,7 @@ trait TableTrait
                     ++$k;
                 }
             } else {
-                $records = $stmt->fetchAll();
+                $records = $this->driver()->fetchAll($sql, $params);
 
                 $k = count($records);
 
@@ -566,27 +587,5 @@ trait TableTrait
         }
 
         return $this;
-    }
-
-    protected function prepareQuery(QueryStrategy $query): StatementStrategy
-    {
-        list($sql, $params) = $query->toSql();
-
-        $stmt = $this->driver()->prepare($sql);
-
-        if ($params) {
-            $stmt->bindMultiple($params);
-        }
-
-        return $stmt;
-    }
-
-    protected function executeQuery(QueryStrategy $query): StatementStrategy
-    {
-        $stmt = $this->prepareQuery($query);
-
-        $stmt->execute();
-
-        return $stmt;
     }
 }

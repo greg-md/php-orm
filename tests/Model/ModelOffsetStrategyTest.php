@@ -1,16 +1,37 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Clause\OffsetClause;
-use Greg\Orm\Query\SelectQuery;
-use Greg\Orm\QueryException;
-use Greg\Orm\Tests\Clause\OffsetClauseTrait;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\SqlException;
 
-class ModelOffsetStrategyTest extends ModelAbstract
+class ModelOffsetStrategyTest extends ModelTestingAbstract
 {
-    use OffsetClauseTrait;
+    public function testCanDetermineIfExists()
+    {
+        $this->assertFalse($this->model->hasOffset());
+
+        $query = $this->model->offset(10);
+
+        $this->assertTrue($query->hasOffset());
+    }
+
+    public function testCanGet()
+    {
+        $query = $this->model->offset(10);
+
+        $this->assertEquals(10, $query->getOffset());
+    }
+
+    public function testCanClear()
+    {
+        $query = $this->model->offset(10);
+
+        $query->clearOffset();
+
+        $this->assertNull($query->getOffset());
+    }
 
     public function testCanAssignOffsetAppliers()
     {
@@ -79,18 +100,24 @@ class ModelOffsetStrategyTest extends ModelAbstract
 
     public function testCanThrowExceptionIfFromNotExists()
     {
-        $this->expectException(QueryException::class);
+        $this->expectException(SqlException::class);
 
         $this->model->updateTable('Column')->offset(1);
     }
 
-    protected function newClause()
+    public function testCanDetermineIfClauseExists()
     {
-        return $this->model->setClause('OFFSET', $this->model->driver()->offset());
+        $this->assertFalse($this->model->hasOffsetClause());
+
+        $this->model->intoOffsetStrategy();
+
+        $this->assertTrue($this->model->hasOffsetClause());
     }
 
-    protected function newSelectQuery(): SelectQuery
+    public function testCanCombineClauses2()
     {
-        return $this->driver->select();
+        $query = $this->model->limit(10)->offset(10);
+
+        $this->assertEquals('LIMIT 10 OFFSET 10', $query->toString());
     }
 }

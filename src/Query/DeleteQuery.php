@@ -12,7 +12,7 @@ use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
-use Greg\Orm\QueryException;
+use Greg\Orm\SqlException;
 use Greg\Orm\SqlAbstract;
 
 class DeleteQuery extends SqlAbstract implements
@@ -109,7 +109,7 @@ class DeleteQuery extends SqlAbstract implements
         list($fromSql, $fromParams) = $this->fromToSql($this);
 
         if (!$fromSql) {
-            throw new QueryException('Undefined DELETE FROM clause.');
+            throw new SqlException('Undefined DELETE FROM clause.');
         }
 
         $sql[] = $fromSql;
@@ -161,7 +161,7 @@ class DeleteQuery extends SqlAbstract implements
     {
         try {
             return $this->toString();
-        } catch (QueryException $e) {
+        } catch (SqlException $e) {
             return $e->getMessage();
         }
     }

@@ -1,15 +1,14 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Conditions;
-use Greg\Orm\Tests\ConditionsTrait;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ConditionsTestingTrait;
+use Greg\Orm\ModelTestingAbstract;
 
-class ModelWhereStrategyTest extends ModelAbstract
+class ModelWhereStrategyTest extends ModelTestingAbstract
 {
-    use ConditionsTrait;
+    use ConditionsTestingTrait;
 
     protected $prefix = 'WHERE ';
 
@@ -116,14 +115,14 @@ class ModelWhereStrategyTest extends ModelAbstract
 
     public function testCanSetExists()
     {
-        $query = $this->model->whereExists($this->driver->select());
+        $query = $this->model->whereExists($this->driverMock->select());
 
         $this->assertEquals($this->prefix() . 'EXISTS (SELECT *)', $query->whereToString());
     }
 
     public function testCanSetNotExists()
     {
-        $query = $this->model->whereNotExists($this->driver->select());
+        $query = $this->model->whereNotExists($this->driverMock->select());
 
         $this->assertEquals($this->prefix() . 'NOT EXISTS (SELECT *)', $query->whereToString());
     }
@@ -151,14 +150,14 @@ class ModelWhereStrategyTest extends ModelAbstract
     {
         $this->assertFalse($this->model->hasExists());
 
-        $query = $this->model->whereExists($this->driver->select());
+        $query = $this->model->whereExists($this->driverMock->select());
 
         $this->assertTrue($query->hasExists());
     }
 
     public function testCanGetExists()
     {
-        $query = $this->model->whereExists($this->driver->select());
+        $query = $this->model->whereExists($this->driverMock->select());
 
         $this->assertNotEmpty($query->getExists());
     }
@@ -169,7 +168,7 @@ class ModelWhereStrategyTest extends ModelAbstract
 
         $this->assertNull($this->model->getExists());
 
-        $query = $this->model->whereExists($this->driver->select());
+        $query = $this->model->whereExists($this->driverMock->select());
 
         $query->clearExists();
 
@@ -181,6 +180,15 @@ class ModelWhereStrategyTest extends ModelAbstract
         $query = $this->model->select('Column')->where('Column', 'foo');
 
         $this->assertEquals('SELECT `Column` FROM `Table` WHERE `Column` = ?', $query->toString());
+    }
+
+    public function testCanDetermineIfClauseExists()
+    {
+        $this->assertFalse($this->model->hasWhereClause());
+
+        $this->model->intoWhereStrategy();
+
+        $this->assertTrue($this->model->hasWhereClause());
     }
 
     protected function getMethods(): array
@@ -200,11 +208,6 @@ class ModelWhereStrategyTest extends ModelAbstract
 
     protected function newClause()
     {
-        return $this->model->setClause('WHERE', $this->model->driver()->where());
-    }
-
-    protected function newConditions()
-    {
-        return new Conditions($this->driver->dialect());
+        return $this->model->intoWhereStrategy();
     }
 }

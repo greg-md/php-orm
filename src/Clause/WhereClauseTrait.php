@@ -3,7 +3,7 @@
 namespace Greg\Orm\Clause;
 
 use Greg\Orm\Conditions;
-use Greg\Orm\DialectStrategy;
+use Greg\Orm\Dialect\DialectStrategy;
 use Greg\Orm\Query\SelectQuery;
 
 trait WhereClauseTrait

@@ -2,6 +2,9 @@
 
 namespace Greg\Orm;
 
+use Greg\Orm\Dialect\DialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
+
 abstract class SqlAbstract implements SqlStrategy
 {
     /**
@@ -14,8 +17,12 @@ abstract class SqlAbstract implements SqlStrategy
      *
      * @param DialectStrategy $dialect
      */
-    public function __construct(DialectStrategy $dialect)
+    public function __construct(DialectStrategy $dialect = null)
     {
+        if (!$dialect) {
+            $dialect = new SqlDialect();
+        }
+
         $this->dialect = $dialect;
     }
 

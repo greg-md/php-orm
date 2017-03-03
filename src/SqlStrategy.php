@@ -2,6 +2,8 @@
 
 namespace Greg\Orm;
 
+use Greg\Orm\Dialect\DialectStrategy;
+
 interface SqlStrategy
 {
     /**

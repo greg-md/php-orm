@@ -54,7 +54,7 @@ trait QueryBuilderTrait
     public function query(): QueryStrategy
     {
         if (!$this->query) {
-            throw new QueryException('Query was not defined.');
+            throw new SqlException('Query was not defined.');
         }
 
         return $this->query;
@@ -89,7 +89,7 @@ trait QueryBuilderTrait
     public function clause(string $name): ClauseStrategy
     {
         if (!isset($this->clauses[$name])) {
-            throw new QueryException('Clause ' . $name . ' was not defined.');
+            throw new SqlException('Clause ' . $name . ' was not defined.');
         }
 
         return $this->clauses[$name];

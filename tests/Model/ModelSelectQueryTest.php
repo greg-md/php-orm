@@ -1,11 +1,11 @@
 <?php
 
-namespace Greg\Orm\Tests\Model;
+namespace Greg\Orm\Model;
 
-use Greg\Orm\QueryException;
-use Greg\Orm\Tests\ModelAbstract;
+use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\SqlException;
 
-class ModelSelectQueryTest extends ModelAbstract
+class ModelSelectQueryTest extends ModelTestingAbstract
 {
     public function testCanSetDistinct()
     {
@@ -47,6 +47,13 @@ class ModelSelectQueryTest extends ModelAbstract
         $query = $this->model->selectColumn('Column', 'c')->from('Table2');
 
         $this->assertEquals('SELECT `Column` AS `c` FROM `Table`, `Table2`', $query->toString());
+    }
+
+    public function testCanSetColumnConcat()
+    {
+        $query = $this->model->selectConcat(['Column1', 'Column2'], ':', 'c')->from('Table2');
+
+        $this->assertEquals('SELECT `Column1` + ? + `Column2` AS `c` FROM `Table`, `Table2`', $query->toString());
     }
 
     public function testCanSetColumnSelect()
@@ -218,14 +225,14 @@ class ModelSelectQueryTest extends ModelAbstract
     {
         $query = $this->model->lockForUpdate();
 
-        $this->assertEquals('SELECT * FROM `Table` FOR UPDATE', $query->toString());
+        $this->assertEquals('SELECT * FROM `Table`', $query->toString());
     }
 
     public function testCanLockInSharedMode()
     {
         $query = $this->model->lockInShareMode();
 
-        $this->assertEquals('SELECT * FROM `Table` LOCK IN SHARE MODE', $query->toString());
+        $this->assertEquals('SELECT * FROM `Table`', $query->toString());
     }
 
     public function testCanDetermineIfLockExists()
@@ -267,7 +274,7 @@ class ModelSelectQueryTest extends ModelAbstract
 
     public function testCanThrowExceptionIfNotHavingStrategy()
     {
-        $this->expectException(QueryException::class);
+        $this->expectException(SqlException::class);
 
         $this->model->updateTable('Table2')->select('Column');
     }
