@@ -96,7 +96,7 @@ class ModelLimitStrategyTest extends ModelTestingAbstract
     {
         $this->assertTrue($this->model->select('Column')->limit(1)->hasLimit());
     }
-    
+
     public function testCanDetermineIfClauseExists()
     {
         $this->assertFalse($this->model->hasLimitClause());

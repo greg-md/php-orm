@@ -70,6 +70,7 @@ trait FromTableClauseTrait
     /**
      * @param $table
      * @param array ...$tables
+     *
      * @return $this
      */
     public function from($table, ...$tables)

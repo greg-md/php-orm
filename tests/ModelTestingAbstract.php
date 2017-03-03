@@ -35,15 +35,14 @@ abstract class ModelTestingAbstract extends TestCase
         $driverMock = $this->driverMock = $this->createMock(DriverStrategy::class);
 
         foreach ($this->driverSql() as $method => $class) {
-            $driverMock->method($method)->willReturnCallback(function() use ($class) {
+            $driverMock->method($method)->willReturnCallback(function () use ($class) {
                 return new $class();
             });
         }
 
         $this->driverMock->method('dialect')->willReturn(new SqlDialect());
 
-        $this->model = new class([], $driverMock) extends Model
-        {
+        $this->model = new class([], $driverMock) extends Model {
             protected $name = 'Table';
 
             protected $label = 'My Table';

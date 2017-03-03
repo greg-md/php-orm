@@ -34,13 +34,15 @@ interface DialectStrategy
 
     /**
      * @param string $name
+     *
      * @return array
      */
     public function parseName(string $name): array;
 
     /**
-     * @param array $values
+     * @param array  $values
      * @param string $delimiter
+     *
      * @return string
      */
     public function concat(array $values, string $delimiter = ''): string;

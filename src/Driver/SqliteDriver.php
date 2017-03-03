@@ -53,8 +53,8 @@ class SqliteDriver extends PdoDriverAbstract
             $record['type'] = strtolower($record['type']);
 
             $extra = [
-                'isInt'   => in_array($record['type'], ['integer']),
-                'isFloat' => in_array($record['type'], ['real']),
+                'isInt'     => in_array($record['type'], ['integer']),
+                'isFloat'   => in_array($record['type'], ['real']),
                 'isNumeric' => in_array($record['type'], ['numeric']),
             ];
 

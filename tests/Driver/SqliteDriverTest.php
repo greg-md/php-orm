@@ -84,7 +84,8 @@ class SqliteDriverTest extends TestCase
 
         $this->pdoMock->expects($this->once())->method('commit');
 
-        $this->driver->transaction(function () {});
+        $this->driver->transaction(function () {
+        });
     }
 
     public function testCanRollbackTransaction()
@@ -370,20 +371,20 @@ class SqliteDriverTest extends TestCase
 
         $this->pdoStatementMock->method('fetchAll')->willReturn([
             [
-                'cid' => '0',
-                'name' => 'Id',
-                'type' => 'INTEGER',
-                'notnull' => '1',
+                'cid'        => '0',
+                'name'       => 'Id',
+                'type'       => 'INTEGER',
+                'notnull'    => '1',
                 'dflt_value' => '',
-                'pk'   => '1',
+                'pk'         => '1',
             ],
             [
-                'cid' => '1',
-                'name' => 'Username',
-                'type' => 'BLOB',
-                'notnull' => '1',
+                'cid'        => '1',
+                'name'       => 'Username',
+                'type'       => 'BLOB',
+                'notnull'    => '1',
                 'dflt_value' => '',
-                'pk'   => '0',
+                'pk'         => '0',
             ],
         ]);
 
@@ -397,8 +398,8 @@ class SqliteDriverTest extends TestCase
                     'null'    => false,
                     'default' => null,
                     'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
+                        'isInt'           => true,
+                        'isFloat'         => false,
                         'isNumeric'       => false,
                     ],
                 ],
@@ -408,8 +409,8 @@ class SqliteDriverTest extends TestCase
                     'null'    => false,
                     'default' => null,
                     'extra'   => [
-                        'isInt'   => false,
-                        'isFloat' => false,
+                        'isInt'     => false,
+                        'isFloat'   => false,
                         'isNumeric' => false,
                     ],
                 ],

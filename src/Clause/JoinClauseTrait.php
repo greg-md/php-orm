@@ -318,7 +318,6 @@ trait JoinClauseTrait
         if ($source) {
             $source = $this->getSourceName($source);
         }
-
         [$tableAlias, $tableName] = $this->dialect()->parseTable($table);
 
         if ($tableName instanceof SelectQuery) {

@@ -12,8 +12,8 @@ use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
-use Greg\Orm\SqlException;
 use Greg\Orm\SqlAbstract;
+use Greg\Orm\SqlException;
 
 class DeleteQuery extends SqlAbstract implements
     QueryStrategy,

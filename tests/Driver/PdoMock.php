@@ -90,6 +90,7 @@ trait PdoMock
 
     /**
      * @param $className
+     *
      * @return PHPUnit_Framework_MockObject_MockBuilder
      */
     abstract public function getMockBuilder($className);

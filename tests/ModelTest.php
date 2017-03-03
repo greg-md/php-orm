@@ -110,7 +110,8 @@ class ModelTest extends ModelTestingAbstract
     public function testCanThrowExceptionIfNameNotDefined()
     {
         /** @var Model $model */
-        $model = new class extends Model {};
+        $model = new class() extends Model {
+        };
 
         $this->expectException(\Exception::class);
 
@@ -120,7 +121,8 @@ class ModelTest extends ModelTestingAbstract
     public function testCanThrowExceptionWhenDriverNotDefined()
     {
         /** @var Model $model */
-        $model = new class extends Model {};
+        $model = new class() extends Model {
+        };
 
         $this->expectException(\Exception::class);
 
@@ -192,7 +194,8 @@ class ModelTest extends ModelTestingAbstract
         $this->expectException(\Exception::class);
 
         /** @var Model $model */
-        $model = new class extends Model {};
+        $model = new class() extends Model {
+        };
 
         $model->pairs();
     }
@@ -648,13 +651,13 @@ class ModelTest extends ModelTestingAbstract
                     'type'    => 'int',
                     'null'    => false,
                     'default' => null,
-                    'extra' => [
-                        'isInt' => true,
-                        'isFloat' => false,
-                        'isNumeric' => false,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
                         'autoIncrement' => true,
-                    ]
-                ]
+                    ],
+                ],
             ],
             'primary' => [
                 'Id',

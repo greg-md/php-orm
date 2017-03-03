@@ -53,8 +53,8 @@ class MysqlDriver extends PdoDriverAbstract
             preg_match("#^(?'type'[a-z]+)(?:\((?'length'.+?)\))?(?: (?'unsigned'unsigned))?#i", $record['Type'], $matches);
 
             $extra = [
-                'isInt'   => in_array($matches['type'], ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'bool', 'boolean']),
-                'isFloat' => in_array($matches['type'], ['float', 'double', 'double precision', 'real', 'decimal']),
+                'isInt'     => in_array($matches['type'], ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'bool', 'boolean']),
+                'isFloat'   => in_array($matches['type'], ['float', 'double', 'double precision', 'real', 'decimal']),
                 'isNumeric' => in_array($matches['type'], ['numeric']),
             ];
 

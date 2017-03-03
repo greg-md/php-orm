@@ -143,8 +143,8 @@ abstract class DriverAbstract implements DriverStrategy
 
     /**
      * @param string $sql
+     * @param array  $params
      *
-     * @param array $params
      * @return $this
      */
     protected function fire(string $sql, array $params = [])

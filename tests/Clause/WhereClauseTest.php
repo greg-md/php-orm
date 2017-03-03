@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\ConditionsTestingAbstract;
+use Greg\Orm\Query\SelectQuery;
 
 class WhereClauseTest extends ConditionsTestingAbstract
 {

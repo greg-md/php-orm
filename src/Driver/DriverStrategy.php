@@ -47,8 +47,8 @@ interface DriverStrategy
 
     /**
      * @param string $sql
+     * @param array  $params
      *
-     * @param array $params
      * @return int
      */
     public function execute(string $sql, array $params = []): int;
@@ -69,63 +69,71 @@ interface DriverStrategy
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return \string[]
      */
     public function fetch(string $sql, array $params = []);
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return \string[][]
      */
     public function fetchAll(string $sql, array $params = []);
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return \string[][]
      */
     public function fetchYield(string $sql, array $params = []);
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $column
+     *
      * @return string
      */
     public function column(string $sql, array $params = [], string $column = '0');
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $column
+     *
      * @return \string[]
      */
     public function columnAll(string $sql, array $params = [], string $column = '0');
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $column
+     *
      * @return mixed
      */
     public function columnYield(string $sql, array $params = [], string $column = '0');
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $key
      * @param string $value
+     *
      * @return \string[]
      */
     public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1');
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $key
      * @param string $value
+     *
      * @return mixed
      */
     public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1');
@@ -151,7 +159,8 @@ interface DriverStrategy
 
     /**
      * @param string $tableName
-     * @param bool $force
+     * @param bool   $force
+     *
      * @return array
      */
     public function describe(string $tableName, bool $force = false): array;

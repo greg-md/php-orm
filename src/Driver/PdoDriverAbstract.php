@@ -65,8 +65,10 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param callable $callable
-     * @return $this
+     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function transaction(callable $callable)
     {
@@ -119,8 +121,8 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
+     * @param array  $params
      *
-     * @param array $params
      * @return int
      */
     public function execute(string $sql, array $params = []): int
@@ -150,7 +152,8 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return \string[]
      */
     public function fetch(string $sql, array $params = [])
@@ -160,7 +163,8 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return \string[][]
      */
     public function fetchAll(string $sql, array $params = [])
@@ -170,7 +174,8 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
+     *
      * @return \Generator
      */
     public function fetchYield(string $sql, array $params = [])
@@ -184,8 +189,9 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $column
+     *
      * @return string
      */
     public function column(string $sql, array $params = [], string $column = '0')
@@ -203,8 +209,9 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $column
+     *
      * @return \string[]
      */
     public function columnAll(string $sql, array $params = [], string $column = '0')
@@ -247,9 +254,10 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
-     * @param array $params
+     * @param array  $params
      * @param string $key
      * @param string $value
+     *
      * @return \string[]
      */
     public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1')
@@ -276,8 +284,8 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
     /**
      * @param string $sql
+     * @param array  $params
      *
-     * @param array $params
      * @return \PDOStatement
      */
     protected function prepare(string $sql, array $params = []): \PDOStatement

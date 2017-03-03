@@ -265,7 +265,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
 
         $this->assertTrue($this->model->hasJoinClause());
     }
-    
+
     public function testCanCombineClauses3()
     {
         $this->assertEquals('FROM `Table1` INNER JOIN `Table2`', $this->model->from('Table1')->inner('Table2')->toString());

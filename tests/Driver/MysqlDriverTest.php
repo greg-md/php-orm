@@ -84,7 +84,8 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoMock->expects($this->once())->method('commit');
 
-        $this->driver->transaction(function () {});
+        $this->driver->transaction(function () {
+        });
     }
 
     public function testCanRollbackTransaction()
@@ -397,12 +398,12 @@ class MysqlDriverTest extends TestCase
                     'null'    => false,
                     'default' => null,
                     'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
+                        'isInt'           => true,
+                        'isFloat'         => false,
                         'isNumeric'       => false,
-                        'autoIncrement' => true,
-                        'length'        => 10,
-                        'unsigned'      => true,
+                        'autoIncrement'   => true,
+                        'length'          => 10,
+                        'unsigned'        => true,
                     ],
                 ],
                 'Gender' => [
@@ -411,10 +412,10 @@ class MysqlDriverTest extends TestCase
                     'null'    => true,
                     'default' => null,
                     'extra'   => [
-                        'isInt'   => false,
-                        'isFloat' => false,
+                        'isInt'     => false,
+                        'isFloat'   => false,
                         'isNumeric' => false,
-                        'values'  => ['male', 'female'],
+                        'values'    => ['male', 'female'],
                     ],
                 ],
             ],

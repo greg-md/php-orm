@@ -16,7 +16,7 @@ class MysqlDialectTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        
+
         $this->dialect = new MysqlDialect();
     }
 
@@ -42,10 +42,10 @@ class MysqlDialectTest extends TestCase
         $this->assertEquals([null, 'foo'], $this->dialect->parseTable('foo'));
 
         $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable('foo as bar'));
-        
+
         $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(['bar' => 'foo']));
 
-        $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(new class extends Model {
+        $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(new class() extends Model {
             protected $name = 'foo';
 
             protected $alias = 'bar';

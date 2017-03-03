@@ -2,7 +2,6 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Support\Arr;
 
@@ -416,7 +415,6 @@ trait TableTrait
                 $query->columnRaw('? as ' . $this->driver()->dialect()->quoteName($column), $value);
             }
         }
-
         [$sql, $params] = $this->newInsertQuery()->columns($columns)->select($query)->toSql();
 
         return $this->driver()->execute($sql, $params);
@@ -458,7 +456,6 @@ trait TableTrait
         if ($tables) {
             $instance->rowsFrom(...$tables);
         }
-
         [$sql, $params] = $instance->toSql();
 
         return $this->driver()->execute($sql, $params);

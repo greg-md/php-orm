@@ -169,7 +169,8 @@ trait JoinTableClauseTrait
      * @param $source
      * @param $table
      * @param string|null $on
-     * @param \string[] ...$params
+     * @param \string[]   ...$params
+     *
      * @return $this
      */
     public function innerTo($source, $table, string $on = null, string ...$params)
