@@ -3,8 +3,6 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Clause\WhereClause;
-use Greg\Support\DateTime;
-use Greg\Support\Str;
 
 trait RowsTrait
 {

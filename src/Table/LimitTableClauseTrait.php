@@ -165,7 +165,7 @@ trait LimitTableClauseTrait
 
     protected function needLimitStrategyInQuery(QueryStrategy $query)
     {
-//        if (!($query instanceof LimitClauseStrategy)) {
+        //        if (!($query instanceof LimitClauseStrategy)) {
 //            throw new SqlException('Current query does not have a LIMIT clause.');
 //        }
 

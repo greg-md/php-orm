@@ -307,16 +307,18 @@ class ModelTest extends ModelTestingAbstract
     public function testCanChunkYieldOneByOne()
     {
         $this->driverMock->expects($this->exactly(3))->method('fetchYield')->will($this->onConsecutiveCalls(
-            (function() {
+            (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
             })(),
-            (function() {
+            (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
             })(),
-            (function() {
-                if (false) yield;
+            (function () {
+                if (false) {
+                    yield;
+                }
             })()
         ));
 
@@ -475,7 +477,7 @@ class ModelTest extends ModelTestingAbstract
 
     public function testCanFetchAllColumnYield()
     {
-        $this->driverMock->method('columnYield')->willReturn((function() {
+        $this->driverMock->method('columnYield')->willReturn((function () {
             yield 1;
             yield 2;
         })());
@@ -502,7 +504,7 @@ class ModelTest extends ModelTestingAbstract
 
     public function testCanFetchPairsYield()
     {
-        $this->driverMock->method('pairsYield')->willReturn((function() {
+        $this->driverMock->method('pairsYield')->willReturn((function () {
             yield 1 => 1;
             yield 2 => 2;
         })());
@@ -814,8 +816,10 @@ class ModelTest extends ModelTestingAbstract
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function() {
-            if (false) yield;
+        $this->driverMock->method('fetchYield')->willReturn((function () {
+            if (false) {
+                yield;
+            }
         })());
 
         $this->assertEquals([], $this->model->fetchRows()->toArray());
@@ -825,7 +829,7 @@ class ModelTest extends ModelTestingAbstract
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function() {
+        $this->driverMock->method('fetchYield')->willReturn((function () {
             yield ['Id' => 1];
 
             yield ['Id' => 2];
@@ -838,7 +842,7 @@ class ModelTest extends ModelTestingAbstract
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function() {
+        $this->driverMock->method('fetchYield')->willReturn((function () {
             yield ['Id' => 1];
 
             yield ['Id' => 2];

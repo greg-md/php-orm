@@ -533,7 +533,7 @@ trait WhereTableClauseTrait
 
     protected function needWhereStrategyInQuery(QueryStrategy $query)
     {
-//        if (!($query instanceof WhereClauseStrategy)) {
+        //        if (!($query instanceof WhereClauseStrategy)) {
 //            throw new SqlException('Current query does not have a WHERE clause.');
 //        }
 
