@@ -214,9 +214,9 @@ trait OrderByTableClauseTrait
 
     protected function needOrderByStrategyInQuery(QueryStrategy $query)
     {
-        if (!($query instanceof OrderByClauseStrategy)) {
-            throw new SqlException('Current query does not have an ORDER BY clause.');
-        }
+//        if (!($query instanceof OrderByClauseStrategy)) {
+//            throw new SqlException('Current query does not have an ORDER BY clause.');
+//        }
 
         return $this;
     }

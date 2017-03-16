@@ -4,6 +4,8 @@ namespace Greg\Orm;
 
 use Greg\Orm\Query\SelectQuery;
 use Greg\Support\Arr;
+use Greg\Support\DateTime;
+use Greg\Support\Str;
 
 trait TableTrait
 {
@@ -143,6 +145,13 @@ trait TableTrait
         return $this->casts[$name] ?? null;
     }
 
+    public function setCast(string $name, string $type): ?string
+    {
+        $this->casts[$name] = $type;
+
+        return $name;
+    }
+
     public function setDefaults(array $defaults)
     {
         $this->defaults = $defaults;
@@ -263,6 +272,9 @@ trait TableTrait
         return $rows;
     }
 
+    /**
+     * @return \Generator|$this[]
+     */
     public function fetchRowsYield()
     {
         foreach ($this->rowsQueryInstance()->fetchYield() as $record) {
@@ -336,7 +348,11 @@ trait TableTrait
 
     public function firstOrCreate(array $data)
     {
-        return $this->firstOrNew($data)->save();
+        $row = $this->firstOrNew($data);
+
+        $row->save();
+
+        return $row;
     }
 
     public function pairs()
@@ -364,7 +380,7 @@ trait TableTrait
 
     public function chunkRows($count, callable $callable, $callOneByOne = false, bool $yield = true)
     {
-        $newCallable = function ($record) use ($callable, $callOneByOne) {
+        $this->chunkQuery($this->rowsQueryInstance()->selectQuery(), $count, function ($record) use ($callable, $callOneByOne) {
             if ($callOneByOne) {
                 return call_user_func_array($callable, [$this->cleanClone()->appendRecord($record)]);
             }
@@ -376,9 +392,7 @@ trait TableTrait
             }
 
             return call_user_func_array($callable, [$rows]);
-        };
-
-        $this->chunkQuery($this->rowsQueryInstance()->selectQuery(), $count, $newCallable, $callOneByOne, $yield);
+        }, $callOneByOne, $yield);
 
         return $this;
     }
@@ -473,6 +487,72 @@ trait TableTrait
     public function truncate()
     {
         return $this->driver()->truncate($this->fullName());
+    }
+
+    public function prepareRecord(array $record, $reverse = false): array
+    {
+        foreach ($record as $columnName => &$value) {
+            $value = $this->prepareValue($columnName, $value, $reverse);
+        }
+        unset($value);
+
+        return $record;
+    }
+
+    public function prepareValue(string $columnName, $value, bool $reverse = false)
+    {
+        $column = $this->column($columnName);
+
+        if ($value === '') {
+            $value = null;
+        }
+
+        if (!$column['null']) {
+            $value = (string) $value;
+        }
+
+        if ($value === null) {
+            return $value;
+        }
+
+        if ($column['extra']['isInt'] and (!$column['null'] or $value !== null)) {
+            $value = (int) $value;
+        }
+
+        if ($column['extra']['isFloat'] and (!$column['null'] or $value !== null)) {
+            $value = (float) $value;
+        }
+
+        switch ($this->cast($columnName) ?: $column['type']) {
+            case 'datetime':
+            case 'timestamp':
+                $value = DateTime::dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+
+                break;
+            case 'date':
+                $value = DateTime::dateString($value);
+
+                break;
+            case 'time':
+                $value = DateTime::timeString($value);
+
+                break;
+            case 'systemName':
+                $value = $reverse ? Str::systemName($value) : $value;
+
+                break;
+            case 'bool':
+            case 'boolean':
+                $value = (bool) $value;
+
+                break;
+            case 'array':
+                $value = $reverse ? json_encode($value) : json_decode($value, true);
+
+                break;
+        }
+
+        return $value;
     }
 
     protected function validateColumn(string $name)

@@ -102,6 +102,13 @@ class ModelHavingStrategyTest extends ModelTestingAbstract
         $this->assertFalse($this->model->select('Column')->hasHaving());
     }
 
+    public function testCanDetermineIfHavingClauseExists()
+    {
+        $this->assertFalse($this->model->hasHavingClause());
+
+        $this->assertFalse($this->model->select('Column')->hasHavingClause());
+    }
+
     public function testCanGetHaving()
     {
         $this->assertCount(0, $this->model->getHaving());

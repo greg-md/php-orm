@@ -200,6 +200,17 @@ class ModelTest extends ModelTestingAbstract
         $model->pairs();
     }
 
+    public function testCanThrowExceptionIfCanNotSelectPairsWhenCustomSelect()
+    {
+        $this->mockDescribe();
+
+        $query = $this->model->select(1);
+
+        $this->expectException(\Exception::class);
+
+        $query->pairs();
+    }
+
     public function testCanCreateNewRow()
     {
         $this->mockDescribe();
@@ -293,6 +304,33 @@ class ModelTest extends ModelTestingAbstract
         $this->assertEquals(4, $count);
     }
 
+    public function testCanChunkYieldOneByOne()
+    {
+        $this->driverMock->expects($this->exactly(3))->method('fetchYield')->will($this->onConsecutiveCalls(
+            (function() {
+                yield ['Id' => 1];
+                yield ['Id' => 2];
+            })(),
+            (function() {
+                yield ['Id' => 1];
+                yield ['Id' => 2];
+            })(),
+            (function() {
+                if (false) yield;
+            })()
+        ));
+
+        $count = 0;
+
+        $this->model->chunk(2, function ($records) use (&$count) {
+            ++$count;
+
+            $this->assertCount(1, $records);
+        }, true);
+
+        $this->assertEquals(4, $count);
+    }
+
     public function testCanStopChunk()
     {
         $this->driverMock->method('fetchAll')->will($this->onConsecutiveCalls(
@@ -331,6 +369,64 @@ class ModelTest extends ModelTestingAbstract
         }, true, false);
 
         $this->assertEquals(1, $count);
+    }
+
+    public function testCanChunkRows()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+            [
+                ['Id' => 1],
+                ['Id' => 2],
+            ],
+            [
+                ['Id' => 3],
+                ['Id' => 4],
+            ],
+            [
+
+            ]
+        ));
+
+        $count = 0;
+
+        $this->model->chunkRows(2, function ($records) use (&$count) {
+            ++$count;
+
+            $this->assertCount(2, $records);
+        });
+
+        $this->assertEquals(2, $count);
+    }
+
+    public function testCanChunkRowsOneByOne()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+            [
+                ['Id' => 1],
+                ['Id' => 2],
+            ],
+            [
+                ['Id' => 3],
+                ['Id' => 4],
+            ],
+            [
+
+            ]
+        ));
+
+        $count = 0;
+
+        $this->model->chunkRows(2, function ($records) use (&$count) {
+            ++$count;
+
+            $this->assertCount(1, $records);
+        }, true, false);
+
+        $this->assertEquals(4, $count);
     }
 
     public function testCanFetch()
@@ -377,11 +473,53 @@ class ModelTest extends ModelTestingAbstract
         $this->assertEquals([1, 2], $this->model->fetchColumnAll());
     }
 
+    public function testCanFetchAllColumnYield()
+    {
+        $this->driverMock->method('columnYield')->willReturn((function() {
+            yield 1;
+            yield 2;
+        })());
+
+        $generator = $this->model->fetchColumnYield();
+
+        $this->assertInstanceOf(\Generator::class, $generator);
+
+        $array = [1, 2];
+
+        foreach ($generator as $column) {
+            $this->assertEquals(array_shift($array), $column);
+        }
+
+        $this->assertEmpty($array);
+    }
+
     public function testCanFetchPairs()
     {
         $this->driverMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->model->fetchPairs());
+    }
+
+    public function testCanFetchPairsYield()
+    {
+        $this->driverMock->method('pairsYield')->willReturn((function() {
+            yield 1 => 1;
+            yield 2 => 2;
+        })());
+
+        $generator = $this->model->fetchPairsYield();
+
+        $this->assertInstanceOf(\Generator::class, $generator);
+
+        $array = [1 => 1, 2 => 2];
+
+        foreach ($generator as $key => $value) {
+            $this->assertEquals(key($array), current($array));
+
+            next($array);
+        }
+
+        $this->assertFalse(next($array));
     }
 
     public function testCanFetchCount()
@@ -640,6 +778,547 @@ class ModelTest extends ModelTestingAbstract
         $row = $this->model->create(['Id' => 1]);
 
         $this->assertEquals(1, $row['Id']);
+    }
+
+    public function testCanFetchRow()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+
+        $this->assertEquals($record, $this->model->fetchRow()->firstToArray());
+    }
+
+    public function testCanFetchEmptyRow()
+    {
+        $this->assertEmpty($this->model->fetchRow());
+    }
+
+    public function testCanFetchRowOrFail()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn(['Id' => 1]);
+
+        $this->assertEquals(['Id' => 1], $this->model->fetchRowOrFail()->firstToArray());
+    }
+
+    public function testCanThrowExceptionIfFetchRowFail()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->model->fetchRowOrFail();
+    }
+
+    public function testCanFetchNoRows()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetchYield')->willReturn((function() {
+            if (false) yield;
+        })());
+
+        $this->assertEquals([], $this->model->fetchRows()->toArray());
+    }
+
+    public function testCanFetchRows()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetchYield')->willReturn((function() {
+            yield ['Id' => 1];
+
+            yield ['Id' => 2];
+        })());
+
+        $this->assertEquals([['Id' => 1], ['Id' => 2]], $this->model->fetchRows()->toArray());
+    }
+
+    public function testCanFetchRowsYield()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetchYield')->willReturn((function() {
+            yield ['Id' => 1];
+
+            yield ['Id' => 2];
+        })());
+
+        $rows = [['Id' => 1], ['Id' => 2]];
+
+        $generator = $this->model->fetchRowsYield();
+
+        $this->assertInstanceOf(\Generator::class, $generator);
+
+        foreach ($generator as $row) {
+            $this->assertEquals(array_shift($rows), $row->firstToArray());
+        }
+
+        $this->assertEmpty($rows);
+    }
+
+    public function testCanFind()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+
+        $row = $this->model->find(1);
+
+        $this->assertEquals($record, $row->firstToArray());
+    }
+
+    public function testCanFindOrFail()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+
+        $row = $this->model->findOrFail(1);
+
+        $this->assertEquals($record, $row->firstToArray());
+    }
+
+    public function testCanThrowExceptionIfFindFail()
+    {
+        $this->mockDescribe();
+
+        $this->expectException(\Exception::class);
+
+        $this->model->findOrFail(1);
+    }
+
+    public function testCanGetFirst()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+
+        $row = $this->model->first($record);
+
+        $this->assertEquals($record, $row->firstToArray());
+    }
+
+    public function testCanGetFirstOrFail()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+
+        $row = $this->model->firstOrFail($record);
+
+        $this->assertEquals($record, $row->firstToArray());
+    }
+
+    public function testCanThrowExceptionIfGetFirstFail()
+    {
+        $this->mockDescribe();
+
+        $this->expectException(\Exception::class);
+
+        $this->model->firstOrFail(['Id' => 1]);
+    }
+
+    public function testCanGetFirstFromFirstOrNew()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+
+        $row = $this->model->firstOrNew($record);
+
+        $this->assertFalse($row->isNew());
+    }
+
+    public function testCanGetNewFromFirstOrNew()
+    {
+        $this->mockDescribe();
+
+        $row = $this->model->firstOrNew(['Id' => 1]);
+
+        $this->assertTrue($row->isNew());
+    }
+
+    public function testCanGetFirstFromFirstOrCreate()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+
+        $row = $this->model->firstOrCreate($record);
+
+        $this->assertFalse($row->isNew());
+    }
+
+    public function testCanGetNewFromFirstOrCreate()
+    {
+        $this->mockDescribe();
+
+        $row = $this->model->firstOrCreate(['Id' => 1]);
+
+        $this->assertFalse($row->isNew());
+    }
+
+    public function testCanErase()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->expects($this->once())->method('execute')->with('DELETE FROM `Table` WHERE `Id` = ?', [1]);
+
+        $this->model->erase(1);
+    }
+
+    public function testCanTruncate()
+    {
+        $this->driverMock->expects($this->once())->method('truncate')->with('Table');
+
+        $this->model->truncate();
+    }
+
+    public function testCanThrowExceptionIfCanNotCombinePrimaryKeys()
+    {
+        $this->mockDescribe();
+
+        $this->expectException(\Exception::class);
+
+        $this->model->find([1, 2]);
+    }
+
+    public function testCanThrowExceptionIfCanNotFetchRows()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->model->select(1)->fetchRow();
+    }
+
+    public function testCanFetchRowAndTransformToNullValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'string',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => false,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '']);
+
+        $row = $this->model->fetchRow();
+
+        $this->assertNull($row['Foo']);
+    }
+
+    public function testCanFetchRowAndTransformToFloatValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'string',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => false,
+                        'isFloat'       => true,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '1.1']);
+
+        $row = $this->model->fetchRow();
+
+        $this->assertTrue(is_float($row['Foo']));
+    }
+
+    public function testCanFetchRowAndTransformToDatetimeValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'text',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => false,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->model->setCast('Foo', 'datetime');
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017 18:00:00']);
+
+        $row = $this->model->fetchRow();
+
+        $this->assertEquals('2017-01-01 18:00:00', $row['Foo']);
+    }
+
+    public function testCanFetchRowAndTransformToDateValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'text',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => false,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->model->setCast('Foo', 'date');
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017']);
+
+        $row = $this->model->fetchRow();
+
+        $this->assertEquals('2017-01-01', $row['Foo']);
+    }
+
+    public function testCanFetchRowAndTransformToTimeValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'text',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => false,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->model->setCast('Foo', 'time');
+
+        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '18:00']);
+
+        $row = $this->model->fetchRow();
+
+        $this->assertEquals('18:00:00', $row['Foo']);
+    }
+
+    public function testCanFetchRowAndTransformToSystemNameValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'text',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => false,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->model->setCast('Foo', 'systemName');
+
+        $this->assertEquals('foo-bar', $this->model->prepareValue('Foo', 'Foo Bar.', true));
+    }
+
+    public function testCanFetchRowAndTransformToBooleanValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'tinyint',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->model->setCast('Foo', 'boolean');
+
+        $this->assertTrue($this->model->prepareValue('Foo', 1));
+    }
+
+    public function testCanFetchRowAndTransformToArrayValue()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Id' => [
+                    'name'    => 'Id',
+                    'type'    => 'int',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => true,
+                    ],
+                ],
+                'Foo' => [
+                    'name'    => 'Foo',
+                    'type'    => 'string',
+                    'null'    => true,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => false,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [
+                'Id',
+            ],
+        ]);
+
+        $this->model->setCast('Foo', 'array');
+
+        $this->assertEquals($value = ['Foo' => 'bar'], $this->model->prepareValue('Foo', json_encode($value)));
+
+        $this->assertEquals(json_encode($value), $this->model->prepareValue('Foo', $value, true));
     }
 
     protected function mockDescribe()

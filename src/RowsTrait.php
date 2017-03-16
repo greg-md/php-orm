@@ -204,7 +204,7 @@ trait RowsTrait
 
                 $query = $this->newInsertQuery()->data($record);
 
-                $this->executeQuery($query);
+                $this->driver()->execute(...$query->toSql());
 
                 if ($column = $this->autoIncrement()) {
                     $row['record'][$column] = (int) $this->driver()->lastInsertId();
@@ -216,7 +216,7 @@ trait RowsTrait
                     ->setMultiple($modified)
                     ->whereMultiple($this->rowFirstUnique($row));
 
-                $this->executeQuery($query);
+                $this->driver()->execute(...$query->toSql());
             }
 
             $row['modified'] = [];
@@ -474,71 +474,6 @@ trait RowsTrait
         }
 
         return $this;
-    }
-
-    protected function prepareRecord(array $record, $reverse = false): array
-    {
-        foreach ($record as $columnName => &$value) {
-            $value = $this->prepareValue($columnName, $value, $reverse);
-        }
-        unset($value);
-
-        return $record;
-    }
-
-    protected function prepareValue(string $columnName, $value, bool $reverse = false)
-    {
-        $column = $this->column($columnName);
-
-        if ($value === '') {
-            $value = null;
-        }
-
-        if (!$column['null']) {
-            $value = (string) $value;
-        }
-
-        if ($value === null) {
-            return $value;
-        }
-
-        if ($column['extra']['isInt'] and (!$column['null'] or $value !== null)) {
-            $value = (int) $value;
-        }
-
-        if ($column['extra']['isFloat'] and (!$column['null'] or $value !== null)) {
-            $value = (float) $value;
-        }
-
-        switch ($this->cast($columnName)) {
-            case 'datetime':
-            case 'timestamp':
-                $value = DateTime::dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
-
-                break;
-            case 'date':
-                $value = DateTime::dateString($value);
-
-                break;
-            case 'time':
-                $value = DateTime::timeString($value);
-
-                break;
-            case 'systemName':
-                $value = $reverse ? Str::systemName($value) : $value;
-
-                break;
-            case 'boolean':
-                $value = (bool) $value;
-
-                break;
-            case 'array':
-                $value = $reverse ? json_encode($value) : json_decode($value, true);
-
-                break;
-        }
-
-        return $value;
     }
 
     protected function defaultRecord(): array

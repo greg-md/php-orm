@@ -130,6 +130,15 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
         $this->assertTrue($query->hasJoin());
     }
 
+    public function testCanDetermineIfJoinClauseExists()
+    {
+        $this->assertFalse($this->model->hasJoinClause());
+
+        $query = $this->model->inner('Foo');
+
+        $this->assertTrue($query->hasJoinClause());
+    }
+
     public function testCanGet()
     {
         $query = $this->model->inner('Foo');

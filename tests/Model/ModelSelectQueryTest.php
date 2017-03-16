@@ -3,6 +3,7 @@
 namespace Greg\Orm\Model;
 
 use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\SqlException;
 
 class ModelSelectQueryTest extends ModelTestingAbstract
@@ -295,5 +296,17 @@ class ModelSelectQueryTest extends ModelTestingAbstract
         $sql = 'SELECT `Table`.`Column` FROM `Table`, `Table2` INNER JOIN `Table3` WHERE `Column` = ? GROUP BY `Column` HAVING `Column` = ? ORDER BY `Column` ASC LIMIT 10 OFFSET 10';
 
         $this->assertEquals($sql, $query->toString());
+    }
+
+    public function testCanTransformIntoSelectQuery()
+    {
+        $this->model->intoSelectQuery();
+
+        $this->assertInstanceOf(SelectQuery::class, $query = $this->model->getQuery());
+
+        // Can get the same query
+        $this->model->intoSelectQuery();
+
+        $this->assertEquals($query, $this->model->getQuery());
     }
 }

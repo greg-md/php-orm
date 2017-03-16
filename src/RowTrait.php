@@ -8,6 +8,15 @@ trait RowTrait
 {
     use RowsTrait;
 
+    public function firstToArray(bool $full = false): array
+    {
+        if ($full) {
+            return $this->firstRow();
+        }
+
+        return $this->firstRow()['record'];
+    }
+
     public function getAutoIncrement(): ?int
     {
         if ($key = $this->autoIncrement()) {

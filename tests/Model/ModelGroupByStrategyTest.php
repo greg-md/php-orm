@@ -31,6 +31,15 @@ class ModelGroupByStrategyTest extends ModelTestingAbstract
         $this->assertTrue($query->hasGroupBy());
     }
 
+    public function testCanDetermineIfClauseExists()
+    {
+        $this->assertFalse($this->model->hasGroupByClause());
+
+        $query = $this->model->groupBy('Foo');
+
+        $this->assertTrue($query->hasGroupByClause());
+    }
+
     public function testCanGet()
     {
         $query = $this->model->groupBy('Foo');

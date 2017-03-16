@@ -39,6 +39,15 @@ class ModelFromStrategyTest extends ModelTestingAbstract
         $this->assertTrue($query->hasFrom());
     }
 
+    public function testCanDetermineIfClauseExists()
+    {
+        $this->assertFalse($this->model->hasFromClause());
+
+        $query = $this->model->from('Foo');
+
+        $this->assertTrue($query->hasFromClause());
+    }
+
     public function testCanGet()
     {
         $query = $this->model->from('Foo');
