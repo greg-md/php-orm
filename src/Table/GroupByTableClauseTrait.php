@@ -15,7 +15,9 @@ trait GroupByTableClauseTrait
 
     public function assignGroupByAppliers(GroupByClauseStrategy $strategy)
     {
-        if ($this->groupByAppliers and $items = $strategy->getGroupBy()) {
+        if ($this->groupByAppliers) {
+            $items = $strategy->getGroupBy();
+
             $strategy->clearGroupBy();
 
             foreach ($this->groupByAppliers as $applier) {

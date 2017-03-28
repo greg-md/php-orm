@@ -16,7 +16,9 @@ trait FromTableClauseTrait
 
     public function assignFromAppliers(FromClauseStrategy $strategy)
     {
-        if ($this->fromAppliers and $items = $strategy->getFrom()) {
+        if ($this->fromAppliers) {
+            $items = $strategy->getFrom();
+
             $strategy->clearFrom();
 
             foreach ($this->fromAppliers as $applier) {

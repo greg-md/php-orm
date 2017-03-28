@@ -83,14 +83,14 @@ trait RowsTrait
         return $this;
     }
 
-    public function pagination(int $limit = 20, int $offset = 0, ?callable $calculateTotal = null)
+    public function pagination(int $limit = 20, int $offset = 0, ?callable $totalQuery = null)
     {
         $query = clone $this->selectQueryInstance();
 
-        return $query->paginate($limit, $offset, $calculateTotal);
+        return $query->paginate($limit, $offset, $totalQuery);
     }
 
-    public function paginate(int $limit = 20, int $offset = 0, ?callable $calculateTotal = null)
+    public function paginate(int $limit = 20, int $offset = 0, ?callable $totalQuery = null)
     {
         $this->rowsLimit = $limit;
 
@@ -102,14 +102,17 @@ trait RowsTrait
             $this->appendRecord($record, false, [], true);
         }
 
-        if ($calculateTotal) {
+        if ($totalQuery) {
             $query = $this->newSelectQuery();
+
+            call_user_func_array($totalQuery, [$query]);
         } else {
             $query = clone $this->getSelectQuery();
 
             $query->clearLimit();
             $query->clearOffset();
         }
+
         [$sql, $params] = $query->clearColumns()->count()->toSql();
 
         $this->rowsTotal = $this->driver()->column($sql, $params);
@@ -141,7 +144,7 @@ trait RowsTrait
             }
         }
 
-        return true;
+        return !!$this->rows;
     }
 
     public function set(string $column, $value)
@@ -204,7 +207,7 @@ trait RowsTrait
 
                 $this->driver()->execute(...$query->toSql());
 
-                if ($column = $this->autoIncrement()) {
+                if (!$this->getAutoIncrement() and $column = $this->autoIncrement()) {
                     $row['record'][$column] = (int) $this->driver()->lastInsertId();
                 }
 
@@ -229,17 +232,37 @@ trait RowsTrait
         $keys = [];
 
         foreach ($this->rows as &$row) {
+            if ($row['isNew']) {
+                continue;
+            }
+
             $keys[] = $this->rowFirstUnique($row);
 
             $this->markRowAsNew($row);
         }
         unset($row);
 
-        $query = $this->newDeleteQuery()->where($this->firstUnique(), $keys);
+        if ($keys) {
+            $query = $this->newDeleteQuery()->where($this->firstUnique(), $keys);
 
-        $this->executeQuery($query);
+            $this->driver()->execute(...$query->toSql());
+        }
 
         return $this;
+    }
+
+    public function row(int $number)
+    {
+        if (!isset($this->rows[$number])) {
+            return null;
+        }
+
+        return $this->cleanClone()->appendRecordRef(
+            $this->rows[$number]['record'],
+            $this->rows[$number]['isNew'],
+            $this->rows[$number]['modified'],
+            true
+        );
     }
 
     public function toArray(bool $full = false): array
@@ -323,6 +346,10 @@ trait RowsTrait
 
     public function hasMany(Model $relationshipTable, $relationshipKey, $tableKey = null)
     {
+        $relationshipTable = clone $relationshipTable;
+
+        $relationshipTable->cleanup();
+
         if ($this->count()) {
             $relationshipKey = (array) $relationshipKey;
 
@@ -332,13 +359,13 @@ trait RowsTrait
 
             $tableKey = (array) $tableKey;
 
-            $values = $this->get($tableKey);
+            $values = $this->getMultiple($tableKey);
 
             $relationshipTable->setWhereApplier(function (WhereClause $query) use ($relationshipKey, $values) {
                 $query->where($relationshipKey, $values);
             });
 
-            $filters = array_combine($relationshipKey, $this->getFirst($tableKey));
+            $filters = array_combine($relationshipKey, $this->getFirstMultiple($tableKey));
 
             $relationshipTable->setDefaults($filters);
         }
@@ -348,6 +375,10 @@ trait RowsTrait
 
     public function belongsTo(Model $referenceTable, $tableKey, $referenceTableKey = null)
     {
+        $referenceTable = clone $referenceTable;
+
+        $referenceTable->cleanup();
+
         $tableKey = (array) $tableKey;
 
         if (!$referenceTableKey) {
@@ -356,21 +387,19 @@ trait RowsTrait
 
         $referenceTableKey = (array) $referenceTableKey;
 
-        $values = $this->get($tableKey);
+        $values = $this->getMultiple($tableKey);
 
-        return $referenceTable->where($referenceTableKey, $values)->fetchRow();
+//        return $referenceTable->where($referenceTableKey, $values)->fetchRow();
 
-        /*
-        $referenceTable->applyOnWhere(function (WhereClauseInterface $query) use ($referenceTableKey, $values) {
+        $referenceTable->setWhereApplier(function (WhereClause $query) use ($referenceTableKey, $values) {
             $query->where($referenceTableKey, $values);
         });
 
-        $filters = array_combine($referenceTableKey, $this->getFirst($tableKey));
+        $filters = array_combine($referenceTableKey, $this->getFirstMultiple($tableKey));
 
         $referenceTable->setDefaults($filters);
 
         return $referenceTable;
-        */
     }
 
     public function count()
@@ -409,10 +438,10 @@ trait RowsTrait
 
     protected function hasInRow(array &$row, string $column): bool
     {
-        return !array_key_exists($column, $row['record']);
+        return (bool) ($row['record'][$column] ?? false);
     }
 
-    protected function setInRow(array &$row, string $column, string $value)
+    protected function setInRow(array &$row, string $column, $value)
     {
         if ($row['record'][$column] !== $value) {
             if ($row['isNew']) {
@@ -433,11 +462,7 @@ trait RowsTrait
             return $row['modified'][$column];
         }
 
-        if (array_key_exists($column, $row['record'])) {
-            return $row['record'][$column];
-        }
-
-        return null;
+        return $row['record'][$column] ?? null;
     }
 
     protected function rowFirstUnique(array &$row)

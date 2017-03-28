@@ -583,7 +583,10 @@ trait TableTrait
 
     protected function loadSchema()
     {
-        $schema = $this->describe();
+        $schema = (array) $this->describe() + [
+            'columns' => [],
+            'primary' => [],
+        ];
 
         if ($this->columns === false) {
             $this->columns = $schema['columns'];

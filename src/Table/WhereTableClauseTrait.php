@@ -17,7 +17,9 @@ trait WhereTableClauseTrait
 
     public function assignWhereAppliers(WhereClauseStrategy $strategy)
     {
-        if ($this->whereAppliers and $items = $strategy->getWhere()) {
+        if ($this->whereAppliers) {
+            $items = $strategy->getWhere();
+
             $strategy->clearWhere();
 
             foreach ($this->whereAppliers as $applier) {
@@ -28,13 +30,15 @@ trait WhereTableClauseTrait
                 $strategy->whereStrategy($clause);
             }
 
-            $clause = $this->driver()->where();
+            if ($items) {
+                $clause = $this->driver()->where();
 
-            foreach ($items as $where) {
-                $clause->whereLogic($where['logic'], $where['sql'], $where['params']);
+                foreach ($items as $where) {
+                    $clause->whereLogic($where['logic'], $where['sql'], $where['params']);
+                }
+
+                $strategy->whereStrategy($clause);
             }
-
-            $strategy->whereStrategy($clause);
         }
 
         return $this;

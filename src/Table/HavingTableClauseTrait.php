@@ -19,7 +19,9 @@ trait HavingTableClauseTrait
 
     public function assignHavingAppliers(HavingClauseStrategy $strategy)
     {
-        if ($this->havingAppliers and $items = $strategy->getHaving()) {
+        if ($this->havingAppliers) {
+            $items = $strategy->getHaving();
+
             $strategy->clearHaving();
 
             foreach ($this->havingAppliers as $applier) {
@@ -30,13 +32,15 @@ trait HavingTableClauseTrait
                 $strategy->havingStrategy($clause);
             }
 
-            $clause = $this->driver()->having();
+            if ($items) {
+                $clause = $this->driver()->having();
 
-            foreach ($items as $where) {
-                $clause->havingLogic($where['logic'], $where['sql'], $where['params']);
+                foreach ($items as $where) {
+                    $clause->havingLogic($where['logic'], $where['sql'], $where['params']);
+                }
+
+                $strategy->havingStrategy($clause);
             }
-
-            $strategy->havingStrategy($clause);
         }
 
         return $this;

@@ -5,7 +5,7 @@ namespace Greg\Orm;
 use Greg\Orm\Driver\DriverStrategy;
 use Greg\Support\Obj;
 
-abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
+abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \Serializable
 {
     use RowTrait;
 
@@ -65,11 +65,50 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         return $this;
     }
 
+    public function serialize()
+    {
+        $data = [];
+
+        foreach ($this->__sleep() as $property) {
+            $data[$property] = $this->{$property};
+        }
+
+        return serialize($data);
+    }
+
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+
+        foreach ($this->__sleep() as $property) {
+            $this->{$property} = $data[$property];
+        }
+    }
+
     public function __sleep()
     {
-        return array_diff(array_keys(get_object_vars($this)), [
-            'driver',
-        ]);
+        return [
+            // Rows
+            'fillable',
+            'guarded',
+            'rows',
+            'rowsTotal',
+            'rowsOffset',
+            'rowsLimit',
+
+            // Table
+            'prefix',
+            'name',
+            'alias',
+            'label',
+            'columns',
+            'primary',
+            'autoIncrement',
+            'unique',
+            'nameColumn',
+            'casts',
+            'defaults',
+        ];
     }
 
     public function __wakeup()

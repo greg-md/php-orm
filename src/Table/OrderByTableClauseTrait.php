@@ -15,7 +15,9 @@ trait OrderByTableClauseTrait
 
     public function assignOrderByAppliers(OrderByClauseStrategy $strategy)
     {
-        if ($this->orderByAppliers and $items = $strategy->getOrderBy()) {
+        if ($this->orderByAppliers) {
+            $items = $strategy->getOrderBy();
+
             $strategy->clearOrderBy();
 
             foreach ($this->orderByAppliers as $applier) {

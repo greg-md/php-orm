@@ -6,6 +6,7 @@ use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Model;
 use Greg\Orm\ModelTestingAbstract;
 use Greg\Orm\Query\QueryStrategy;
+use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\SqlException;
 
 class ModelTest extends ModelTestingAbstract
@@ -246,6 +247,41 @@ class ModelTest extends ModelTestingAbstract
         $row = $rows->search(function (Model $row) {
             return $row['Id'] === 2;
         }, false);
+
+        $this->assertEquals(2, $row['Id']);
+
+        $row = $rows->search(function (Model $row) {
+            return $row['Id'] === 3;
+        }, false);
+
+        $this->assertNull($row);
+    }
+
+    public function testCanSearchWhere()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $rows->appendRecord(['Id' => 2]);
+
+        $row = $rows->searchWhere('Id', 2);
+
+        $this->assertEquals(2, $row['Id']);
+
+        $row = $rows->searchWhere('Id', '>', 1);
+
+        $this->assertEquals(2, $row['Id']);
+
+        $row = $rows->searchWhere('Id', '<', 2);
+
+        $this->assertEquals(1, $row['Id']);
+
+        $row = $rows->searchWhere('Id', '!=', 1);
+
+        $this->assertEquals(2, $row['Id']);
+
+        $row = $rows->searchWhere('Id', 'in', [2, 3]);
 
         $this->assertEquals(2, $row['Id']);
     }
@@ -685,6 +721,28 @@ class ModelTest extends ModelTestingAbstract
         $this->driverMock->method('column')->willReturn(20);
 
         $pagination = $this->model->pagination(10, 10);
+
+        $this->assertEquals(10, $pagination->rowsLimit());
+
+        $this->assertEquals(10, $pagination->rowsOffset());
+
+        $this->assertEquals(20, $pagination->rowsTotal());
+    }
+
+    public function testCanFetchPaginationTotalQuery()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock->method('fetchYield')->willReturnOnConsecutiveCalls([
+            ['Id' => 1],
+            ['Id' => 2],
+        ]);
+
+        $this->driverMock->method('column')->willReturn(20);
+
+        $pagination = $this->model->pagination(10, 10, function(SelectQuery $query) {
+            $query->where('foo', 'bar');
+        });
 
         $this->assertEquals(10, $pagination->rowsLimit());
 
@@ -1323,6 +1381,256 @@ class ModelTest extends ModelTestingAbstract
         $this->assertEquals($value = ['Foo' => 'bar'], $this->model->prepareValue('Foo', json_encode($value)));
 
         $this->assertEquals(json_encode($value), $this->model->prepareValue('Foo', $value, true));
+    }
+
+    public function testCanDetermineIfModelRowsHasColumn()
+    {
+        $this->mockDescribe();
+
+        $this->assertFalse($this->model->has('Id'));
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $this->assertTrue($rows->has('Id'));
+
+        $this->assertFalse($rows->has('Undefined'));
+    }
+
+    public function testCanDetermineIfModelRowsHasMultipleColumns()
+    {
+        $this->mockDescribe();
+
+        $this->assertFalse($this->model->hasMultiple(['Id']));
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $this->assertTrue($rows->hasMultiple(['Id']));
+
+        $this->assertFalse($rows->hasMultiple(['Id', 'Undefined']));
+
+        $this->assertTrue($rows->hasMultiple([]));
+    }
+
+    public function testCanSetColumn()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $rows->appendRecord(['Id' => 2]);
+
+        $rows->set('Id', 3);
+
+        $this->assertEquals(3, $rows->row(0)['Id']);
+
+        $this->assertEquals(3, $rows->row(0)['Id']);
+    }
+
+    public function testCanSetMultipleColumns()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $rows->appendRecord(['Id' => 2]);
+
+        $rows->setMultiple([
+            'Id' => 3,
+        ]);
+
+        $this->assertEquals(3, $rows->row(0)['Id']);
+
+        $this->assertEquals(3, $rows->row(0)['Id']);
+    }
+
+    public function testCanGetColumnsValues()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $rows->appendRecord(['Id' => 2]);
+
+        $this->assertEquals([1, 2], $rows->get('Id'));
+    }
+
+    public function testCanGetModifiedValue()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1])->save();
+
+        $this->assertEquals(1, $rows['Id']);
+
+        $rows->set('Id', 2);
+
+        $this->assertEquals(2, $rows['Id']);
+    }
+
+    public function testCanGetMultipleColumnsValues()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $rows->appendRecord(['Id' => 2]);
+
+        $this->assertEquals(['Id' => [1, 2]], $rows->getMultiple(['Id']));
+    }
+
+    public function testCanSaveValues()
+    {
+        $this->mockDescribe();
+
+        $this->driverMock
+            ->expects($this->once())
+            ->method('lastInsertId')
+            ->willReturn(1);
+
+        $rows = $this->model->create(['Id' => null]);
+
+        $rows->save();
+
+        $this->assertFalse($rows->isNew());
+
+        $this->driverMock
+            ->expects($this->once())
+            ->method('execute')
+            ->with('UPDATE `Table` SET `Id` = ? WHERE `Id` = ?', ['2', '1']);
+
+        $rows->set('Id', 2);
+
+        $rows->save();
+    }
+
+    public function testCanDestroyRows()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1])->save();
+
+        $rows->appendRecord(['Id' => 2], true);
+
+        $this->driverMock
+            ->expects($this->once())
+            ->method('execute')
+            ->with('DELETE FROM `Table` WHERE `Id` IN (?)', ['1']);
+
+        $rows->destroy();
+    }
+
+    public function testCanGetRow()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $this->assertNotNull($rows->row(0));
+
+        $this->assertNull($rows->row(1));
+    }
+    
+    public function testCanGetToArray()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $this->assertEquals([['Id' => 1]], $rows->toArray());
+
+        $this->assertEquals([['record' => ['Id' => 1], 'isNew' => true, 'modified' => []]], $rows->toArray(true));
+    }
+
+    public function testCanChangeRowStatus()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $rows->markAsOld();
+
+        $this->assertFalse($rows->row(0)->isNew());
+
+        $rows->markAsNew();
+
+        $this->assertTrue($rows->row(0)->isNew());
+    }
+
+    public function testCanGetMany()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $manyRows = $rows->hasMany($this->model, 'Id');
+
+        $this->assertInstanceOf(Model::class, $manyRows);
+
+        $this->assertEquals('SELECT * FROM `Table` WHERE (`Id` IN (?))', $manyRows->select('*')->toString());
+    }
+
+    public function testCanBelongsTo()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1]);
+
+        $belongsTo = $rows->belongsTo($this->model, 'Id');
+
+        $this->assertInstanceOf(Model::class, $belongsTo);
+
+        $this->assertEquals('SELECT * FROM `Table` WHERE (`Id` IN (?))', $belongsTo->select('*')->toString());
+    }
+
+    public function testCanSetUnmodified()
+    {
+        $this->mockDescribe();
+
+        $rows = $this->model->create(['Id' => 1])->save();
+
+        $this->assertEmpty($rows->originalModified());
+
+        $rows->set('Id', 2);
+
+        $this->assertNotEmpty($rows->originalModified());
+
+        $rows->set('Id', 1);
+
+        $this->assertEquals([], $rows->originalModified());
+    }
+
+    public function testCanThrowExceptionIfColumnIsNotFillable()
+    {
+        $this->mockDescribe();
+
+        $driver = $this->driverMock;
+
+        /** @var Model $row */
+        $row = new class(['Id' => 1], $driver) extends Model {
+            protected $name = 'Table';
+
+            protected $fillable = [];
+        };
+
+        $this->expectException(\Exception::class);
+
+        $row['Id'] = 2;
+    }
+
+    public function testCanSetDriver()
+    {
+        $this->model->setDriver($this->driverMock);
+
+        $this->assertEquals($this->driverMock, $this->model->getDriver());
+    }
+
+    public function testCanSerialize()
+    {
+        $data = $this->model->serialize();
+
+        $this->model->unserialize($data);
+
+        $this->assertEquals($data, $this->model->serialize());
     }
 
     protected function mockDescribe()

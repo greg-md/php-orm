@@ -163,4 +163,15 @@ trait RowTrait
 
         return $this->getFromRow($this->firstRow(), $column);
     }
+
+    protected function getFirstMultiple(array $columns)
+    {
+        $items = [];
+
+        foreach ($columns as $column) {
+            $items[$column] = $this->getFirst($column);
+        }
+
+        return $items;
+    }
 }

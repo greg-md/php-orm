@@ -1016,6 +1016,8 @@ class Conditions extends SqlAbstract
                 $value = (string) $value;
             }
             unset($value);
+
+            $values = array_values($values);
         } else {
             if ($valueCallable) {
                 $values = call_user_func_array($valueCallable, [(string) $values]);
