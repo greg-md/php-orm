@@ -112,7 +112,6 @@ trait RowsTrait
             $query->clearLimit();
             $query->clearOffset();
         }
-
         [$sql, $params] = $query->clearColumns()->count()->toSql();
 
         $this->rowsTotal = $this->driver()->column($sql, $params);
@@ -144,7 +143,7 @@ trait RowsTrait
             }
         }
 
-        return !!$this->rows;
+        return (bool) $this->rows;
     }
 
     public function set(string $column, $value)

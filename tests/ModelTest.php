@@ -740,7 +740,7 @@ class ModelTest extends ModelTestingAbstract
 
         $this->driverMock->method('column')->willReturn(20);
 
-        $pagination = $this->model->pagination(10, 10, function(SelectQuery $query) {
+        $pagination = $this->model->pagination(10, 10, function (SelectQuery $query) {
             $query->where('foo', 'bar');
         });
 
@@ -1529,7 +1529,7 @@ class ModelTest extends ModelTestingAbstract
 
         $this->assertNull($rows->row(1));
     }
-    
+
     public function testCanGetToArray()
     {
         $this->mockDescribe();
