@@ -1,5 +1,43 @@
 # Driver Strategy
 
+A driver works directly with the database.
+
+### Mysql Driver
+
+Mysql use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
+
+Let say you have a database named `example_db` on `127.0.0.1` with username `john` and password `doe`.
+All you have to do is to initialize the driver with a `PDO` connector strategy.
+
+```php
+$driver = new \Greg\Orm\Driver\Mysql\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+{
+    public function connect(): \PDO
+    {
+        return new \PDO('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe');
+    }
+});
+```
+
+### Sqlite Driver
+
+Sqlite use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
+
+Let say your database is in `/var/db/example_db.sqlite`.
+All you have to do is to initialize the driver with a `PDO` connector strategy.
+
+```php
+$driver = new \Greg\Orm\Driver\Sqlite\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+{
+    public function connect(): \PDO
+    {
+        return new \PDO('sqlite:/var/db/example_db.sqlite');
+    }
+});
+```
+
+# Methods
+
 Below you can find a list of supported methods.
 
 * [transaction](#transaction) - Process data in a transaction;
