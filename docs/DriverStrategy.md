@@ -1,6 +1,6 @@
 # Driver Strategy
 
-A driver works directly with the database.
+`Greg\Orm\Driver\DriverStrategy` works directly with the database.
 
 ### Mysql Driver
 
@@ -74,6 +74,23 @@ Below you can find a list of supported methods.
 * [offset](#offset)
 
 ## transaction
+
+Turns off autocommit mode and execute user defined process.
+If run successfully, then the transaction will be committed, otherwise it will be rolled back.
+
+```php
+public function transaction(callable $callable);
+```
+
+`$callable` - The callable.
+
+```php
+$driver->transaction(function(Greg\Orm\Driver\DriverStrategy $driver) {
+    $driver->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
+});
+```
+
+_Example:_
 
 ## inTransaction
 

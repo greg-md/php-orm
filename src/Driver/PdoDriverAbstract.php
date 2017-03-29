@@ -78,13 +78,13 @@ abstract class PdoDriverAbstract extends DriverAbstract
             call_user_func_array($callable, [$this]);
 
             $this->commit();
+
+            return $this;
         } catch (\Exception $e) {
             $this->rollBack();
 
             throw $e;
         }
-
-        return $this;
     }
 
     /**
