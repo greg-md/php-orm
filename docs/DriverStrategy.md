@@ -40,11 +40,11 @@ $driver = new \Greg\Orm\Driver\Sqlite\SqliteDriver(new class implements \Greg\Or
 
 Below you can find a list of supported methods.
 
-* [transaction](#transaction) - Process data in a transaction;
+* [transaction](#transaction) - Execute a process in a transaction;
 * [inTransaction](#inTransaction) - Determine if inside a transaction;
 * [beginTransaction](#beginTransaction) - Initiates a transaction;
 * [commit](#commit) - Commits a transaction;
-* [rollBack](#rollBack)
+* [rollBack](#rollBack) - Rolls back a transaction;
 * [execute](#execute)
 * [lastInsertId](#lastInsertId)
 * [quote](#quote)
@@ -75,7 +75,7 @@ Below you can find a list of supported methods.
 
 ## transaction
 
-Turns off autocommit mode and execute user defined process.
+Turns off autocommit mode and execute user defined callable.
 If run successfully, then the transaction will be committed, otherwise it will be rolled back.
 
 ```php
@@ -135,3 +135,30 @@ try {
     $driver->rollBack();
 }
 ```
+
+## commit
+
+Commits a transaction, returning the database connection to autocommit mode
+until the next call to [beginTransaction](#beginTransaction) starts a new transaction.
+
+```php
+public function commit(): bool
+```
+
+_Example:_
+
+See [beginTransaction](#beginTransaction).
+
+## rollBack
+
+Rolls back the current transaction, as initiated by [beginTransaction](#beginTransaction).
+If the database was set to autocommit mode,
+this function will restore autocommit mode after it has rolled back the transaction.
+
+```php
+public function rollBack(): bool
+```
+
+_Example:_
+
+See [beginTransaction](#beginTransaction).
