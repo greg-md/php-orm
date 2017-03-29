@@ -17,7 +17,7 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 * **Minimum Memory Usage**
 * **Lightweight Package**
 * **Powerful Query Builder**
-* **Powerful Model**
+* **Powerful Active Record Model**
 * **Powerful Migrations**
 * **Easy to extend**
 * **Multiple drivers support**
@@ -48,20 +48,20 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 # Documentation
 
 * [Driver Strategy](#driver-strategy) - Works directly with database. [Full Documentation](docs/DriverStrategy.md).
-* [Query Builder](#query-builder) - Build SQL queries. [Full Documentation](docs/DriverStrategy.md).
-* [Model](#model) - All you need to work with a database table. [Full Documentation](docs/DriverStrategy.md).
+* [Query Builder](#query-builder) - Build SQL queries. [Full Documentation](docs/QueryBuilder.md).
+* [Active Record Model](#active-record-model) - All you need to work with a database table. [Full Documentation](docs/ActiveRecordModel.md).
 * [Migrations](#migrations) - Database migrations. [Full Documentation](docs/Migrations.md).
 
 ## Driver Strategy
 
-A driver works directly with the database. [Full Documentation](docs/Migrations.md).
+A driver works directly with the database. [Full Documentation](docs/DriverStrategy.md).
 
 ### Mysql Driver
 
 Mysql use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
 
 Let say you have a database named `example_db` on `127.0.0.1` with username `john` and password `doe`.
-All you have to do is to initialize the driver with a `PDO` connector.
+All you have to do is to initialize the driver with a `PDO` connector strategy.
 
 ```php
 $driver = new \Greg\Orm\Driver\Mysql\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
@@ -78,7 +78,7 @@ $driver = new \Greg\Orm\Driver\Mysql\MysqlDriver(new class implements \Greg\Orm\
 Sqlite use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
 
 Let say your database is in `/var/db/example_db.sqlite`.
-All you have to do is to initialize the driver with a `PDO` connector.
+All you have to do is to initialize the driver with a `PDO` connector strategy.
 
 ```php
 $driver = new \Greg\Orm\Driver\Sqlite\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
