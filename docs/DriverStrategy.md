@@ -45,8 +45,8 @@ Below you can find a list of supported methods.
 * [beginTransaction](#beginTransaction) - Initiates a transaction;
 * [commit](#commit) - Commits a transaction;
 * [rollBack](#rollBack) - Rolls back a transaction;
-* [execute](#execute)
-* [lastInsertId](#lastInsertId)
+* [execute](#execute) - Execute an SQL statement and return the number of affected rows;
+* [lastInsertId](#lastInsertId) - Returns the ID of the last inserted row or sequence value;
 * [quote](#quote)
 * [fetch](#fetch)
 * [fetchAll](#fetchAll)
@@ -162,3 +162,21 @@ public function rollBack(): bool
 _Example:_
 
 See [beginTransaction](#beginTransaction).
+
+## execute
+
+Executes an SQL statement in a single function call,
+returning the number of rows affected by the statement.
+
+```php
+public function execute(string $sql, array $params = []): int
+```
+
+`$sql` - The SQL statement to prepare and execute;  
+`$params` - SQL statement parameters.
+
+_Example:_
+
+```php
+$driver->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
+```
