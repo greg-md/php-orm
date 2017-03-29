@@ -73,7 +73,7 @@ interface DriverStrategy
      *
      * @return \string[]
      */
-    public function fetch(string $sql, array $params = []);
+    public function fetch(string $sql, array $params = []): ?array;
 
     /**
      * @param string $sql
@@ -81,7 +81,7 @@ interface DriverStrategy
      *
      * @return \string[][]
      */
-    public function fetchAll(string $sql, array $params = []);
+    public function fetchAll(string $sql, array $params = []): array;
 
     /**
      * @param string $sql
@@ -107,7 +107,7 @@ interface DriverStrategy
      *
      * @return \string[]
      */
-    public function columnAll(string $sql, array $params = [], string $column = '0');
+    public function columnAll(string $sql, array $params = [], string $column = '0'): array;
 
     /**
      * @param string $sql
@@ -126,7 +126,7 @@ interface DriverStrategy
      *
      * @return \string[]
      */
-    public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1');
+    public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array;
 
     /**
      * @param string $sql
