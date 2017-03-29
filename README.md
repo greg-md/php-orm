@@ -43,6 +43,8 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 # Installation
 
+You can add this library as a local, per-project dependency to your project using [Composer](https://getcomposer.org/):
+
 `composer require greg-md/php-orm`
 
 # Documentation
