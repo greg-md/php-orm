@@ -84,13 +84,13 @@ public function transaction(callable $callable);
 
 `$callable` - The callable.
 
+_Example:_
+
 ```php
 $driver->transaction(function(Greg\Orm\Driver\DriverStrategy $driver) {
     $driver->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
 });
 ```
-
-_Example:_
 
 ## inTransaction
 
