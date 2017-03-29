@@ -50,8 +50,8 @@ Below you can find a list of supported methods.
 * [quote](#quote) - Quotes a string for use in a query;
 * [fetch](#fetch) - Fetches the next row from a result set;
 * [fetchAll](#fetchAll) - Returns an array containing all of the result set rows;
-* [fetchYield](#fetchYield)
-* [column](#column)
+* [fetchYield](#fetchYield) - Returns a generator containing all of the result set rows;
+* [column](#column) - Returns a single column from the next row of a result set;
 * [columnAll](#columnAll)
 * [columnYield](#columnYield)
 * [pairs](#pairs)
@@ -253,4 +253,52 @@ _Example:_
 
 ```php
 $driver->fetchAll('Select `Column` from `Table`'); // result: [["Column" => 'foo'], ["Column" => 'bar']]
+```
+
+## fetchYield
+
+Returns a generator containing all of the remaining rows in the result set.
+The generator represents each row as either an array of column values
+or an object with properties corresponding to each column name.
+An empty array is returned if there are zero results to fetch.
+
+```php
+public function fetchYield(string $sql, array $params = []): array
+```
+
+`$sql` - The SQL statement to prepare and execute;  
+`$params` - SQL statement parameters.
+
+_Example:_
+
+```php
+$generator = $driver->fetchYield('Select `Column` from `Table`');
+
+foreach($generator as $row) {
+    // 1st result: ["Column" => 'foo']
+    // 2nd result: ["Column" => 'bar']
+}
+```
+
+## column
+
+Returns a single column from the next row of a result set or FALSE if there are no more rows.
+
+```php
+public function column(string $sql, array $params = [], string $column = '0')
+```
+
+`$sql` - The SQL statement to prepare and execute;  
+`$params` - SQL statement parameters;  
+`$column` - The column you wish to retrieve from the row. If no value is supplied, it fetches the first column.
+
+_Example:_
+
+```php
+$generator = $driver->fetchYield('Select `Column` from `Table`');
+
+foreach($generator as $row) {
+    // 1st result: ["Column" => 'foo']
+    // 2nd result: ["Column" => 'bar']
+}
 ```
