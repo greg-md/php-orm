@@ -16,7 +16,7 @@ trait DeleteTableQueryTrait
     use TableQueryTrait;
 
     /**
-     * @param string    $table
+     * @param string   $table
      * @param string[] ...$tables
      *
      * @return $this

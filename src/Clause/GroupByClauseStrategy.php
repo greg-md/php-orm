@@ -12,7 +12,7 @@ interface GroupByClauseStrategy
     public function groupBy(string $column);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this

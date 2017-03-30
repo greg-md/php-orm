@@ -268,7 +268,7 @@ interface WhereClauseStrategy extends ClauseStrategy
     public function orWhereStrategy(WhereClauseStrategy $strategy);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -276,7 +276,7 @@ interface WhereClauseStrategy extends ClauseStrategy
     public function whereRaw(string $sql, string ...$params);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -322,7 +322,7 @@ interface WhereClauseStrategy extends ClauseStrategy
     public function whereNotExists(SelectQuery $sql);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -330,7 +330,7 @@ interface WhereClauseStrategy extends ClauseStrategy
     public function whereExistsRaw(string $sql, string ...$params);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this

@@ -126,7 +126,7 @@ class UpdateQuery extends SqlAbstract implements
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this

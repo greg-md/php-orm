@@ -27,7 +27,7 @@ interface OrderByClauseStrategy
     public function orderDesc(string $column);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this

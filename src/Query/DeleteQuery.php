@@ -35,7 +35,7 @@ class DeleteQuery extends SqlAbstract implements
     private $rowsFrom = [];
 
     /**
-     * @param string    $table
+     * @param string   $table
      * @param string[] ...$tables
      *
      * @return $this

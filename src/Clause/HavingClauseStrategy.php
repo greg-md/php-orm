@@ -267,7 +267,7 @@ interface HavingClauseStrategy
     public function orHavingStrategy(HavingClauseStrategy $strategy);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -275,7 +275,7 @@ interface HavingClauseStrategy
     public function havingRaw(string $sql, string ...$params);
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this

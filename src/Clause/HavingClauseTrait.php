@@ -433,7 +433,7 @@ trait HavingClauseTrait
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -446,7 +446,7 @@ trait HavingClauseTrait
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this

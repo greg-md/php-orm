@@ -437,8 +437,8 @@ trait TableTrait
     /**
      * @todo Need to inject columns into raw select
      *
-     * @param array     $columns
-     * @param string    $sql
+     * @param array    $columns
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return int

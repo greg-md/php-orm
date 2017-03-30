@@ -78,7 +78,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param $table
-     * @param string    $column
+     * @param string   $column
      * @param string[] ...$columns
      *
      * @return $this
@@ -92,7 +92,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param $table
-     * @param string    $column
+     * @param string   $column
      * @param string[] ...$columns
      *
      * @return $this
@@ -118,7 +118,7 @@ class SelectQuery extends SqlAbstract implements
     }
 
     /**
-     * @param string    $column
+     * @param string   $column
      * @param string[] ...$columns
      *
      * @return $this
@@ -193,7 +193,7 @@ class SelectQuery extends SqlAbstract implements
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -353,7 +353,7 @@ class SelectQuery extends SqlAbstract implements
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -366,7 +366,7 @@ class SelectQuery extends SqlAbstract implements
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -379,7 +379,7 @@ class SelectQuery extends SqlAbstract implements
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this

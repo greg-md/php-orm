@@ -590,7 +590,7 @@ class Conditions extends SqlAbstract
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
@@ -603,7 +603,7 @@ class Conditions extends SqlAbstract
     }
 
     /**
-     * @param string    $sql
+     * @param string   $sql
      * @param string[] ...$params
      *
      * @return $this
