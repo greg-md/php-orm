@@ -62,6 +62,59 @@ You can add this library as a local, per-project dependency to your project usin
 
 ## Driver Strategy
 
+### Quick Start
+
+There are two ways of working with driver strategies. Directly or via a driver manager.
+
+> A driver manager could have many driver strategies and a default one.
+> The driver manager implements the same driver strategy and could act as default one if it's defined.
+
+In the next example we will use a driver manager with multiple driver strategies.
+
+**First of all**, you have to initialize a driver manager and register some strategies:
+
+```php
+$cache = new \Greg\Orm\Driver\DriverManager();
+
+// Register a MySQL driver
+$cache->register('driver1', function() {
+    return new \Greg\Orm\Driver\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+    {
+        public function connect(): \PDO
+        {
+            return new \PDO('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe');
+        }
+    });
+});
+
+// Register a SQLite driver
+$cache->register('driver2', function() {
+    return new \Greg\Orm\Driver\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+    {
+        public function connect(): \PDO
+        {
+            return new \PDO('sqlite:/var/db/example_db.sqlite');
+        }
+    });
+});
+```
+
+**Optionally**, you can define a default driver to be used by the driver manager.
+
+```php
+$cache->setDefaultDriverName('driver1');
+```
+
+**Then**, you can work with this drivers:
+
+```php
+// Fetch a statement in SQLite
+$cache->driver('driver2')->fetchAll('SELECT * FROM `FooTable`');
+
+// Fetch a statement in default driver, which is "driver1"
+$cache->fetchAll('SELECT * FROM `BarTable`');
+```
+
 Full documentation can be found [here](docs/DriverStrategy.md).
 
 ## Query Builder

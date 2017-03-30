@@ -15,7 +15,7 @@ Let say you have a database named `example_db` on `127.0.0.1` with username `joh
 All you have to do is to initialize the driver with a `PDO` connector strategy.
 
 ```php
-$driver = new \Greg\Orm\Driver\Mysql\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+$driver = new \Greg\Orm\Driver\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
 {
     public function connect(): \PDO
     {
@@ -32,7 +32,7 @@ Let say your database is in `/var/db/example_db.sqlite`.
 All you have to do is to initialize the driver with a `PDO` connector strategy.
 
 ```php
-$driver = new \Greg\Orm\Driver\Sqlite\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
+$driver = new \Greg\Orm\Driver\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
 {
     public function connect(): \PDO
     {
