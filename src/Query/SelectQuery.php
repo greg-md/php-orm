@@ -115,8 +115,8 @@ class SelectQuery extends SqlAbstract implements
     {
         array_unshift($columns, $column);
 
-        foreach ($columns as $alias => $column) {
-            $this->column($column, !is_int($alias) ? $alias : null);
+        foreach ($columns as $column) {
+            $this->column($column);
         }
 
         return $this;

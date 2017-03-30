@@ -139,9 +139,30 @@ public function columns(string $column, string ...$columns): $this;
 _Example:_
 
 ```php
-$query->columns('Column1', 'Column2')->from('Table');
+$query->columns('Column1 as c1', 'Column2')->from('Table');
 
-echo $query->toString(); // result: SELECT `Column1`, `Column2` FROM `Table`
+echo $query->toString(); // result: SELECT `Column1` AS `c1`, `Column2` FROM `Table`
+```
+
+## column
+
+Select column.
+
+```php
+public function column(string $column, ?string $alias = null): $this;
+```
+
+`$column` - Select column.
+
+_Example:_
+
+```php
+$query
+    ->column('Column1 as c1')
+    ->column('Column2', 'c2')
+    ->from('Table');
+
+echo $query->toString(); // result: SELECT `Column1` AS `c1`, `Column2` AS `c2` FROM `Table`
 ```
 
 # Update Statement
