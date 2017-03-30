@@ -5,7 +5,7 @@ A powerful query builder for web-artisans.
 Next, you will find a list of available statements and clauses.
 
 * **Statements**
-    * [Select](#select-statement) - `SELECT` statement;
+    * [Select](#select-statement) - `SELECT` is used to retrieve rows selected from one or more tables;
     * [Update](#update-statement) - `UPDATE` statement;
     * [Delete](#delete-statement) - `DELETE` statement;
     * [Insert](#insert-statement) - `INSERT` statement.
@@ -21,7 +21,17 @@ Next, you will find a list of available statements and clauses.
 
 # Select Statement
 
-`SELECT` statement.
+`SELECT` is used to retrieve rows selected from one or more tables.
+
+_Example:_
+
+```php
+$query = new Greg\Orm\Query\SelectQuery();
+
+$query->from('Table');
+
+$query->toString(); // result: SELECT * FROM `Table`
+```
 
 **Supported clauses**:
 
@@ -41,7 +51,7 @@ Next, you will find a list of available statements and clauses.
 
 **Supported methods**:
 
-* [distinct](#distinct)
+* [distinct](#distinct) - The `DISTINCT` is used to return only distinct (different) values.
 * [fromTable](#fromtable)
 * [columnsFrom](#columnsfrom)
 * [columns](#columns)
@@ -75,6 +85,26 @@ Next, you will find a list of available statements and clauses.
 * [selectToString](#selecttostring)
 * [toSql](#tosql)
 * [toString](#tostring)
+
+## distinct
+
+The `DISTINCT` is used to return only distinct (different) values.
+
+Inside a table, a column often contains many duplicate values and sometimes you only want to list the different (distinct) values.
+
+```php
+public function distinct(bool $value = true): $this;
+```
+
+`$value` - `true` or `false`. Default `true`.
+
+_Example:_
+
+```php
+$query->distinct()->from('Table');
+
+echo $query->toString(); // result: SELECT DISTINCT * FROM `Table`
+```
 
 # Update Statement
 
