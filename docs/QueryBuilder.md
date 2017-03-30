@@ -2,7 +2,7 @@
 
 A powerful query builder for web-artisans.
 
-# Table of Contents:
+Next, you will find a list of available statements and clauses.
 
 * **Statements**
     * [Select](#select-statement) - `SELECT` statement;
@@ -23,7 +23,7 @@ A powerful query builder for web-artisans.
 
 `SELECT` statement.
 
-List of **supported clauses**:
+**Supported clauses**:
 
 * [From](#from-clause) - `FROM` clause;
 * [Join](#join-clause) - `JOIN` clause;
@@ -34,12 +34,12 @@ List of **supported clauses**:
 * [Limit](#limit-clause) - `LIMIT` clause;
 * [Offset](#offset-clause) - `OFFSET` clause.
 
-List of **magic methods**:
+**Magic methods**:
 
 * [__toString](#__tostring)
 * [__clone](#__clone)
 
-List of **supported methods**:
+**Supported methods**:
 
 * [distinct](#distinct)
 * [fromTable](#fromtable)
