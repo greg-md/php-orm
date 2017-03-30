@@ -8,6 +8,36 @@ class FromClause extends SqlAbstract implements ClauseStrategy, FromClauseStrate
 {
     use FromClauseTrait;
 
+//    public function table($table, ...$tables)
+//    {
+//        return $this->from($table, ...$tables);
+//    }
+//
+//    public function raw(?string $alias, string $sql, string ...$params)
+//    {
+//        return $this->fromRaw($alias, $sql, ...$params);
+//    }
+//
+//    public function logic(?string $tableKey, $table, ?string $alias, array $params = [])
+//    {
+//        return $this->fromLogic($tableKey, $table, $alias, $params);
+//    }
+//
+//    public function has(): bool
+//    {
+//        return $this->hasFrom();
+//    }
+//
+//    public function get(): array
+//    {
+//        return $this->getFrom();
+//    }
+//
+//    public function clear()
+//    {
+//        return $this->clearFrom();
+//    }
+
     /**
      * @param JoinClauseStrategy|null $join
      * @param bool                    $useClause
