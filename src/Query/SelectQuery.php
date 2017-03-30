@@ -19,7 +19,6 @@ use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\SqlAbstract;
-use Greg\Orm\SqlException;
 
 class SelectQuery extends SqlAbstract implements
     QueryStrategy,
@@ -80,7 +79,7 @@ class SelectQuery extends SqlAbstract implements
     /**
      * @param $table
      * @param string    $column
-     * @param \string[] ...$columns
+     * @param string[] ...$columns
      *
      * @return $this
      */
@@ -94,7 +93,7 @@ class SelectQuery extends SqlAbstract implements
     /**
      * @param $table
      * @param string    $column
-     * @param \string[] ...$columns
+     * @param string[] ...$columns
      *
      * @return $this
      */
@@ -120,7 +119,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param string    $column
-     * @param \string[] ...$columns
+     * @param string[] ...$columns
      *
      * @return $this
      */
@@ -195,7 +194,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -355,7 +354,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -368,7 +367,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -381,7 +380,7 @@ class SelectQuery extends SqlAbstract implements
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */

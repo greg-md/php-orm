@@ -61,7 +61,7 @@ trait OrderByClauseTrait
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */

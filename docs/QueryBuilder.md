@@ -1,14 +1,14 @@
 # Query Builder
 
-A better query builder for web-artisans.
+A powerful query builder for web-artisans.
 
 # Table of Contents:
 
-* **Queries**
-    * [Select](#select-query) - `SELECT` query;
-    * [Update](#update-query) - `UPDATE` query;
-    * [Delete](#delete-query) - `DELETE` query;
-    * [Insert](#insert-query) - `INSERT` query.
+* **Statements**
+    * [Select](#select-statement) - `SELECT` statement;
+    * [Update](#update-statement) - `UPDATE` statement;
+    * [Delete](#delete-statement) - `DELETE` statement;
+    * [Insert](#insert-statement) - `INSERT` statement.
 * **Clauses**
     * [From](#from-clause) - `FROM` clause;
     * [Join](#join-clause) - `JOIN` clause;
@@ -19,9 +19,9 @@ A better query builder for web-artisans.
     * [Limit](#limit-clause) - `LIMIT` clause;
     * [Offset](#offset-clause) - `OFFSET` clause.
 
-# Select Query
+# Select Statement
 
-`SELECT` query.
+`SELECT` statement.
 
 List of **supported clauses**:
 
@@ -76,9 +76,9 @@ List of **supported methods**:
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Update Query
+# Update Statement
 
-`UPDATE` query.
+`UPDATE` statement.
 
 List of **supported clauses**:
 
@@ -113,9 +113,9 @@ List of **supported methods**:
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Delete Query
+# Delete Statement
 
-`DELETE` query.
+`DELETE` statement.
 
 List of **supported clauses**:
 
@@ -141,9 +141,9 @@ List of **supported methods**:
 * [toSql](#tosql)
 * [toString](#tostring)
 
-# Insert Query
+# Insert Statement
 
-`INSERT` query.
+`INSERT` statement.
 
 List of **magic methods**:
 

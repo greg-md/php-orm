@@ -154,7 +154,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      * @param string $sql
      * @param array  $params
      *
-     * @return \string[]
+     * @return string[]
      */
     public function fetch(string $sql, array $params = []): ?array
     {
@@ -165,7 +165,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      * @param string $sql
      * @param array  $params
      *
-     * @return \string[][]
+     * @return string[][]
      */
     public function fetchAll(string $sql, array $params = []): array
     {
@@ -176,9 +176,9 @@ abstract class PdoDriverAbstract extends DriverAbstract
      * @param string $sql
      * @param array  $params
      *
-     * @return \Generator
+     * @return string[][]|\Generator
      */
-    public function fetchYield(string $sql, array $params = [])
+    public function fetchYield(string $sql, array $params = []): \Generator
     {
         $stmt = $this->prepare($sql, $params);
 
@@ -212,7 +212,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      * @param array  $params
      * @param string $column
      *
-     * @return \string[]
+     * @return string[]
      */
     public function columnAll(string $sql, array $params = [], string $column = '0'): array
     {
@@ -237,7 +237,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
         return $values;
     }
 
-    public function columnYield(string $sql, array $params = [], string $column = '0')
+    public function columnYield(string $sql, array $params = [], string $column = '0'): \Generator
     {
         $stmt = $this->prepare($sql, $params);
 
@@ -258,7 +258,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      * @param string $key
      * @param string $value
      *
-     * @return \string[]
+     * @return string[]
      */
     public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array
     {
@@ -273,7 +273,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
         return $pairs;
     }
 
-    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1')
+    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1'): \Generator
     {
         $stmt = $this->prepare($sql, $params);
 

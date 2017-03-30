@@ -440,7 +440,7 @@ trait WhereClauseTrait
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -453,7 +453,7 @@ trait WhereClauseTrait
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -540,7 +540,7 @@ trait WhereClauseTrait
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -559,7 +559,7 @@ trait WhereClauseTrait
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */

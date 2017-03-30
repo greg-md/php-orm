@@ -36,7 +36,7 @@ class DeleteQuery extends SqlAbstract implements
 
     /**
      * @param string    $table
-     * @param \string[] ...$tables
+     * @param string[] ...$tables
      *
      * @return $this
      */

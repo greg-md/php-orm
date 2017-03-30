@@ -17,7 +17,7 @@ trait DeleteTableQueryTrait
 
     /**
      * @param string    $table
-     * @param \string[] ...$tables
+     * @param string[] ...$tables
      *
      * @return $this
      */

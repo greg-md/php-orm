@@ -38,8 +38,14 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 
 # Supported Drivers
 
-- **Mysql**
-- **Sqlite**
+- **MySQL**
+- **SQLite**
+
+In progress:
+
+- MS SQL
+- PostgreSQL
+- Oracle
 
 # Installation
 
@@ -56,19 +62,19 @@ You can add this library as a local, per-project dependency to your project usin
 
 ## Driver Strategy
 
-Full documentation you can find [here](docs/DriverStrategy.md).
+Full documentation can be found [here](docs/DriverStrategy.md).
 
 ## Query Builder
 
-Full documentation you can find [here](docs/QueryBuilder.md).
+Full documentation can be found [here](docs/QueryBuilder.md).
 
 ## Active Record Model
 
-Full documentation you can find [here](docs/ActiveRecordModel.md).
+Full documentation can be found [here](docs/ActiveRecordModel.md).
 
 ## Migrations
 
-_Under construction..._
+Full documentation can be found [here](docs/Migrations.md).
 
 # License
 

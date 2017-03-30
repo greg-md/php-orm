@@ -269,7 +269,7 @@ interface WhereClauseStrategy extends ClauseStrategy
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -277,7 +277,7 @@ interface WhereClauseStrategy extends ClauseStrategy
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -323,7 +323,7 @@ interface WhereClauseStrategy extends ClauseStrategy
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -331,7 +331,7 @@ interface WhereClauseStrategy extends ClauseStrategy
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */

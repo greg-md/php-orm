@@ -53,7 +53,7 @@ trait FromClauseTrait
     /**
      * @param null|string $alias
      * @param string      $sql
-     * @param \string[]   ...$params
+     * @param string[]   ...$params
      *
      * @return $this
      */

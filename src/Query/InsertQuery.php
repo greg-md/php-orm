@@ -190,7 +190,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */

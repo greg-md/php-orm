@@ -268,7 +268,7 @@ interface HavingClauseStrategy
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */
@@ -276,7 +276,7 @@ interface HavingClauseStrategy
 
     /**
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return $this
      */

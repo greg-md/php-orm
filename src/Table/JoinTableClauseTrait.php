@@ -171,7 +171,7 @@ trait JoinTableClauseTrait
      * @param $source
      * @param $table
      * @param string|null $on
-     * @param \string[]   ...$params
+     * @param string[]   ...$params
      *
      * @return $this
      */

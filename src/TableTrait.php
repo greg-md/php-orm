@@ -439,7 +439,7 @@ trait TableTrait
      *
      * @param array     $columns
      * @param string    $sql
-     * @param \string[] ...$params
+     * @param string[] ...$params
      *
      * @return int
      */
