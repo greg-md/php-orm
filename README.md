@@ -55,14 +55,12 @@ You can add this library as a local, per-project dependency to your project usin
 
 # Documentation
 
-* [Driver Strategy](#driver-strategy) - Works directly with database. [Full Documentation](docs/DriverStrategy.md).
+* [Driver Strategy](#driver-strategy-quick-start) - Works directly with database. [Full Documentation](docs/DriverStrategy.md).
 * [Query Builder](#query-builder) - Build SQL queries. [Full Documentation](docs/QueryBuilder.md).
 * [Active Record Model](#active-record-model) - All you need to work with a database table. [Full Documentation](docs/ActiveRecordModel.md).
 * [Migrations](#migrations) - Database migrations. [Full Documentation](docs/Migrations.md).
 
-## Driver Strategy
-
-### Quick Start
+## Driver Strategy - Quick Start
 
 There are two ways of working with driver strategies. Directly or via a driver manager.
 
