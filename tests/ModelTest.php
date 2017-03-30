@@ -713,10 +713,10 @@ class ModelTest extends ModelTestingAbstract
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturnOnConsecutiveCalls([
-            ['Id' => 1],
-            ['Id' => 2],
-        ]);
+        $this->driverMock->method('fetchYield')->willReturn((function() {
+            yield ['Id' => 1];
+            yield ['Id' => 2];
+        })());
 
         $this->driverMock->method('column')->willReturn(20);
 
@@ -733,10 +733,10 @@ class ModelTest extends ModelTestingAbstract
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturnOnConsecutiveCalls([
-            ['Id' => 1],
-            ['Id' => 2],
-        ]);
+        $this->driverMock->method('fetchYield')->willReturn((function() {
+            yield ['Id' => 1];
+            yield ['Id' => 2];
+        })());
 
         $this->driverMock->method('column')->willReturn(20);
 
