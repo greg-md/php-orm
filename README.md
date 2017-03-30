@@ -41,11 +41,13 @@ A powerful ORM(Object-Relational Mapping) for web-artisans.
 - **MySQL**
 - **SQLite**
 
+<div style="color: gray;">
 In progress:
 
 - MS SQL
 - PostgreSQL
 - Oracle
+</div>
 
 # Installation
 
