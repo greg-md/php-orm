@@ -469,7 +469,7 @@ _Example:_
 ```php
 $query = $driver->select()->from('Table');
 
-$query->toString(); // result: SELECT * FROM `Table`
+echo $query->toString(); // result: SELECT * FROM `Table`
 ```
 
 ## insert
@@ -485,7 +485,7 @@ _Example:_
 ```php
 $query = $driver->insert()->into('Table')->data(['Column' => 'foo']);
 
-$query->toString(); // result: INSERT INTO `Table` (`Column`) VALUES (?)
+echo $query->toString(); // result: INSERT INTO `Table` (`Column`) VALUES (?)
 ```
 
 ## delete
@@ -501,7 +501,7 @@ _Example:_
 ```php
 $query = $driver->delete()->from('Table');
 
-$query->toString(); // result: DELETE FROM `Table`
+echo $query->toString(); // result: DELETE FROM `Table`
 ```
 
 ## update
@@ -517,7 +517,7 @@ _Example:_
 ```php
 $query = $driver->update()->table('Table')->set(['Column' => 'foo']);
 
-$query->toString(); // result: UPDATE `Table` SET `Column` = ?
+echo $query->toString(); // result: UPDATE `Table` SET `Column` = ?
 ```
 
 ## from
@@ -533,7 +533,7 @@ _Example:_
 ```php
 $query = $driver->from()->from('Table');
 
-$query->toString(); // result: FROM `Table`
+echo $query->toString(); // result: FROM `Table`
 ```
 
 ## join
@@ -549,7 +549,7 @@ _Example:_
 ```php
 $query = $driver->join()->inner('Table');
 
-$query->toString(); // result: INNER JOIN `Table`
+echo $query->toString(); // result: INNER JOIN `Table`
 ```
 
 ## where
@@ -565,7 +565,7 @@ _Example:_
 ```php
 $query = $driver->where()->where('Column', 1);
 
-$query->toString(); // result: WHERE `Column` = ?
+echo $query->toString(); // result: WHERE `Column` = ?
 ```
 
 ## having
@@ -581,7 +581,7 @@ _Example:_
 ```php
 $query = $driver->having()->having('Column', 1);
 
-$query->toString(); // result: HAVING `Column` = ?
+echo $query->toString(); // result: HAVING `Column` = ?
 ```
 
 ## orderBy
@@ -597,7 +597,7 @@ _Example:_
 ```php
 $query = $driver->orderBy()->orderAsc('Column');
 
-$query->toString(); // result: ORDER BY `Column` ASC
+echo $query->toString(); // result: ORDER BY `Column` ASC
 ```
 
 ## groupBy
@@ -613,7 +613,7 @@ _Example:_
 ```php
 $query = $driver->groupBy()->groupBy('Column');
 
-$query->toString(); // result: GROUP BY `Column`
+echo $query->toString(); // result: GROUP BY `Column`
 ```
 
 ## limit
@@ -629,7 +629,7 @@ _Example:_
 ```php
 $query = $driver->limit()->limit(10');
 
-$query->toString(); // result: LIMIT `Column`
+echo $query->toString(); // result: LIMIT `Column`
 ```
 
 ## offset
@@ -645,5 +645,5 @@ _Example:_
 ```php
 $query = $driver->offset()->offset(10');
 
-$query->toString(); // result: OFFSET `Column`
+echo $query->toString(); // result: OFFSET `Column`
 ```

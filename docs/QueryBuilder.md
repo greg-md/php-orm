@@ -30,7 +30,7 @@ $query = new Greg\Orm\Query\SelectQuery();
 
 $query->from('Table');
 
-$query->toString(); // result: SELECT * FROM `Table`
+echo $query->toString(); // result: SELECT * FROM `Table`
 ```
 
 **Supported clauses**:
@@ -51,14 +51,13 @@ $query->toString(); // result: SELECT * FROM `Table`
 
 **Supported methods**:
 
-* [distinct](#distinct) - The `DISTINCT` is used to return only distinct (different) values.
-* [fromTable](#fromtable)
-* [columnsFrom](#columnsfrom)
-* [columns](#columns)
-* [column](#column)
-* [columnConcat](#columnconcat)
-* [columnSelect](#columnselect)
-* [columnRaw](#columnraw)
+* [distinct](#distinct) - The `DISTINCT` is used to return only distinct (different) values;
+* [columnsFrom](#columnsfrom) - Select columns from a table;
+* [columns](#columns) - Select columns;
+* [column](#column) - Select column;
+* [columnConcat](#columnconcat) - Select concatenated columns;
+* [columnSelect](#columnselect) - Select sub-query column;
+* [columnRaw](#columnraw) - Select raw column;
 * [count](#count)
 * [max](#max)
 * [min](#min)
@@ -104,6 +103,45 @@ _Example:_
 $query->distinct()->from('Table');
 
 echo $query->toString(); // result: SELECT DISTINCT * FROM `Table`
+```
+
+## columnsFrom
+
+Select columns from a table.
+
+```php
+public function columnsFrom(mixed $table, string $column, string ...$columns): $this;
+```
+
+`$table` - Select table;  
+`$column` - Select column from table;  
+`...$columns` - Select other columns from table.
+
+_Example:_
+
+```php
+$query->columnsFrom('Table', 'Column1', 'Column2');
+
+echo $query->toString(); // result: SELECT `Table`.`Column1`, `Table`.`Column2` FROM `Table`
+```
+
+## columns
+
+Select columns.
+
+```php
+public function columns(string $column, string ...$columns): $this;
+```
+
+`$column` - Select column;  
+`...$columns` - Select other columns.
+
+_Example:_
+
+```php
+$query->columns('Column1', 'Column2')->from('Table');
+
+echo $query->toString(); // result: SELECT `Column1`, `Column2` FROM `Table`
 ```
 
 # Update Statement

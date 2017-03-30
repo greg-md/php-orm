@@ -82,7 +82,7 @@ trait FromClauseTrait
      */
     public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = [])
     {
-        $this->from[] = [
+        $this->from[$tableKey] = [
             'tableKey' => $tableKey,
             'table'    => $table,
             'alias'    => $alias,

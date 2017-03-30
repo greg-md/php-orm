@@ -83,22 +83,10 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return $this
      */
-    public function fromTable($table, string $column, string ...$columns)
-    {
-        $this->from($table)->columnsFrom($table, $column, ...$columns);
-
-        return $this;
-    }
-
-    /**
-     * @param $table
-     * @param string   $column
-     * @param string[] ...$columns
-     *
-     * @return $this
-     */
     public function columnsFrom($table, string $column, string ...$columns)
     {
+        $this->from($table);
+
         list($tableAlias, $tableName) = $this->dialect()->parseTable($table);
 
         if (!$tableAlias) {

@@ -27,15 +27,6 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function fromTable($table, string $column, string ...$columns)
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery()->fromTable($table, $column, ...$columns);
-
-        return $instance;
-    }
-
     public function selectFrom($table, string $column, string ...$columns)
     {
         $instance = $this->selectQueryInstance();

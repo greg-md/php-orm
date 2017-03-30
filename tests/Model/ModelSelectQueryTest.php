@@ -15,16 +15,9 @@ class ModelSelectQueryTest extends ModelTestingAbstract
         $this->assertEquals('SELECT DISTINCT * FROM `Table`', $query->toString());
     }
 
-    public function testCanSetFromTable()
-    {
-        $query = $this->model->fromTable('Table2', 'Column');
-
-        $this->assertEquals('SELECT `Table2`.`Column` FROM `Table`, `Table2`', $query->toString());
-    }
-
     public function testCanSetColumnsFrom()
     {
-        $query = $this->model->from('Table2')->selectFrom('Table2', 'Column');
+        $query = $this->model->selectFrom('Table2', 'Column');
 
         $this->assertEquals('SELECT `Table2`.`Column` FROM `Table`, `Table2`', $query->toString());
     }

@@ -14,18 +14,9 @@ class SelectQueryTest extends TestCase
         $this->assertEquals(['SELECT DISTINCT *', []], $query->toSql());
     }
 
-    public function testCanSetFromTable()
-    {
-        $query = $this->newQuery()->fromTable('Table', 'Column');
-
-        $this->assertEquals('SELECT `Table`.`Column`', $query->selectToString());
-
-        $this->assertEquals('SELECT `Table`.`Column` FROM `Table`', $query->toString());
-    }
-
     public function testCanSetColumnsFrom()
     {
-        $query = $this->newQuery()->from('Table')->columnsFrom('Table', 'Column');
+        $query = $this->newQuery()->columnsFrom('Table', 'Column');
 
         $this->assertEquals(['SELECT `Table`.`Column` FROM `Table`', []], $query->toSql());
     }
