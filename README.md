@@ -72,10 +72,10 @@ In the next example we will use a driver manager with multiple driver strategies
 **First of all**, you have to initialize a driver manager and register some strategies:
 
 ```php
-$cache = new \Greg\Orm\Driver\DriverManager();
+$manager = new \Greg\Orm\Driver\DriverManager();
 
 // Register a MySQL driver
-$cache->register('driver1', function() {
+$manager->register('driver1', function() {
     return new \Greg\Orm\Driver\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
     {
         public function connect(): \PDO
@@ -86,7 +86,7 @@ $cache->register('driver1', function() {
 });
 
 // Register a SQLite driver
-$cache->register('driver2', function() {
+$manager->register('driver2', function() {
     return new \Greg\Orm\Driver\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
     {
         public function connect(): \PDO
@@ -100,17 +100,17 @@ $cache->register('driver2', function() {
 **Optionally**, you can define a default driver to be used by the driver manager.
 
 ```php
-$cache->setDefaultDriverName('driver1');
+$manager->setDefaultDriverName('driver1');
 ```
 
 **Then**, you can work with this drivers:
 
 ```php
 // Fetch a statement in SQLite
-$cache->driver('driver2')->fetchAll('SELECT * FROM `FooTable`');
+$manager->driver('driver2')->fetchAll('SELECT * FROM `FooTable`');
 
 // Fetch a statement in default driver, which is "driver1"
-$cache->fetchAll('SELECT * FROM `BarTable`');
+$manager->fetchAll('SELECT * FROM `BarTable`');
 ```
 
 Full documentation can be found [here](docs/DriverStrategy.md).
