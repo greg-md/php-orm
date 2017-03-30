@@ -52,10 +52,10 @@ Below you can find a list of supported methods.
 * [fetchAll](#fetchAll) - Returns an array containing all of the result set rows;
 * [fetchYield](#fetchYield) - Returns a generator containing all of the result set rows;
 * [column](#column) - Returns a single column from the next row of a result set;
-* [columnAll](#columnAll)
-* [columnYield](#columnYield)
-* [pairs](#pairs)
-* [pairsYield](#pairsYield)
+* [columnAll](#columnAll) - Returns an array containing a single column from all of the result set rows;
+* [columnYield](#columnYield) - Returns a generator containing a single column from all of the result set rows;
+* [pairs](#pairs) - Returns an array containing a pair of key-value column from all of the result set rows;
+* [pairsYield](#pairsYield) - Returns a generator containing a pair of key-value column from all of the result set rows;
 * [dialect](#dialect)
 * [truncate](#truncate)
 * [listen](#listen)
@@ -260,10 +260,10 @@ $driver->fetchAll('Select `Column` from `Table`'); // result: [["Column" => 'foo
 Returns a generator containing all of the remaining rows in the result set.
 The generator represents each row as either an array of column values
 or an object with properties corresponding to each column name.
-An empty array is returned if there are zero results to fetch.
+An empty generator is returned if there are zero results to fetch.
 
 ```php
-public function fetchYield(string $sql, array $params = []): array
+public function fetchYield(string $sql, array $params = [])
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -285,7 +285,46 @@ foreach($generator as $row) {
 Returns a single column from the next row of a result set or FALSE if there are no more rows.
 
 ```php
-public function column(string $sql, array $params = [], string $column = '0')
+public function column(string $sql, array $params = [], string $column = 0)
+```
+
+`$sql` - The SQL statement to prepare and execute;  
+`$params` - SQL statement parameters;  
+`$column` - The column you wish to retrieve from the row. If no value is supplied, it fetches the first column.
+
+_Example:_
+
+```php
+$driver->column('Select `Column` from `Table`'); // result: foo
+```
+
+## columnAll
+
+Returns an array containing a single column from all of the result set rows.
+An empty array is returned if there are zero results to fetch.
+
+```php
+public function columnAll(string $sql, array $params = [], string $column = 0): array
+```
+
+`$sql` - The SQL statement to prepare and execute;  
+`$params` - SQL statement parameters;  
+`$column` - The column you wish to retrieve from the row. If no value is supplied, it fetches the first column.
+
+_Example:_
+
+```php
+$driver->columnAll('Select `Column` from `Table`'); // result: ['foo', 'bar']
+```
+
+## columnYield
+
+Returns a generator containing a single column from all of the result set rows.
+The generator represents each row as either a column value.
+An empty generator is returned if there are zero results to fetch.
+
+```php
+public function columnYield(string $sql, array $params = [], string $column = 0)
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -297,8 +336,53 @@ _Example:_
 ```php
 $generator = $driver->fetchYield('Select `Column` from `Table`');
 
-foreach($generator as $row) {
-    // 1st result: ["Column" => 'foo']
-    // 2nd result: ["Column" => 'bar']
+foreach($generator as $column) {
+    // 1st result: 'foo'
+    // 2nd result: 'bar'
+}
+```
+
+## pairs
+
+Returns an array containing a pair of key-value column from all of the result set rows.
+An empty array is returned if there are zero results to fetch.
+
+```php
+public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array
+```
+
+`$sql` - The SQL statement to prepare and execute;  
+`$params` - SQL statement parameters;  
+`$key` - The key column you wish to retrieve from the row. If no value is supplied, it fetches the first column;  
+`$value` - The value column you wish to retrieve from the row. If no value is supplied, it fetches the second column.
+
+_Example:_
+
+```php
+$driver->pairs('Select `Id`, `Column` from `Table`'); // result: [1 => 'foo', 2 => 'bar']
+```
+
+## pairsYield
+
+Returns a generator containing a pair of key-value column from all of the result set rows.
+An empty generator is returned if there are zero results to fetch.
+
+```php
+public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1')
+```
+
+`$sql` - The SQL statement to prepare and execute;  
+`$params` - SQL statement parameters;  
+`$key` - The key column you wish to retrieve from the row. If no value is supplied, it fetches the first column;  
+`$value` - The value column you wish to retrieve from the row. If no value is supplied, it fetches the second column.
+
+_Example:_
+
+```php
+$generator = $driver->fetchYield('Select `Id`, `Column` from `Table`');
+
+foreach($generator as $id => $column) {
+    // 1st result: 1 => 'foo'
+    // 2nd result: 2 => 'bar'
 }
 ```
