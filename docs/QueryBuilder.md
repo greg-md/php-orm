@@ -120,9 +120,11 @@ public function columnsFrom(mixed $table, string $column, string ...$columns): $
 _Example:_
 
 ```php
-$query->columnsFrom('Table', 'Column1', 'Column2');
+$query
+    ->columnsFrom('Table1 as t1', 'Column1', 'Column2')
+    ->columnsFrom(['t2' => 'Table2'], 'Column1', 'Column2');
 
-echo $query->toString(); // result: SELECT `Table`.`Column1`, `Table`.`Column2` FROM `Table`
+echo $query->toString(); // result: SELECT `t1`.`Column1`, `t1`.`Column2`, `t2`.`Column1`, `t2`.`Column2` FROM `Table1` AS `t1`, `Table2` AS `t2`
 ```
 
 ## columns
