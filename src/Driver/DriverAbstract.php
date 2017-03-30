@@ -150,7 +150,7 @@ abstract class DriverAbstract implements DriverStrategy
     protected function fire(string $sql, array $params = [])
     {
         foreach ($this->listeners as $listener) {
-            call_user_func_array($listener, [$sql, $params]);
+            call_user_func_array($listener, [$sql, $params, $this]);
         }
 
         return $this;

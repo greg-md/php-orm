@@ -34,7 +34,7 @@ class SqliteDriver extends PdoDriverAbstract
      *
      * @return int
      */
-    public function truncate(string $tableName)
+    public function truncate(string $tableName): int
     {
         return $this->execute('TRUNCATE ' . $this->dialect()->quoteTable($tableName));
     }

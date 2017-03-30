@@ -40,8 +40,8 @@ $driver = new \Greg\Orm\Driver\Sqlite\SqliteDriver(new class implements \Greg\Or
 
 Below you can find a list of supported methods.
 
-* [transaction](#transaction) - Execute a process in a transaction;
-* [inTransaction](#inTransaction) - Determine if inside a transaction;
+* [transaction](#transaction) - Executes a process in a transaction;
+* [inTransaction](#inTransaction) - Determines if inside a transaction;
 * [beginTransaction](#beginTransaction) - Initiates a transaction;
 * [commit](#commit) - Commits a transaction;
 * [rollBack](#rollBack) - Rolls back a transaction;
@@ -56,22 +56,22 @@ Below you can find a list of supported methods.
 * [columnYield](#columnYield) - Returns a generator containing a single column from all of the result set rows;
 * [pairs](#pairs) - Returns an array containing a pair of key-value column from all of the result set rows;
 * [pairsYield](#pairsYield) - Returns a generator containing a pair of key-value column from all of the result set rows;
-* [dialect](#dialect)
-* [truncate](#truncate)
-* [listen](#listen)
-* [describe](#describe)
-* [select](#select)
-* [insert](#insert)
-* [delete](#delete)
-* [update](#update)
-* [from](#from)
-* [join](#join)
-* [where](#where)
-* [having](#having)
-* [orderBy](#orderBy)
-* [groupBy](#groupBy)
-* [limit](#limit)
-* [offset](#offset)
+* [dialect](#dialect) - Returns the dialect strategy of the current driver;
+* [truncate](#truncate) - Truncates a table and returns the number of affected rows;
+* [listen](#listen) - Listens for executed queries;
+* [describe](#describe) - Describes a table;
+* [select](#select) - Creates a SELECT statement;
+* [insert](#insert) - Creates a INSERT statement;
+* [delete](#delete) - Creates a DELETE statement;
+* [update](#update) - Creates a UPDATE statement;
+* [from](#from) - Creates a FROM clause;
+* [join](#join) - Creates a JOIN clause;
+* [where](#where) - Creates a WHERE clause;
+* [having](#having) - Creates a HAVING clause;
+* [orderBy](#orderBy) - Creates a ORDER BY clause;
+* [groupBy](#groupBy) - Creates a GROUP BY clause;
+* [limit](#limit) - Creates a LIMIT clause;
+* [offset](#offset) - Creates a OFFSET clause;
 
 ## transaction
 
@@ -79,7 +79,7 @@ Turns off autocommit mode and execute user defined callable.
 If run successfully, then the transaction will be committed, otherwise it will be rolled back.
 
 ```php
-public function transaction(callable $callable);
+public function transaction(callable($this): void $callable): $this;
 ```
 
 `$callable` - The callable.
@@ -263,7 +263,7 @@ or an object with properties corresponding to each column name.
 An empty generator is returned if there are zero results to fetch.
 
 ```php
-public function fetchYield(string $sql, array $params = [])
+public function fetchYield(string $sql, array $params = []): \Generator
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -285,7 +285,7 @@ foreach($generator as $row) {
 Returns a single column from the next row of a result set or FALSE if there are no more rows.
 
 ```php
-public function column(string $sql, array $params = [], string $column = 0)
+public function column(string $sql, array $params = [], string $column = '0'): mixed
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -304,7 +304,7 @@ Returns an array containing a single column from all of the result set rows.
 An empty array is returned if there are zero results to fetch.
 
 ```php
-public function columnAll(string $sql, array $params = [], string $column = 0): array
+public function columnAll(string $sql, array $params = [], string $column = '0'): array
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -324,7 +324,7 @@ The generator represents each row as either a column value.
 An empty generator is returned if there are zero results to fetch.
 
 ```php
-public function columnYield(string $sql, array $params = [], string $column = 0)
+public function columnYield(string $sql, array $params = [], string $column = '0'): \Generator
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -368,7 +368,7 @@ Returns a generator containing a pair of key-value column from all of the result
 An empty generator is returned if there are zero results to fetch.
 
 ```php
-public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1')
+public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1'): \Generator
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -385,4 +385,84 @@ foreach($generator as $id => $column) {
     // 1st result: 1 => 'foo'
     // 2nd result: 2 => 'bar'
 }
+```
+
+## dialect
+
+Returns the dialect strategy of the current driver.
+
+```php
+public function dialect(): Greg\Orm\Dialect\DialectStrategy
+```
+
+_Example:_
+
+```php
+$driver->dialect()->concat(['`Column1`', '`Column2`'], '","');
+```
+
+## truncate
+
+Truncates a table and returns the number of affected rows.
+
+```php
+public function truncate(string $tableName): int
+```
+
+`$tableName` - Table name.
+
+_Example:_
+
+```php
+$driver->truncate('Table');
+```
+
+## listen
+
+Listens for executed queries.
+
+```php
+public function listen(callable(string $sql, array $params, $this): void $callable): $this
+```
+
+`$callable` - The callable.
+
+_Example:_
+
+```php
+$driver->truncate('Table');
+```
+
+## describe
+
+Describes a table.
+
+```php
+public function describe(string $tableName, bool $force = false): array
+```
+
+`$tableName` - Table name;  
+`$force` - By default driver will save in memory the table description.
+            Set it to `true` if you want to fetch from database new description.
+
+_Example:_
+
+```php
+$driver->describe('Table'); // result: ['columns' => [...], 'primary' => [...]]
+```
+
+## select
+
+Creates a SELECT statement.
+
+```php
+public function select(): Greg\Orm\Query\SelectQuery
+```
+
+_Example:_
+
+```php
+$query = $driver->select()->from('Table');
+
+$query->toString(); // result: SELECT * FROM `Table`
 ```

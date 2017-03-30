@@ -146,9 +146,9 @@ interface DriverStrategy
     /**
      * @param string $tableName
      *
-     * @return $this
+     * @return int
      */
-    public function truncate(string $tableName);
+    public function truncate(string $tableName): int;
 
     /**
      * @param callable $callable
