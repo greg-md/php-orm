@@ -106,10 +106,10 @@ $manager->setDefaultDriverName('driver1');
 **Then**, you can work with this drivers:
 
 ```php
-// Fetch a statement in SQLite
+// Fetch a statement from SQLite
 $manager->driver('driver2')->fetchAll('SELECT * FROM `FooTable`');
 
-// Fetch a statement in default driver, which is "driver1"
+// Fetch a statement from default driver, which is MySQL
 $manager->fetchAll('SELECT * FROM `BarTable`');
 ```
 
