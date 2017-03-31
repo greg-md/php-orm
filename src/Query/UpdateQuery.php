@@ -62,7 +62,7 @@ class UpdateQuery extends SqlAbstract implements
                 $tableAlias = $this->dialect()->quoteName($tableAlias);
             }
 
-            $this->tables[] = [
+            $this->tables[$tableKey] = [
                 'tableKey' => $tableKey,
                 'table'    => $tableName,
                 'alias'    => $tableAlias,
@@ -140,30 +140,30 @@ class UpdateQuery extends SqlAbstract implements
 
     /**
      * @param string $column
-     * @param int    $value
+     * @param int    $step
      *
      * @return $this
      */
-    public function increment(string $column, int $value = 1)
+    public function increment(string $column, int $step = 1)
     {
         $column = $this->dialect()->quoteName($column);
 
-        $this->setLogic($column . ' = ' . $column . ' + ?', [$value]);
+        $this->setLogic($column . ' = ' . $column . ' + ?', [$step]);
 
         return $this;
     }
 
     /**
      * @param string $column
-     * @param int    $value
+     * @param int    $step
      *
      * @return $this
      */
-    public function decrement(string $column, int $value = 1)
+    public function decrement(string $column, int $step = 1)
     {
         $column = $this->dialect()->quoteName($column);
 
-        $this->setLogic($column . ' = ' . $column . ' - ?', [$value]);
+        $this->setLogic($column . ' = ' . $column . ' - ?', [$step]);
 
         return $this;
     }

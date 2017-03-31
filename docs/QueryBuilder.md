@@ -74,11 +74,11 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [avg](#avg) - Select column average;
 * [sum](#sum) - Select column sum;
 * [hasColumns](#hascolumns) - Determines if has custom select columns;
-* [getColumns](#getcolumns) - Get selected columns;
-* [clearColumns](#clearcolumns) - Clear selected columns;
+* [getColumns](#getcolumns) - Get select columns;
+* [clearColumns](#clearcolumns) - Clear select columns;
 * [union](#union) - UNION is used to combine the result from multiple SELECT statements into a single result set;
 * [unionAll](#unionall) - The result includes all matching rows from all the SELECT statements;
-* [unionRaw](#unionraw) - Perform UNION with a raw SQL statement;
+* [unionRaw](#unionraw) - Perform UNION with a raw SQL;
 * [unionAllRaw](#unionallraw) - Perform UNION ALL with a raw SQL statement;
 * [hasUnions](#hasunions) - Determines if select has unions;
 * [getUnions](#getunions) - Get select unions;
@@ -90,7 +90,7 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [clearLock](#clearlock) - Clear the select lock;
 * [selectToSql](#selecttosql) - Get SELECT SQL clause with parameters;
 * [selectToString](#selecttostring) - Get SELECT SQL clause;
-* [toSql](#tosql) Get SQL statement with parameters;
+* [toSql](#tosql) - Get SQL statement with parameters;
 * [toString](#tostring) - Get SQL statement.
 
 ## distinct
@@ -382,7 +382,7 @@ $query->hasColumns(); // result: true
 
 ## getColumns
 
-Get selected columns.
+Get select columns.
 
 ```php
 public function getColumns(): array
@@ -402,7 +402,7 @@ $columns = $query->getColumns();
 
 ## clearColumns
 
-Clear selected columns.
+Clear select columns.
 
 ```php
 public function clearColumns(): $this
@@ -794,24 +794,276 @@ The `UPDATE` statement is used to modify the existing records in a table.
 
 **Supported methods**:
 
-* [table](#table)
-* [hasTables](#hastables)
-* [getTables](#gettables)
-* [clearTables](#cleartables)
-* [set](#set)
-* [setMultiple](#setmultiple)
-* [setRaw](#setraw)
-* [increment](#increment)
-* [decrement](#decrement)
-* [hasSet](#hasset)
-* [getSet](#getset)
-* [clearSet](#clearset)
-* [updateToSql](#updatetosql)
-* [updateToString](#updatetostring)
-* [setToSql](#settosql)
-* [setToString](#settostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [table](#table) - Update table.
+* [hasTables](#hastables) - Determines if has custom update tables;
+* [getTables](#gettables) - Get update tables;
+* [clearTables](#cleartables) - Clear update tables;
+* [set](#set) - Set new column-value;
+* [setMultiple](#setmultiple) - Set multiple new column-value; 
+* [setRaw](#setraw) - Set raw SQL;
+* [increment](#increment) - Increment a column value;
+* [decrement](#decrement) - Decrement a column value;
+* [hasSet](#hasset) - Determines if has SET values;
+* [getSet](#getset) - Get defined SET values;
+* [clearSet](#clearset) - Clear defined SET values;
+* [updateToSql](#updatetosql) - Get UPDATE SQL clause with parameters;
+* [updateToString](#updatetostring) - Get UPDATE SQL clause;
+* [setToSql](#settosql) - Get SET SQL clause with parameters;
+* [setToString](#settostring) - Get SET SQL clause;
+* [toSql](#tosql) - Get SQL statement with parameters;
+* [toString](#tostring) - Get SQL statement with parameters.
+
+## table
+
+Update table.
+
+```php
+public function table($table, ...$tables): $this
+```
+
+`$table` - Table name;  
+`...$tables` - Other tables names.
+
+_Example:_
+
+```php
+$query
+    ->table('Table')
+    ->set('Column', 'foo');
+
+echo $query->toString();
+// UPDATE `Table` SET `Column` = ?
+```
+
+## hasTables
+
+Determines if has custom update tables.
+
+```php
+public function hasTables(): bool
+```
+
+_Example:_
+
+```php
+$query->hasTables(); // result: false
+
+$query->table('Table');
+
+$query->hasTables(); // result: true
+```
+
+## getTables
+
+Get update tables.
+
+```php
+public function getTables(): array
+```
+
+_Example:_
+
+```php
+$query->table('Table1', 'Table2 as t2');
+
+$tables = $query->getTables();
+//[
+//    ['tableKey' => 'Table1', 'table' => '`Table1`', 'alias' => null],
+//    ['tableKey' => 'Table2', 'table' => '`Table2`', 'alias' => 't2'],
+//]
+```
+
+## clearTables
+
+Clear update tables.
+
+```php
+public function clearTables(): $this
+```
+
+_Example:_
+
+```php
+$query->table('Table1', 'Table2 as t2');
+
+$query->hasTables(); // result: true
+
+$query->clearTables();
+
+$query->hasTables(); // result: false
+```
+
+## set
+
+Set new column-value.
+
+```php
+public function set(string $column, string $value): $this
+```
+
+`$column` - Column name;  
+`$value` - Column value.
+
+_Example:_
+
+```php
+$query
+    ->table('Table')
+    ->set('Column', 'foo');
+
+echo $query->toString();
+// UPDATE `Table` SET `Column` = ?
+```
+
+## setMultiple
+
+Set multiple new column-value.
+
+```php
+public function setMultiple(array $columns): $this
+```
+
+`$columns` - An array of column-value pairs.
+
+_Example:_
+
+```php
+$query
+    ->table('Table')
+    ->setMultiple([
+        'Column1' => 'foo',
+        'Column2' => 'bar',
+    ]);
+
+echo $query->toString();
+// UPDATE `Table` SET `Column1` = ?, `Column2` = ?
+```
+
+## setRaw
+
+Set raw SQL.
+
+```php
+public function setRaw(string $sql, string ...$params): $this
+```
+
+`$sql` - SET SQL statement;  
+`...$params` - Statement parameters.
+
+_Example:_
+
+```php
+$query
+    ->table('Table')
+    ->setRaw('`Column` = ?', 'foo');
+
+echo $query->toString();
+// UPDATE `Table` SET `Column` = ?
+```
+
+## increment
+
+Increment a column value.
+
+```php
+public function increment(string $column, int $step = 1): $this
+```
+
+`$column` - Column;  
+`$step` - Increment step.
+
+_Example:_
+
+```php
+$query
+    ->table('Table')
+    ->increment('Column');
+
+echo $query->toString();
+// UPDATE `Table` SET `Column` = `Column` + ?
+```
+
+## decrement
+
+Decrement a column value.
+
+```php
+public function decrement(string $column, int $step = 1): $this
+```
+
+`$column` - Column;  
+`$step` - Decrement step.
+
+_Example:_
+
+```php
+$query
+    ->table('Table')
+    ->decrement('Column');
+
+echo $query->toString();
+// UPDATE `Table` SET `Column` = `Column` - ?
+```
+
+## hasSet
+
+Determines if has SET values.
+
+```php
+public function hasSet(): bool
+```
+
+_Example:_
+
+```php
+$query->hasSet(); // result: false
+
+$query->set('Column', 'foo');
+
+$query->hasSet(); // result: true
+```
+
+## getSet
+
+Get defined SET values.
+
+```php
+public function getSet(): array
+```
+
+_Example:_
+
+```php
+$query->set('Column1', 'foo');
+
+$query->set('Column2', 'bar');
+
+$set = $query->getSet();
+//[
+//    ['sql' => '`Column1` = ?', 'params' => ['foo']],
+//    ['sql' => '`Column2` = ?', 'params' => ['bar']],
+//]
+```
+
+## clearSet
+
+Clear defined SET values.
+
+```php
+public function clearSet(): $this
+```
+
+_Example:_
+
+```php
+$query->set('Column', 'foo');
+
+$query->hasSet(); // result: true
+
+$query->clearSet();
+
+$query->hasSet(); // result: false
+```
 
 # Delete Statement
 
