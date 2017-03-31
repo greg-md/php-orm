@@ -329,18 +329,6 @@ class SelectQuery extends SqlAbstract implements
     }
 
     /**
-     * @param SelectQuery $query
-     *
-     * @return $this
-     */
-    public function unionDistinct(SelectQuery $query)
-    {
-        $this->unionLogic('DISTINCT', $query);
-
-        return $this;
-    }
-
-    /**
      * @param string   $sql
      * @param string[] ...$params
      *
@@ -362,19 +350,6 @@ class SelectQuery extends SqlAbstract implements
     public function unionAllRaw(string $sql, string ...$params)
     {
         $this->unionLogic('ALL', $sql, $params);
-
-        return $this;
-    }
-
-    /**
-     * @param string   $sql
-     * @param string[] ...$params
-     *
-     * @return $this
-     */
-    public function unionDistinctRaw(string $sql, string ...$params)
-    {
-        $this->unionLogic('DISTINCT', $sql, $params);
 
         return $this;
     }

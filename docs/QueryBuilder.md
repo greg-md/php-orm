@@ -76,12 +76,10 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [hasColumns](#hascolumns) - Determines if has custom select columns;
 * [getColumns](#getcolumns) - Get selected columns;
 * [clearColumns](#clearcolumns) - Clear selected columns;
-* [union](#union)
-* [unionAll](#unionall)
-* [unionDistinct](#uniondistinct)
-* [unionRaw](#unionraw)
-* [unionAllRaw](#unionallraw)
-* [unionDistinctRaw](#uniondistinctraw)
+* [union](#union) - UNION is used to combine the result from multiple SELECT statements into a single result set;
+* [unionAll](#unionall) - The result includes all matching rows from all the SELECT statements;
+* [unionRaw](#unionraw) - Perform UNION with a raw SQL statement;
+* [unionAllRaw](#unionallraw) - Perform UNION ALL with a raw SQL statement;
 * [hasUnions](#hasunions)
 * [getUnions](#getunions)
 * [clearUnions](#clearunions)
@@ -210,7 +208,7 @@ echo $query->toString();
 Select sub-query column.
 
 ```php
-public function columnSelect(SelectQuery $query, ?string $alias = null): $this
+public function columnSelect(\Greg\Orm\Query\SelectQuery $query, ?string $alias = null): $this
 ```
 
 `$query` - Select query;  
@@ -420,6 +418,117 @@ $query
 
 echo $query->toString();
 // SELECT * FROM `Table`
+```
+
+## union
+
+UNION is used to combine the result from multiple SELECT statements into a single result set.
+
+The UNION operator selects only distinct values by default. To allow duplicate values, use [unionAll](#unionAll).
+
+The column names from the first SELECT statement are used as the column names for the results returned.
+Selected columns listed in corresponding positions of each SELECT statement should have the same data type.
+(For example, the first column selected by the first statement should have the same type as
+the first column selected by the other statements.)
+
+If the data types of corresponding SELECT columns do not match,
+the types and lengths of the columns in the UNION result take into account
+the values retrieved by all of the SELECT statements.
+
+```php
+public function union(\Greg\Orm\Query\SelectQuery $query): $this
+```
+
+`$query` - Select statement.
+
+_Example:_
+
+```php
+$unionQuery = new \Greg\Orm\Query\SelectQuery();
+
+$unionQuery->from('Table2')->column('Column');
+
+$query
+    ->from('Table1')
+    ->column('Column')
+    ->union($unionQuery);
+
+echo $query->toString();
+// (SELECT `Column` FROM `Table1`) UNION (SELECT `Column` FROM `Table2`)
+```
+
+## unionAll
+
+See [union](#union) for details.
+
+The result includes all matching rows from all the SELECT statements;
+
+```php
+public function union(\Greg\Orm\Query\SelectQuery $query): $this
+```
+
+`$query` - Select statement.
+
+_Example:_
+
+```php
+$unionQuery = new \Greg\Orm\Query\SelectQuery();
+
+$unionQuery->from('Table2')->column('Column');
+
+$query
+    ->from('Table1')
+    ->column('Column')
+    ->unionAll($unionQuery);
+
+echo $query->toString();
+// (SELECT `Column` FROM `Table1`) UNION ALL (SELECT `Column` FROM `Table2`)
+```
+
+## unionRaw
+
+See [union](#union) for details.
+
+```php
+public function unionRaw(string $sql, string ...$params): $this
+```
+
+`$sql` - Select statement;  
+`...$params` - Statement parameters.
+
+_Example:_
+
+```php
+$query
+    ->from('Table1')
+    ->column('Column')
+    ->unionRaw('SELECT `Column` FROM `Table2`');
+
+echo $query->toString();
+// (SELECT `Column` FROM `Table1`) UNION (SELECT `Column` FROM `Table2`)
+```
+
+## unionAllRaw
+
+See [unionAll](#unionall) for details.
+
+```php
+public function unionAllRaw(string $sql, string ...$params): $this
+```
+
+`$sql` - Select statement;  
+`...$params` - Statement parameters.
+
+_Example:_
+
+```php
+$query
+    ->from('Table1')
+    ->column('Column')
+    ->unionAllRaw('SELECT `Column` FROM `Table2`');
+
+echo $query->toString();
+// (SELECT `Column` FROM `Table1`) UNION ALL (SELECT `Column` FROM `Table2`)
 ```
 
 # Update Statement
