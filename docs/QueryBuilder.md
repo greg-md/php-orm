@@ -68,14 +68,14 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [columnConcat](#columnconcat) - Select concatenated columns;
 * [columnSelect](#columnselect) - Select sub-query column;
 * [columnRaw](#columnraw) - Select raw column;
-* [count](#count)
-* [max](#max)
-* [min](#min)
-* [avg](#avg)
-* [sum](#sum)
-* [hasColumns](#hascolumns)
-* [getColumns](#getcolumns)
-* [clearColumns](#clearcolumns)
+* [count](#count) - Select column count;
+* [max](#max) - Select column maximum value;
+* [min](#min) - Select column minimum value;
+* [avg](#avg) - Select column average;
+* [sum](#sum) - Select column sum;
+* [hasColumns](#hascolumns) - Determines if has custom select columns;
+* [getColumns](#getcolumns) - Get selected columns;
+* [clearColumns](#clearcolumns) - Clear selected columns;
 * [union](#union)
 * [unionAll](#unionall)
 * [unionDistinct](#uniondistinct)
@@ -168,7 +168,7 @@ public function column(string $column, ?string $alias = null): $this;
 ```
 
 `$column` - Column;  
-`$alias` - Alias.
+`$alias` - Column alias.
 
 _Example:_
 
@@ -192,7 +192,7 @@ public function columnConcat(array $columns, string $delimiter = '', ?string $al
 
 `$columns` - Columns to concatenate;  
 `$delimiter` - Delimiter;  
-`$alias` - Alias.
+`$alias` - Columns alias.
 
 _Example:_
 
@@ -214,7 +214,7 @@ public function columnSelect(SelectQuery $query, ?string $alias = null): $this;
 ```
 
 `$query` - Select query;  
-`$alias` - Alias.
+`$alias` - Query alias.
 
 _Example:_
 
@@ -252,6 +252,116 @@ $query
 
 echo $query->toString();
 // SELECT SUM(`Column1` + `Column2`) AS `sum` FROM `Table`
+```
+
+## count
+
+Select column count.
+
+```php
+public function count(string $column = '*', string $alias = null): $this;
+```
+
+`$column` - Column;  
+`$alias` - Column alias.
+
+_Example:_
+
+```php
+$query
+    ->count('Column', 'count')
+    ->from('Table');
+
+echo $query->toString();
+// SELECT COUNT(`Column`) AS `count` FROM `Table`
+```
+
+## max
+
+Select column maximum value.
+
+```php
+public function max(string $column, string $alias = null): $this;
+```
+
+`$column` - Column;  
+`$alias` - Column alias.
+
+_Example:_
+
+```php
+$query
+    ->max('Column', 'max')
+    ->from('Table');
+
+echo $query->toString();
+// SELECT MAX(`Column`) AS `max` FROM `Table`
+```
+
+## min
+
+Select column minimum value.
+
+```php
+public function min(string $column, string $alias = null): $this;
+```
+
+`$column` - Column;  
+`$alias` - Column alias.
+
+_Example:_
+
+```php
+$query
+    ->min('Column', 'min')
+    ->from('Table');
+
+echo $query->toString();
+// SELECT MIN(`Column`) AS `min` FROM `Table`
+```
+
+## avg
+
+Select column average.
+
+```php
+public function avg(string $column, string $alias = null): $this;
+```
+
+`$column` - Column;  
+`$alias` - Column alias.
+
+_Example:_
+
+```php
+$query
+    ->avg('Column', 'avg')
+    ->from('Table');
+
+echo $query->toString();
+// SELECT AVG(`Column`) AS `avg` FROM `Table`
+```
+
+## sum
+
+Select column sum.
+
+```php
+public function sum(string $column, string $alias = null): $this;
+```
+
+`$column` - Column;  
+`$alias` - Column alias.
+
+_Example:_
+
+```php
+$query
+    ->sum('Column', 'sum')
+    ->from('Table');
+
+echo $query->toString();
+// SELECT SUM(`Column`) AS `sum` FROM `Table`
 ```
 
 # Update Statement
