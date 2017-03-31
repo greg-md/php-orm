@@ -733,7 +733,7 @@ _Example:_
 ```php
 $query->columnRaw('`Column` + ? AS `col`', 'foo')->from('Table');
 
-echo $query->selectToSql();
+echo $query->selectToString();
 // SELECT `Column` + ? AS `col`
 ```
 
@@ -767,7 +767,7 @@ _Example:_
 ```php
 $query->columnRaw('`Column` + ? AS `col`', 'foo')->from('Table');
 
-echo $query->toSql();
+echo $query->toString();
 // SELECT `Column` + ? AS `col` FROM `Table`
 ```
 
@@ -811,7 +811,7 @@ The `UPDATE` statement is used to modify the existing records in a table.
 * [setToSql](#settosql) - Get SET SQL clause with parameters;
 * [setToString](#settostring) - Get SET SQL clause;
 * [toSql](#tosql) - Get SQL statement with parameters;
-* [toString](#tostring) - Get SQL statement with parameters.
+* [toString](#tostring) - Get SQL statement.
 
 ## table
 
@@ -1063,6 +1063,108 @@ $query->hasSet(); // result: true
 $query->clearSet();
 
 $query->hasSet(); // result: false
+```
+
+## updateToSql
+
+Get UPDATE SQL clause with parameters.
+
+```php
+public function updateToSql(): array
+```
+
+_Example:_
+
+```php
+$query->table('Table')->set('Column', 'foo');
+
+echo $query->updateToSql();
+// ['UPDATE `Table`', []]
+```
+
+## updateToString
+
+Get UPDATE SQL clause.
+
+```php
+public function updateToString(): string
+```
+
+_Example:_
+
+```php
+$query->table('Table')->set('Column', 'foo');
+
+echo $query->setToString();
+// UPDATE `Table`
+```
+
+## setToSql
+
+Get SET SQL clause with parameters.
+
+```php
+public function setToSql(): array
+```
+
+_Example:_
+
+```php
+$query->table('Table')->set('Column', 'foo');
+
+echo $query->setToSql();
+// ['SET `Column` = ?', ['foo']]
+```
+
+## setToString
+
+Get SET SQL clause.
+
+```php
+public function setToString(): string
+```
+
+_Example:_
+
+```php
+$query->table('Table')->set('Column', 'foo');
+
+echo $query->setToString();
+// SET `Column` = ?
+```
+
+## toSql
+
+Get SQL statement with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->table('Table')->set('Column', 'foo');
+
+echo $query->toSql();
+// ['UPDATE `Table` SET `Column` = ?', ['foo']]
+```
+
+## toString
+
+Get SQL statement.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->table('Table')->set('Column', 'foo');
+
+echo $query->toString();
+// UPDATE `Table` SET `Column` = ?
 ```
 
 # Delete Statement
