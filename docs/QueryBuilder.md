@@ -232,6 +232,28 @@ echo $query->toString();
 // SELECT `Column`, (SELECT COUNT(`Column`) FROM `Table1`) AS `count` FROM `Table2`
 ```
 
+## columnRaw
+
+Select raw column.
+
+```php
+public function columnRaw(string $sql, string ...$params): $this;
+```
+
+`$sql` - SQL statement;  
+`...$params` - Statement parameters.
+
+_Example:_
+
+```php
+$query
+    ->columnRaw('SUM(`Column1` + `Column2`) AS `sum`')
+    ->from('Table');
+
+echo $query->toString();
+// SELECT SUM(`Column1` + `Column2`) AS `sum` FROM `Table`
+```
+
 # Update Statement
 
 `UPDATE` statement.
