@@ -83,7 +83,7 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [hasUnions](#hasunions) - Determines if select has unions;
 * [getUnions](#getunions) - Get select unions;
 * [clearUnions](#clearunions) - Clear select unions;
-* [lockForUpdate](#lockforupdate)
+* [lockForUpdate](#lockforupdate) - Lock selected rows
 * [lockInShareMode](#lockinsharemode)
 * [hasLock](#haslock)
 * [getLock](#getlock)
@@ -594,6 +594,30 @@ $query->hasUnions(); // result: true
 $query->clearUnions();
 
 $query->hasUnions(); // result: false
+```
+
+## lockForUpdate
+
+For index records the search encounters, locks the rows and any associated index entries,
+the same as if you issued an UPDATE statement for those rows.
+Other transactions are blocked from updating those rows, from doing [lockInShareMode](#lockinsharemode),
+or from reading the data in certain transaction isolation levels.
+Consistent reads ignore any locks set on the records that exist in the read view.
+
+> NOTE: Currently works only for MySQL driver. For others this rule will be ignored.
+
+```php
+public function lockForUpdate(): $this
+```
+
+_Example:_
+
+```php
+$query->lockForUpdate()->from('Table');
+
+echo $query->toString();
+// SQL: SELECT * FROM `Table`
+// MySQL: SELECT * FROM `Table` FOR UPDATE
 ```
 
 # Update Statement
