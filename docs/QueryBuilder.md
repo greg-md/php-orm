@@ -30,7 +30,8 @@ $query = new Greg\Orm\Query\SelectQuery();
 
 $query->from('Table');
 
-echo $query->toString(); // result: SELECT * FROM `Table`
+echo $query->toString();
+// SELECT * FROM `Table`
 ```
 
 Optionally, you can define a SQL dialect for your query.
@@ -112,7 +113,6 @@ _Example:_
 $query->distinct()->from('Table');
 
 echo $query->toString();
-
 // SELECT DISTINCT * FROM `Table`
 ```
 
@@ -136,7 +136,6 @@ $query
     ->columnsFrom(['t2' => 'Table2'], 'Column1', 'Column2');
 
 echo $query->toString();
-
 // SELECT `t1`.`Column1`, `t1`.`Column2`, `t2`.`Column1`, `t2`.`Column2` FROM `Table1` AS `t1`, `Table2` AS `t2`
 ```
 
@@ -157,7 +156,6 @@ _Example:_
 $query->columns('Column1 as c1', 'Column2')->from('Table');
 
 echo $query->toString();
-
 // SELECT `Column1` AS `c1`, `Column2` FROM `Table`
 ```
 
@@ -181,7 +179,6 @@ $query
     ->from('Table');
 
 echo $query->toString();
-
 // SELECT `Column1` AS `c1`, `Column2` AS `c2` FROM `Table`
 ```
 
@@ -205,7 +202,6 @@ $query
     ->from('Table');
 
 echo $query->toString();
-
 // SELECT `Column1` + ? + `Column2` AS `result` FROM `Table`
 ```
 
