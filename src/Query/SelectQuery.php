@@ -164,18 +164,18 @@ class SelectQuery extends SqlAbstract implements
     }
 
     /**
-     * @param SelectQuery $column
+     * @param SelectQuery $query
      * @param string|null $alias
      *
      * @return $this
      */
-    public function columnSelect(SelectQuery $column, ?string $alias = null)
+    public function columnSelect(SelectQuery $query, ?string $alias = null)
     {
         if ($alias) {
             $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnLogic($column, $alias);
+        $this->columnLogic($query, $alias);
 
         return $this;
     }

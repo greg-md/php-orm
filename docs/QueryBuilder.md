@@ -33,6 +33,15 @@ $query->from('Table');
 echo $query->toString(); // result: SELECT * FROM `Table`
 ```
 
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Query\SelectQuery($dialect);
+```
+
 **Supported clauses**:
 
 * [From](#from-clause) - `FROM` clause;
@@ -102,7 +111,9 @@ _Example:_
 ```php
 $query->distinct()->from('Table');
 
-echo $query->toString(); // result: SELECT DISTINCT * FROM `Table`
+echo $query->toString();
+
+// SELECT DISTINCT * FROM `Table`
 ```
 
 ## columnsFrom
@@ -124,7 +135,9 @@ $query
     ->columnsFrom('Table1 as t1', 'Column1', 'Column2')
     ->columnsFrom(['t2' => 'Table2'], 'Column1', 'Column2');
 
-echo $query->toString(); // result: SELECT `t1`.`Column1`, `t1`.`Column2`, `t2`.`Column1`, `t2`.`Column2` FROM `Table1` AS `t1`, `Table2` AS `t2`
+echo $query->toString();
+
+// SELECT `t1`.`Column1`, `t1`.`Column2`, `t2`.`Column1`, `t2`.`Column2` FROM `Table1` AS `t1`, `Table2` AS `t2`
 ```
 
 ## columns
@@ -143,7 +156,9 @@ _Example:_
 ```php
 $query->columns('Column1 as c1', 'Column2')->from('Table');
 
-echo $query->toString(); // result: SELECT `Column1` AS `c1`, `Column2` FROM `Table`
+echo $query->toString();
+
+// SELECT `Column1` AS `c1`, `Column2` FROM `Table`
 ```
 
 ## column
@@ -165,7 +180,9 @@ $query
     ->column('Column2', 'c2')
     ->from('Table');
 
-echo $query->toString(); // result: SELECT `Column1` AS `c1`, `Column2` AS `c2` FROM `Table`
+echo $query->toString();
+
+// SELECT `Column1` AS `c1`, `Column2` AS `c2` FROM `Table`
 ```
 
 ## columnConcat
@@ -184,11 +201,40 @@ _Example:_
 
 ```php
 $query
-    ->column('Column1 as c1')
-    ->column('Column2', 'c2')
+    ->columnConcat(['Column1', 'Column2'], ", ", "result")
     ->from('Table');
 
-echo $query->toString(); // result: SELECT `Column1` AS `c1`, `Column2` AS `c2` FROM `Table`
+echo $query->toString();
+
+// SELECT `Column1` + ? + `Column2` AS `result` FROM `Table`
+```
+
+## columnSelect
+
+Select sub-query column.
+
+```php
+public function columnSelect(SelectQuery $query, ?string $alias = null): $this;
+```
+
+`$query` - Select query;  
+`$alias` - Alias.
+
+_Example:_
+
+```php
+$countQuery = new \Greg\Orm\Query\SelectQuery();
+
+$countQuery->count('Column')->from('Table1');
+
+$query
+    ->column('Column')
+    ->columnSelect($countQuery, "count")
+    ->from('Table2');
+
+echo $query->toString();
+
+// SELECT `Column`, (SELECT COUNT(`Column`) FROM `Table1`) AS `count` FROM `Table2`
 ```
 
 # Update Statement
