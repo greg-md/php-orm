@@ -102,7 +102,7 @@ The `DISTINCT` is used to return only distinct (different) values.
 Inside a table, a column often contains many duplicate values and sometimes you only want to list the different (distinct) values.
 
 ```php
-public function distinct(bool $value = true): $this;
+public function distinct(bool $value = true): $this
 ```
 
 `$value` - `true` or `false`. Default `true`.
@@ -121,7 +121,7 @@ echo $query->toString();
 Select columns from a table.
 
 ```php
-public function columnsFrom(mixed $table, string $column, string ...$columns): $this;
+public function columnsFrom(mixed $table, string $column, string ...$columns): $this
 ```
 
 `$table` - Table to select from;  
@@ -144,7 +144,7 @@ echo $query->toString();
 Select columns.
 
 ```php
-public function columns(string $column, string ...$columns): $this;
+public function columns(string $column, string ...$columns): $this
 ```
 
 `$column` - Column;  
@@ -164,7 +164,7 @@ echo $query->toString();
 Select column.
 
 ```php
-public function column(string $column, ?string $alias = null): $this;
+public function column(string $column, ?string $alias = null): $this
 ```
 
 `$column` - Column;  
@@ -187,7 +187,7 @@ echo $query->toString();
 Select concatenated columns.
 
 ```php
-public function columnConcat(array $columns, string $delimiter = '', ?string $alias = null): $this;
+public function columnConcat(array $columns, string $delimiter = '', ?string $alias = null): $this
 ```
 
 `$columns` - Columns to concatenate;  
@@ -210,7 +210,7 @@ echo $query->toString();
 Select sub-query column.
 
 ```php
-public function columnSelect(SelectQuery $query, ?string $alias = null): $this;
+public function columnSelect(SelectQuery $query, ?string $alias = null): $this
 ```
 
 `$query` - Select query;  
@@ -237,7 +237,7 @@ echo $query->toString();
 Select raw column.
 
 ```php
-public function columnRaw(string $sql, string ...$params): $this;
+public function columnRaw(string $sql, string ...$params): $this
 ```
 
 `$sql` - SQL statement;  
@@ -259,7 +259,7 @@ echo $query->toString();
 Select column count.
 
 ```php
-public function count(string $column = '*', string $alias = null): $this;
+public function count(string $column = '*', string $alias = null): $this
 ```
 
 `$column` - Column;  
@@ -281,7 +281,7 @@ echo $query->toString();
 Select column maximum value.
 
 ```php
-public function max(string $column, string $alias = null): $this;
+public function max(string $column, string $alias = null): $this
 ```
 
 `$column` - Column;  
@@ -303,7 +303,7 @@ echo $query->toString();
 Select column minimum value.
 
 ```php
-public function min(string $column, string $alias = null): $this;
+public function min(string $column, string $alias = null): $this
 ```
 
 `$column` - Column;  
@@ -325,7 +325,7 @@ echo $query->toString();
 Select column average.
 
 ```php
-public function avg(string $column, string $alias = null): $this;
+public function avg(string $column, string $alias = null): $this
 ```
 
 `$column` - Column;  
@@ -347,7 +347,7 @@ echo $query->toString();
 Select column sum.
 
 ```php
-public function sum(string $column, string $alias = null): $this;
+public function sum(string $column, string $alias = null): $this
 ```
 
 `$column` - Column;  
@@ -362,6 +362,24 @@ $query
 
 echo $query->toString();
 // SELECT SUM(`Column`) AS `sum` FROM `Table`
+```
+
+## hasColumns
+
+Determines if has custom select columns.
+
+```php
+public function hasColumns(): bool
+```
+
+_Example:_
+
+```php
+$query->hasColumns(); // false
+
+$query->column('Column');
+
+$query->hasColumns(); // true
 ```
 
 # Update Statement
