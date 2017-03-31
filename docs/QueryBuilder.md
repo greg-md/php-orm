@@ -233,7 +233,6 @@ $query
     ->from('Table2');
 
 echo $query->toString();
-
 // SELECT `Column`, (SELECT COUNT(`Column`) FROM `Table1`) AS `count` FROM `Table2`
 ```
 
