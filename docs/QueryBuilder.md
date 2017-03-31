@@ -113,8 +113,8 @@ Select columns from a table.
 public function columnsFrom(mixed $table, string $column, string ...$columns): $this;
 ```
 
-`$table` - Table name to select from;  
-`$column` - Column name from table;  
+`$table` - Table to select from;  
+`$column` - Column from table;  
 `...$columns` - Other columns from table.
 
 _Example:_
@@ -135,8 +135,8 @@ Select columns.
 public function columns(string $column, string ...$columns): $this;
 ```
 
-`$column` - Column name;  
-`...$columns` - Select other columns.
+`$column` - Column;  
+`...$columns` - Other columns.
 
 _Example:_
 
@@ -154,8 +154,8 @@ Select column.
 public function column(string $column, ?string $alias = null): $this;
 ```
 
-`$column` - Column name;  
-`$alias` - Alias name.
+`$column` - Column;  
+`$alias` - Alias.
 
 _Example:_
 
@@ -178,7 +178,7 @@ public function columnConcat(array $columns, string $delimiter = '', ?string $al
 
 `$columns` - Columns to concatenate;  
 `$delimiter` - Delimiter;  
-`$alias` - Alias name.
+`$alias` - Alias.
 
 _Example:_
 
