@@ -5,10 +5,10 @@ A powerful query builder for web-artisans.
 Next, you will find a list of available statements and clauses.
 
 * **Statements**
-    * [Select](#select-statement) - `SELECT` is used to retrieve rows selected from one or more tables;
-    * [Update](#update-statement) - `UPDATE` statement;
-    * [Delete](#delete-statement) - `DELETE` statement;
-    * [Insert](#insert-statement) - `INSERT` statement.
+    * [Select](#select-statement) - The `SELECT` statement is used to select data from a database;
+    * [Update](#update-statement) - The `UPDATE` statement is used to modify the existing records in a table;
+    * [Delete](#delete-statement) - The `DELETE` statement is used to delete existing records in a table;
+    * [Insert](#insert-statement) - The `INSERT` statement is used to insert new records in a table.
 * **Clauses**
     * [From](#from-clause) - `FROM` clause;
     * [Join](#join-clause) - `JOIN` clause;
@@ -773,21 +773,26 @@ echo $query->toSql();
 
 # Update Statement
 
-`UPDATE` statement.
+The `UPDATE` statement is used to modify the existing records in a table.
 
-List of **supported clauses**:
+> **Note:** Be careful when updating records in a table!
+> Notice the WHERE clause in the UPDATE statement.
+> The WHERE clause specifies which record(s) that should be updated.
+> If you omit the WHERE clause, all records in the table will be updated!
+
+**Supported clauses**:
 
 * [Join](#join-clause) - `JOIN` clause;
 * [Where](#where-clause) - `WHERE` clause;
 * [Order By](#order-by-clause) - `ORDER BY` clause;
 * [Limit](#limit-clause) - `LIMIT` clause;
 
-List of **magic methods**:
+**Magic methods**:
 
 * [__toString](#__tostring)
 * [__clone](#__clone)
 
-List of **supported methods**:
+**Supported methods**:
 
 * [table](#table)
 * [hasTables](#hastables)
