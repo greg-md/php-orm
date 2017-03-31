@@ -83,8 +83,8 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [hasUnions](#hasunions) - Determines if select has unions;
 * [getUnions](#getunions) - Get select unions;
 * [clearUnions](#clearunions) - Clear select unions;
-* [lockForUpdate](#lockforupdate) - Lock selected rows
-* [lockInShareMode](#lockinsharemode)
+* [lockForUpdate](#lockforupdate) - Locks the rows and any associated index entries;
+* [lockInShareMode](#lockinsharemode) - Sets a shared mode lock on any rows that are read.
 * [hasLock](#haslock)
 * [getLock](#getlock)
 * [clearLock](#clearlock)
@@ -618,6 +618,29 @@ $query->lockForUpdate()->from('Table');
 echo $query->toString();
 // SQL: SELECT * FROM `Table`
 // MySQL: SELECT * FROM `Table` FOR UPDATE
+```
+
+## lockInShareMode
+
+Sets a shared mode lock on any rows that are read.
+Other sessions can read the rows, but cannot modify them until your transaction commits.
+If any of these rows were changed by another transaction that has not yet committed,
+your query waits until that transaction ends and then uses the latest values.
+
+> NOTE: Currently works only for MySQL driver. For others this rule will be ignored.
+
+```php
+public function lockInShareMode(): $this
+```
+
+_Example:_
+
+```php
+$query->lockInShareMode()->from('Table');
+
+echo $query->toString();
+// SQL: SELECT * FROM `Table`
+// MySQL: SELECT * FROM `Table` LOCK IN SHARE MODE
 ```
 
 # Update Statement
