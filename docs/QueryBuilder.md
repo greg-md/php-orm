@@ -56,8 +56,8 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 
 **Magic methods**:
 
-* [__toString](#__tostring)
-* [__clone](#__clone)
+* __toString
+* __clone
 
 **Supported methods**:
 
@@ -789,8 +789,8 @@ The `UPDATE` statement is used to modify the existing records in a table.
 
 **Magic methods**:
 
-* [__toString](#__tostring)
-* [__clone](#__clone)
+* __toString
+* __clone
 
 **Supported methods**:
 
