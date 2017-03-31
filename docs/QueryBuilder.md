@@ -113,9 +113,9 @@ Select columns from a table.
 public function columnsFrom(mixed $table, string $column, string ...$columns): $this;
 ```
 
-`$table` - Select table;  
-`$column` - Select column from table;  
-`...$columns` - Select other columns from table.
+`$table` - Table name to select from;  
+`$column` - Column name from table;  
+`...$columns` - Other columns from table.
 
 _Example:_
 
@@ -135,7 +135,7 @@ Select columns.
 public function columns(string $column, string ...$columns): $this;
 ```
 
-`$column` - Select column;  
+`$column` - Column name;  
 `...$columns` - Select other columns.
 
 _Example:_
@@ -154,7 +154,31 @@ Select column.
 public function column(string $column, ?string $alias = null): $this;
 ```
 
-`$column` - Select column.
+`$column` - Column name;  
+`$alias` - Alias name.
+
+_Example:_
+
+```php
+$query
+    ->column('Column1 as c1')
+    ->column('Column2', 'c2')
+    ->from('Table');
+
+echo $query->toString(); // result: SELECT `Column1` AS `c1`, `Column2` AS `c2` FROM `Table`
+```
+
+## columnConcat
+
+Select concatenated columns.
+
+```php
+public function columnConcat(array $columns, string $delimiter = '', ?string $alias = null): $this;
+```
+
+`$columns` - Columns to concatenate;  
+`$delimiter` - Delimiter;  
+`$alias` - Alias name.
 
 _Example:_
 
