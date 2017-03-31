@@ -88,8 +88,8 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [hasLock](#haslock) - Determines if select has a lock;
 * [getLock](#getlock) - Get the select lock;
 * [clearLock](#clearlock) - Clear the select lock;
-* [selectToSql](#selecttosql) - Get SELECT clause with parameters;
-* [selectToString](#selecttostring) - Get SELECT clause;
+* [selectToSql](#selecttosql) - Get SELECT SQL clause with parameters;
+* [selectToString](#selecttostring) - Get SELECT SQL clause;
 * [toSql](#tosql) Get SQL statement with parameters;
 * [toString](#tostring) - Get SQL statement.
 
@@ -701,6 +701,74 @@ $query->hasLock(); // result: true
 $query->clearLock();
 
 $query->hasLock(); // result: false
+```
+
+## selectToSql
+
+Get SELECT SQL clause with parameters.
+
+```php
+public function selectToSql(): array
+```
+
+_Example:_
+
+```php
+$query->columnRaw('`Column` + ? AS `col`', 'foo')->from('Table');
+
+echo $query->selectToSql();
+// ['SELECT `Column` + ? AS `col`', ['foo']]
+```
+
+## selectToString
+
+Get SELECT SQL clause.
+
+```php
+public function selectToString(): string
+```
+
+_Example:_
+
+```php
+$query->columnRaw('`Column` + ? AS `col`', 'foo')->from('Table');
+
+echo $query->selectToSql();
+// SELECT `Column` + ? AS `col`
+```
+
+## toSql
+
+Get SQL statement with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->columnRaw('`Column` + ? AS `col`', 'foo')->from('Table');
+
+echo $query->toSql();
+// ['SELECT `Column` + ? AS `col` FROM `Table`', ['foo']]
+```
+
+## toString
+
+Get SQL statement.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->columnRaw('`Column` + ? AS `col`', 'foo')->from('Table');
+
+echo $query->toSql();
+// SELECT `Column` + ? AS `col` FROM `Table`
 ```
 
 # Update Statement
