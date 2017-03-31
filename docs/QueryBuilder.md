@@ -604,7 +604,7 @@ Other transactions are blocked from updating those rows, from doing [lockInShare
 or from reading the data in certain transaction isolation levels.
 Consistent reads ignore any locks set on the records that exist in the read view.
 
-> NOTE: Currently works only for MySQL driver. For others this rule will be ignored.
+> NOTE: Currently works only for MySQL driver. For others this rule is ignored.
 
 ```php
 public function lockForUpdate(): $this
@@ -627,7 +627,7 @@ Other sessions can read the rows, but cannot modify them until your transaction 
 If any of these rows were changed by another transaction that has not yet committed,
 your query waits until that transaction ends and then uses the latest values.
 
-> NOTE: Currently works only for MySQL driver. For others this rule will be ignored.
+> NOTE: Currently works only for MySQL driver. For others this rule is ignored.
 
 ```php
 public function lockInShareMode(): $this
