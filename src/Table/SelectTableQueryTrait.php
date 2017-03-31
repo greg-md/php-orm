@@ -182,15 +182,6 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function unionDistinct(SelectQuery $query)
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery()->unionDistinct($query);
-
-        return $instance;
-    }
-
     public function unionRaw(string $sql, string ...$params)
     {
         $instance = $this->selectQueryInstance();
@@ -205,15 +196,6 @@ trait SelectTableQueryTrait
         $instance = $this->selectQueryInstance();
 
         $instance->selectQuery()->unionAllRaw($sql, ...$params);
-
-        return $instance;
-    }
-
-    public function unionDistinctRaw(string $sql, string ...$params)
-    {
-        $instance = $this->selectQueryInstance();
-
-        $instance->selectQuery()->unionDistinctRaw($sql, ...$params);
 
         return $instance;
     }

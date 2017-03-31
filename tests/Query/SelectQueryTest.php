@@ -136,13 +136,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals(['(SELECT *) UNION ALL (SELECT `Column`)', []], $query->toSql());
     }
 
-    public function testCanSetUnionDistinct()
-    {
-        $query = $this->newQuery()->unionDistinct($this->newQuery()->column('Column'));
-
-        $this->assertEquals(['(SELECT *) UNION DISTINCT (SELECT `Column`)', []], $query->toSql());
-    }
-
     public function testCanSetUnionRaw()
     {
         $query = $this->newQuery()->unionRaw((string) $this->newQuery()->column('Column'));
@@ -155,13 +148,6 @@ class SelectQueryTest extends TestCase
         $query = $this->newQuery()->unionAllRaw((string) $this->newQuery()->column('Column'));
 
         $this->assertEquals(['(SELECT *) UNION ALL (SELECT `Column`)', []], $query->toSql());
-    }
-
-    public function testCanSetUnionDistinctRaw()
-    {
-        $query = $this->newQuery()->unionDistinctRaw((string) $this->newQuery()->column('Column'));
-
-        $this->assertEquals(['(SELECT *) UNION DISTINCT (SELECT `Column`)', []], $query->toSql());
     }
 
     public function testCanDetermineIfUnionsExists()
