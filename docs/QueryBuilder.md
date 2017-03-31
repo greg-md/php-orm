@@ -375,11 +375,31 @@ public function hasColumns(): bool
 _Example:_
 
 ```php
-$query->hasColumns(); // false
+$query->hasColumns(); // result: false
 
 $query->column('Column');
 
-$query->hasColumns(); // true
+$query->hasColumns(); // result: true
+```
+
+## getColumns
+
+Get selected columns.
+
+```php
+public function getColumns(): array
+```
+
+_Example:_
+
+```php
+$query->columns('Column1', 'Column2 as c2');
+
+$query->getColumns();
+//[
+//    ['sql' => '`Column1`', 'alias' => null, 'params' => []],
+//    ['sql' => '`Column2`', 'alias' => 'c2', 'params' => []]
+//]
 ```
 
 # Update Statement
