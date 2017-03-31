@@ -80,9 +80,9 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [unionAll](#unionall) - The result includes all matching rows from all the SELECT statements;
 * [unionRaw](#unionraw) - Perform UNION with a raw SQL statement;
 * [unionAllRaw](#unionallraw) - Perform UNION ALL with a raw SQL statement;
-* [hasUnions](#hasunions)
-* [getUnions](#getunions)
-* [clearUnions](#clearunions)
+* [hasUnions](#hasunions) - Determines if select has unions;
+* [getUnions](#getunions) - Get select unions;
+* [clearUnions](#clearunions) - Clear select unions;
 * [lockForUpdate](#lockforupdate)
 * [lockInShareMode](#lockinsharemode)
 * [hasLock](#haslock)
@@ -411,13 +411,13 @@ public function clearColumns(): $this
 _Example:_
 
 ```php
-$query
-    ->columns('Column1', 'Column2 as c2')
-    ->from('Table')
-    ->clearColumns();
+$query->columns('Column1', 'Column2 as c2');
 
-echo $query->toString();
-// SELECT * FROM `Table`
+$query->hasColumns(); // result: true
+
+$query->clearColumns();
+
+$query->hasColumns(); // result: false
 ```
 
 ## union
@@ -529,6 +529,71 @@ $query
 
 echo $query->toString();
 // (SELECT `Column` FROM `Table1`) UNION ALL (SELECT `Column` FROM `Table2`)
+```
+
+## hasUnions
+
+Determines if select has unions.
+
+```php
+public function hasUnions(): bool
+```
+
+_Example:_
+
+```php
+$query->hasUnions(); // result: false
+
+$query->unionRaw('SELECT * FROM `Table`');
+
+$query->hasUnions(); // result: true
+```
+
+## getUnions
+
+Get select unions.
+
+```php
+public function getUnions(): array
+```
+
+_Example:_
+
+```php
+$query->unionAllRaw('SELECT * FROM `Table`');
+
+$unions = $query->getUnions();
+//Array
+//(
+//    [0] => Array
+//        (
+//            [type] => ALL
+//            [sql] => SELECT * FROM `Table`
+//            [params] => Array
+//                (
+//                )
+//        )
+//)
+```
+
+## clearUnions
+
+Clear select unions.
+
+```php
+public function clearUnions(): $this
+```
+
+_Example:_
+
+```php
+$query->unionAllRaw('SELECT * FROM `Table`');
+
+$query->hasUnions(); // result: true
+
+$query->clearUnions();
+
+$query->hasUnions(); // result: false
 ```
 
 # Update Statement
