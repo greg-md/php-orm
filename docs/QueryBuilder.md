@@ -395,11 +395,31 @@ _Example:_
 ```php
 $query->columns('Column1', 'Column2 as c2');
 
-$query->getColumns();
+$columns = $query->getColumns();
 //[
 //    ['sql' => '`Column1`', 'alias' => null, 'params' => []],
 //    ['sql' => '`Column2`', 'alias' => 'c2', 'params' => []]
 //]
+```
+
+## clearColumns
+
+Clear selected columns.
+
+```php
+public function clearColumns(): $this
+```
+
+_Example:_
+
+```php
+$query
+    ->columns('Column1', 'Column2 as c2')
+    ->from('Table')
+    ->clearColumns();
+
+echo $query->toString();
+// SELECT * FROM `Table`
 ```
 
 # Update Statement
