@@ -40,9 +40,9 @@ class SelectQuery extends SqlAbstract implements
         LimitClauseTrait,
         OffsetClauseTrait;
 
-    private const LOCK_FOR_UPDATE = 'FOR UPDATE';
+    const LOCK_FOR_UPDATE = 'FOR UPDATE';
 
-    private const LOCK_IN_SHARE_MORE = 'IN SHARE MODE';
+    const LOCK_IN_SHARE_MORE = 'LOCK IN SHARE MODE';
 
     /**
      * @var bool

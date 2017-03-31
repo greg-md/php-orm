@@ -85,13 +85,13 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [clearUnions](#clearunions) - Clear select unions;
 * [lockForUpdate](#lockforupdate) - Locks the rows and any associated index entries;
 * [lockInShareMode](#lockinsharemode) - Sets a shared mode lock on any rows that are read.
-* [hasLock](#haslock)
-* [getLock](#getlock)
-* [clearLock](#clearlock)
-* [selectToSql](#selecttosql)
-* [selectToString](#selecttostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [hasLock](#haslock) - Determines if select has a lock;
+* [getLock](#getlock) - Get the select lock;
+* [clearLock](#clearlock) - Clear the select lock;
+* [selectToSql](#selecttosql) - Get SELECT clause with parameters;
+* [selectToString](#selecttostring) - Get SELECT clause;
+* [toSql](#tosql) Get SQL statement with parameters;
+* [toString](#tostring) - Get SQL statement.
 
 ## distinct
 
@@ -641,6 +641,66 @@ $query->lockInShareMode()->from('Table');
 echo $query->toString();
 // SQL: SELECT * FROM `Table`
 // MySQL: SELECT * FROM `Table` LOCK IN SHARE MODE
+```
+
+## hasLock
+
+Determines if select has a lock.
+
+```php
+public function hasLock(): bool
+```
+
+_Example:_
+
+```php
+$query->hasLock(); // result: false
+
+$query->lockInShareMode();
+
+$query->hasLock(); // result: true
+```
+
+## getLock
+
+Get the select lock. Available values:
+
+```php
+const LOCK_FOR_UPDATE = 'FOR UPDATE';
+
+const LOCK_IN_SHARE_MORE = 'LOCK IN SHARE MODE';
+```
+
+```php
+public function getLock(): array
+```
+
+_Example:_
+
+```php
+$query->lockInShareMode();
+
+$lock = $query->getLock(); // result: self::LOCK_IN_SHARE_MORE
+```
+
+## clearLock
+
+Clear the select lock.
+
+```php
+public function clearLock(): $this
+```
+
+_Example:_
+
+```php
+$query->lockInShareMode();
+
+$query->hasLock(); // result: true
+
+$query->clearLock();
+
+$query->hasLock(); // result: false
 ```
 
 # Update Statement
