@@ -22,7 +22,7 @@ class ModelUpdateQueryTest extends ModelTestingAbstract
 
         $this->assertTrue($this->model->hasUpdateTables());
 
-        $this->model->updateTable('Table');
+        $this->model->updateTable('Table2');
 
         $this->assertCount(2, $this->model->getUpdateTables());
     }
@@ -33,7 +33,7 @@ class ModelUpdateQueryTest extends ModelTestingAbstract
 
         $this->model->setQuery($this->model->newUpdateQuery());
 
-        $this->model->updateTable('Table');
+        $this->model->updateTable('Table2');
 
         $this->assertCount(2, $this->model->getUpdateTables());
     }
