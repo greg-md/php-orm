@@ -750,7 +750,7 @@ _Example:_
 ```php
 $query->columnRaw('`Column` + ? AS `col`', 'foo')->from('Table');
 
-echo $query->toSql();
+$sql = $query->toSql();
 // ['SELECT `Column` + ? AS `col` FROM `Table`', ['foo']]
 ```
 
@@ -1146,7 +1146,7 @@ _Example:_
 ```php
 $query->table('Table')->set('Column', 'foo');
 
-echo $query->toSql();
+$sql = $query->toSql();
 // ['UPDATE `Table` SET `Column` = ?', ['foo']]
 ```
 
@@ -1186,14 +1186,158 @@ List of **magic methods**:
 
 List of **supported methods**:
 
-* [rowsFrom](#rowsfrom)
-* [hasRowsFrom](#hasrowsfrom)
-* [getRowsFrom](#getrowsfrom)
-* [clearRowsFrom](#clearrowsfrom)
-* [deleteToSql](#deletetosql)
-* [deleteToString](#deletetostring)
-* [toSql](#tosql)
+* [rowsFrom](#rowsfrom) - Delete rows from table;
+* [hasRowsFrom](#hasrowsfrom) - Determine if has tables from where delete the rows;
+* [getRowsFrom](#getrowsfrom) - Get tables from where delete the rows;
+* [clearRowsFrom](#clearrowsfrom) - Clear defined tables where delete the rows;
+* [deleteToSql](#deletetosql) - Get DELETE SQL clause with parameters;
+* [deleteToString](#deletetostring) - Get DELETE SQL clause;
+* [toSql](#tosql) - Get SQL statement with parameters;
 * [toString](#tostring)
+
+## rowsFrom
+
+Delete rows from table.
+
+```php
+public function rowsFrom(string $table, string ...$tables): $this
+```
+
+`$table` - Table name;  
+`...$tables` - Other tables names.
+
+_Example:_
+
+```php
+$query
+    ->from('Table1', 'Table2 as t2')
+    ->rowsFrom('t2');
+
+echo $query->toString();
+// DELETE `t2` FROM `Table1`, `Table2` AS `t2`
+```
+
+## hasRowsFrom
+
+Determine if has tables from where delete the rows..
+
+```php
+public function hasRowsFrom(): bool
+```
+
+_Example:_
+
+```php
+$query->hasRowsFrom(); // result: false
+
+$query->rowsFrom('Table');
+
+$query->hasRowsFrom(); // result: true
+```
+
+## getRowsFrom
+
+Get tables from where delete the rows.
+
+```php
+public function getRowsFrom(): array
+```
+
+_Example:_
+
+```php
+$query->rowsFrom('Table');
+
+$rowsFrom = $query->getRowsFrom(); // result: [`Table`]
+```
+
+## clearRowsFrom
+
+Clear defined tables where delete the rows.
+
+```php
+public function clearRowsFrom(): $this
+```
+
+_Example:_
+
+```php
+$query->rowsFrom('Table');
+
+$query->hasRowsFrom(); // result: true
+
+$query->clearRowsFrom();
+
+$query->hasRowsFrom(); // result: false
+```
+
+## deleteToSql
+
+Get DELETE SQL clause with parameters.
+
+```php
+public function deleteToSql(): array
+```
+
+_Example:_
+
+```php
+$query->from('Table1', 'Table2 as t2')->rowsFrom('t2');
+
+echo $query->deleteToSql();
+// ['DELETE `t2`', []]
+```
+
+## deleteToString
+
+Get DELETE SQL clause.
+
+```php
+public function deleteToString(): string
+```
+
+_Example:_
+
+```php
+$query->from('Table1', 'Table2 as t2')->rowsFrom('t2');
+
+echo $query->deleteToString();
+// DELETE `t2`
+```
+
+## toSql
+
+Get SQL statement with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->from('Table1', 'Table2 as t2')->rowsFrom('t2');
+
+$sql = $query->toSql();
+// ['DELETE `t2` FROM `Table1`, `Table2` AS `t2`', []]
+```
+
+## toString
+
+Get SQL statement.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->from('Table1', 'Table2 as t2')->rowsFrom('t2');
+
+echo $query->toString();
+// DELETE `t2` FROM `Table1`, `Table2` AS `t2`
+```
 
 # Insert Statement
 
