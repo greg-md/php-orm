@@ -90,8 +90,8 @@ $query = new Greg\Orm\Query\SelectQuery($dialect);
 * [clearLock](#clearlock) - Clear the select lock;
 * [selectToSql](#selecttosql) - Get SELECT SQL clause with parameters;
 * [selectToString](#selecttostring) - Get SELECT SQL clause;
-* [toSql](#tosql) - Get SQL statement with parameters;
-* [toString](#tostring) - Get SQL statement.
+* [toSql](#tosql-select-statement) - Get SQL statement with parameters;
+* [toString](#tostring-select-statement) - Get SQL statement.
 
 ## distinct
 
@@ -737,7 +737,7 @@ echo $query->selectToString();
 // SELECT `Column` + ? AS `col`
 ```
 
-## toSql
+## toSql SELECT statement
 
 Get SQL statement with parameters.
 
@@ -754,7 +754,7 @@ $sql = $query->toSql();
 // ['SELECT `Column` + ? AS `col` FROM `Table`', ['foo']]
 ```
 
-## toString
+## toString SELECT statement
 
 Get SQL statement.
 
@@ -810,8 +810,8 @@ The `UPDATE` statement is used to modify the existing records in a table.
 * [updateToString](#updatetostring) - Get UPDATE SQL clause;
 * [setToSql](#settosql) - Get SET SQL clause with parameters;
 * [setToString](#settostring) - Get SET SQL clause;
-* [toSql](#tosql) - Get SQL statement with parameters;
-* [toString](#tostring) - Get SQL statement.
+* [toSql](#tosql-update-statement) - Get SQL statement with parameters;
+* [toString](#tostring-update-statement) - Get SQL statement.
 
 ## table
 
@@ -1133,7 +1133,7 @@ echo $query->setToString();
 // SET `Column` = ?
 ```
 
-## toSql
+## toSql UPDATE statement
 
 Get SQL statement with parameters.
 
@@ -1150,7 +1150,7 @@ $sql = $query->toSql();
 // ['UPDATE `Table` SET `Column` = ?', ['foo']]
 ```
 
-## toString
+## toString UPDATE statement
 
 Get SQL statement.
 
@@ -1192,8 +1192,8 @@ List of **supported methods**:
 * [clearRowsFrom](#clearrowsfrom) - Clear defined tables where delete the rows;
 * [deleteToSql](#deletetosql) - Get DELETE SQL clause with parameters;
 * [deleteToString](#deletetostring) - Get DELETE SQL clause;
-* [toSql](#tosql) - Get SQL statement with parameters;
-* [toString](#tostring)
+* [toSql](#tosql-delete-statement) - Get SQL statement with parameters;
+* [toString](#tostring-delete-statement) - Get SQL statement;
 
 ## rowsFrom
 
@@ -1305,7 +1305,7 @@ echo $query->deleteToString();
 // DELETE `t2`
 ```
 
-## toSql
+## toSql DELETE statement
 
 Get SQL statement with parameters.
 
@@ -1322,7 +1322,7 @@ $sql = $query->toSql();
 // ['DELETE `t2` FROM `Table1`, `Table2` AS `t2`', []]
 ```
 
-## toString
+## toString DELETE statement
 
 Get SQL statement.
 
@@ -1349,27 +1349,48 @@ List of **magic methods**:
 
 List of **supported methods**:
 
-* [into](#into)
-* [hasInto](#hasinto)
-* [getInto](#getinto)
-* [clearInto](#clearinto)
-* [columns](#columns)
-* [hasColumns](#hascolumns)
-* [getColumns](#getcolumns)
-* [clearColumns](#clearcolumns)
-* [values](#values)
-* [hasValues](#hasvalues)
-* [getValues](#getvalues)
-* [clearValues](#clearvalues)
-* [data](#data)
-* [clearData](#cleardata)
-* [select](#select)
-* [selectRaw](#selectraw)
-* [hasSelect](#hasselect)
-* [getSelect](#getselect)
-* [clearSelect](#clearselect)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [into](#into) - Insert into table;
+* [hasInto](#hasinto) - Determine if has insert into table;
+* [getInto](#getinto) - Get insert into table;
+* [clearInto](#clearinto) - Clear insert into table;
+* [columns](#columns) - Insert into columns;
+* [hasColumns](#hascolumns) - Determine if has insert into columns;
+* [getColumns](#getcolumns) - Get insert into columns;
+* [clearColumns](#clearcolumns) - Clear insert into columns;
+* [values](#values) - Insert values;
+* [hasValues](#hasvalues) - Determine if has inser values;
+* [getValues](#getvalues) - Get insert values;
+* [clearValues](#clearvalues) - Clear insert values;
+* [data](#data) - Insert column-value pairs;
+* [clearData](#cleardata) - Clear insert column-value pairs;
+* [select](#select) - Insert select;
+* [selectRaw](#selectraw) - Insert raw select;
+* [hasSelect](#hasselect) - Determine if has insert select;
+* [getSelect](#getselect) - Get insert select;
+* [clearSelect](#clearselect) - Clear insert select;
+* [toSql](#tosql-insert-statement) - Get SQL statement with parameters;
+* [toString](#tostring-insert-statement) - Get SQL statement;
+
+## into
+
+Insert into table.
+
+```php
+public function into($table): $this
+```
+
+`$table` - Table name.
+
+_Example:_
+
+```php
+$query
+    ->into('Table')
+    ->data(['foo' => 'bar']);
+
+echo $query->toString();
+// INSERT INTO `Table` (`foo`) VALUES (?)
+```
 
 # From Clause
 
@@ -1389,8 +1410,8 @@ List of **supported methods**:
 * [clearFrom](#clearfrom)
 * [fromToSql](#fromtosql)
 * [fromToString](#fromtostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [toSql](#tosql-from-clause)
+* [toString](#tostring-from-clause)
 
 # Join Clause
 
@@ -1422,8 +1443,8 @@ List of **supported methods**:
 * [clearJoin](#clearjoin)
 * [joinToSql](#jointosql)
 * [joinToString](#jointostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [toSql](#tosql-join-clause)
+* [toString](#tostring-join-clause)
 
 # Where Clause
 
@@ -1483,8 +1504,8 @@ List of **supported methods**:
 * [clearExists](#clearexists)
 * [whereToSql](#wheretosql)
 * [whereToString](#wheretostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [toSql](#tosql-where-clause)
+* [toString](#tostring-where-clause)
 
 # Group By Clause
 
@@ -1504,8 +1525,8 @@ List of **supported methods**:
 * [clearGroupBy](#cleargroupby)
 * [groupByToSql](#groupbytosql)
 * [groupByToString](#groupbytostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [toSql](#tosql-group-by-clause)
+* [toString](#tostring-group-by-clause)
 
 # Having Clause
 
@@ -1558,8 +1579,8 @@ List of **supported methods**:
 * [clearHaving](#clearhaving)
 * [havingToSql](#havingtosql)
 * [havingToString](#havingtostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [toSql](#tosql-having-clause)
+* [toString](#tostring-having-clause)
 
 # Order By Clause
 
@@ -1581,8 +1602,8 @@ List of **supported methods**:
 * [clearOrderBy](#clearorderby)
 * [orderByToSql](#orderbytosql)
 * [orderByToString](#orderbytostring)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [toSql](#tosql-order-by-clause)
+* [toString](#tostring-order-by-clause)
 
 # Limit Clause
 
@@ -1652,5 +1673,5 @@ List of **supported methods**:
 * [has](#has)
 * [get](#get)
 * [clear](#clear)
-* [toSql](#tosql)
-* [toString](#tostring)
+* [toSql](#tosql-conditions-clause)
+* [toString](#tostring-conditions-clause)
