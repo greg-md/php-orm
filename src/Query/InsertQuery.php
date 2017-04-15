@@ -177,13 +177,13 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     }
 
     /**
-     * @param SelectQuery $strategy
+     * @param SelectQuery $query
      *
      * @return $this
      */
-    public function select(SelectQuery $strategy)
+    public function select(SelectQuery $query)
     {
-        $this->selectLogic($strategy);
+        $this->selectLogic($query);
 
         return $this;
     }

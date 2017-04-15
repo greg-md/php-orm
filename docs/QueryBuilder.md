@@ -1219,7 +1219,7 @@ echo $query->toString();
 
 ## hasRowsFrom
 
-Determine if has tables from where delete the rows..
+Determine if has tables from where delete the rows.
 
 ```php
 public function hasRowsFrom(): bool
@@ -1357,8 +1357,8 @@ List of **supported methods**:
 * [hasColumns](#hascolumns) - Determine if has insert into columns;
 * [getColumns](#getcolumns) - Get insert into columns;
 * [clearColumns](#clearcolumns) - Clear insert into columns;
-* [values](#values) - Insert values;
-* [hasValues](#hasvalues) - Determine if has inser values;
+* [values](#values) - Insert columns values;
+* [hasValues](#hasvalues) - Determine if has insert values;
 * [getValues](#getvalues) - Get insert values;
 * [clearValues](#clearvalues) - Clear insert values;
 * [data](#data) - Insert column-value pairs;
@@ -1386,10 +1386,397 @@ _Example:_
 ```php
 $query
     ->into('Table')
-    ->data(['foo' => 'bar']);
+    ->data(['Column' => 'values']);
 
 echo $query->toString();
-// INSERT INTO `Table` (`foo`) VALUES (?)
+// INSERT INTO `Table` (`Column`) VALUES (?)
+```
+
+## hasInto
+
+Determine if has insert into table.
+
+```php
+public function hasInto(): bool
+```
+
+_Example:_
+
+```php
+$query->hasInto(); // result: false
+
+$query->into('Table');
+
+$query->hasInto(); // result: true
+```
+
+## getInto
+
+Get insert into table.
+
+```php
+public function getInto(): array
+```
+
+_Example:_
+
+```php
+$query->into('Table');
+
+$into = $query->getInto(); // result: `Table`
+```
+
+## clearInto
+
+Clear insert into table.
+
+```php
+public function clearInto(): $this
+```
+
+_Example:_
+
+```php
+$query->into('Table');
+
+$query->hasInto(); // result: true
+
+$query->clearInto();
+
+$query->hasInto(); // result: false
+```
+
+## columns
+
+Insert into columns.
+
+```php
+public function columns(array $columns): $this
+```
+
+`$columns` - Columns names.
+
+_Example:_
+
+```php
+$query
+    ->into('Table')
+    ->columns(['Column'])
+    ->values(['value']);
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) VALUES (?)
+```
+
+## hasColumns
+
+Determine if has insert into columns.
+
+```php
+public function hasColumns(): bool
+```
+
+_Example:_
+
+```php
+$query->hasColumns(); // result: false
+
+$query->columns(['Column']);
+
+$query->hasColumns(); // result: true
+```
+
+## getColumns
+
+Get insert into columns.
+
+```php
+public function getColumns(): array
+```
+
+_Example:_
+
+```php
+$query->columns(['Column1', 'Column2']);
+
+$columns = $query->getColumns(); // result: ['`Column1`', '`Column2`']
+```
+
+## clearColumns
+
+Clear insert into columns.
+
+```php
+public function clearColumns(): $this
+```
+
+_Example:_
+
+```php
+$query->columns(['Column']);
+
+$query->hasColumns(); // result: true
+
+$query->clearColumns();
+
+$query->hasColumns(); // result: false
+```
+
+## values
+
+Insert values.
+
+```php
+public function values(array $values): $this
+```
+
+`$values` - Values.
+
+_Example:_
+
+```php
+$query
+    ->into('Table')
+    ->columns(['Column'])
+    ->values(['value']);
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) VALUES (?)
+```
+
+## hasValues
+
+Determine if has insert values.
+
+```php
+public function hasValues(): bool
+```
+
+_Example:_
+
+```php
+$query->hasValues(); // result: false
+
+$query->values(['value']);
+
+$query->hasValues(); // result: true
+```
+
+## getValues
+
+Get insert values.
+
+```php
+public function getValues(): array
+```
+
+_Example:_
+
+```php
+$query->values(['value1', 'value2']);
+
+$values = $query->getValues(); // result: ['value1', 'value2']
+```
+
+## clearValues
+
+Clear insert values.
+
+```php
+public function clearValues(): $this
+```
+
+_Example:_
+
+```php
+$query->values(['value']);
+
+$query->hasValues(); // result: true
+
+$query->clearValues();
+
+$query->hasValues(); // result: false
+```
+
+## data
+
+Insert column-value pairs.
+
+```php
+public function data(array $data): $this
+```
+
+`$data` - Column-value pairs.
+
+_Example:_
+
+```php
+$query
+    ->into('Table')
+    ->data(['Column' => 'value']);
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) VALUES (?)
+```
+
+## clearData
+
+Clear insert column-value pairs.
+
+```php
+public function clearData(): $this
+```
+
+_Example:_
+
+```php
+$query->data(['Column' => 'value']);
+
+$query->hasColumns(); // result: true
+
+$query->hasValues(); // result: true
+
+$query->clearData();
+
+$query->hasColumns(); // result: false
+
+$query->hasValues(); // result: false
+```
+
+## select
+
+Insert select.
+
+```php
+public function select(\Greg\Orm\Query\SelectQuery $query): $this
+```
+
+`$query` - Select query.
+
+_Example:_
+
+```php
+$selectQuery = new \Greg\Orm\Query\SelectQuery($query->dialect());
+
+$selectQuery->columnsFrom('Table2', 'Column');
+
+$query
+    ->into('Table1')
+    ->columns(['Column'])
+    ->select($selectQuery);
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) Select `Column` from `Table2`
+```
+
+## selectRaw
+
+Insert raw select.
+
+```php
+public function selectRaw(string $sql): $this
+```
+
+`$sql` - Select raw SQL.
+
+_Example:_
+
+```php
+$query
+    ->into('Table1')
+    ->columns(['Column'])
+    ->select('Select `Column` from `Table2`');
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) Select `Column` from `Table2`
+```
+
+## hasSelect
+
+Determine if has insert select.
+
+```php
+public function hasSelect(): bool
+```
+
+_Example:_
+
+```php
+$query->hasSelect(); // result: false
+
+$query->selectRaw('Select `Column` from `Table2`');
+
+$query->hasSelect(); // result: true
+```
+
+## getSelect
+
+Get insert select.
+
+```php
+public function getSelect(): array
+```
+
+_Example:_
+
+```php
+$query->selectRaw('Select `Column` from `Table2`');
+
+$sql = $query->getSelect(); // result: Select `Column` from `Table2`
+```
+
+## clearSelect
+
+Clear insert select.
+
+```php
+public function clearSelect(): $this
+```
+
+_Example:_
+
+```php
+$query->selectRaw('Select `Column` from `Table2`');
+
+$query->hasSelect(); // result: true
+
+$query->clearSelect();
+
+$query->hasSelect(); // result: false
+```
+
+## toSql INSERT statement
+
+Get SQL statement with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->into('Table')->data(['Column' => 'value']);
+
+$sql = $query->toSql();
+// ['INSERT INTO `Table` (`Column`) VALUES (?)', ['value']]
+```
+
+## toString INSERT statement
+
+Get SQL statement.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->into('Table')->data(['Column' => 'value']);
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) VALUES (?)
 ```
 
 # From Clause
