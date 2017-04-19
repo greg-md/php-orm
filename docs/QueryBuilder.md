@@ -780,6 +780,26 @@ The `UPDATE` statement is used to modify the existing records in a table.
 > The WHERE clause specifies which record(s) that should be updated.
 > If you omit the WHERE clause, all records in the table will be updated!
 
+_Example:_
+
+```php
+$query = new Greg\Orm\Query\UpdateQuery();
+
+$query->table('Table')->set('Column', 'value');
+
+echo $query->toString();
+// UPDATE `Table` SET `Column` = ?
+```
+
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Query\UpdateQuery($dialect);
+```
+
 **Supported clauses**:
 
 * [Join](#join-clause) - `JOIN` clause;
@@ -1169,7 +1189,31 @@ echo $query->toString();
 
 # Delete Statement
 
-`DELETE` statement.
+The DELETE statement is used to delete records from a table.
+
+> **Notice the WHERE clause in the DELETE syntax:**
+> The WHERE clause specifies which record or records that should be deleted.
+> If you omit the WHERE clause, all records will be deleted!
+
+_Example:_
+
+```php
+$query = new Greg\Orm\Query\DeleteQuery();
+
+$query->from('Table')->where('Id', 1);
+
+echo $query->toString();
+// DELETE FROM `Table` WHERE `Id` = ?
+```
+
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Query\DeleteQuery($dialect);
+```
 
 List of **supported clauses**:
 
@@ -1341,7 +1385,30 @@ echo $query->toString();
 
 # Insert Statement
 
-`INSERT` statement.
+The INSERT INTO statement is used to add new records to a MySQL table.
+
+> **Note:** If a column is AUTO_INCREMENT (like the "id" column) or TIMESTAMP (like the "reg_date" column),
+> it is no need to be specified in the SQL query; MySQL will automatically add the value.
+
+_Example:_
+
+```php
+$query = new Greg\Orm\Query\InsertQuery();
+
+$query->into('Table')->data(['Column' => 'value']);
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) VALUES (?)
+```
+
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Query\InsertQuery($dialect);
+```
 
 List of **magic methods**:
 
@@ -1789,16 +1856,115 @@ List of **magic methods**:
 
 List of **supported methods**:
 
-* [from](#from)
-* [fromRaw](#fromraw)
-* [fromLogic](#fromlogic)
-* [hasFrom](#hasfrom)
-* [getFrom](#getfrom)
-* [clearFrom](#clearfrom)
-* [fromToSql](#fromtosql)
-* [fromToString](#fromtostring)
-* [toSql](#tosql-from-clause)
-* [toString](#tostring-from-clause)
+* [from](#from) - Define tables;
+* [fromRaw](#fromraw) - Define raw tables;
+* [fromLogic](#fromlogic) - Define FROM logic;
+* [hasFrom](#hasfrom) - Determine if has tables;
+* [getFrom](#getfrom) - Get tables;
+* [clearFrom](#clearfrom) - Clear tables;
+* [fromToSql](#fromtosql) - Get FROM SQL clause with parameters;
+* [fromToString](#fromtostring) - Get FROM SQL clause;
+* [toSql](#tosql-from-clause) - Get SQL clause with parameters;
+* [toString](#tostring-from-clause) - Get SQL clause;
+
+## from
+
+Define tables.
+
+```php
+public function from(mixed $table, mixed ...$tables): $this
+```
+
+`$table` - Table;  
+`...$tables` - Tables.
+
+_Example:_
+
+```php
+$query
+    ->into('Table1')
+    ->columns(['Column'])
+    ->select($selectQuery);
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) Select `Column` from `Table2`
+```
+
+## selectRaw
+
+Insert raw select.
+
+```php
+public function selectRaw(string $sql): $this
+```
+
+`$sql` - Select raw SQL.
+
+_Example:_
+
+```php
+$query
+    ->into('Table1')
+    ->columns(['Column'])
+    ->select('Select `Column` from `Table2`');
+
+echo $query->toString();
+// INSERT INTO `Table` (`Column`) Select `Column` from `Table2`
+```
+
+## hasSelect
+
+Determine if has insert select.
+
+```php
+public function hasSelect(): bool
+```
+
+_Example:_
+
+```php
+$query->hasSelect(); // result: false
+
+$query->selectRaw('Select `Column` from `Table2`');
+
+$query->hasSelect(); // result: true
+```
+
+## getSelect
+
+Get insert select.
+
+```php
+public function getSelect(): array
+```
+
+_Example:_
+
+```php
+$query->selectRaw('Select `Column` from `Table2`');
+
+$sql = $query->getSelect(); // result: Select `Column` from `Table2`
+```
+
+## clearSelect
+
+Clear insert select.
+
+```php
+public function clearSelect(): $this
+```
+
+_Example:_
+
+```php
+$query->selectRaw('Select `Column` from `Table2`');
+
+$query->hasSelect(); // result: true
+
+$query->clearSelect();
+
+$query->hasSelect(); // result: false
+```
 
 # Join Clause
 
