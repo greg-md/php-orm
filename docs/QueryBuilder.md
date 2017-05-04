@@ -1848,7 +1848,30 @@ echo $query->toString();
 
 # From Clause
 
-`FROM` clause.
+The `FROM table_references` clause indicates the table or tables from which to retrieve rows.
+If you name more than one table, you are performing a join.
+For information on join syntax, see [Join Clause](#join-clause).
+For each table specified, you can optionally specify an alias.
+
+_Example:_
+
+```php
+$query = new Greg\Orm\Clause\FromClause();
+
+$query->from('Table1', 'Table2 as t2');
+
+echo $query->toString();
+// FROM `Table1`, `Table2` AS `t2`
+```
+
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Clause\FromClause($dialect);
+```
 
 List of **magic methods**:
 
@@ -1881,89 +1904,128 @@ public function from(mixed $table, mixed ...$tables): $this
 _Example:_
 
 ```php
-$query
-    ->into('Table1')
-    ->columns(['Column'])
-    ->select($selectQuery);
+$query->from('Table1', 'Table2 as t2');
 
 echo $query->toString();
-// INSERT INTO `Table` (`Column`) Select `Column` from `Table2`
+// FROM `Table1`, `Table2` AS `t2`
 ```
 
-## selectRaw
+## fromRaw
 
-Insert raw select.
+Define raw tables.
 
 ```php
-public function selectRaw(string $sql): $this
+public function fromRaw(?string $alias, string $sql, string ...$params)
 ```
 
-`$sql` - Select raw SQL.
+`$alias` - Table alias;  
+`$sql` - Table raw SQL;  
+`$params` - Table parameters.
 
 _Example:_
 
 ```php
-$query
-    ->into('Table1')
-    ->columns(['Column'])
-    ->select('Select `Column` from `Table2`');
+$query->fromRaw('t', 'SELECT * FROM `Table` WHERE Column = ?', 'value');
 
 echo $query->toString();
-// INSERT INTO `Table` (`Column`) Select `Column` from `Table2`
+// FROM (SELECT * FROM `Table` WHERE Column = ?) AS `t`
 ```
 
-## hasSelect
+## fromLogic
 
-Determine if has insert select.
+Define tables logic.
+
+> **Note:** Use this method only if you know what you are doing!
 
 ```php
-public function hasSelect(): bool
+public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = [])
+```
+
+`$tableKey` - Table key, used with joins;  
+`$table` - The table;  
+`$alias` - Table alias;  
+`$params` - Table parameters.
+
+_Example:_
+
+```php
+$query->fromLogic('table1', '`Table1`', '`t1`');
+
+echo $query->toString();
+// FROM `Table1` AS `t1`
+
+$join = new Greg\Orm\Clause\JoinClause($query->dialect());
+
+$join->innerTo('table1', 'Table2 as t2', '!t1.Id = !t2.Table1Id');
+
+echo $query->toString($join);
+// FROM `Table1` AS t1 INNER JOIN `Table2` AS `t2` ON `t1`.`Id` = `t2`.`Table1Id` 
+```
+
+## hasFrom
+
+Determine if has from tables.
+
+```php
+public function hasFrom(): bool
 ```
 
 _Example:_
 
 ```php
-$query->hasSelect(); // result: false
+$query->hasFrom(); // result: false
 
-$query->selectRaw('Select `Column` from `Table2`');
+$query->from('Table');
 
-$query->hasSelect(); // result: true
+$query->hasFrom(); // result: true
 ```
 
-## getSelect
+## getFrom
 
-Get insert select.
-
-```php
-public function getSelect(): array
-```
-
-_Example:_
+Get from tables.
 
 ```php
-$query->selectRaw('Select `Column` from `Table2`');
-
-$sql = $query->getSelect(); // result: Select `Column` from `Table2`
-```
-
-## clearSelect
-
-Clear insert select.
-
-```php
-public function clearSelect(): $this
+public function getFrom(): array
 ```
 
 _Example:_
 
 ```php
-$query->selectRaw('Select `Column` from `Table2`');
+$query->from('Table');
 
-$query->hasSelect(); // result: true
+$sql = $query->getFrom();
+//Array
+//(
+//    [Table] => Array
+//        (
+//            [tableKey] => Table
+//            [table] => `Table`
+//            [alias] => 
+//            [params] => Array
+//                (
+//                )
+//        )
+//)
+```
 
-$query->clearSelect();
+## clearFrom
 
-$query->hasSelect(); // result: false
+Clear from tables.
+
+```php
+public function clearFrom(): $this
+```
+
+_Example:_
+
+```php
+$query->from('Table');
+
+$query->hasFrom(); // result: true
+
+$query->clearFrom();
+
+$query->hasFrom(); // result: false
 ```
 
 # Join Clause
