@@ -1881,14 +1881,14 @@ List of **supported methods**:
 
 * [from](#from) - Define tables;
 * [fromRaw](#fromraw) - Define raw tables;
-* [fromLogic](#fromlogic) - Define FROM logic;
+* [fromLogic](#fromlogic) - Define custom tables logic;
 * [hasFrom](#hasfrom) - Determine if has tables;
 * [getFrom](#getfrom) - Get tables;
 * [clearFrom](#clearfrom) - Clear tables;
 * [fromToSql](#fromtosql) - Get FROM SQL clause with parameters;
 * [fromToString](#fromtostring) - Get FROM SQL clause;
 * [toSql](#tosql-from-clause) - Get SQL clause with parameters;
-* [toString](#tostring-from-clause) - Get SQL clause;
+* [toString](#tostring-from-clause) - Get SQL clause.
 
 ## from
 
@@ -1915,7 +1915,7 @@ echo $query->toString();
 Define raw tables.
 
 ```php
-public function fromRaw(?string $alias, string $sql, string ...$params)
+public function fromRaw(?string $alias, string $sql, string ...$params): $this
 ```
 
 `$alias` - Table alias;  
@@ -1933,12 +1933,12 @@ echo $query->toString();
 
 ## fromLogic
 
-Define tables logic.
+Define custom tables logic.
 
 > **Note:** Use this method only if you know what you are doing!
 
 ```php
-public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = [])
+public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = []): $this
 ```
 
 `$tableKey` - Table key, used with joins;  
@@ -2028,9 +2028,77 @@ $query->clearFrom();
 $query->hasFrom(); // result: false
 ```
 
+## fromToSql
+
+Get FROM SQL clause with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->from('Table');
+
+$sql = $query->toSql();
+// ['FROM `Table`', []]
+```
+
+## fromToString
+
+Get FROM SQL clause.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->from('Table');
+
+echo $query->toString();
+// FROM `Table`
+```
+
+## toSql FROM clause
+
+Get SQL clause with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->from('Table');
+
+$sql = $query->toSql();
+// ['FROM `Table`', []]
+```
+
+## toString FROM clause
+
+Get SQL clause.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->from('Table');
+
+echo $query->toString();
+// FROM `Table`
+```
+
 # Join Clause
 
-`JOIN` clause.
+A `JOIN` clause is used to combine rows from two or more tables, based on a related column between them.
 
 List of **magic methods**:
 
@@ -2038,28 +2106,312 @@ List of **magic methods**:
 
 List of **supported methods**:
 
-* [left](#left)
-* [leftOn](#lefton)
-* [right](#right)
-* [rightOn](#righton)
-* [inner](#inner)
-* [innerOn](#inneron)
-* [cross](#cross)
-* [leftTo](#leftto)
-* [leftToOn](#lefttoon)
-* [rightTo](#rightto)
-* [rightToOn](#righttoon)
-* [innerTo](#innerto)
-* [innerToOn](#innertoon)
-* [crossTo](#crossto)
-* [joinLogic](#joinlogic)
-* [hasJoin](#hasjoin)
-* [getJoin](#getjoin)
-* [clearJoin](#clearjoin)
-* [joinToSql](#jointosql)
-* [joinToString](#jointostring)
-* [toSql](#tosql-join-clause)
-* [toString](#tostring-join-clause)
+* [left](#left) - Left join;
+* [leftOn](#lefton) - Left join with conditions;
+* [right](#right) - Right join;
+* [rightOn](#righton) - Right join with conditions;
+* [inner](#inner) - Inner join;
+* [innerOn](#inneron) - Inner join with conditions;
+* [cross](#cross) - Cross join;
+* [leftTo](#leftto) - Left join to a specific FROM table;
+* [leftToOn](#lefttoon) - Left join to a specific FROM table with conditions;
+* [rightTo](#rightto) - Right join to a specific FROM table;
+* [rightToOn](#righttoon) - Right join to a specific FROM table with conditions;
+* [innerTo](#innerto) - Inner join to a specific FROM table;
+* [innerToOn](#innertoon) - Inner join to a specific FROM table with conditions;
+* [crossTo](#crossto) - Cross join to a specific FROM table;
+* [joinLogic](#joinlogic) - Define custom join logic;
+* [hasJoin](#hasjoin) - Determine if has joins;
+* [getJoin](#getjoin) - Get joins;
+* [clearJoin](#clearjoin) - Clear joins;
+* [joinToSql](#jointosql) - Get JOIN SQL clause with parameters;
+* [joinToString](#jointostring) - Get JOIN SQL clause;
+* [toSql](#tosql-join-clause) - Get SQL clause with parameters;
+* [toString](#tostring-join-clause) - Get SQL clause.
+
+## left
+
+Left join.
+
+Return all records from the left table, and the matched records from the right table.
+
+```php
+public function left($table, string $on = null, string ...$params): $this
+```
+
+## leftOn
+
+Left join with conditions.
+
+Return all records from the left table, and the matched records from the right table.
+
+```php
+public function leftOn($table, $on): $this
+```
+
+## right
+
+Right join.
+
+Return all records from the right table, and the matched records from the left table.
+
+```php
+public function right($table, string $on = null, string ...$params): $this
+```
+
+## rightOn
+
+Right join with conditions.
+
+Return all records from the right table, and the matched records from the left table.
+
+```php
+public function rightOn($table, $on): $this
+```
+
+## inner
+
+Inner join.
+
+Returns records that have matching values in both tables.
+
+```php
+public function inner($table, string $on = null, string ...$params): $this
+```
+
+## innerOn
+
+Inner join with conditions.
+
+Returns records that have matching values in both tables.
+
+```php
+public function innerOn($table, $on): $this
+```
+
+## cross
+
+Cross join.
+
+Return all records when there is a match in either left or right table.
+
+```php
+public function cross($table): $this
+```
+
+## leftTo
+
+Left join to a specific FROM table.
+
+Return all records from the left table, and the matched records from the right table.
+
+```php
+public function leftTo($source, $table, string $on = null, string ...$params): $this
+```
+
+## leftToOn
+
+Left join to a specific FROM table with conditions.
+
+Return all records from the left table, and the matched records from the right table.
+
+```php
+public function leftToOn($source, $table, $on): $this
+```
+
+## rightTo
+
+Right join to a specific FROM table.
+
+Return all records from the right table, and the matched records from the left table.
+
+```php
+public function rightTo($source, $table, string $on = null, string ...$params): $this
+```
+
+## rightToOn
+
+Right join to a specific FROM table with conditions.
+
+Return all records from the right table, and the matched records from the left table.
+
+```php
+public function rightToOn($soruce, $table, $on): $this
+```
+
+## innerTo
+
+Inner join to a specific FROM table.
+
+Returns records that have matching values in both tables.
+
+```php
+public function innerTo($source, $table, string $on = null, string ...$params): $this
+```
+
+## innerToOn
+
+Inner join to a specific FROM table with conditions.
+
+Returns records that have matching values in both tables.
+
+```php
+public function innerToOn($source, $table, $on): $this
+```
+
+## crossTo
+
+Cross join to a specific FROM table.
+
+Return all records when there is a match in either left or right table.
+
+```php
+public function crossTo($source, $table): $this
+```
+
+## joinLogic
+
+Define custom join logic.
+
+```php
+public function joinLogic(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = []): $this
+```
+
+## hasJoin
+
+Determine if has joins.
+
+```php
+public function hasJoin(): bool
+```
+
+_Example:_
+
+```php
+$query->hasJoin(); // result: false
+
+$query->inner('Table');
+
+$query->hasJoin(); // result: true
+```
+
+## getJoin
+
+Get joins.
+
+```php
+public function getJoin(): array
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+$sql = $query->getJoin();
+//Array
+//(
+//    [Table] => Array
+//        (
+//            [type] => INNER
+//            [source] => 
+//            [table] => `Table`
+//            [alias] => 
+//            [on] => 
+//            [params] => Array
+//                (
+//                )
+//        )
+//)
+```
+
+## clearJoin
+
+Clear joins.
+
+```php
+public function clearJoin(): $this
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+$query->hasJoin(); // result: true
+
+$query->clearJoin();
+
+$query->hasJoin(); // result: false
+```
+
+## joinToSql
+
+Get JOIN SQL clause with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+$sql = $query->toSql();
+// ['INNER JOIN `Table`', []]
+```
+
+## joinToString
+
+Get JOIN SQL clause.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+echo $query->toString();
+// INNER JOIN `Table`
+```
+
+## toSql FROM clause
+
+Get SQL clause with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+$sql = $query->toSql();
+// ['INNER JOIN `Table`', []]
+```
+
+## toString FROM clause
+
+Get SQL clause.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+echo $query->toString();
+// INNER JOIN `Table`
+```
 
 # Where Clause
 
