@@ -2100,6 +2100,26 @@ echo $query->toString();
 
 A `JOIN` clause is used to combine rows from two or more tables, based on a related column between them.
 
+_Example:_
+
+```php
+$query = new Greg\Orm\Clause\JoinClause();
+
+$query->inner('Table');
+
+echo $query->toString();
+// INNER JOIN `Table`
+```
+
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Clause\JoinClause($dialect);
+```
+
 List of **magic methods**:
 
 * [__toString](#__tostring)
@@ -2415,7 +2435,29 @@ echo $query->toString();
 
 # Where Clause
 
-`WHERE` clause.
+The `WHERE` clause is used to filter records.
+
+The `WHERE` clause is used to extract only those records that fulfill a specified condition.
+
+_Example:_
+
+```php
+$query = new Greg\Orm\Clause\WhereClause();
+
+$query->where('Column', 'value');
+
+echo $query->toString();
+// WHERE `Column` = ?
+```
+
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Clause\WhereClause($dialect);
+```
 
 List of **magic methods**:
 
@@ -2424,55 +2466,183 @@ List of **magic methods**:
 
 List of **supported methods**:
 
-* [where](#where)
-* [orWhere](#orwhere)
-* [whereMultiple](#wheremultiple)
-* [orWhereMultiple](#orwheremultiple)
-* [whereDate](#wheredate)
-* [orWhereDate](#orwheredate)
-* [whereTime](#wheretime)
-* [orWhereTime](#orwheretime)
-* [whereYear](#whereyear)
-* [orWhereYear](#orwhereyear)
-* [whereMonth](#wheremonth)
-* [orWhereMonth](#orwheremonth)
-* [whereDay](#whereday)
-* [orWhereDay](#orwhereday)
-* [whereRelation](#whererelation)
-* [orWhereRelation](#orwhererelation)
-* [whereRelations](#whererelations)
-* [orWhereRelations](#orwhererelations)
-* [whereIsNull](#whereisnull)
-* [orWhereIsNull](#orwhereisnull)
-* [whereIsNotNull](#whereisnotnull)
-* [orWhereIsNotNull](#orwhereisnotnull)
-* [whereBetween](#wherebetween)
-* [orWhereBetween](#orwherebetween)
-* [whereNotBetween](#wherenotbetween)
-* [orWhereNotBetween](#orwherenotbetween)
-* [whereGroup](#wheregroup)
-* [orWhereGroup](#orwheregroup)
-* [whereConditions](#whereconditions)
-* [orWhereConditions](#orwhereconditions)
-* [whereStrategy](#wherestrategy)
-* [orWhereStrategy](#orwherestrategy)
-* [whereRaw](#whereraw)
-* [orWhereRaw](#orwhereraw)
-* [whereLogic](#wherelogic)
-* [hasWhere](#haswhere)
-* [getWhere](#getwhere)
-* [clearWhere](#clearwhere)
-* [whereExists](#whereexists)
-* [whereNotExists](#wherenotexists)
-* [whereExistsRaw](#whereexistsraw)
-* [whereNotExistsRaw](#wherenotexistsraw)
-* [hasExists](#hasexists)
-* [getExists](#getexists)
-* [clearExists](#clearexists)
-* [whereToSql](#wheretosql)
-* [whereToString](#wheretostring)
-* [toSql](#tosql-where-clause)
-* [toString](#tostring-where-clause)
+* [where](#where) - Filter records with AND condition;
+* [orWhere](#orwhere) - Filter records with OR condition;
+* [whereMultiple](#wheremultiple) - Filter records by column-value with AND condition;
+* [orWhereMultiple](#orwheremultiple) - Filter records by column-value with OR condition;
+* [whereDate](#wheredate) - Filter records by date with AND condition;
+* [orWhereDate](#orwheredate) - Filter records by date with OR condition;
+* [whereTime](#wheretime) - Filter records by time with AND condition;
+* [orWhereTime](#orwheretime) - Filter records by time with OR condition;
+* [whereYear](#whereyear) - Filter records by year with AND condition;
+* [orWhereYear](#orwhereyear) - Filter records by year with OR condition;
+* [whereMonth](#wheremonth) - Filter records by month with AND condition;
+* [orWhereMonth](#orwheremonth) - Filter records by month with OR condition;
+* [whereDay](#whereday) - Filter records by day with AND condition;
+* [orWhereDay](#orwhereday) - Filter records by day with OR condition;
+* [whereRelation](#whererelation) - Filter records by column relation with AND condition;
+* [orWhereRelation](#orwhererelation) - Filter records by column relation with OR condition;
+* [whereRelations](#whererelations) - Filter records by column-column relations with AND condition;
+* [orWhereRelations](#orwhererelations) - Filter records by column-column relations with OR condition;
+* [whereIsNull](#whereisnull) - Filter records by NULL column with AND condition;
+* [orWhereIsNull](#orwhereisnull) - Filter records by NULL column with OR condition;
+* [whereIsNotNull](#whereisnotnull) - Filter records by NOT NULL column with AND condition;
+* [orWhereIsNotNull](#orwhereisnotnull) - Filter records by NOT NULL column with OR condition;
+* [whereBetween](#wherebetween) - Filter records by column between values with AND condition;
+* [orWhereBetween](#orwherebetween) - Filter records by column between values with OR condition;
+* [whereNotBetween](#wherenotbetween) - Filter records by column not between values with AND condition;
+* [orWhereNotBetween](#orwherenotbetween) - Filter records by column not between values with OR condition;
+* [whereGroup](#wheregroup) - Filter records by group of filters with AND condition;
+* [orWhereGroup](#orwheregroup) - Filter records by group of filters with OR condition;
+* [whereConditions](#whereconditions) - Filter records by conditions with AND condition;
+* [orWhereConditions](#orwhereconditions) - Filter records by conditions with OR condition;
+* [whereStrategy](#wherestrategy) - Filter records by where strategy with AND condition;
+* [orWhereStrategy](#orwherestrategy) - Filter records by where strategy with OR condition;
+* [whereRaw](#whereraw) - Filter records by raw SQL with AND condition;
+* [orWhereRaw](#orwhereraw) - Filter records by raw SQL with OR condition;
+* [whereLogic](#wherelogic) - Define custom where logic;
+* [hasWhere](#haswhere) - Determine if has where conditions;
+* [getWhere](#getwhere) - Get where conditions;
+* [clearWhere](#clearwhere) - Clear where conditions;
+* [whereExists](#whereexists) - Filter records by SELECT if exists;
+* [whereNotExists](#wherenotexists) - Filter records by SELECT statement if not exists;
+* [whereExistsRaw](#whereexistsraw) - Filter records by raw SELECT statement if exists;
+* [whereNotExistsRaw](#wherenotexistsraw) - Filter records by raw SELECT statement if not exists;
+* [hasExists](#hasexists) - Determine if has exists SELECT statement;
+* [getExists](#getexists) - Get exists SELECT statement;
+* [clearExists](#clearexists) - Clear exists SELECT statement;
+* [whereToSql](#wheretosql) - Get WHERE SQL clause with parameters;
+* [whereToString](#wheretostring) - Get WHERE SQL clause;
+* [toSql](#tosql-where-clause) - Get SQL clause with parameters;
+* [toString](#tostring-where-clause) - Get SQL clause;
+
+## where
+
+Filter records with AND condition.
+
+```php
+public function where(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## orWhere
+
+Filter records with OR condition.
+
+```php
+public function orWhere(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## whereMultiple
+
+Filter records by column-value with AND condition.
+
+```php
+public function whereMultiple(array $columns): $this
+```
+
+## orWhereMultiple
+
+Filter records by column-value with OR condition.
+
+```php
+public function orWhereMultiple(array $columns): $this
+```
+
+## whereDate
+
+Filter records by date with AND condition.
+
+```php
+public function whereDate(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## orWhereDate
+
+Filter records by date with OR condition;
+
+```php
+public function orWhereDate(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## whereTime
+
+Filter records by time with AND condition.
+
+```php
+public function whereTime(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## orWhereTime
+
+Filter records by time with OR condition;
+
+```php
+public function orWhereTime(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## whereYear
+
+Filter records by year with AND condition.
+
+```php
+public function whereYear(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## orWhereYear
+
+Filter records by year with OR condition;
+
+```php
+public function orWhereYear(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## whereMonth
+
+Filter records by month with AND condition.
+
+```php
+public function whereMonth(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## orWhereMonth
+
+Filter records by month with OR condition;
+
+```php
+public function orWhereMonth(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## whereDay
+
+Filter records by day with AND condition.
+
+```php
+public function whereDay(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## orWhereDay
+
+Filter records by day with OR condition;
+
+```php
+public function orWhereDay(string|array $column, string $operator, string|array $value = null): $this
+```
+
+## whereRelation
+
+Filter records by column relation with AND condition.
+
+```php
+public function whereRelation(string|array $column1, string $operator, string|array $column2 = null): $this
+```
+
+## orWhereRelation
+
+Filter records by column relation with OR condition.
+
+```php
+public function orWhereRelation(string|array $column1, string $operator, string|array $column2 = null): $this
+```
 
 # Group By Clause
 
