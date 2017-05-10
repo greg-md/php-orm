@@ -92,7 +92,13 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function inTransaction(): bool
     {
-        return $this->tryConnection(__FUNCTION__);
+        return $this->dbProcess(function () {
+            $result = $this->connection()->inTransaction();
+
+            $this->checkError();
+
+            return $result;
+        });
     }
 
     /**
@@ -100,7 +106,13 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function beginTransaction(): bool
     {
-        return $this->tryConnection(__FUNCTION__);
+        return $this->dbProcess(function () {
+            $result = $this->connection()->beginTransaction();
+
+            $this->checkError();
+
+            return $result;
+        });
     }
 
     /**
@@ -108,7 +120,13 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function commit(): bool
     {
-        return $this->tryConnection(__FUNCTION__);
+        return $this->dbProcess(function () {
+            $result = $this->connection()->commit();
+
+            $this->checkError();
+
+            return $result;
+        });
     }
 
     /**
@@ -116,7 +134,13 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function rollBack(): bool
     {
-        return $this->tryConnection(__FUNCTION__);
+        return $this->dbProcess(function () {
+            $result = $this->connection()->rollBack();
+
+            $this->checkError();
+
+            return $result;
+        });
     }
 
     /**
@@ -137,7 +161,15 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function lastInsertId(string $sequenceId = null): string
     {
-        return $this->tryConnection(__FUNCTION__, func_get_args());
+        $args = func_get_args();
+
+        return $this->dbProcess(function () use ($args) {
+            $id = $this->connection()->lastInsertId(...$args);
+
+            $this->checkError();
+
+            return $id;
+        });
     }
 
     /**
@@ -147,7 +179,13 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function quote(string $value): string
     {
-        return $this->tryConnection(__FUNCTION__, [$value]);
+        return $this->dbProcess(function () use ($value) {
+            $result = $this->connection()->quote($value);
+
+            $this->checkError();
+
+            return $result;
+        });
     }
 
     /**
@@ -290,55 +328,46 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     protected function prepare(string $sql, array $params = []): \PDOStatement
     {
-        /** @var \PDOStatement $stmt */
-        $stmt = $this->tryConnection(__FUNCTION__, [$sql, $params]);
+        return $this->dbProcess(function () use ($sql, $params) {
+            $stmt = $this->connection()->prepare($sql);
 
-        if ($params) {
-            $k = 1;
+            $this->checkError();
 
-            foreach ($params as $key => $value) {
-                $stmt->bindValue(is_int($key) ? $k++ : $key, $value);
+            if ($params) {
+                $k = 1;
+
+                foreach ($params as $key => $value) {
+                    $stmt->bindValue(is_int($key) ? $k++ : $key, $value);
+                }
             }
-        }
 
-        $this->fire($sql, $params);
+            $this->fire($sql, $params);
 
-        $stmt->execute();
+            $stmt->execute();
 
-        return $stmt;
+            $this->checkError();
+
+            return $stmt;
+        });
     }
 
-    /**
-     * @param string $method
-     * @param array  $args
-     *
-     * @return mixed
-     */
-    protected function tryConnection(string $method, array $args = [])
+    protected function dbProcess(callable $callable)
     {
         try {
-            return $this->callConnection($method, $args);
+            return call_user_func_array($callable, []);
         } catch (\PDOException $e) {
             if ($e->errorInfo[1] == self::ERROR_CONNECTION_EXPIRED) {
                 $this->connect();
 
-                return $this->callConnection($method, $args);
+                return call_user_func_array($callable, []);
             }
 
             throw $e;
         }
     }
 
-    /**
-     * @param string $method
-     * @param array  $args
-     *
-     * @return mixed
-     */
-    protected function callConnection(string $method, array $args = [])
+    protected function checkError()
     {
-        $result = call_user_func_array([$this->connection(), $method], $args);
-
         $errorInfo = $this->connection()->errorInfo();
 
         if ($errorInfo[1]) {
@@ -348,8 +377,6 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
             throw $e;
         }
-
-        return $result;
     }
 
     abstract protected function connector(): PdoConnectorStrategy;
