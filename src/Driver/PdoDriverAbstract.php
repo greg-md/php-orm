@@ -92,13 +92,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function inTransaction(): bool
     {
-        return $this->dbProcess(function () {
-            $result = $this->connection()->inTransaction();
-
-            $this->checkError();
-
-            return $result;
-        });
+        return $this->connection()->inTransaction();
     }
 
     /**
@@ -120,13 +114,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function commit(): bool
     {
-        return $this->dbProcess(function () {
-            $result = $this->connection()->commit();
-
-            $this->checkError();
-
-            return $result;
-        });
+        return $this->connection()->commit();
     }
 
     /**
@@ -134,13 +122,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function rollBack(): bool
     {
-        return $this->dbProcess(function () {
-            $result = $this->connection()->rollBack();
-
-            $this->checkError();
-
-            return $result;
-        });
+        return $this->connection()->rollBack();
     }
 
     /**
@@ -161,15 +143,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function lastInsertId(string $sequenceId = null): string
     {
-        $args = func_get_args();
-
-        return $this->dbProcess(function () use ($args) {
-            $id = $this->connection()->lastInsertId(...$args);
-
-            $this->checkError();
-
-            return $id;
-        });
+        return $this->connection()->lastInsertId(...func_get_args());
     }
 
     /**
