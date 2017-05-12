@@ -30,7 +30,7 @@ trait PdoMock
     {
         $this->pdoMock
             ->method('connectionProcess')
-            ->willReturnCallback(function($callable) {
+            ->willReturnCallback(function ($callable) {
                 return $callable($this->pdoMock);
             });
 
