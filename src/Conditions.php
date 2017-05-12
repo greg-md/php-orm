@@ -1062,7 +1062,7 @@ class Conditions extends SqlAbstract
             call_user_func_array($callable, [$conditions]);
         }
 
-        if (!($conditions instanceof Conditions)
+        if (!($conditions instanceof self)
             and !($conditions instanceof WhereClauseStrategy)
             and !($conditions instanceof HavingClauseStrategy)) {
             throw new \Exception('Unknown conditions format.');

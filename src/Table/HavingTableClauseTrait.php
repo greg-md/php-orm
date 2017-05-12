@@ -4,7 +4,6 @@ namespace Greg\Orm\Table;
 
 use Greg\Orm\Clause\HavingClause;
 use Greg\Orm\Clause\HavingClauseStrategy;
-use Greg\Orm\Conditions;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\SqlException;
 
