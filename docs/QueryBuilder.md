@@ -2871,67 +2871,31 @@ public function clearExists(): $this
 Get WHERE SQL clause with parameters.
 
 ```php
-public function whereToSql(): array
-```
-
-_Example:_
-
-```php
-$query->inner('Table');
-
-$sql = $query->toSql();
-// ['INNER JOIN `Table`', []]
+public function whereToSql(bool $useClause = true): array
 ```
 
 ## joinToString
 
-Get JOIN SQL clause.
+Get WHERE SQL clause.
 
 ```php
-public function joinToString(): string
+public function whereToString(bool $useClause = true): string
 ```
 
-_Example:_
-
-```php
-$query->inner('Table');
-
-echo $query->toString();
-// INNER JOIN `Table`
-```
-
-## toSql FROM clause
+## toSql WHERE clause
 
 Get SQL clause with parameters.
 
 ```php
-public function toSql(): array
+public function toSql(bool $useClause = true): array
 ```
 
-_Example:_
-
-```php
-$query->inner('Table');
-
-$sql = $query->toSql();
-// ['INNER JOIN `Table`', []]
-```
-
-## toString FROM clause
+## toString WHERE clause
 
 Get SQL clause.
 
 ```php
-public function toString(): string
-```
-
-_Example:_
-
-```php
-$query->inner('Table');
-
-echo $query->toString();
-// INNER JOIN `Table`
+public function toString(bool $useClause = true): string
 ```
 
 # Group By Clause
