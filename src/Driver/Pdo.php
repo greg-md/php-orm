@@ -203,12 +203,12 @@ class Pdo
     public function connectionProcess(callable $callable)
     {
         try {
-            return call_user_func_array($callable, []);
+            return call_user_func_array($callable, [$this]);
         } catch (\PDOException $e) {
             if ($this->connection()->errorInfo()[1] == self::ERROR_CONNECTION_EXPIRED) {
                 $this->connect();
 
-                return call_user_func_array($callable, []);
+                return call_user_func_array($callable, [$this]);
             }
 
             throw $e;

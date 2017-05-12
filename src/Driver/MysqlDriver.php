@@ -7,13 +7,13 @@ use Greg\Orm\Dialect\MysqlDialect;
 
 class MysqlDriver extends PdoDriverAbstract
 {
-    private $connector;
+    private $pdo;
 
     private $dialect;
 
-    public function __construct(PdoConnectorStrategy $strategy, DialectStrategy $dialect = null)
+    public function __construct(Pdo $pdo, DialectStrategy $dialect = null)
     {
-        $this->connector = $strategy;
+        $this->pdo = $pdo;
 
         if (!$dialect) {
             $dialect = new MysqlDialect();
@@ -22,6 +22,11 @@ class MysqlDriver extends PdoDriverAbstract
         $this->dialect = $dialect;
 
         return $this;
+    }
+
+    public function pdo(): Pdo
+    {
+        return $this->pdo;
     }
 
     public function dialect(): DialectStrategy
@@ -84,10 +89,5 @@ class MysqlDriver extends PdoDriverAbstract
         }
 
         return compact('columns', 'primary');
-    }
-
-    protected function connector(): PdoConnectorStrategy
-    {
-        return $this->connector;
     }
 }

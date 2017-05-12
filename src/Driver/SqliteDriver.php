@@ -7,13 +7,13 @@ use Greg\Orm\Dialect\SqliteDialect;
 
 class SqliteDriver extends PdoDriverAbstract
 {
-    private $connector;
+    private $pdo;
 
     private $dialect;
 
-    public function __construct(PdoConnectorStrategy $strategy, DialectStrategy $dialect = null)
+    public function __construct(Pdo $pdo, DialectStrategy $dialect = null)
     {
-        $this->connector = $strategy;
+        $this->pdo = $pdo;
 
         if (!$dialect) {
             $dialect = new SqliteDialect();
@@ -22,6 +22,11 @@ class SqliteDriver extends PdoDriverAbstract
         $this->dialect = $dialect;
 
         return $this;
+    }
+
+    public function pdo(): Pdo
+    {
+        return $this->pdo;
     }
 
     public function dialect(): DialectStrategy
@@ -71,10 +76,5 @@ class SqliteDriver extends PdoDriverAbstract
             'columns' => $columns,
             'primary' => $primary,
         ];
-    }
-
-    protected function connector(): PdoConnectorStrategy
-    {
-        return $this->connector;
     }
 }

@@ -7,37 +7,33 @@ use PHPUnit_Framework_MockObject_MockBuilder;
 trait PdoMock
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var Pdo|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $pdoMock;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PDOStatement|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $pdoStatementMock;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PdoConnectorStrategy
-     */
-    protected $pdoConnector;
-
     protected function initPdoMock()
     {
-        $this->pdoMock = $pdoMock = $this->getMockBuilder(\PDO::class)
+        $this->pdoMock = $pdoMock = $this->getMockBuilder(Pdo::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->pdoStatementMock = $this->getMockBuilder(\PDOStatement::class)
             ->getMock();
-
-        $this->pdoConnector = $this->getMockBuilder(PdoConnectorStrategy::class)
-            ->getMock();
-
-        $this->pdoConnector->method('connect')->willReturn($this->pdoMock);
     }
 
     protected function mockStatements()
     {
+        $this->pdoMock
+            ->method('connectionProcess')
+            ->willReturnCallback(function($callable) {
+                return $callable($this->pdoMock);
+            });
+
         $this->pdoMock->method('prepare')->willReturn($this->pdoStatementMock);
 
         $this->pdoMock->method('query')->willReturn($this->pdoStatementMock);

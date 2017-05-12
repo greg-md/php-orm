@@ -31,49 +31,12 @@ class MysqlDriverTest extends TestCase
 
         $this->initPdoMock();
 
-        $this->driver = new MysqlDriver($this->pdoConnector);
-    }
-
-    public function testCanConnect()
-    {
-        $this->pdoConnector->expects($this->once())->method('connect');
-
-        $this->driver->connect();
+        $this->driver = new MysqlDriver($this->pdoMock);
     }
 
     public function testCanGetConnection()
     {
-        $this->assertInstanceOf(\PDO::class, $this->driver->connection());
-    }
-
-    public function testCanExecInitEvent()
-    {
-        $used = false;
-
-        $this->driver->onInit(function () use (&$used) {
-            $used = true;
-        });
-
-        $this->driver->connect();
-
-        $this->assertTrue($used);
-    }
-
-    public function testCanReconnectIfConnectionExpired()
-    {
-        /** @var \PDOException $e */
-        $e = $this->getMockBuilder(\PDOException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $e->errorInfo = ['Error', 2006, 'Expired'];
-
-        $this->pdoMock
-            ->expects($this->exactly(2))
-            ->method('prepare')
-            ->will($this->onConsecutiveCalls($this->throwException($e), $this->pdoStatementMock));
-
-        $this->driver->fetch('SELECT 1');
+        $this->assertInstanceOf(Pdo::class, $this->driver->pdo());
     }
 
     public function testCanCommitTransaction()
@@ -326,17 +289,6 @@ class MysqlDriverTest extends TestCase
         foreach ($generator as $key => $value) {
             $this->assertEquals(array_shift($result), [$key => $value]);
         }
-    }
-
-    public function testCanThrowPDOExceptionIfStatementIsWrong()
-    {
-        $this->pdoMock->method('prepare')->willReturn(false);
-
-        $this->pdoMock->method('errorInfo')->willReturn(['ERROR', 1, 'Something wrong.']);
-
-        $this->expectException(\PDOException::class);
-
-        $this->driver->fetch('SELECT error');
     }
 
     public function testCanTruncate()

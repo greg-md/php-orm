@@ -7,62 +7,6 @@ use Greg\Support\Str;
 
 abstract class PdoDriverAbstract extends DriverAbstract
 {
-    private const ERROR_CONNECTION_EXPIRED = 2006;
-
-    /**
-     * @var \PDO
-     */
-    private $connection;
-
-    /**
-     * @var callable[]
-     */
-    private $onInit = [];
-
-    /**
-     * @return $this
-     */
-    public function connect()
-    {
-        $this->connection = $this->connector()->connect();
-
-        $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        $this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-
-        $this->connection->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
-
-        foreach ($this->onInit as $callable) {
-            call_user_func_array($callable, [$this->connection]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function connection(): \PDO
-    {
-        if (!$this->connection) {
-            $this->connect();
-        }
-
-        return $this->connection;
-    }
-
-    /**
-     * @param callable $callable
-     *
-     * @return $this
-     */
-    public function onInit(callable $callable)
-    {
-        $this->onInit[] = $callable;
-
-        return $this;
-    }
-
     /**
      * @param callable $callable
      *
@@ -92,7 +36,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function inTransaction(): bool
     {
-        return $this->connection()->inTransaction();
+        return $this->pdo()->inTransaction();
     }
 
     /**
@@ -100,13 +44,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function beginTransaction(): bool
     {
-        return $this->dbProcess(function () {
-            $result = $this->connection()->beginTransaction();
-
-            $this->checkError();
-
-            return $result;
-        });
+        return $this->pdo()->beginTransaction();
     }
 
     /**
@@ -114,7 +52,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function commit(): bool
     {
-        return $this->connection()->commit();
+        return $this->pdo()->commit();
     }
 
     /**
@@ -122,7 +60,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function rollBack(): bool
     {
-        return $this->connection()->rollBack();
+        return $this->pdo()->rollBack();
     }
 
     /**
@@ -143,7 +81,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function lastInsertId(string $sequenceId = null): string
     {
-        return $this->connection()->lastInsertId(...func_get_args());
+        return $this->pdo()->lastInsertId(...func_get_args());
     }
 
     /**
@@ -153,13 +91,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     public function quote(string $value): string
     {
-        return $this->dbProcess(function () use ($value) {
-            $result = $this->connection()->quote($value);
-
-            $this->checkError();
-
-            return $result;
-        });
+        return $this->pdo()->quote($value);
     }
 
     /**
@@ -302,10 +234,8 @@ abstract class PdoDriverAbstract extends DriverAbstract
      */
     protected function prepare(string $sql, array $params = []): \PDOStatement
     {
-        return $this->dbProcess(function () use ($sql, $params) {
-            $stmt = $this->connection()->prepare($sql);
-
-            $this->checkError();
+        return $this->pdo()->connectionProcess(function (Pdo $pdo) use ($sql, $params) {
+            $stmt = $pdo->prepare($sql);
 
             if ($params) {
                 $k = 1;
@@ -319,39 +249,11 @@ abstract class PdoDriverAbstract extends DriverAbstract
 
             $stmt->execute();
 
-            $this->checkError();
+            $pdo->checkError();
 
             return $stmt;
         });
     }
 
-    protected function dbProcess(callable $callable)
-    {
-        try {
-            return call_user_func_array($callable, []);
-        } catch (\PDOException $e) {
-            if ($e->errorInfo[1] == self::ERROR_CONNECTION_EXPIRED) {
-                $this->connect();
-
-                return call_user_func_array($callable, []);
-            }
-
-            throw $e;
-        }
-    }
-
-    protected function checkError()
-    {
-        $errorInfo = $this->connection()->errorInfo();
-
-        if ($errorInfo[1]) {
-            $e = new \PDOException($errorInfo[2], $errorInfo[1]);
-
-            $e->errorInfo = $errorInfo;
-
-            throw $e;
-        }
-    }
-
-    abstract protected function connector(): PdoConnectorStrategy;
+    abstract public function pdo(): Pdo;
 }
