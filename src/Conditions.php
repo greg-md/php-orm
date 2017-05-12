@@ -534,57 +534,25 @@ class Conditions extends SqlAbstract
     }
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions
      *
      * @return $this
      */
-    public function group(callable $callable)
+    public function conditions($conditions)
     {
-        $conditions = new self($this->dialect());
-
-        call_user_func_array($callable, [$conditions]);
-
-        $this->logic('AND', $conditions);
+        $this->logic('AND', $this->prepareConditions($conditions));
 
         return $this;
     }
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions
      *
      * @return $this
      */
-    public function orGroup(callable $callable)
+    public function orConditions($conditions)
     {
-        $conditions = new self($this->dialect());
-
-        call_user_func_array($callable, [$conditions]);
-
-        $this->logic('OR', $conditions);
-
-        return $this;
-    }
-
-    /**
-     * @param Conditions $conditions
-     *
-     * @return $this
-     */
-    public function conditions(Conditions $conditions)
-    {
-        $this->logic('AND', $conditions);
-
-        return $this;
-    }
-
-    /**
-     * @param Conditions $conditions
-     *
-     * @return $this
-     */
-    public function orConditions(Conditions $conditions)
-    {
-        $this->logic('OR', $conditions);
+        $this->logic('OR', $this->prepareConditions($conditions));
 
         return $this;
     }
@@ -1082,5 +1050,24 @@ class Conditions extends SqlAbstract
         }
 
         return '?';
+    }
+
+    protected function prepareConditions($conditions)
+    {
+        if (is_callable($conditions)) {
+            $callable = $conditions;
+
+            $conditions = new self($this->dialect());
+
+            call_user_func_array($callable, [$conditions]);
+        }
+
+        if (!($conditions instanceof Conditions)
+            and !($conditions instanceof WhereClauseStrategy)
+            and !($conditions instanceof HavingClauseStrategy)) {
+            throw new \Exception('Unknown conditions format.');
+        }
+
+        return $conditions;
     }
 }

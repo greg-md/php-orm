@@ -2492,12 +2492,8 @@ List of **supported methods**:
 * [orWhereBetween](#orwherebetween) - Filter records by column between values with OR condition;
 * [whereNotBetween](#wherenotbetween) - Filter records by column not between values with AND condition;
 * [orWhereNotBetween](#orwherenotbetween) - Filter records by column not between values with OR condition;
-* [whereGroup](#wheregroup) - Filter records by group of filters with AND condition;
-* [orWhereGroup](#orwheregroup) - Filter records by group of filters with OR condition;
 * [whereConditions](#whereconditions) - Filter records by conditions with AND condition;
 * [orWhereConditions](#orwhereconditions) - Filter records by conditions with OR condition;
-* [whereStrategy](#wherestrategy) - Filter records by where strategy with AND condition;
-* [orWhereStrategy](#orwherestrategy) - Filter records by where strategy with OR condition;
 * [whereRaw](#whereraw) - Filter records by raw SQL with AND condition;
 * [orWhereRaw](#orwhereraw) - Filter records by raw SQL with OR condition;
 * [whereLogic](#wherelogic) - Define custom where logic;
@@ -2642,6 +2638,102 @@ Filter records by column relation with OR condition.
 
 ```php
 public function orWhereRelation(string|array $column1, string $operator, string|array $column2 = null): $this
+```
+
+## whereRelations
+
+Filter records by column-column relations with AND condition.
+
+```php
+public function whereRelations(array $relations): $this
+```
+
+## orWhereRelations
+
+Filter records by column-column relations with OR condition.
+
+```php
+public function orWhereRelations(array $relations): $this
+```
+
+## whereIsNull
+
+Filter records by NULL column with AND condition.
+
+```php
+public function whereIsNull(string $column): $this
+```
+
+## orWhereIsNull
+
+Filter records by NULL column with OR condition.
+
+```php
+public function orWhereIsNull(string $column): $this
+```
+
+## whereIsNotNull
+
+Filter records by NOT NULL column with AND condition.
+
+```php
+public function whereIsNotNull(string $column): $this
+```
+
+## orWhereIsNotNull
+
+Filter records by NOT NULL column with OR condition.
+
+```php
+public function orWhereIsNotNull(string $column): $this
+```
+
+## whereBetween
+
+Filter records by column between values with AND condition.
+
+```php
+public function whereBetween(string $column, int $min, int $max): $this
+```
+
+## orWhereBetween
+
+Filter records by column between values with OR condition.
+
+```php
+public function orWhereBetween(string $column, int $min, int $max): $this
+```
+
+## whereNotBetween
+
+Filter records by column not between values with AND condition.
+
+```php
+public function whereNotBetween(string $column, int $min, int $max): $this
+```
+
+## orWhereNotBetween
+
+Filter records by column not between values with OR condition.
+
+```php
+public function orWhereNotBetween(string $column, int $min, int $max): $this
+```
+
+## whereGroup
+
+Filter records by group of filters with AND condition.
+
+```php
+public function whereGroup(callable $callable): $this
+```
+
+## orWhereGroup
+
+Filter records by group of filters with OR condition.
+
+```php
+public function orWhereGroup(callable $callable): $this
 ```
 
 # Group By Clause

@@ -225,46 +225,18 @@ interface HavingClauseStrategy
     public function orHavingNotBetween(string $column, int $min, int $max);
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $strategy
      *
      * @return $this
      */
-    public function havingGroup(callable $callable);
+    public function havingConditions($strategy);
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $strategy
      *
      * @return $this
      */
-    public function orHavingGroup(callable $callable);
-
-    /**
-     * @param Conditions $strategy
-     *
-     * @return $this
-     */
-    public function havingConditions(Conditions $strategy);
-
-    /**
-     * @param Conditions $strategy
-     *
-     * @return $this
-     */
-    public function orHavingConditions(Conditions $strategy);
-
-    /**
-     * @param HavingClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function havingStrategy(HavingClauseStrategy $strategy);
-
-    /**
-     * @param HavingClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function orHavingStrategy(HavingClauseStrategy $strategy);
+    public function orHavingConditions($strategy);
 
     /**
      * @param string   $sql

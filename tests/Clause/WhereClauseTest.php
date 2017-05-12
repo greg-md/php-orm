@@ -36,8 +36,8 @@ class WhereClauseTest extends ConditionsTestingAbstract
         'orBetween'    => 'orWhereBetween',
         'notBetween'   => 'whereNotBetween',
         'orNotBetween' => 'orWhereNotBetween',
-        'group'        => 'whereGroup',
-        'orGroup'      => 'orWhereGroup',
+        'group'        => 'whereConditions',
+        'orGroup'      => 'orWhereConditions',
         'conditions'   => 'whereConditions',
         'orConditions' => 'orWhereConditions',
         'raw'          => 'whereRaw',
@@ -52,7 +52,7 @@ class WhereClauseTest extends ConditionsTestingAbstract
     {
         $query = $this->newClause();
 
-        $query->whereStrategy($this->newClause()->where('Foo', 'foo'));
+        $query->whereConditions($this->newClause()->where('Foo', 'foo'));
 
         $this->assertEquals([$this->prefix() . '(`Foo` = ?)', ['foo']], $query->toSql());
 
@@ -68,7 +68,7 @@ class WhereClauseTest extends ConditionsTestingAbstract
      */
     public function testCanSetOrStrategy(WhereClause $query)
     {
-        $query->orWhereStrategy($this->newClause()->where('Bar', 'bar'));
+        $query->orWhereConditions($this->newClause()->where('Bar', 'bar'));
 
         $this->assertEquals([$this->prefix() . '(`Foo` = ?) OR (`Bar` = ?)', ['foo', 'bar']], $query->toSql());
     }

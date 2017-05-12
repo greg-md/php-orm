@@ -29,7 +29,7 @@ trait HavingTableClauseTrait
 
                 call_user_func_array($applier, [$clause]);
 
-                $strategy->havingStrategy($clause);
+                $strategy->havingConditions($clause);
             }
 
             if ($items) {
@@ -39,7 +39,7 @@ trait HavingTableClauseTrait
                     $clause->havingLogic($where['logic'], $where['sql'], $where['params']);
                 }
 
-                $strategy->havingStrategy($clause);
+                $strategy->havingConditions($clause);
             }
         }
 
@@ -310,25 +310,7 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
-    public function havingGroup(callable $callable)
-    {
-        $instance = $this->havingStrategyInstance();
-
-        $instance->havingStrategy()->havingGroup($callable);
-
-        return $instance;
-    }
-
-    public function orHavingGroup(callable $callable)
-    {
-        $instance = $this->havingStrategyInstance();
-
-        $instance->havingStrategy()->orHavingGroup($callable);
-
-        return $instance;
-    }
-
-    public function havingConditions(Conditions $strategy)
+    public function havingConditions($strategy)
     {
         $instance = $this->havingStrategyInstance();
 
@@ -337,7 +319,7 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
-    public function orHavingConditions(Conditions $strategy)
+    public function orHavingConditions($strategy)
     {
         $instance = $this->havingStrategyInstance();
 

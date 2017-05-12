@@ -27,7 +27,7 @@ trait WhereTableClauseTrait
 
                 call_user_func_array($applier, [$clause]);
 
-                $strategy->whereStrategy($clause);
+                $strategy->whereConditions($clause);
             }
 
             if ($items) {
@@ -37,7 +37,7 @@ trait WhereTableClauseTrait
                     $clause->whereLogic($where['logic'], $where['sql'], $where['params']);
                 }
 
-                $strategy->whereStrategy($clause);
+                $strategy->whereConditions($clause);
             }
         }
 
@@ -308,25 +308,7 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
-    public function whereGroup(callable $callable)
-    {
-        $instance = $this->whereStrategyInstance();
-
-        $instance->whereStrategy()->whereGroup($callable);
-
-        return $instance;
-    }
-
-    public function orWhereGroup(callable $callable)
-    {
-        $instance = $this->whereStrategyInstance();
-
-        $instance->whereStrategy()->orWhereGroup($callable);
-
-        return $instance;
-    }
-
-    public function whereConditions(Conditions $strategy)
+    public function whereConditions($strategy)
     {
         $instance = $this->whereStrategyInstance();
 
@@ -335,7 +317,7 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
-    public function orWhereConditions(Conditions $strategy)
+    public function orWhereConditions($strategy)
     {
         $instance = $this->whereStrategyInstance();
 

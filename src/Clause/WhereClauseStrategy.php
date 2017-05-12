@@ -226,46 +226,18 @@ interface WhereClauseStrategy extends ClauseStrategy
     public function orWhereNotBetween(string $column, int $min, int $max);
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions
      *
      * @return $this
      */
-    public function whereGroup(callable $callable);
+    public function whereConditions($conditions);
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions
      *
      * @return $this
      */
-    public function orWhereGroup(callable $callable);
-
-    /**
-     * @param Conditions $conditions
-     *
-     * @return $this
-     */
-    public function whereConditions(Conditions $conditions);
-
-    /**
-     * @param Conditions $conditions
-     *
-     * @return $this
-     */
-    public function orWhereConditions(Conditions $conditions);
-
-    /**
-     * @param WhereClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function whereStrategy(WhereClauseStrategy $strategy);
-
-    /**
-     * @param WhereClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function orWhereStrategy(WhereClauseStrategy $strategy);
+    public function orWhereConditions($conditions);
 
     /**
      * @param string   $sql

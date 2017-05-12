@@ -361,73 +361,25 @@ trait HavingClauseTrait
     }
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions
      *
      * @return $this
      */
-    public function havingGroup(callable $callable)
+    public function havingConditions($conditions)
     {
-        $this->hConditions()->group($callable);
+        $this->hConditions()->conditions($conditions);
 
         return $this;
     }
 
     /**
-     * @param callable $callable
+     * @param callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions
      *
      * @return $this
      */
-    public function orHavingGroup(callable $callable)
+    public function orHavingConditions($conditions)
     {
-        $this->hConditions()->orGroup($callable);
-
-        return $this;
-    }
-
-    /**
-     * @param Conditions $strategy
-     *
-     * @return $this
-     */
-    public function havingConditions(Conditions $strategy)
-    {
-        $this->hConditions()->conditions($strategy);
-
-        return $this;
-    }
-
-    /**
-     * @param Conditions $strategy
-     *
-     * @return $this
-     */
-    public function orHavingConditions(Conditions $strategy)
-    {
-        $this->hConditions()->orConditions($strategy);
-
-        return $this;
-    }
-
-    /**
-     * @param HavingClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function havingStrategy(HavingClauseStrategy $strategy)
-    {
-        $this->hConditions()->logic('AND', $strategy);
-
-        return $this;
-    }
-
-    /**
-     * @param HavingClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function orHavingStrategy(HavingClauseStrategy $strategy)
-    {
-        $this->hConditions()->logic('OR', $strategy);
+        $this->hConditions()->orConditions($conditions);
 
         return $this;
     }

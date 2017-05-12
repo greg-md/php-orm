@@ -36,8 +36,8 @@ class HavingClauseTest extends ConditionsTestingAbstract
         'orBetween'    => 'orHavingBetween',
         'notBetween'   => 'havingNotBetween',
         'orNotBetween' => 'orHavingNotBetween',
-        'group'        => 'havingGroup',
-        'orGroup'      => 'orHavingGroup',
+        'group'        => 'havingConditions',
+        'orGroup'      => 'orHavingConditions',
         'conditions'   => 'havingConditions',
         'orConditions' => 'orHavingConditions',
         'raw'          => 'havingRaw',
@@ -52,7 +52,7 @@ class HavingClauseTest extends ConditionsTestingAbstract
     {
         $query = $this->newClause();
 
-        $query->havingStrategy($this->newClause()->having('Foo', 'foo'));
+        $query->havingConditions($this->newClause()->having('Foo', 'foo'));
 
         $this->assertEquals([$this->prefix() . '(`Foo` = ?)', ['foo']], $query->toSql());
 
@@ -68,7 +68,7 @@ class HavingClauseTest extends ConditionsTestingAbstract
      */
     public function testCanSetOrStrategy(HavingClause $query)
     {
-        $query->orHavingStrategy($this->newClause()->having('Bar', 'bar'));
+        $query->orHavingConditions($this->newClause()->having('Bar', 'bar'));
 
         $this->assertEquals([$this->prefix() . '(`Foo` = ?) OR (`Bar` = ?)', ['foo', 'bar']], $query->toSql());
     }

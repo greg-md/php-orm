@@ -367,35 +367,11 @@ trait WhereClauseTrait
     }
 
     /**
-     * @param callable $callable
+     * @param WhereClauseStrategy|Conditions|callable $conditions
      *
      * @return $this
      */
-    public function whereGroup(callable $callable)
-    {
-        $this->wConditions()->group($callable);
-
-        return $this;
-    }
-
-    /**
-     * @param callable $callable
-     *
-     * @return $this
-     */
-    public function orWhereGroup(callable $callable)
-    {
-        $this->wConditions()->orGroup($callable);
-
-        return $this;
-    }
-
-    /**
-     * @param Conditions $conditions
-     *
-     * @return $this
-     */
-    public function whereConditions(Conditions $conditions)
+    public function whereConditions($conditions)
     {
         $this->wConditions()->conditions($conditions);
 
@@ -403,37 +379,13 @@ trait WhereClauseTrait
     }
 
     /**
-     * @param Conditions $conditions
+     * @param WhereClauseStrategy|Conditions|callable $conditions
      *
      * @return $this
      */
-    public function orWhereConditions(Conditions $conditions)
+    public function orWhereConditions($conditions)
     {
         $this->wConditions()->orConditions($conditions);
-
-        return $this;
-    }
-
-    /**
-     * @param WhereClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function whereStrategy(WhereClauseStrategy $strategy)
-    {
-        $this->wConditions()->logic('AND', $strategy);
-
-        return $this;
-    }
-
-    /**
-     * @param WhereClauseStrategy $strategy
-     *
-     * @return $this
-     */
-    public function orWhereStrategy(WhereClauseStrategy $strategy)
-    {
-        $this->wConditions()->logic('OR', $strategy);
 
         return $this;
     }
