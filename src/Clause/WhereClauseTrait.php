@@ -366,11 +366,6 @@ trait WhereClauseTrait
         return $this;
     }
 
-    /**
-     * @param WhereClauseStrategy|Conditions|callable $conditions
-     *
-     * @return $this
-     */
     public function whereConditions($conditions)
     {
         $this->wConditions()->conditions($conditions);
@@ -378,11 +373,6 @@ trait WhereClauseTrait
         return $this;
     }
 
-    /**
-     * @param WhereClauseStrategy|Conditions|callable $conditions
-     *
-     * @return $this
-     */
     public function orWhereConditions($conditions)
     {
         $this->wConditions()->orConditions($conditions);

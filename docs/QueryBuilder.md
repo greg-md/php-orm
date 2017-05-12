@@ -2293,6 +2293,8 @@ public function crossTo($source, $table): $this
 
 Define custom join logic.
 
+> **Note:** Use this method only if you know what you are doing!
+
 ```php
 public function joinLogic(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = []): $this
 ```
@@ -2370,7 +2372,7 @@ $query->hasJoin(); // result: false
 Get JOIN SQL clause with parameters.
 
 ```php
-public function toSql(): array
+public function joinToSql(string $source = null): array
 ```
 
 _Example:_
@@ -2387,7 +2389,7 @@ $sql = $query->toSql();
 Get JOIN SQL clause.
 
 ```php
-public function toString(): string
+public function joinToString(string $source = null): string
 ```
 
 _Example:_
@@ -2399,12 +2401,12 @@ echo $query->toString();
 // INNER JOIN `Table`
 ```
 
-## toSql FROM clause
+## toSql JOIN clause
 
 Get SQL clause with parameters.
 
 ```php
-public function toSql(): array
+public function toSql(string $source = null): array
 ```
 
 _Example:_
@@ -2416,12 +2418,12 @@ $sql = $query->toSql();
 // ['INNER JOIN `Table`', []]
 ```
 
-## toString FROM clause
+## toString JOIN clause
 
 Get SQL clause.
 
 ```php
-public function toString(): string
+public function toString(string $source = null): string
 ```
 
 _Example:_
@@ -2720,20 +2722,216 @@ Filter records by column not between values with OR condition.
 public function orWhereNotBetween(string $column, int $min, int $max): $this
 ```
 
-## whereGroup
+## whereConditions
 
-Filter records by group of filters with AND condition.
+Filter records by conditions with AND condition.
 
 ```php
-public function whereGroup(callable $callable): $this
+public function whereConditions(callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions): $this
 ```
 
-## orWhereGroup
+## orWhereConditions
 
-Filter records by group of filters with OR condition.
+Filter records by conditions with OR condition.
 
 ```php
-public function orWhereGroup(callable $callable): $this
+public function orWhereConditions(callable|Conditions|WhereClauseStrategy|HavingClauseStrategy $conditions): $this
+```
+
+## whereRaw
+
+Filter records by raw SQL with AND condition.
+
+```php
+public function whereRaw(string $sql, string ...$params): $this
+```
+
+## orWhereRaw
+
+Filter records by raw SQL with OR condition.
+
+```php
+public function orWhereRaw(string $sql, string ...$params): $this
+```
+
+## whereLogic
+
+Define custom where logic.
+
+> **Note:** Use this method only if you know what you are doing!
+
+```php
+public function whereLogic(string $logic, $sql, array $params = []): $this
+```
+
+## hasWhere
+
+Determine if has where conditions.
+
+```php
+public function hasWhere(): bool
+```
+
+_Example:_
+
+```php
+$query->hasWhere(); // result: false
+
+$query->where('Column', 'value');
+
+$query->hasWhere(); // result: true
+```
+
+## getWhere
+
+Get where conditions.
+
+```php
+public function getWhere(): array
+```
+
+## clearWhere
+
+Clear where conditions.
+
+```php
+public function clearWhere(): $this
+```
+
+_Example:_
+
+```php
+$query->where('Column', 'value');
+
+$query->hasWhere(); // result: true
+
+$query->clearWhere();
+
+$query->hasWhere(); // result: false
+```
+
+## whereExists
+
+Filter records by SELECT if exists.
+
+```php
+public function whereExists(SelectQuery $sql): $this
+```
+
+## whereNotExists
+
+Filter records by SELECT statement if not exists.
+
+```php
+public function whereNotExists(SelectQuery $sql): $this
+```
+
+## whereExistsRaw
+
+Filter records by raw SELECT statement if exists.
+
+```php
+public function whereExistsRaw(string $sql, string ...$params): $this
+```
+
+## whereNotExistsRaw
+
+Filter records by raw SELECT statement if not exists.
+
+```php
+public function whereNotExistsRaw(string $sql, string ...$params): $this
+```
+
+## hasExists
+
+Determine if has exists SELECT statement.
+
+```php
+public function hasExists(): bool
+```
+
+## getExists
+
+Get exists SELECT statement.
+
+```php
+public function getExists(): array
+```
+
+## clearExists
+
+Clear exists SELECT statement.
+
+```php
+public function clearExists(): $this
+```
+
+## whereToSql
+
+Get WHERE SQL clause with parameters.
+
+```php
+public function whereToSql(): array
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+$sql = $query->toSql();
+// ['INNER JOIN `Table`', []]
+```
+
+## joinToString
+
+Get JOIN SQL clause.
+
+```php
+public function joinToString(): string
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+echo $query->toString();
+// INNER JOIN `Table`
+```
+
+## toSql FROM clause
+
+Get SQL clause with parameters.
+
+```php
+public function toSql(): array
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+$sql = $query->toSql();
+// ['INNER JOIN `Table`', []]
+```
+
+## toString FROM clause
+
+Get SQL clause.
+
+```php
+public function toString(): string
+```
+
+_Example:_
+
+```php
+$query->inner('Table');
+
+echo $query->toString();
+// INNER JOIN `Table`
 ```
 
 # Group By Clause
