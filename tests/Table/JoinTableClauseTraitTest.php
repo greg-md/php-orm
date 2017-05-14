@@ -1,15 +1,14 @@
 <?php
 
-namespace Greg\Orm\Model;
+namespace Greg\Orm\Table;
 
 use Greg\Orm\Clause\JoinClause;
 use Greg\Orm\Conditions;
 use Greg\Orm\Model;
-use Greg\Orm\ModelTestingAbstract;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\SqlException;
 
-class ModelJoinStrategyTest extends ModelTestingAbstract
+trait JoinTableClauseTraitTest
 {
     /**
      * @test
@@ -21,7 +20,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
     public function testCanJoin(string $type)
     {
         /** @var Model $query */
-        $query = $this->model->{$type}('Foo');
+        $query = $this->model()->{$type}('Foo');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->toString());
     }
@@ -36,7 +35,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
     public function testCanJoinOn(string $type)
     {
         /** @var Model $query */
-        $query = $this->model->{$type}('Foo', '`Foo`.`Id` = !Bar.Id');
+        $query = $this->model()->{$type}('Foo', '`Foo`.`Id` = !Bar.Id');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->toString());
     }
@@ -51,7 +50,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
     public function testCanJoinOnCallable(string $type)
     {
         /** @var Model $query */
-        $query = $this->model->{$type . 'On'}('Foo', function (Conditions $query) {
+        $query = $this->model()->{$type . 'On'}('Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -60,7 +59,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
 
     public function testCanCross()
     {
-        $query = $this->model->cross('Foo');
+        $query = $this->model()->cross('Foo');
 
         $this->assertEquals('CROSS JOIN `Foo`', $query->toString());
     }
@@ -75,7 +74,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
     public function testCanJoinTo(string $type)
     {
         /** @var Model $query */
-        $query = $this->model->{$type . 'To'}('bar', 'Foo');
+        $query = $this->model()->{$type . 'To'}('bar', 'Foo');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->joinToString('bar'));
 
@@ -92,7 +91,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
     public function testCanJoinToOn(string $type)
     {
         /** @var Model $query */
-        $query = $this->model->{$type . 'To'}('bar', 'Foo', '`Foo`.`Id` = !Bar.Id');
+        $query = $this->model()->{$type . 'To'}('bar', 'Foo', '`Foo`.`Id` = !Bar.Id');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->joinToString('bar'));
     }
@@ -107,7 +106,7 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
     public function testCanJoinToCallable(string $type)
     {
         /** @var Model $query */
-        $query = $this->model->{$type . 'ToOn'}('bar', 'Foo', function (Conditions $query) {
+        $query = $this->model()->{$type . 'ToOn'}('bar', 'Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -116,39 +115,39 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
 
     public function testCanCrossTo()
     {
-        $query = $this->model->crossTo('bar', 'Foo');
+        $query = $this->model()->crossTo('bar', 'Foo');
 
         $this->assertEquals('CROSS JOIN `Foo`', $query->joinToString('bar'));
     }
 
     public function testCanDetermineIfJoinExists()
     {
-        $this->assertFalse($this->model->hasJoin());
+        $this->assertFalse($this->model()->hasJoin());
 
-        $query = $this->model->inner('Foo');
+        $query = $this->model()->inner('Foo');
 
         $this->assertTrue($query->hasJoin());
     }
 
     public function testCanDetermineIfJoinClauseExists()
     {
-        $this->assertFalse($this->model->hasJoinClause());
+        $this->assertFalse($this->model()->hasJoinClause());
 
-        $query = $this->model->inner('Foo');
+        $query = $this->model()->inner('Foo');
 
         $this->assertTrue($query->hasJoinClause());
     }
 
-    public function testCanGet()
+    public function testCanGetJoin()
     {
-        $query = $this->model->inner('Foo');
+        $query = $this->model()->inner('Foo');
 
         $this->assertCount(1, $query->getJoin());
     }
 
-    public function testCanClear()
+    public function testCanClearJoin()
     {
-        $query = $this->model->inner('Foo');
+        $query = $this->model()->inner('Foo');
 
         $query->clearJoin();
 
@@ -157,37 +156,37 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
 
     public function testCanJoinWithAlias()
     {
-        $query = $this->model->inner(['f' => 'Foo']);
+        $query = $this->model()->inner(['f' => 'Foo']);
 
         $this->assertEquals('INNER JOIN `Foo` AS `f`', $query->toString());
     }
 
     public function testCanTransformToString()
     {
-        $query = $this->model->inner(['f' => 'Foo']);
+        $query = $this->model()->inner(['f' => 'Foo']);
 
         $this->assertEquals('INNER JOIN `Foo` AS `f`', (string) $query);
     }
 
-    public function testCanCombineClauses()
+    public function testCanCombineClausesWithJoin()
     {
-        $query = $this->model->inner(['t' => new SelectQuery()]);
+        $query = $this->model()->inner(['t' => new SelectQuery()]);
 
         $this->assertEquals('INNER JOIN (SELECT *) AS `t`', $query->toString());
     }
 
-    public function testCanThrowExceptionIfDerivedTableNotHaveAlias()
+    public function testCanThrowExceptionIfJoinDerivedTableNotHaveAlias()
     {
         $this->expectException(SqlException::class);
 
-        $this->model->inner(new SelectQuery());
+        $this->model()->inner(new SelectQuery());
     }
 
     public function testCanThrowExceptionIfDerivedTableNotHaveAliasInSource()
     {
         $this->expectException(SqlException::class);
 
-        $this->model->innerTo(new SelectQuery(), 'Table');
+        $this->model()->innerTo(new SelectQuery(), 'Table');
     }
 
     public function joins()
@@ -199,84 +198,86 @@ class ModelJoinStrategyTest extends ModelTestingAbstract
 
     public function testCanAssignJoinAppliers()
     {
-        $this->model->setJoinApplier(function (JoinClause $clause) {
+        $this->model()->setJoinApplier(function (JoinClause $clause) {
             $clause->inner('Table1');
         });
 
-        $query = $this->model->inner('Table2');
+        $query = $this->model()->inner('Table2');
 
         $this->assertEquals('INNER JOIN `Table1` INNER JOIN `Table2`', $query->toString());
     }
 
-    public function testCanDetermineIfAppliersExists()
+    public function testCanDetermineIfJoinAppliersExists()
     {
-        $this->assertFalse($this->model->hasJoinAppliers());
+        $this->assertFalse($this->model()->hasJoinAppliers());
 
-        $this->model->setJoinApplier(function () {
+        $this->model()->setJoinApplier(function () {
         });
 
-        $this->assertTrue($this->model->hasJoinAppliers());
+        $this->assertTrue($this->model()->hasJoinAppliers());
     }
 
-    public function testCanGetAppliers()
+    public function testCanGetJoinAppliers()
     {
-        $this->model->setJoinApplier(function () {
+        $this->model()->setJoinApplier(function () {
         });
 
-        $this->assertCount(1, $this->model->getJoinAppliers());
+        $this->assertCount(1, $this->model()->getJoinAppliers());
     }
 
-    public function testCanClearAppliers()
+    public function testCanClearJoinAppliers()
     {
-        $this->model->setJoinApplier(function () {
+        $this->model()->setJoinApplier(function () {
         });
 
-        $this->model->clearJoinAppliers();
+        $this->model()->clearJoinAppliers();
 
-        $this->assertFalse($this->model->hasJoinAppliers());
+        $this->assertFalse($this->model()->hasJoinAppliers());
     }
 
     public function testCanDetermineIfJoinExists2()
     {
-        $this->assertFalse($this->model->hasJoin());
+        $this->assertFalse($this->model()->hasJoin());
     }
 
-    public function testCanGetJoin()
+    public function testCanGetEmptyJoin()
     {
-        $this->assertCount(0, $this->model->getJoin());
+        $this->assertCount(0, $this->model()->getJoin());
     }
 
-    public function testCanClearJoin()
+    public function testCanClearEmptyJoin()
     {
-        $this->model->clearJoin();
+        $this->model()->clearJoin();
 
-        $this->assertFalse($this->model->hasJoin());
+        $this->assertFalse($this->model()->hasJoin());
     }
 
     public function testCanGetJoinString()
     {
-        $this->assertEquals('INNER JOIN `Table`', $this->model->inner('Table')->joinToString());
+        $this->assertEquals('INNER JOIN `Table`', $this->model()->inner('Table')->joinToString());
     }
 
     public function testCanGetEmptyJoinString()
     {
-        $this->assertEquals('', $this->model->joinToString());
+        $this->assertEquals('', $this->model()->joinToString());
     }
 
-    public function testCanCombineClauses2()
+    public function testCanCombineClausesWithJoin2()
     {
-        $this->assertTrue($this->model->select('Column')->inner('Table2')->hasJoin());
+        $this->assertTrue($this->model()->select('Column')->inner('Table2')->hasJoin());
     }
 
     public function testCanTransformIntoJoin()
     {
-        $this->model->intoJoinStrategy();
+        $this->model()->intoJoinStrategy();
 
-        $this->assertTrue($this->model->hasJoinClause());
+        $this->assertTrue($this->model()->hasJoinClause());
     }
 
     public function testCanCombineClauses3()
     {
-        $this->assertEquals('FROM `Table1` INNER JOIN `Table2`', $this->model->from('Table1')->inner('Table2')->toString());
+        $this->assertEquals('FROM `Table1` INNER JOIN `Table2`', $this->model()->from('Table1')->inner('Table2')->toString());
     }
+
+    abstract protected function model(): Model;
 }

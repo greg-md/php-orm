@@ -1,15 +1,16 @@
 <?php
 
-namespace Greg\Orm\Clause;
+namespace Greg\Orm\Table;
 
+use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Conditions;
-use Greg\Orm\Query\SelectQuery;
+use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Model;
 use Greg\Orm\SqlException;
-use PHPUnit\Framework\TestCase;
 
-class WhereClauseTest extends TestCase
+trait WhereTableClauseTraitTest
 {
-    public function testCanSetColumn()
+    public function testCanSetWhereColumn()
     {
         $query = $this->newQuery();
 
@@ -20,7 +21,7 @@ class WhereClauseTest extends TestCase
         return $query;
     }
 
-    public function testCanTransformArrayColumnValueToScalar()
+    public function testCanTransformWhereArrayColumnValueToScalar()
     {
         $query = $this->newQuery();
 
@@ -122,18 +123,18 @@ class WhereClauseTest extends TestCase
     /**
      * @test
      *
-     * @depends testCanSetColumn
+     * @depends testCanSetWhereColumn
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrColumn(WhereClause $query)
+    public function testCanSetOrWhereColumn(Model $query)
     {
         $query->orWhere('Bar', 'bar');
 
         $this->assertEquals(['WHERE `Foo` = ? OR `Bar` = ?', ['foo', 'bar']], $query->toSql());
     }
 
-    public function testCanSetColumns()
+    public function testCanSetWhereColumns()
     {
         $query = $this->newQuery();
 
@@ -149,11 +150,11 @@ class WhereClauseTest extends TestCase
     /**
      * @test
      *
-     * @depends testCanSetColumns
+     * @depends testCanSetWhereColumns
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrColumns(WhereClause $query)
+    public function testCanSetOrColumns(Model $query)
     {
         $query->orWhereMultiple([
             'Bar' => 'bar',
@@ -268,9 +269,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetRelation
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrRelation(WhereClause $query)
+    public function testCanSetOrRelation(Model $query)
     {
         $query->orWhereRelation('Bar', 'bar');
 
@@ -295,9 +296,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetRelations
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrRelations(WhereClause $query)
+    public function testCanSetOrRelations(Model $query)
     {
         $query->orWhereRelations([
             'Bar' => 'bar',
@@ -322,9 +323,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetIs
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrIs(WhereClause $query)
+    public function testCanSetOrIs(Model $query)
     {
         $query->orWhereIs('Bar');
 
@@ -347,9 +348,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetIsNot
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrIsNot(WhereClause $query)
+    public function testCanSetOrIsNot(Model $query)
     {
         $query->orWhereIsNot('Bar');
 
@@ -372,9 +373,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetIsNull
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrIsNull(WhereClause $query)
+    public function testCanSetOrIsNull(Model $query)
     {
         $query->orWhereIsNull('Bar');
 
@@ -397,9 +398,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetIsNotNull
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrIsNotNull(WhereClause $query)
+    public function testCanSetOrIsNotNull(Model $query)
     {
         $query->orWhereIsNotNull('Bar');
 
@@ -422,9 +423,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetBetween
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrBetween(WhereClause $query)
+    public function testCanSetOrBetween(Model $query)
     {
         $query->orWhereBetween('Bar', 1, 10);
 
@@ -447,9 +448,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetNotBetween
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrNotBetween(WhereClause $query)
+    public function testCanSetOrNotBetween(Model $query)
     {
         $query->orWhereNotBetween('Bar', 1, 10);
 
@@ -472,9 +473,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetDate
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrDate(WhereClause $query)
+    public function testCanSetOrDate(Model $query)
     {
         $query->orWhereDate('Bar', '1990-07-15');
 
@@ -515,9 +516,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetTime
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrTime(WhereClause $query)
+    public function testCanSetOrTime(Model $query)
     {
         $query->orWhereTime('Bar', '19:00:00');
 
@@ -540,9 +541,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetYear
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrYear(WhereClause $query)
+    public function testCanSetOrYear(Model $query)
     {
         $query->orWhereYear('Bar', 2016);
 
@@ -565,9 +566,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetMonth
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrMonth(WhereClause $query)
+    public function testCanSetOrMonth(Model $query)
     {
         $query->orWhereMonth('Bar', '01');
 
@@ -590,9 +591,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetDay
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrDay(WhereClause $query)
+    public function testCanSetOrDay(Model $query)
     {
         $query->orWhereDay('Bar', '01');
 
@@ -617,38 +618,13 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetConditionsCallable
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrConditionsCallable(WhereClause $query)
+    public function testCanSetOrConditionsCallable(Model $query)
     {
         $query->orWhereConditions(function (Conditions $query) {
             $query->column('Bar', 'bar');
         });
-
-        $this->assertEquals(['WHERE (`Foo` = ?) OR (`Bar` = ?)', ['foo', 'bar']], $query->toSql());
-    }
-
-    public function testCanSetConditions()
-    {
-        $query = $this->newQuery();
-
-        $query->whereConditions($this->newQuery()->where('Foo', 'foo'));
-
-        $this->assertEquals(['WHERE (`Foo` = ?)', ['foo']], $query->toSql());
-
-        return $query;
-    }
-
-    /**
-     * @test
-     *
-     * @depends testCanSetConditions
-     *
-     * @param WhereClause $query
-     */
-    public function testCanSetOrConditions(WhereClause $query)
-    {
-        $query->orWhereConditions($this->newQuery()->where('Bar', 'bar'));
 
         $this->assertEquals(['WHERE (`Foo` = ?) OR (`Bar` = ?)', ['foo', 'bar']], $query->toSql());
     }
@@ -669,9 +645,9 @@ class WhereClauseTest extends TestCase
      *
      * @depends testCanSetRaw
      *
-     * @param WhereClause $query
+     * @param Model $query
      */
-    public function testCanSetOrRaw(WhereClause $query)
+    public function testCanSetOrRaw(Model $query)
     {
         $query->orWhereRaw('`Bar` = ?', 'bar');
 
@@ -689,7 +665,7 @@ class WhereClauseTest extends TestCase
         $this->assertTrue($query->hasWhere());
     }
 
-    public function testCanGet()
+    public function testCanGetWhere()
     {
         $query = $this->newQuery();
 
@@ -698,7 +674,7 @@ class WhereClauseTest extends TestCase
         $this->assertCount(1, $query->getWhere());
     }
 
-    public function testCanClear()
+    public function testCanClearWhere()
     {
         $query = $this->newQuery();
 
@@ -718,80 +694,151 @@ class WhereClauseTest extends TestCase
         $this->assertEquals('WHERE `Foo` = ?', (string) $query);
     }
 
+    public function testCanAssignWhereAppliers()
+    {
+        $this->model()->setWhereApplier(function (WhereClause $clause) {
+            $clause->where('Column', 'bar');
+        });
+
+        $query = $this->model()->where('Column', 'foo');
+
+        $this->assertEquals('WHERE (`Column` = ?) AND (`Column` = ?)', $query->toString());
+    }
+
+    public function testCanDetermineIfWhereAppliersExists()
+    {
+        $this->assertFalse($this->model()->hasWhereAppliers());
+
+        $this->model()->setWhereApplier(function () {
+        });
+
+        $this->assertTrue($this->model()->hasWhereAppliers());
+    }
+
+    public function testCanGetWhereAppliers()
+    {
+        $this->model()->setWhereApplier(function () {
+        });
+
+        $this->assertCount(1, $this->model()->getWhereAppliers());
+    }
+
+    public function testCanClearWhereAppliers()
+    {
+        $this->model()->setWhereApplier(function () {
+        });
+
+        $this->model()->clearWhereAppliers();
+
+        $this->assertFalse($this->model()->hasWhereAppliers());
+    }
+
+    public function testCanDetermineIfWhereExists()
+    {
+        $this->assertFalse($this->model()->hasWhere());
+
+        $this->assertFalse($this->model()->select('Column')->hasWhere());
+    }
+
+    public function testCanGetEmptyWhere()
+    {
+        $this->assertCount(0, $this->model()->getWhere());
+    }
+
+    public function testCanClearEmptyWhere()
+    {
+        $this->model()->clearWhere();
+
+        $this->assertFalse($this->model()->hasWhere());
+    }
+
     public function testCanSetExists()
     {
-        $query = $this->newQuery()->whereExists(new SelectQuery());
+        $query = $this->model()->whereExists($this->driverMock()->select());
 
-        $this->assertEquals(['WHERE EXISTS (SELECT *)', []], $query->toSql());
+        $this->assertEquals('WHERE EXISTS (SELECT *)', $query->whereToString());
     }
 
     public function testCanSetNotExists()
     {
-        $query = $this->newQuery()->whereNotExists(new SelectQuery());
+        $query = $this->model()->whereNotExists($this->driverMock()->select());
 
-        $this->assertEquals(['WHERE NOT EXISTS (SELECT *)', []], $query->toSql());
+        $this->assertEquals('WHERE NOT EXISTS (SELECT *)', $query->whereToString());
     }
 
     public function testCanSetExistsRaw()
     {
-        $query = $this->newQuery()->whereExistsRaw('SELECT 1');
+        $query = $this->model()->whereExistsRaw('SELECT 1');
 
-        $this->assertEquals(['WHERE EXISTS (SELECT 1)', []], $query->toSql());
+        $this->assertEquals('WHERE EXISTS (SELECT 1)', $query->whereToString());
     }
 
     public function testCanSetNotExistsRaw()
     {
-        $query = $this->newQuery()->whereNotExistsRaw('SELECT 1');
+        $query = $this->model()->whereNotExistsRaw('SELECT 1');
 
-        $this->assertEquals(['WHERE NOT EXISTS (SELECT 1)', []], $query->toSql());
+        $this->assertEquals('WHERE NOT EXISTS (SELECT 1)', $query->whereToString());
+    }
+
+    public function testCanWhereBeNull()
+    {
+        $this->assertEmpty($this->model()->whereToString());
     }
 
     public function testCanDetermineIfExistsExists()
     {
-        $query = $this->newQuery();
+        $this->assertFalse($this->model()->hasExists());
 
-        $this->assertFalse($query->hasExists());
-
-        $query->whereExists(new SelectQuery());
+        $query = $this->model()->whereExists($this->driverMock()->select());
 
         $this->assertTrue($query->hasExists());
     }
 
     public function testCanGetExists()
     {
-        $query = $this->newQuery();
-
-        $query->whereExists(new SelectQuery());
+        $query = $this->model()->whereExists($this->driverMock()->select());
 
         $this->assertNotEmpty($query->getExists());
     }
 
     public function testCanClearExists()
     {
-        $query = $this->newQuery();
+        $this->model()->clearExists();
 
-        $query->whereExists(new SelectQuery());
+        $this->assertNull($this->model()->getExists());
+
+        $query = $this->model()->whereExists($this->driverMock()->select());
 
         $query->clearExists();
 
-        $this->assertNull($query->getExists());
+        $this->assertNull($this->model()->getExists());
     }
 
-    public function testCanClone()
+    public function testCanSelectWhere()
     {
-        $query = $this->newQuery()->where('Foo', 'foo');
+        $query = $this->model()->select('Column')->where('Column', 'foo');
 
-        $clone = clone $query;
-
-        $clone->where('Bar', 'bar');
-
-        $this->assertEquals(['WHERE `Foo` = ?', ['foo']], $query->toSql());
-
-        $this->assertEquals(['WHERE `Foo` = ? AND `Bar` = ?', ['foo', 'bar']], $clone->toSql());
+        $this->assertEquals('SELECT `Column` FROM `Table` WHERE `Column` = ?', $query->toString());
     }
 
-    protected function newQuery(): WhereClause
+    public function testCanDetermineIfClauseExists()
     {
-        return new WhereClause();
+        $this->assertFalse($this->model()->hasWhereClause());
+
+        $this->model()->intoWhereStrategy();
+
+        $this->assertTrue($this->model()->hasWhereClause());
     }
+
+    protected function newQuery(): Model
+    {
+        return $this->model()->intoWhereStrategy();
+    }
+
+    abstract protected function model(): Model;
+
+    /**
+     * @return DriverStrategy|\PHPUnit_Framework_MockObject_MockObject
+     */
+    abstract protected function driverMock(): \PHPUnit_Framework_MockObject_MockObject;
 }

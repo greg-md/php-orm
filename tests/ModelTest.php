@@ -2,15 +2,89 @@
 
 namespace Greg\Orm\Tests;
 
+use Greg\Orm\Clause\FromClause;
+use Greg\Orm\Clause\GroupByClause;
+use Greg\Orm\Clause\HavingClause;
+use Greg\Orm\Clause\JoinClause;
+use Greg\Orm\Clause\LimitClause;
+use Greg\Orm\Clause\OffsetClause;
+use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
+use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Model;
-use Greg\Orm\ModelTestingAbstract;
+use Greg\Orm\Query\DeleteQuery;
+use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\SelectQuery;
+use Greg\Orm\Query\UpdateQuery;
 use Greg\Orm\SqlException;
+use Greg\Orm\Table\DeleteTableQueryTraitTest;
+use Greg\Orm\Table\FromTableClauseTraitTest;
+use Greg\Orm\Table\GroupByTableClauseTraitTest;
+use Greg\Orm\Table\HavingTableClauseTraitTest;
+use Greg\Orm\Table\JoinTableClauseTraitTest;
+use Greg\Orm\Table\LimitTableClauseTraitTest;
+use Greg\Orm\Table\OffsetTableClauseTraitTest;
+use Greg\Orm\Table\OrderByTableClauseTraitTest;
+use Greg\Orm\Table\SelectTableQueryTraitTest;
+use Greg\Orm\Table\UpdateTableQueryTraitTest;
+use Greg\Orm\Table\WhereTableClauseTraitTest;
+use PHPUnit\Framework\TestCase;
 
-class ModelTest extends ModelTestingAbstract
+class ModelTest extends TestCase
 {
+    use DeleteTableQueryTraitTest,
+        FromTableClauseTraitTest,
+        GroupByTableClauseTraitTest,
+        HavingTableClauseTraitTest,
+        JoinTableClauseTraitTest,
+        LimitTableClauseTraitTest,
+        OffsetTableClauseTraitTest,
+        OrderByTableClauseTraitTest,
+        SelectTableQueryTraitTest,
+        UpdateTableQueryTraitTest,
+        WhereTableClauseTraitTest;
+
+    /**
+     * @var Model
+     */
+    protected $model;
+
+    /**
+     * @var DriverStrategy|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $driverMock;
+
+    public function setUp()
+    {
+        $driverMock = $this->driverMock = $this->createMock(DriverStrategy::class);
+
+        foreach ($this->driverSql() as $method => $class) {
+            $driverMock->method($method)->willReturnCallback(function () use ($class) {
+                return new $class();
+            });
+        }
+
+        $this->driverMock->method('dialect')->willReturn(new SqlDialect());
+
+        $this->model = new class($driverMock) extends Model {
+            protected $name = 'Table';
+
+            protected $label = 'My Table';
+
+            protected $nameColumn = 'Name';
+
+            protected $unique = [
+                'SystemName',
+            ];
+
+            protected $casts = [
+                'Active' => 'bool',
+            ];
+        };
+    }
+
     public function testCanManageQuery()
     {
         $this->assertFalse($this->model->hasQuery());
@@ -110,24 +184,15 @@ class ModelTest extends ModelTestingAbstract
 
     public function testCanThrowExceptionIfNameNotDefined()
     {
+        $driverMock = $this->driverMock;
+
         /** @var Model $model */
-        $model = new class() extends Model {
+        $model = new class($driverMock) extends Model {
         };
 
         $this->expectException(\Exception::class);
 
         $model->name();
-    }
-
-    public function testCanThrowExceptionWhenDriverNotDefined()
-    {
-        /** @var Model $model */
-        $model = new class() extends Model {
-        };
-
-        $this->expectException(\Exception::class);
-
-        $model->driver();
     }
 
     public function testCanGetLabel()
@@ -192,11 +257,13 @@ class ModelTest extends ModelTestingAbstract
 
     public function testCanThrowExceptionIfCanNotSelectPairs()
     {
-        $this->expectException(\Exception::class);
+        $driverMock = $this->driverMock;
 
         /** @var Model $model */
-        $model = new class() extends Model {
+        $model = new class($driverMock) extends Model {
         };
+
+        $this->expectException(\Exception::class);
 
         $model->pairs();
     }
@@ -212,28 +279,14 @@ class ModelTest extends ModelTestingAbstract
         $query->pairs();
     }
 
-    public function testCanCreateNewRow()
-    {
-        $this->mockDescribe();
-
-        $driver = $this->driverMock;
-
-        /** @var Model $row */
-        $row = new class(['Id' => 1], $driver) extends Model {
-            protected $name = 'Table';
-        };
-
-        $this->assertEquals(1, $row['Id']);
-    }
-
     public function testCanGetFirstByCallable()
     {
         $this->mockDescribe();
 
-        $driver = $this->driverMock;
+        $driverMock = $this->driverMock;
 
         /** @var Model $rows */
-        $rows = new class([], $driver) extends Model {
+        $rows = new class($driverMock) extends Model {
             protected $name = 'Table';
         };
 
@@ -798,10 +851,10 @@ class ModelTest extends ModelTestingAbstract
             ],
         ]);
 
-        $driver = $this->driverMock;
+        $driverMock = $this->driverMock;
 
         /** @var Model $model */
-        $model = new class([], $driver) extends Model {
+        $model = new class($driverMock) extends Model {
             protected $name = 'Table';
 
             protected $unique = ['Id'];
@@ -819,10 +872,10 @@ class ModelTest extends ModelTestingAbstract
             ],
         ]);
 
-        $driver = $this->driverMock;
+        $driverMock = $this->driverMock;
 
         /** @var Model $model */
-        $model = new class([], $driver) extends Model {
+        $model = new class($driverMock) extends Model {
             protected $name = 'Table';
         };
 
@@ -1603,34 +1656,30 @@ class ModelTest extends ModelTestingAbstract
     {
         $this->mockDescribe();
 
-        $driver = $this->driverMock;
+        $driverMock = $this->driverMock;
 
         /** @var Model $row */
-        $row = new class(['Id' => 1], $driver) extends Model {
+        $row = new class($driverMock) extends Model {
             protected $name = 'Table';
 
             protected $fillable = [];
         };
+
+        $row->appendRecord(['Id' => 1]);
 
         $this->expectException(\Exception::class);
 
         $row['Id'] = 2;
     }
 
-    public function testCanSetDriver()
+    protected function model(): Model
     {
-        $this->model->setDriver($this->driverMock);
-
-        $this->assertEquals($this->driverMock, $this->model->getDriver());
+        return $this->model;
     }
 
-    public function testCanSerialize()
+    protected function driverMock(): \PHPUnit_Framework_MockObject_MockObject
     {
-        $data = $this->model->serialize();
-
-        $this->model->unserialize($data);
-
-        $this->assertEquals($data, $this->model->serialize());
+        return $this->driverMock;
     }
 
     protected function mockDescribe()
@@ -1654,5 +1703,21 @@ class ModelTest extends ModelTestingAbstract
                 'Id',
             ],
         ]);
+    }
+
+    protected function driverSql()
+    {
+        yield 'select' => SelectQuery::class;
+        yield 'insert' => InsertQuery::class;
+        yield 'delete' => DeleteQuery::class;
+        yield 'update' => UpdateQuery::class;
+        yield 'from' => FromClause::class;
+        yield 'join' => JoinClause::class;
+        yield 'where' => WhereClause::class;
+        yield 'having' => HavingClause::class;
+        yield 'orderBy' => OrderByClause::class;
+        yield 'groupBy' => GroupByClause::class;
+        yield 'limit' => LimitClause::class;
+        yield 'offset' => OffsetClause::class;
     }
 }

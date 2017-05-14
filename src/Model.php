@@ -5,7 +5,7 @@ namespace Greg\Orm;
 use Greg\Orm\Driver\DriverStrategy;
 use Greg\Support\Obj;
 
-abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \Serializable
+class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 {
     use RowTrait;
 
@@ -14,35 +14,15 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
      */
     private $driver;
 
-    public function __construct(?array $record = [], ?DriverStrategy $driver = null)
-    {
-        if ($driver) {
-            $this->driver = $driver;
-        }
-
-        $this->bootTraits();
-
-        $this->boot();
-
-        $this->bootedTraits();
-
-        if ($record) {
-            $this->appendRecord($record, true);
-        }
-
-        return $this;
-    }
-
-    public function setDriver(DriverStrategy $driver)
+    public function __construct(DriverStrategy $driver)
     {
         $this->driver = $driver;
 
-        return $this;
-    }
+        $this->boot();
 
-    public function getDriver(): ?DriverStrategy
-    {
-        return $this->driver;
+        $this->bootTraits();
+
+        return $this;
     }
 
     public function driver(): DriverStrategy
@@ -65,61 +45,6 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         return $this;
     }
 
-    public function serialize()
-    {
-        $data = [];
-
-        foreach ($this->__sleep() as $property) {
-            $data[$property] = $this->{$property};
-        }
-
-        return serialize($data);
-    }
-
-    public function unserialize($serialized)
-    {
-        $data = unserialize($serialized);
-
-        foreach ($this->__sleep() as $property) {
-            $this->{$property} = $data[$property];
-        }
-    }
-
-    public function __sleep()
-    {
-        return [
-            // Rows
-            'fillable',
-            'guarded',
-            'rows',
-            'rowsTotal',
-            'rowsOffset',
-            'rowsLimit',
-
-            // Table
-            'prefix',
-            'name',
-            'alias',
-            'label',
-            'columns',
-            'primary',
-            'autoIncrement',
-            'unique',
-            'nameColumn',
-            'casts',
-            'defaults',
-        ];
-    }
-
-    public function __wakeup()
-    {
-        $this->bootTraits();
-
-        $this->boot();
-
-        $this->bootedTraits();
-    }
-
     protected function boot()
     {
         return $this;
@@ -129,17 +54,6 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
     {
         foreach (Obj::usesRecursive(static::class, self::class) as $trait) {
             if (method_exists($this, $method = 'boot' . Obj::baseName($trait))) {
-                call_user_func_array([$this, $method], []);
-            }
-        }
-
-        return $this;
-    }
-
-    protected function bootedTraits()
-    {
-        foreach (Obj::usesRecursive(static::class, self::class) as $trait) {
-            if (method_exists($this, $method = 'booted' . Obj::baseName($trait))) {
                 call_user_func_array([$this, $method], []);
             }
         }
