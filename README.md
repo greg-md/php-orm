@@ -111,8 +111,9 @@ Full documentation can be found [here](docs/DriverStrategy.md).
 
 The Query Builder provides an elegant way of creating SQL statements and clauses.
 
-Let say you have a `Students` table and want to find students names that lives in Chisinau and were born in 1990.
-To achieve that, we will use the SELECT statement.
+_Example:_
+
+Let say you have a students table and want to find students names that lives in Chisinau and were born in 1990.
 
 ```php
 $query = new Greg\Orm\Query\SelectQuery();
