@@ -172,19 +172,42 @@ Let say you have a students table and want to delete students that were not admi
 ```php
 $query = $driver->delete()
     ->from('Students')
-    ->where('Admitted', 0)
+    ->whereIsNot('Admitted')
 ;
 
 [$statement, $parameters] = $query->toSql();
 
 echo $statement;
-// UPDATE `Students` SET `Grade` = ? WHERE `Id` = ?
+// DELETE FROM `Students` WHERE `Admited` = 0
 
 print_r($parameters);
 //Array
 //(
 //    [0] => 1400
 //    [1] => 10
+//)
+```
+
+_Example 4:_
+
+Let say you have a students table and want to add a new student:
+
+```php
+$query = $driver->insert()
+    ->into('Students')
+    ->data(['Name' => 'John Doe', 'Year' => 2017])
+;
+
+[$statement, $parameters] = $query->toSql();
+
+echo $statement;
+// INSERT INTO `Students` (`Name`, 'Year') VALUES (?, ?)
+
+print_r($parameters);
+//Array
+//(
+//    [0] => 'Jogn Doe'
+//    [1] => 2017
 //)
 ```
 
