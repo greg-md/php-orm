@@ -2033,7 +2033,7 @@ $query->hasFrom(); // result: false
 Get FROM SQL clause with parameters.
 
 ```php
-public function toSql(): array
+public function fromToSql(?JoinClauseStrategy $join = null, bool $useClause = true): array
 ```
 
 _Example:_
@@ -2050,7 +2050,7 @@ $sql = $query->toSql();
 Get FROM SQL clause.
 
 ```php
-public function toString(): string
+public function fromToString(?JoinClauseStrategy $join = null, bool $useClause = true): string
 ```
 
 _Example:_
@@ -2067,7 +2067,7 @@ echo $query->toString();
 Get SQL clause with parameters.
 
 ```php
-public function toSql(): array
+public function toSql(?JoinClauseStrategy $join = null, bool $useClause = true): array
 ```
 
 _Example:_
@@ -2084,7 +2084,7 @@ $sql = $query->toSql();
 Get SQL clause.
 
 ```php
-public function toString(): string
+public function toString(?JoinClauseStrategy $join = null, bool $useClause = true): string
 ```
 
 _Example:_
@@ -2900,7 +2900,28 @@ public function toString(bool $useClause = true): string
 
 # Group By Clause
 
-`GROUP BY` clause.
+The `GROUP BY` statement is often used with aggregate functions (COUNT, MAX, MIN, SUM, AVG)
+to group the result-set by one or more columns.
+
+_Example:_
+
+```php
+$query = new Greg\Orm\Clause\GroupByClause();
+
+$query->groupBy('Column');
+
+echo $query->toString();
+// GROUP BY `Column`
+```
+
+Optionally, you can define a SQL dialect for your query.
+By default it will use base SQL syntax.
+
+```php
+$dialect = new \Greg\Orm\Dialect\MysqlDialect();
+
+$query = new Greg\Orm\Clause\GroupByClause($dialect);
+```
 
 List of **magic methods**:
 
@@ -2908,16 +2929,96 @@ List of **magic methods**:
 
 List of **supported methods**:
 
-* [groupBy](#groupby)
-* [groupByRaw](#groupbyraw)
-* [groupByLogic](#groupbylogic)
-* [hasGroupBy](#hasgroupby)
-* [getGroupBy](#getgroupby)
-* [clearGroupBy](#cleargroupby)
-* [groupByToSql](#groupbytosql)
-* [groupByToString](#groupbytostring)
-* [toSql](#tosql-group-by-clause)
-* [toString](#tostring-group-by-clause)
+* [groupBy](#groupby) - Group by columns;
+* [groupByRaw](#groupbyraw) - Group by raw columns;
+* [groupByLogic](#groupbylogic) - Define custom group by logic;
+* [hasGroupBy](#hasgroupby) - Determine if has group by columns;
+* [getGroupBy](#getgroupby) - Get group by columns;
+* [clearGroupBy](#cleargroupby) - Clear group by columns;
+* [groupByToSql](#groupbytosql) - Get GROUP BY SQL clause with parameters;
+* [groupByToString](#groupbytostring) - Get GROUP BY SQL clause;
+* [toSql](#tosql-group-by-clause) - Get SQL clause with parameters;
+* [toString](#tostring-group-by-clause) - Get SQL clause.
+
+## groupBy
+
+Group by columns.
+
+```php
+public function groupBy(string $column): $this
+```
+
+## groupByRaw
+
+Group by raw columns.
+
+```php
+public function groupByRaw(string $sql, string ...$params): $this
+```
+
+## groupByLogic
+
+Define custom group by logic.
+
+```php
+public function groupByLogic(string $sql, array $params = []): $this
+```
+
+## hasGroupBy
+
+Determine if has group by columns.
+
+```php
+public function hasGroupBy(): bool
+```
+
+## getGroupBy
+
+Get group by columns.
+
+```php
+public function getGroupBy(): array
+```
+
+## clearGroupBy
+
+Clear group by columns.
+
+```php
+public function clearGroupBy(): $this
+```
+
+## groupByToSql
+
+Get GROUP BY SQL clause with parameters.
+
+```php
+public function groupByToSql(bool $useClause = true): array
+```
+
+## groupByToString
+
+Get GROUP BY SQL clause.
+
+```php
+public function groupByToString(bool $useClause = true): string
+```
+
+## toSql WHERE clause
+
+Get SQL clause with parameters.
+
+```php
+public function toSql(bool $useClause = true): array
+```
+
+## toString WHERE clause
+
+Get SQL clause.
+
+```php
+public function toString(bool $useClause = true): string
+```
 
 # Having Clause
 
