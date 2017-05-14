@@ -62,7 +62,7 @@ You can add this library as a local, per-project dependency to your project usin
 
 ## Driver Strategy - Quick Start
 
-There are two ways of working with driver strategies. Directly or via a driver manager.
+There are two ways of working with driver strategies. Directly or via a Driver Manager.
 
 > A driver manager could have many driver strategies and a default one.
 > The driver manager implements the same driver strategy and could act as default one if it's defined.
@@ -76,24 +76,16 @@ $manager = new \Greg\Orm\Driver\DriverManager();
 
 // Register a MySQL driver
 $manager->register('driver1', function() {
-    return new \Greg\Orm\Driver\MysqlDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
-    {
-        public function connect(): \PDO
-        {
-            return new \PDO('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe');
-        }
-    });
+    return new \Greg\Orm\Driver\MysqlDriver(
+        new \Greg\Orm\Driver\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
+    );
 });
 
 // Register a SQLite driver
 $manager->register('driver2', function() {
-    return new \Greg\Orm\Driver\SqliteDriver(new class implements \Greg\Orm\Driver\PdoConnectorStrategy
-    {
-        public function connect(): \PDO
-        {
-            return new \PDO('sqlite:/var/db/example_db.sqlite');
-        }
-    });
+    return new \Greg\Orm\Driver\SqliteDriver(
+        new \Greg\Orm\Driver\Pdo('sqlite:/var/db/example_db.sqlite')
+    );
 });
 ```
 
@@ -116,6 +108,51 @@ $manager->fetchAll('SELECT * FROM `BarTable`');
 Full documentation can be found [here](docs/DriverStrategy.md).
 
 ## Query Builder
+
+The Query Builder provides an elegant way of creating SQL statements and clauses.
+
+Let say you have a `Students` table and want to find students names that lives in Chisinau and were born in 1990.
+To achieve that, we will use the SELECT statement.
+
+```php
+$query = new Greg\Orm\Query\SelectQuery();
+
+$query
+    ->columns('Id', 'Name')
+    ->from('Students')
+    ->where('City', 'Chisinau')
+    ->whereYear('Birthday', 1990)
+;
+
+[$statement, $parameters] = $query->toSql();
+
+echo $statement;
+// SELECT `Id`, `Name` FROM `Students` WHERE `City` = ? AND YEAR(`Birthday`) = ?
+
+print_r($parameters);
+//Array
+//(
+//    [0] => Chisinau
+//    [1] => 1990
+//)
+```
+
+Next, you will find a list of available statements and clauses:
+
+* **Statements**
+    * [Select](docs/QueryBuilder.md#select-statement) - The `SELECT` statement is used to select data from a database;
+    * [Update](docs/QueryBuilder.md#update-statement) - The `UPDATE` statement is used to modify the existing records in a table;
+    * [Delete](docs/QueryBuilder.md#delete-statement) - The `DELETE` statement is used to delete existing records in a table;
+    * [Insert](docs/QueryBuilder.md#insert-statement) - The `INSERT` statement is used to insert new records in a table.
+* **Clauses**
+    * [From](docs/QueryBuilder.md#from-clause) - `FROM` clause;
+    * [Join](docs/QueryBuilder.md#join-clause) - `JOIN` clause;
+    * [Where](docs/QueryBuilder.md#where-clause) - `WHERE` clause;
+    * [Group By](docs/QueryBuilder.md#group-by-clause) - `GROUP BY` clause;
+    * [Having](docs/QueryBuilder.md#having-clause) - `HAVING` clause;
+    * [Order By](docs/QueryBuilder.md#order-by-clause) - `ORDER BY` clause;
+    * [Limit](docs/QueryBuilder.md#limit-clause) - `LIMIT` clause;
+    * [Offset](docs/QueryBuilder.md#offset-clause) - `OFFSET` clause.
 
 Full documentation can be found [here](docs/QueryBuilder.md).
 

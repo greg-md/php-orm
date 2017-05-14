@@ -1,8 +1,8 @@
 # Query Builder
 
-A powerful query builder for web-artisans.
+A powerful query builder for web-artisans. The Query Builder provides an elegant way of creating SQL statements and clauses.
 
-Next, you will find a list of available statements and clauses.
+Next, you will find a list of available statements and clauses:
 
 * **Statements**
     * [Select](#select-statement) - The `SELECT` statement is used to select data from a database;
