@@ -118,7 +118,7 @@ In the next examples we will use the Driver Strategy to initialize queries.
 
 _Example 1:_
 
-Let say you have a students table and want to find students names that lives in Chisinau and were born in 1990:
+Let say you have students table and want to find students names that lives in Chisinau and were born in 1990:
 
 ```php
 $query = $driver->select()
@@ -143,7 +143,7 @@ print_r($parameters);
 
 _Example 2:_
 
-Let say you have a students table and want to update the grade of a student:
+Let say you have students table and want to update the grade of a student:
 
 ```php
 $query = $driver->update()
@@ -167,7 +167,7 @@ print_r($parameters);
 
 _Example 3:_
 
-Let say you have a students table and want to delete students that were not admitted in the current year:
+Let say you have students table and want to delete students that were not admitted in the current year:
 
 ```php
 $query = $driver->delete()
@@ -190,7 +190,7 @@ print_r($parameters);
 
 _Example 4:_
 
-Let say you have a students table and want to add a new student:
+Let say you have students table and want to add a new student:
 
 ```php
 $query = $driver->insert()
