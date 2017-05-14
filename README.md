@@ -111,14 +111,17 @@ Full documentation can be found [here](docs/DriverStrategy.md).
 
 The Query Builder provides an elegant way of creating SQL statements and clauses.
 
-_Example:_
+> You can use Query Builder in standalone mode or via a Driver Strategy.
+> In standalone mode you will have to define manually the SQL Dialect in constructor.
 
-Let say you have a students table and want to find students names that lives in Chisinau and were born in 1990.
+In the next examples we will use the Driver Strategy to initialize queries.
+
+_Example 1:_
+
+Let say you have a students table and want to find students names that lives in Chisinau and were born in 1990:
 
 ```php
-$query = new Greg\Orm\Query\SelectQuery();
-
-$query
+$query = $driver->select()
     ->columns('Id', 'Name')
     ->from('Students')
     ->where('City', 'Chisinau')
@@ -135,6 +138,53 @@ print_r($parameters);
 //(
 //    [0] => Chisinau
 //    [1] => 1990
+//)
+```
+
+_Example 2:_
+
+Let say you have a students table and want to update the grade of a student:
+
+```php
+$query = $driver->update()
+    ->table('Students')
+    ->set('Grade', 1400)
+    ->where('Id', 10)
+;
+
+[$statement, $parameters] = $query->toSql();
+
+echo $statement;
+// UPDATE `Students` SET `Grade` = ? WHERE `Id` = ?
+
+print_r($parameters);
+//Array
+//(
+//    [0] => 1400
+//    [1] => 10
+//)
+```
+
+_Example 3:_
+
+Let say you have a students table and want to delete students that were not admitted in the current year:
+
+```php
+$query = $driver->delete()
+    ->from('Students')
+    ->where('Admitted', 0)
+;
+
+[$statement, $parameters] = $query->toSql();
+
+echo $statement;
+// UPDATE `Students` SET `Grade` = ? WHERE `Id` = ?
+
+print_r($parameters);
+//Array
+//(
+//    [0] => 1400
+//    [1] => 10
 //)
 ```
 

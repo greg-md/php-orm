@@ -166,6 +166,34 @@ interface WhereClauseStrategy extends ClauseStrategy
      *
      * @return $this
      */
+    public function whereIs(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orWhereIs(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function whereIsNot(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orWhereIsNot(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
     public function whereIsNull(string $column);
 
     /**

@@ -237,6 +237,42 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    public function havingIs(string $column)
+    {
+        $instance = $this->havingStrategyInstance();
+
+        $instance->havingStrategy()->havingIs($column);
+
+        return $instance;
+    }
+
+    public function orHavingIs(string $column)
+    {
+        $instance = $this->havingStrategyInstance();
+
+        $instance->havingStrategy()->orHavingIs($column);
+
+        return $instance;
+    }
+
+    public function havingIsNot(string $column)
+    {
+        $instance = $this->havingStrategyInstance();
+
+        $instance->havingStrategy()->havingIsNot($column);
+
+        return $instance;
+    }
+
+    public function orHavingIsNot(string $column)
+    {
+        $instance = $this->havingStrategyInstance();
+
+        $instance->havingStrategy()->orHavingIsNot($column);
+
+        return $instance;
+    }
+
     public function havingIsNull(string $column)
     {
         $instance = $this->havingStrategyInstance();

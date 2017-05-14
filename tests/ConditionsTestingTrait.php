@@ -490,6 +490,80 @@ trait ConditionsTestingTrait
         $this->assertEquals($this->prefix() . '`Foo` = `foo` OR `Bar` = `bar`', $query->toString());
     }
 
+    public function testCanSetIs()
+    {
+        if ($this->disableTest(__FUNCTION__)) {
+            $this->assertTrue(true);
+
+            return null;
+        }
+
+        $query = $this->newClause();
+
+        $query->{$this->method('is')}('Foo');
+
+        $this->assertEquals($this->prefix() . '`Foo` = 1', $query->toString());
+
+        return $query;
+    }
+
+    /**
+     * @test
+     *
+     * @depends testCanSetIs
+     *
+     * @param Conditions $query
+     */
+    public function testCanSetOrIs($query)
+    {
+        if ($this->disableTest(__FUNCTION__)) {
+            $this->assertTrue(true);
+
+            return;
+        }
+
+        $query->{$this->method('orIs')}('Bar');
+
+        $this->assertEquals($this->prefix() . '`Foo` = 1 OR `Bar` = 1', $query->toString());
+    }
+
+    public function testCanSetIsNot()
+    {
+        if ($this->disableTest(__FUNCTION__)) {
+            $this->assertTrue(true);
+
+            return null;
+        }
+
+        $query = $this->newClause();
+
+        $query->{$this->method('isNot')}('Foo');
+
+        $this->assertEquals($this->prefix() . '`Foo` = 0', $query->toString());
+
+        return $query;
+    }
+
+    /**
+     * @test
+     *
+     * @depends testCanSetIsNot
+     *
+     * @param Conditions $query
+     */
+    public function testCanSetOrIsNot($query)
+    {
+        if ($this->disableTest(__FUNCTION__)) {
+            $this->assertTrue(true);
+
+            return;
+        }
+
+        $query->{$this->method('orIsNot')}('Bar');
+
+        $this->assertEquals($this->prefix() . '`Foo` = 0 OR `Bar` = 0', $query->toString());
+    }
+
     public function testCanSetIsNull()
     {
         if ($this->disableTest(__FUNCTION__)) {

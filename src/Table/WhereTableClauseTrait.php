@@ -235,6 +235,42 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    public function whereIs(string $column)
+    {
+        $instance = $this->whereStrategyInstance();
+
+        $instance->whereStrategy()->whereIs($column);
+
+        return $instance;
+    }
+
+    public function orWhereIs(string $column)
+    {
+        $instance = $this->whereStrategyInstance();
+
+        $instance->whereStrategy()->orWhereIs($column);
+
+        return $instance;
+    }
+
+    public function whereIsNot(string $column)
+    {
+        $instance = $this->whereStrategyInstance();
+
+        $instance->whereStrategy()->whereIsNot($column);
+
+        return $instance;
+    }
+
+    public function orWhereIsNot(string $column)
+    {
+        $instance = $this->whereStrategyInstance();
+
+        $instance->whereStrategy()->orWhereIsNot($column);
+
+        return $instance;
+    }
+
     public function whereIsNull(string $column)
     {
         $instance = $this->whereStrategyInstance();

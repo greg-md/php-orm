@@ -267,6 +267,54 @@ trait WhereClauseTrait
      *
      * @return $this
      */
+    public function whereIs(string $column)
+    {
+        $this->wConditions()->is(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orWhereIs(string $column)
+    {
+        $this->wConditions()->orIs(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function whereIsNot(string $column)
+    {
+        $this->wConditions()->isNot(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orWhereIsNot(string $column)
+    {
+        $this->wConditions()->orIsNot(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
     public function whereIsNull(string $column)
     {
         $this->wConditions()->isNull(...func_get_args());

@@ -2486,6 +2486,10 @@ List of **supported methods**:
 * [orWhereRelation](#orwhererelation) - Filter records by column relation with OR condition;
 * [whereRelations](#whererelations) - Filter records by column-column relations with AND condition;
 * [orWhereRelations](#orwhererelations) - Filter records by column-column relations with OR condition;
+* [whereIs](#whereis) - Filter records by TRUE column with AND condition;
+* [orWhereIs](#orwhereis) - Filter records by TRUE column with OR condition;
+* [whereIsNot](#whereisnot) - Filter records by FALSE column with AND condition;
+* [orWhereIsNot](#orwhereisnot) - Filter records by FALSE column with OR condition;
 * [whereIsNull](#whereisnull) - Filter records by NULL column with AND condition;
 * [orWhereIsNull](#orwhereisnull) - Filter records by NULL column with OR condition;
 * [whereIsNotNull](#whereisnotnull) - Filter records by NOT NULL column with AND condition;
@@ -2656,6 +2660,38 @@ Filter records by column-column relations with OR condition.
 
 ```php
 public function orWhereRelations(array $relations): $this
+```
+
+## whereIs
+
+Filter records by TRUE column with AND condition.
+
+```php
+public function whereIs(string $column): $this
+```
+
+## orWhereIs
+
+Filter records by TRUE column with OR condition.
+
+```php
+public function orWhereIs(string $column): $this
+```
+
+## whereIsNot
+
+Filter records by FALSE column with AND condition.
+
+```php
+public function whereIsNotNull(string $column): $this
+```
+
+## orWhereIsNot
+
+Filter records by FALSE column with OR condition.
+
+```php
+public function orWhereIsNotNull(string $column): $this
 ```
 
 ## whereIsNull
@@ -3049,6 +3085,10 @@ List of **supported methods**:
 * [orHavingRelation](#orhavingrelation)
 * [havingRelations](#havingrelations)
 * [orHavingRelations](#orhavingrelations)
+* [havingIs](#havingis)
+* [orHavingIs](#orhavingis)
+* [havingIsNot](#havingisnot)
+* [orHavingIsNot](#orhavingisnot)
 * [havingIsNull](#havingisnull)
 * [orHavingIsNull](#orhavingisnull)
 * [havingIsNotNull](#havingisnotnull)
@@ -3147,6 +3187,10 @@ List of **supported methods**:
 * [orRelation](#orrelation)
 * [relations](#relations)
 * [orRelations](#orrelations)
+* [is](#is)
+* [orIs](#oris)
+* [isNot](#isnot)
+* [orIsNot](#orisnot)
 * [isNull](#isnull)
 * [orIsNull](#orisnull)
 * [isNotNull](#isnotnull)
@@ -3155,8 +3199,6 @@ List of **supported methods**:
 * [orBetween](#orbetween)
 * [notBetween](#notbetween)
 * [orNotBetween](#ornotbetween)
-* [group](#group)
-* [orGroup](#orgroup)
 * [conditions](#conditions)
 * [orConditions](#orconditions)
 * [raw](#raw)

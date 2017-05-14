@@ -434,6 +434,54 @@ class Conditions extends SqlAbstract
      *
      * @return $this
      */
+    public function is(string $columnName)
+    {
+        $this->logic('AND', $this->dialect()->quoteName($columnName) . ' = 1');
+
+        return $this;
+    }
+
+    /**
+     * @param string $columnName
+     *
+     * @return $this
+     */
+    public function orIs(string $columnName)
+    {
+        $this->logic('OR', $this->dialect()->quoteName($columnName) . ' = 1');
+
+        return $this;
+    }
+
+    /**
+     * @param string $columnName
+     *
+     * @return $this
+     */
+    public function isNot(string $columnName)
+    {
+        $this->logic('AND', $this->dialect()->quoteName($columnName) . ' = 0');
+
+        return $this;
+    }
+
+    /**
+     * @param string $columnName
+     *
+     * @return $this
+     */
+    public function orIsNot(string $columnName)
+    {
+        $this->logic('OR', $this->dialect()->quoteName($columnName) . ' = 0');
+
+        return $this;
+    }
+
+    /**
+     * @param string $columnName
+     *
+     * @return $this
+     */
     public function isNull(string $columnName)
     {
         $this->logic('AND', $this->dialect()->quoteName($columnName) . ' IS NULL');

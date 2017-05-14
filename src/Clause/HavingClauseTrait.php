@@ -306,6 +306,54 @@ trait HavingClauseTrait
 
     /**
      * @param string $column
+     *
+     * @return $this
+     */
+    public function havingIs(string $column)
+    {
+        $this->hConditions()->is(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orHavingIs(string $column)
+    {
+        $this->hConditions()->orIs(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function havingIsNot(string $column)
+    {
+        $this->hConditions()->isNot(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orHavingIsNot(string $column)
+    {
+        $this->hConditions()->orIsNot(...func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
      * @param int    $min
      * @param int    $max
      *

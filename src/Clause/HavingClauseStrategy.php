@@ -165,6 +165,34 @@ interface HavingClauseStrategy
      *
      * @return $this
      */
+    public function havingIs(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orHavingIs(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function havingIsNot(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
+    public function orHavingIsNot(string $column);
+
+    /**
+     * @param string $column
+     *
+     * @return $this
+     */
     public function havingIsNull(string $column);
 
     /**
