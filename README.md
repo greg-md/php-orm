@@ -211,23 +211,6 @@ print_r($parameters);
 //)
 ```
 
-Next, you will find a list of available statements and clauses:
-
-* **Statements**
-    * [Select](docs/QueryBuilder.md#select-statement) - The `SELECT` statement is used to select data from a database;
-    * [Update](docs/QueryBuilder.md#update-statement) - The `UPDATE` statement is used to modify the existing records in a table;
-    * [Delete](docs/QueryBuilder.md#delete-statement) - The `DELETE` statement is used to delete existing records in a table;
-    * [Insert](docs/QueryBuilder.md#insert-statement) - The `INSERT` statement is used to insert new records in a table.
-* **Clauses**
-    * [From](docs/QueryBuilder.md#from-clause) - `FROM` clause;
-    * [Join](docs/QueryBuilder.md#join-clause) - `JOIN` clause;
-    * [Where](docs/QueryBuilder.md#where-clause) - `WHERE` clause;
-    * [Group By](docs/QueryBuilder.md#group-by-clause) - `GROUP BY` clause;
-    * [Having](docs/QueryBuilder.md#having-clause) - `HAVING` clause;
-    * [Order By](docs/QueryBuilder.md#order-by-clause) - `ORDER BY` clause;
-    * [Limit](docs/QueryBuilder.md#limit-clause) - `LIMIT` clause;
-    * [Offset](docs/QueryBuilder.md#offset-clause) - `OFFSET` clause.
-
 Full documentation can be found [here](docs/QueryBuilder.md).
 
 ## Active Record Model
