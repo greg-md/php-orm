@@ -270,7 +270,7 @@ print_r($model->primary()); // result: ['Id']
 print_r($model->unique()); // result: [['Email']]
 ```
 
-***Working with a specific row***
+#### Working with a specific row
 
 ```
 $row = $model->create([
@@ -287,7 +287,7 @@ print_r($row['Id']); // result: 1
 print_r($row->getPrimary()); // result: ['Id' => 1]
 ```
 
-***Working with rows***
+#### Working with rows
 
 ```php
 $model->create([
