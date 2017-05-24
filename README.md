@@ -216,8 +216,11 @@ Full documentation can be found [here](docs/QueryBuilder.md).
 ## Active Record Model
 
 The Active Record Model represents a full instance of a table and it's rows.
-It can work with table's schema, queries, rows or a specific row.
-All you need, is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start).
+It can work with table's schema, queries, rows and a specific row.
+The magic thing is that you have all this features into one powerful model.
+
+Forget about creating a separate classes.
+All you need, is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start) that deals will all of that.
 
 Let say you have a `Users` table:
 
@@ -318,6 +321,16 @@ $rows->set('Active', true)->save();
 
 print_r($rows->row(0)['Active']); // result: true
 print_r($rows->row(1)['Active']); // result: true
+```
+
+#### Working with SELECT queries.
+
+```php
+$query = $model->select('Id', 'Email')->orderDesc('Id')->limit(10);
+
+print_r($query->toString()); // result: SELECT `Id`, `Email` FROM `Users` ORDER BY `Id` DESC LIMIT 10;
+
+$rows = $query->fetchRows();
 ```
 
 Full documentation can be found [here](docs/ActiveRecordModel.md).
