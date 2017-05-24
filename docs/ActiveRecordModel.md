@@ -10,8 +10,6 @@ A powerful database model for web-artisans.
 
 List of **magic methods**:
 
-* [__sleep](#__sleep)
-* [__wakeup](#__wakeup)
 * **Row**
     * [__get](#__get)
     * [__set](#__set)
@@ -20,11 +18,10 @@ List of **magic methods**:
 
 List of **supported methods**:
 
-* [setDriver](#setdriver)
-* [getDriver](#getdriver)
 * [driver](#driver)
 * [cleanup](#cleanup)
 * **Row**
+    * [firstToArray](#firsttoarray)
     * [getAutoIncrement](#getautoincrement)
     * [setAutoIncrement](#setautoincrement)
     * [getPrimary](#getprimary)
@@ -42,6 +39,8 @@ List of **supported methods**:
     * [rowsLimit](#rowslimit)
     * [appendRecord](#appendrecord)
     * [appendRecordRef](#appendrecordref)
+    * [pagination](#pagination)
+    * [paginate](#paginate)
     * [has](#has)
     * [hasMultiple](#hasmultiple)
     * [set](#set)
@@ -50,11 +49,12 @@ List of **supported methods**:
     * [getMultiple](#getmultiple)
     * [save](#save)
     * [destroy](#destroy)
+    * [row](#row)
     * [toArray](#toArray)
     * [markAsNew](#markasnew)
     * [markAsOld](#markasold)
     * [search](#first)
-    * [searchWhere](#firstwhere)
+    * [searchWhere](#searchwhere)
     * [hasMany](#hasmany)
     * [belongsTo](#belongsto)
 * **Table**
@@ -73,10 +73,13 @@ List of **supported methods**:
     * [nameColumn](#nameColumn)
     * [casts](#casts)
     * [cast](#cast)
+    * [setCast](#setCast)
     * [setDefaults](#setDefaults)
     * [getDefaults](#getDefaults)
     * [describe](#describe)
     * [create](#create)
+    * [prepareRecord](#prepareRecord)
+    * [prepareValue](#prepareValue)
     * **Select**
         * [fetch](#fetch)
         * [fetchOrFail](#fetchOrFail)
@@ -117,8 +120,6 @@ List of **supported methods**:
         * [delete](#delete)
         * [erase](#erase)
         * [truncate](#truncate)
-    * [prepare](#prepare)
-    * [execute](#execute)
 * **Query Builder**
     * [query](#query)
     * [hasQuery](#hasQuery)

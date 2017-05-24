@@ -5,7 +5,7 @@ namespace Greg\Orm;
 use Greg\Orm\Driver\DriverStrategy;
 use Greg\Support\Obj;
 
-class Model implements \IteratorAggregate, \Countable, \ArrayAccess
+abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 {
     use RowTrait;
 
