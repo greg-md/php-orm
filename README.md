@@ -272,7 +272,7 @@ print_r($model->unique()); // result: [['Email']]
 
 #### Working with a specific row
 
-```
+```php
 $row = $model->create([
     'Email' => 'john@doe.com',
     'Password' => password_hash('secret'),
