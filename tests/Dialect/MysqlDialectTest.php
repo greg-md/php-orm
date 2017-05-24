@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\Dialect;
 
+use Greg\Orm\Driver\DriverStrategy;
 use Greg\Orm\Model;
 use Greg\Orm\Query\SelectQuery;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +46,9 @@ class MysqlDialectTest extends TestCase
 
         $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(['bar' => 'foo']));
 
-        $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(new class() extends Model {
+        $driverMock = $this->driverMock = $this->createMock(DriverStrategy::class);
+
+        $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(new class($driverMock) extends Model {
             protected $name = 'foo';
 
             protected $alias = 'bar';
