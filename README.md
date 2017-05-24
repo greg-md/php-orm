@@ -215,6 +215,50 @@ Full documentation can be found [here](docs/QueryBuilder.md).
 
 ## Active Record Model
 
+The Active Record Model represents a full instance of a table and it's rows.
+It can work with table's schema, queries, rows or a concrete row.
+All you need, is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start).
+
+Let say we have a `Users` table:
+
+```sql
+CREATE TABLE `Users` (
+  `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Email` varchar(255) NOT NULL,
+  `Password` varchar(32) NOT NULL,
+  `FirstName` varchar(20) NOT NULL,
+  `LastName` varchar(20) NOT NULL,
+  `Active` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`Id`),
+  UNIQUE (`Email`),
+  KEY (`Password`),
+  KEY (`FirstName`),
+  KEY (`LastName`),
+  KEY (`Active`)
+);
+```
+
+***First of all***, we need to create the `Users` model:
+
+```php
+class UsersModel extends \Greg\Orm\Model
+{
+    protected $name = 'Users';
+}
+```
+
+***Then***, we can instantiate and work with it:
+
+```php
+$driver = new \Greg\Orm\Driver\MysqlDriver(
+    new \Greg\Orm\Driver\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
+);
+
+$model = new UsersModel($driver);
+
+echo $model->name(); // result: Users
+```
+
 Full documentation can be found [here](docs/ActiveRecordModel.md).
 
 ## Migrations
