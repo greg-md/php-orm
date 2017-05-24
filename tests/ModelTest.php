@@ -314,7 +314,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $rows->appendRecord(['Id' => 2]);
 
@@ -888,7 +888,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $row = $this->model->create(['Id' => 1]);
+        $row = $this->model->new(['Id' => 1]);
 
         $this->assertEquals(1, $row['Id']);
     }
@@ -1442,7 +1442,7 @@ class ModelTest extends TestCase
 
         $this->assertFalse($this->model->has('Id'));
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $this->assertTrue($rows->has('Id'));
 
@@ -1455,7 +1455,7 @@ class ModelTest extends TestCase
 
         $this->assertFalse($this->model->hasMultiple(['Id']));
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $this->assertTrue($rows->hasMultiple(['Id']));
 
@@ -1468,7 +1468,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $rows->appendRecord(['Id' => 2]);
 
@@ -1483,7 +1483,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $rows->appendRecord(['Id' => 2]);
 
@@ -1500,7 +1500,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $rows->appendRecord(['Id' => 2]);
 
@@ -1511,7 +1511,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1])->save();
+        $rows = $this->model->create(['Id' => 1]);
 
         $this->assertEquals(1, $rows['Id']);
 
@@ -1524,7 +1524,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $rows->appendRecord(['Id' => 2]);
 
@@ -1540,7 +1540,7 @@ class ModelTest extends TestCase
             ->method('lastInsertId')
             ->willReturn(1);
 
-        $rows = $this->model->create(['Id' => null]);
+        $rows = $this->model->new(['Id' => null]);
 
         $rows->save();
 
@@ -1560,7 +1560,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1])->save();
+        $rows = $this->model->create(['Id' => 1]);
 
         $rows->appendRecord(['Id' => 2], true);
 
@@ -1576,7 +1576,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $this->assertNotNull($rows->row(0));
 
@@ -1587,7 +1587,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $this->assertEquals([['Id' => 1]], $rows->records());
 
@@ -1598,7 +1598,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $rows->markAsOld();
 
@@ -1613,7 +1613,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $manyRows = $rows->hasMany($this->model, 'Id');
 
@@ -1626,7 +1626,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1]);
+        $rows = $this->model->new(['Id' => 1]);
 
         $belongsTo = $rows->belongsTo($this->model, 'Id');
 
@@ -1639,7 +1639,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $rows = $this->model->create(['Id' => 1])->save();
+        $rows = $this->model->create(['Id' => 1]);
 
         $this->assertEmpty($rows->originalModified());
 
