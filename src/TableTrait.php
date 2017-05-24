@@ -169,9 +169,14 @@ trait TableTrait
         return $this->driver()->describe($this->fullName());
     }
 
-    public function create(array $record = [])
+    public function new(array $record = [])
     {
         return $this->cleanClone()->appendRecord($record, true);
+    }
+
+    public function create(array $record = [])
+    {
+        return $this->cleanClone()->appendRecord($record, true)->save();
     }
 
     public function fetch(): ?array
@@ -340,7 +345,7 @@ trait TableTrait
     public function firstOrNew(array $data)
     {
         if (!$row = $this->first($data)) {
-            $row = $this->create($data);
+            $row = $this->new($data);
         }
 
         return $row;
@@ -348,9 +353,9 @@ trait TableTrait
 
     public function firstOrCreate(array $data)
     {
-        $row = $this->firstOrNew($data);
-
-        $row->save();
+        if (!$row = $this->first($data)) {
+            $row = $this->create($data);
+        }
 
         return $row;
     }

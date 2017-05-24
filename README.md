@@ -216,34 +216,39 @@ Full documentation can be found [here](docs/QueryBuilder.md).
 ## Active Record Model
 
 The Active Record Model represents a full instance of a table and it's rows.
-It can work with table's schema, queries, rows or a concrete row.
+It can work with table's schema, queries, rows or a specific row.
 All you need, is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start).
 
-Let say we have a `Users` table:
+Let say you have a `Users` table:
 
 ```sql
 CREATE TABLE `Users` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Email` varchar(255) NOT NULL,
   `Password` varchar(32) NOT NULL,
-  `FirstName` varchar(20) NOT NULL,
-  `LastName` varchar(20) NOT NULL,
   `Active` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`Id`),
   UNIQUE (`Email`),
   KEY (`Password`),
-  KEY (`FirstName`),
-  KEY (`LastName`),
   KEY (`Active`)
 );
 ```
 
-***First of all***, we need to create the `Users` model:
+***First of all***, you need to create the `Users` model and configure it:
 
 ```php
 class UsersModel extends \Greg\Orm\Model
 {
+    // Define table name. (required)
     protected $name = 'Users';
+
+    // Define table alias. (optional)
+    protected $alias = 'u';
+
+    // Cast columns. (optional)
+    protected $casts = [
+        'Active' => 'boolean',
+    ];
 }
 ```
 
@@ -256,7 +261,63 @@ $driver = new \Greg\Orm\Driver\MysqlDriver(
 
 $model = new UsersModel($driver);
 
-echo $model->name(); // result: Users
+print_r($model->name()); // result: Users
+
+print_r($model->autoIncrement()); // result: Id
+
+print_r($model->primary()); // result: ['Id']
+
+print_r($model->unique()); // result: [['Email']]
+```
+
+***Working with a specific row***
+
+```
+$row = $model->create([
+    'Email' => 'john@doe.com',
+    'Password' => password_hash('secret'),
+]);
+
+print_r($row['Email']); // result: john@doe.com
+
+print_r($row['Active']); // result: true
+
+print_r($row['Id']); // result: 1
+
+print_r($row->getPrimary()); // result: ['Id' => 1]
+```
+
+***Working with rows***
+
+```php
+$model->create([
+   'Email' => 'john@doe.com',
+   'Password' => password_hash('secret'),
+   'Active' => true,
+]);
+
+$model->create([
+   'Email' => 'matt@damon.com',
+   'Password' => password_hash('secret'),
+   'Active' => false,
+]);
+
+$model->create([
+   'Email' => 'josh@barro.com',
+   'Password' => password_hash('secret'),
+   'Active' => false,
+]);
+
+$rows = $model->whereIsNot('Active')->fetchAll();
+
+print_r($rows->count()); // result: 2
+
+print_r($rows->get('Email')); // result: ['matt@damon.com', 'josh@barro.com']
+
+$rows->set('Active', true)->save();
+
+print_r($rows->row(0)['Active']); // result: true
+print_r($rows->row(1)['Active']); // result: true
 ```
 
 Full documentation can be found [here](docs/ActiveRecordModel.md).

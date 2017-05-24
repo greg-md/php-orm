@@ -8,7 +8,7 @@ trait RowTrait
 {
     use RowsTrait;
 
-    public function firstToArray(bool $full = false): array
+    public function record(bool $full = false): array
     {
         if ($full) {
             return $this->firstRow();

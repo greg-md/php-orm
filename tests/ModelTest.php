@@ -899,7 +899,7 @@ class ModelTest extends TestCase
 
         $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
-        $this->assertEquals($record, $this->model->fetchRow()->firstToArray());
+        $this->assertEquals($record, $this->model->fetchRow()->record());
     }
 
     public function testCanFetchEmptyRow()
@@ -913,7 +913,7 @@ class ModelTest extends TestCase
 
         $this->driverMock->method('fetch')->willReturn(['Id' => 1]);
 
-        $this->assertEquals(['Id' => 1], $this->model->fetchRowOrFail()->firstToArray());
+        $this->assertEquals(['Id' => 1], $this->model->fetchRowOrFail()->record());
     }
 
     public function testCanThrowExceptionIfFetchRowFail()
@@ -933,7 +933,7 @@ class ModelTest extends TestCase
             }
         })());
 
-        $this->assertEquals([], $this->model->fetchRows()->toArray());
+        $this->assertEquals([], $this->model->fetchRows()->records());
     }
 
     public function testCanFetchRows()
@@ -946,7 +946,7 @@ class ModelTest extends TestCase
             yield ['Id' => 2];
         })());
 
-        $this->assertEquals([['Id' => 1], ['Id' => 2]], $this->model->fetchRows()->toArray());
+        $this->assertEquals([['Id' => 1], ['Id' => 2]], $this->model->fetchRows()->records());
     }
 
     public function testCanFetchRowsYield()
@@ -966,7 +966,7 @@ class ModelTest extends TestCase
         $this->assertInstanceOf(\Generator::class, $generator);
 
         foreach ($generator as $row) {
-            $this->assertEquals(array_shift($rows), $row->firstToArray());
+            $this->assertEquals(array_shift($rows), $row->record());
         }
 
         $this->assertEmpty($rows);
@@ -980,7 +980,7 @@ class ModelTest extends TestCase
 
         $row = $this->model->find(1);
 
-        $this->assertEquals($record, $row->firstToArray());
+        $this->assertEquals($record, $row->record());
     }
 
     public function testCanFindOrFail()
@@ -991,7 +991,7 @@ class ModelTest extends TestCase
 
         $row = $this->model->findOrFail(1);
 
-        $this->assertEquals($record, $row->firstToArray());
+        $this->assertEquals($record, $row->record());
     }
 
     public function testCanThrowExceptionIfFindFail()
@@ -1011,7 +1011,7 @@ class ModelTest extends TestCase
 
         $row = $this->model->first($record);
 
-        $this->assertEquals($record, $row->firstToArray());
+        $this->assertEquals($record, $row->record());
     }
 
     public function testCanGetFirstOrFail()
@@ -1022,7 +1022,7 @@ class ModelTest extends TestCase
 
         $row = $this->model->firstOrFail($record);
 
-        $this->assertEquals($record, $row->firstToArray());
+        $this->assertEquals($record, $row->record());
     }
 
     public function testCanThrowExceptionIfGetFirstFail()
@@ -1589,9 +1589,9 @@ class ModelTest extends TestCase
 
         $rows = $this->model->create(['Id' => 1]);
 
-        $this->assertEquals([['Id' => 1]], $rows->toArray());
+        $this->assertEquals([['Id' => 1]], $rows->records());
 
-        $this->assertEquals([['record' => ['Id' => 1], 'isNew' => true, 'modified' => []]], $rows->toArray(true));
+        $this->assertEquals([['record' => ['Id' => 1], 'isNew' => true, 'modified' => []]], $rows->records(true));
     }
 
     public function testCanChangeRowStatus()

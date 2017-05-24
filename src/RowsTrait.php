@@ -250,7 +250,7 @@ trait RowsTrait
         return $this;
     }
 
-    public function row(int $number)
+    public function row(int $number = 1)
     {
         if (!isset($this->rows[$number])) {
             return null;
@@ -264,7 +264,7 @@ trait RowsTrait
         );
     }
 
-    public function toArray(bool $full = false): array
+    public function records(bool $full = false): array
     {
         if ($full) {
             return $this->rows;
