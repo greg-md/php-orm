@@ -3,9 +3,6 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Query\SelectQuery;
-use Greg\Support\Arr;
-use Greg\Support\DateTime;
-use Greg\Support\Str;
 
 trait TableTrait
 {
@@ -114,8 +111,8 @@ trait TableTrait
             return $primary;
         }
 
-        if ($unique = (array) Arr::first($this->unique)) {
-            return $unique;
+        if ($this->unique) {
+            return $this->unique[0];
         }
 
         throw new \Exception('No unique keys found in `' . $this->name() . '`.');
@@ -531,19 +528,15 @@ trait TableTrait
         switch ($this->cast($columnName) ?: $column['type']) {
             case 'datetime':
             case 'timestamp':
-                $value = DateTime::dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+                $value = $this->driver()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
 
                 break;
             case 'date':
-                $value = DateTime::dateString($value);
+                $value = $this->driver()->dialect()->dateString($value);
 
                 break;
             case 'time':
-                $value = DateTime::timeString($value);
-
-                break;
-            case 'systemName':
-                $value = $reverse ? Str::systemName($value) : $value;
+                $value = $this->driver()->dialect()->timeString($value);
 
                 break;
             case 'bool':

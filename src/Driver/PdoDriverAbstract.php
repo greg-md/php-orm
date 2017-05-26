@@ -2,9 +2,6 @@
 
 namespace Greg\Orm\Driver;
 
-use Greg\Support\Arr;
-use Greg\Support\Str;
-
 abstract class PdoDriverAbstract extends DriverAbstract
 {
     /**
@@ -142,13 +139,15 @@ abstract class PdoDriverAbstract extends DriverAbstract
     {
         $stmt = $this->prepare($sql, $params);
 
-        if (Str::isDigit($column)) {
+        if (ctype_digit((string) $column)) {
             return $stmt->fetchColumn($column);
         }
 
-        $record = $stmt->fetch();
+        if ($record = $stmt->fetch()) {
+            return array_key_exists($column, $record) ? $record[$column] : null;
+        }
 
-        return $record ? Arr::get($record, $column) : null;
+        return null;
     }
 
     /**
@@ -162,7 +161,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
     {
         $stmt = $this->prepare($sql, $params);
 
-        if (Str::isDigit($column)) {
+        if (ctype_digit((string) $column)) {
             $values = [];
 
             while (($value = $stmt->fetchColumn($column)) !== false) {
@@ -175,7 +174,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
         $values = [];
 
         while ($record = $stmt->fetch()) {
-            $values[] = Arr::get($record, $column);
+            $values[] = array_key_exists($column, $record) ? $record[$column] : null;
         }
 
         return $values;
@@ -185,13 +184,13 @@ abstract class PdoDriverAbstract extends DriverAbstract
     {
         $stmt = $this->prepare($sql, $params);
 
-        if (Str::isDigit($column)) {
+        if (ctype_digit((string) $column)) {
             while (($value = $stmt->fetchColumn($column)) !== false) {
                 yield $value;
             }
         } else {
             while ($record = $stmt->fetch()) {
-                yield Arr::get($record, $column);
+                yield array_key_exists($column, $record) ? $record[$column] : null;
             }
         }
     }
@@ -211,7 +210,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
         $pairs = [];
 
         while ($record = $stmt->fetch()) {
-            $pairs[Arr::get($record, $key)] = Arr::get($record, $value);
+            $pairs[array_key_exists($key, $record) ? $record[$key] : null] = array_key_exists($value, $record) ? $record[$value] : null;
         }
 
         return $pairs;
@@ -222,7 +221,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
         $stmt = $this->prepare($sql, $params);
 
         while ($record = $stmt->fetch()) {
-            yield Arr::get($record, $key) => Arr::get($record, $value);
+            yield array_key_exists($key, $record) ? $record[$key] : null => array_key_exists($value, $record) ? $record[$value] : null;
         }
     }
 

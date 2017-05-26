@@ -2,8 +2,6 @@
 
 namespace Greg\Orm;
 
-use Greg\Support\Arr;
-
 trait RowTrait
 {
     use RowsTrait;
@@ -134,11 +132,11 @@ trait RowTrait
 
     protected function &firstRow(): array
     {
-        if (!$row = &Arr::firstRef($this->rows)) {
+        if (!$this->rows) {
             throw new \Exception('Model row is not found.');
         }
 
-        return $row;
+        return $this->rows[0];
     }
 
     protected function hasFirst(string $column): bool

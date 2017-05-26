@@ -3,7 +3,6 @@
 namespace Greg\Orm\Dialect;
 
 use Greg\Orm\Model;
-use Greg\Support\Str;
 
 class SqlDialect implements DialectStrategy
 {
@@ -16,6 +15,21 @@ class SqlDialect implements DialectStrategy
      * @var string
      */
     protected $nameRegex = '[a-z0-9_\.\*]+';
+
+    /**
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d';
+
+    /**
+     * @var string
+     */
+    protected $timeFormat = 'H:i:s';
+
+    /**
+     * @var string
+     */
+    protected $dateTimeFormat = 'Y-m-d H:i:s';
 
     /**
      * @param string $name
@@ -41,7 +55,7 @@ class SqlDialect implements DialectStrategy
         $sql = explode('.', $name);
 
         $sql = array_map(function ($part) {
-            return $part !== '*' ? Str::quote($part, $this->quoteNameWith) : $part;
+            return $part !== '*' ? $this->quoteNameWith . $part . $this->quoteNameWith : $part;
         }, $sql);
 
         $sql = implode('.', $sql);
@@ -139,6 +153,21 @@ class SqlDialect implements DialectStrategy
     public function lockInShareMode(string $sql): string
     {
         return $sql;
+    }
+
+    public function dateString(string $time): string
+    {
+        return date($this->dateFormat, ctype_digit($time) ? $time : strtotime($time));
+    }
+
+    public function timeString(string $time): string
+    {
+        return date($this->timeFormat, ctype_digit($time) ? $time : strtotime($time));
+    }
+
+    public function dateTimeString(string $time): string
+    {
+        return date($this->dateTimeFormat, ctype_digit($time) ? $time : strtotime($time));
     }
 
 //    public function quoteLike(string $value, string $escape = '\\'): string

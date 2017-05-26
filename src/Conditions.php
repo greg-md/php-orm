@@ -4,7 +4,6 @@ namespace Greg\Orm;
 
 use Greg\Orm\Clause\HavingClauseStrategy;
 use Greg\Orm\Clause\WhereClauseStrategy;
-use Greg\Support\DateTime;
 
 class Conditions extends SqlAbstract
 {
@@ -102,7 +101,7 @@ class Conditions extends SqlAbstract
             },
 
             function (string $value) {
-                return DateTime::dateString($value);
+                return $this->dialect()->dateString($value);
             }
         );
 
@@ -130,7 +129,7 @@ class Conditions extends SqlAbstract
             },
 
             function (string $value) {
-                return DateTime::dateString($value);
+                return $this->dialect()->dateString($value);
             }
         );
 
@@ -158,7 +157,7 @@ class Conditions extends SqlAbstract
             },
 
             function (string $value) {
-                return DateTime::timeString($value);
+                return $this->dialect()->timeString($value);
             }
         );
 
@@ -186,7 +185,7 @@ class Conditions extends SqlAbstract
             },
 
             function (string $value) {
-                return DateTime::timeString($value);
+                return $this->dialect()->timeString($value);
             }
         );
 

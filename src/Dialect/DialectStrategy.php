@@ -77,6 +77,12 @@ interface DialectStrategy
      */
     public function lockInShareMode(string $sql): string;
 
+    public function dateString(string $time): string;
+
+    public function timeString(string $time): string;
+
+    public function dateTimeString(string $time): string;
+
 //    public function quoteLike(string $value, string $escape = '\\'): string;
 //
 //    public function ifNullSql(string $sql, string $else = '""'): string;
