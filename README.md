@@ -223,7 +223,7 @@ Forget about creating separate classes(repositories, entities, data mappers, etc
 All you need is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start)
 that deals with all of them.
 
-Let say you have a `Users` table:
+Let say you have an `Users` table:
 
 ```sql
 CREATE TABLE `Users` (
