@@ -1699,7 +1699,7 @@ class ModelTest extends TestCase
                     ],
                 ],
             ],
-            'primary' => [ ],
+            'primary' => [],
         ]);
 
         $row = $this->model->create(['Active' => true]);
