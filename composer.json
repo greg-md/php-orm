@@ -2,7 +2,10 @@
   "name": "greg-md/php-orm",
   "type": "library",
   "description": "Greg PHP ORM",
-  "keywords": [ "greg-md", "greg-php", "php-orm", "orm", "php", "web-artisans" ],
+  "keywords": [
+    "greg-md", "greg-php", "php-orm", "orm", "php", "web-artisans", "query-builder", "intellisense",
+    "big-data", "activerecord", "migrations", "mysql", "sqlite", "mssql", "postgresql", "oracle"
+  ],
   "homepage": "https://github.com/greg-md/php-orm",
   "license": "MIT",
   "authors": [
