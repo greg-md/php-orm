@@ -276,7 +276,7 @@ class UsersModel extends \Greg\Orm\Model
     }
 
     // Extend SQL Builder. (optional)
-    public function withoutFullName()
+    public function whereIsNoFullName()
     {
         $this->whereIsNull('FirstName')->whereIsNull('LastName');
 
@@ -376,10 +376,10 @@ print_r($rows->row(1)['Active']); // result: true
 
 #### Working with SELECT query.
 
-Select users without first and last names.
+Select users that doesn't have first and last names.
 
 ```php
-$query = $model->select('Id', 'Email')->withoutFullName();
+$query = $model->select('Id', 'Email')->whereIsNoFullName();
 
 print_r($query->toString()); // result: SELECT `Id`, `Email` FROM `Users` AS `u` WHERE `FirstName` IS NULL AND `LastName` IS NULL
 
