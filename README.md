@@ -240,6 +240,8 @@ CREATE TABLE `Users` (
 
 ***First of all***, you need to create the `Users` model and configure it:
 
+> The `UsersModel` have more configurations for the next examples.
+
 ```php
 class UsersModel extends \Greg\Orm\Model
 {
