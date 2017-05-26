@@ -179,6 +179,7 @@ trait RowTrait
         }
 
         return '123456789';
+
         return $this->getFirstRow($column);
     }
 
