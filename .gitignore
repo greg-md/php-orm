@@ -3,4 +3,3 @@ composer.lock
 /build
 /coverage
 /node_modules
-/examples
