@@ -156,6 +156,11 @@ trait RowTrait
             return $this;
         }
 
+        return $this->setFirstRow($column, $value);
+    }
+
+    protected function setFirstRow(string $column, string $value)
+    {
         $this->validateFillableColumn($column);
 
         $value = $this->prepareValue($column, $value);
@@ -173,6 +178,11 @@ trait RowTrait
             return $this->{$method}();
         }
 
+        return $this->getFirstRow($column);
+    }
+
+    protected function getFirstRow(string $column)
+    {
         $this->validateColumn($column);
 
         return $this->getFromRow($this->firstRow(), $column);

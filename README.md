@@ -257,7 +257,7 @@ class UsersModel extends \Greg\Orm\Model
     protected $casts = [
         'Active' => 'boolean',
     ];
-    
+
     // Create an abstract attribute. (optional)
     protected function getFullNameAttribute()
     {
@@ -268,7 +268,15 @@ class UsersModel extends \Greg\Orm\Model
     protected function getLastNameAttribute()
     {
         // Get only the first letter.
-        return $this['LastName'][0] . '.';
+        return $this['LastName'][0];
+    }
+
+    // Extend SQL Builder. (optional)
+    public function withoutFullName()
+    {
+        $this->whereIsNull('FirstName')->whereIsNull('LastName');
+
+        return $this;
     }
 }
 ```
@@ -346,9 +354,9 @@ print_r($rows->row(1)['Active']); // result: true
 #### Working with SELECT queries.
 
 ```php
-$query = $model->select('Id', 'Email')->orderDesc('Id')->limit(10);
+$query = $model->select('Id', 'Email')->withoutFullName();
 
-print_r($query->toString()); // result: SELECT `Id`, `Email` FROM `Users` ORDER BY `Id` DESC LIMIT 10;
+print_r($query->toString()); // result: SELECT `Id`, `Email` FROM `Users` AS `u` WHERE `FirstName` IS NULL AND `LastName` IS NULL
 
 $rows = $query->fetchRows();
 ```
