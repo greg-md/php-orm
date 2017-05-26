@@ -1,10 +1,102 @@
-# Model
+# Active Record Model
 
-A powerful database model for web-artisans.
+The Active Record Model represents a full instance of a table and it's rows.
+It can work with table's schema, queries, rows and a specific row.
+The magic thing is that you have all this features into one powerful model.
 
 **Implements:** [\IteratorAggregate](http://php.net/manual/en/class.iteratoraggregate.php),
                 [\Countable](http://php.net/manual/en/class.countable.php),
                 [\ArrayAccess](http://php.net/manual/en/class.arrayaccess.php)
+
+Forget about creating separate classes(repositories, entities, data mappers, etc) that works with the same table data.
+All you need is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start)
+that deals with all of them.
+
+Let say you have an `Users` table:
+
+```sql
+CREATE TABLE `Users` (
+  `Id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Email` VARCHAR(255) NOT NULL,
+  `Password` VARCHAR(32) NOT NULL,
+  `SSN` VARCHAR(32) NULL,
+  `FirstName` VARCHAR(50) NULL,
+  `LastName` VARCHAR(50) NULL,
+  `Active` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1',
+  PRIMARY KEY (`Id`),
+  UNIQUE (`Email`),
+  UNIQUE (`SSN`),
+  KEY (`Password`),
+  KEY (`FirstName`),
+  KEY (`LastName`),
+  KEY (`Active`)
+);
+```
+
+***First of all***, you need to create the `Users` model and configure it:
+
+> The `UsersModel` have more configurations for the next examples.
+
+```php
+class UsersModel extends \Greg\Orm\Model
+{
+    // Define table name. (required)
+    protected $name = 'Users';
+
+    // Define table alias. (optional)
+    protected $alias = 'u';
+
+    // Cast columns. (optional)
+    protected $casts = [
+        'Active' => 'boolean',
+    ];
+
+    // Create abstract attribute "FullName". (optional)
+    protected function getFullNameAttribute()
+    {
+        return implode(' ', array_filter([$this['FirstName'], $this['LastName']]));
+    }
+
+    // Change "SSN" attribute. (optional)
+    protected function getSSNAttribute()
+    {
+        // Display only last 3 digits of the SSN.
+        return str_repeat('*', 6) . substr($this['SSN'], -3, 3);
+    }
+
+    // Extend SQL Builder. (optional)
+    public function whereIsNoFullName()
+    {
+        $this->whereIsNull('FirstName')->whereIsNull('LastName');
+
+        return $this;
+    }
+}
+```
+
+***Then***, we can instantiate and work with it:
+
+```php
+// Create or use an existent driver strategy.
+$driver = new \Greg\Orm\Driver\MysqlDriver(
+    new \Greg\Orm\Driver\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
+);
+
+// Initialize the model.
+$model = new UsersModel($driver);
+
+// Display table name.
+print_r($model->name()); // result: Users
+
+// Display auto-increment column.
+print_r($model->autoIncrement()); // result: Id
+
+// Display primary keys.
+print_r($model->primary()); // result: ['Id']
+
+// Display all unique keys.
+print_r($model->unique()); // result: [['Email'], ['SSN']]
+```
 
 # Table of Contents:
 
