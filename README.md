@@ -56,9 +56,9 @@ You can add this library as a local, per-project dependency to your project usin
 # Documentation
 
 * [Driver Strategy](#driver-strategy---quick-start) - Works directly with database. [Full Documentation](docs/DriverStrategy.md).
-* [Query Builder](#query-builder) - Build SQL queries. [Full Documentation](docs/QueryBuilder.md).
-* [Active Record Model](#active-record-model) - All you need to work with a database table. [Full Documentation](docs/ActiveRecordModel.md).
-* [Migrations](#migrations) - Database migrations. [Full Documentation](docs/Migrations.md).
+* [Query Builder](#query-builder---quick-start) - Build SQL queries. [Full Documentation](docs/QueryBuilder.md).
+* [Active Record Model](#active-record-model---quick-start) - All you need to work with a database table. [Full Documentation](docs/ActiveRecordModel.md).
+* [Migrations](#migrations---quick-start) - Database migrations. [Full Documentation](docs/Migrations.md).
 
 ## Driver Strategy - Quick Start
 
@@ -107,7 +107,7 @@ $manager->fetchAll('SELECT * FROM `BarTable`');
 
 Full documentation can be found [here](docs/DriverStrategy.md).
 
-## Query Builder
+## Query Builder - Quick Start
 
 The Query Builder provides an elegant way of creating SQL statements and clauses.
 
@@ -213,7 +213,7 @@ print_r($parameters);
 
 Full documentation can be found [here](docs/QueryBuilder.md).
 
-## Active Record Model
+## Active Record Model - Quick Start
 
 The Active Record Model represents a full instance of a table and it's rows.
 It can work with table's schema, queries, rows and a specific row.
@@ -388,7 +388,7 @@ print_r($query->fetchRows()); // result: UsersModel<UsersModel[]>
 
 Full documentation can be found [here](docs/ActiveRecordModel.md).
 
-## Migrations
+## Migrations - Quick Start
 
 _Under construction..._
 
