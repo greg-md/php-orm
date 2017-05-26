@@ -230,7 +230,7 @@ CREATE TABLE `Users` (
   `Id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `Email` VARCHAR(255) NOT NULL,
   `Password` VARCHAR(32) NOT NULL,
-  `SSN` VARCHAR(32) NOT NULL,
+  `SSN` VARCHAR(32) NULL,
   `FirstName` VARCHAR(50) NULL,
   `LastName` VARCHAR(50) NULL,
   `Active` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1',
@@ -262,17 +262,17 @@ class UsersModel extends \Greg\Orm\Model
         'Active' => 'boolean',
     ];
 
-    // Create an abstract attribute. (optional)
+    // Create abstract attribute "FullName". (optional)
     protected function getFullNameAttribute()
     {
         return implode(' ', array_filter([$this['FirstName'], $this['LastName']]));
     }
 
-    // Change an attribute. (optional)
-    protected function getLastNameAttribute()
+    // Change "SSN" attribute. (optional)
+    protected function getSSNAttribute()
     {
-        // Get only the first letter of the last name.
-        return $this['LastName'][0];
+        // Display only last 3 digits of the SSN.
+        return str_repeat('*', 6) . substr($this['SSN'], -3, 3);
     }
 
     // Extend SQL Builder. (optional)
@@ -316,6 +316,7 @@ print_r($model->unique()); // result: [['Email'], ['SSN']]
 $row = $model->create([
     'Email' => 'john@doe.com',
     'Password' => password_hash('secret'),
+    'SSN' => '123456789',
     'FirstName' => 'John',
     'LastName' => 'Doe',
 ]);
@@ -324,7 +325,9 @@ $row = $model->create([
 print_r($row['Email']); // result: john@doe.com
 
 // Display user full name.
-print_r($row['FullName']); // result: John D.
+print_r($row['FullName']); // result: John Doe
+
+print_r($row['SSN']); // result: ******789
 
 // Display if user is active.
 print_r($row['Active']); // result: true
