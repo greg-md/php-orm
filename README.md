@@ -227,15 +227,19 @@ Let say you have a `Users` table:
 
 ```sql
 CREATE TABLE `Users` (
-  `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `Email` varchar(255) NOT NULL,
-  `Password` varchar(32) NOT NULL,
-  `FirstName` varchar(50) NULL,
-  `LastName` varchar(50) NULL,
-  `Active` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `Id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Email` VARCHAR(255) NOT NULL,
+  `Password` VARCHAR(32) NOT NULL,
+  `SSN` VARCHAR(32) NOT NULL,
+  `FirstName` VARCHAR(50) NULL,
+  `LastName` VARCHAR(50) NULL,
+  `Active` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (`Id`),
   UNIQUE (`Email`),
+  UNIQUE (`SSN`),
   KEY (`Password`),
+  KEY (`FirstName`),
+  KEY (`LastName`),
   KEY (`Active`)
 );
 ```
@@ -267,7 +271,7 @@ class UsersModel extends \Greg\Orm\Model
     // Change an attribute. (optional)
     protected function getLastNameAttribute()
     {
-        // Get only the first letter.
+        // Get only the first letter of the last name.
         return $this['LastName'][0];
     }
 
@@ -284,24 +288,31 @@ class UsersModel extends \Greg\Orm\Model
 ***Then***, we can instantiate and work with it:
 
 ```php
+// Create or use an existent driver strategy.
 $driver = new \Greg\Orm\Driver\MysqlDriver(
     new \Greg\Orm\Driver\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
 );
 
+// Initialize the model.
 $model = new UsersModel($driver);
 
+// Display table name.
 print_r($model->name()); // result: Users
 
+// Display auto-increment column.
 print_r($model->autoIncrement()); // result: Id
 
+// Display primary keys.
 print_r($model->primary()); // result: ['Id']
 
-print_r($model->unique()); // result: [['Email']]
+// Display all unique keys.
+print_r($model->unique()); // result: [['Email'], ['SSN']]
 ```
 
 #### Working with a specific row
 
 ```php
+// Create a user.
 $row = $model->create([
     'Email' => 'john@doe.com',
     'Password' => password_hash('secret'),
@@ -309,18 +320,23 @@ $row = $model->create([
     'LastName' => 'Doe',
 ]);
 
+// Display user email.
 print_r($row['Email']); // result: john@doe.com
 
+// Display user full name.
 print_r($row['FullName']); // result: John D.
 
+// Display if user is active.
 print_r($row['Active']); // result: true
 
+// Display user's primary keys.
 print_r($row->getPrimary()); // result: ['Id' => 1]
 ```
 
 #### Working with rows
 
 ```php
+// Create some users.
 $model->create([
    'Email' => 'john@doe.com',
    'Password' => password_hash('secret'),
@@ -339,26 +355,32 @@ $model->create([
    'Active' => false,
 ]);
 
+// Fetch all unactive users from database.
 $rows = $model->whereIsNot('Active')->fetchAll();
 
+// Display users count.
 print_r($rows->count()); // result: 2
 
+// Display users emails.
 print_r($rows->get('Email')); // result: ['matt@damon.com', 'josh@barro.com']
 
+// Activate users.
 $rows->set('Active', true)->save();
 
 print_r($rows->row(0)['Active']); // result: true
 print_r($rows->row(1)['Active']); // result: true
 ```
 
-#### Working with SELECT queries.
+#### Working with SELECT query.
+
+Select users without first and last names.
 
 ```php
 $query = $model->select('Id', 'Email')->withoutFullName();
 
 print_r($query->toString()); // result: SELECT `Id`, `Email` FROM `Users` AS `u` WHERE `FirstName` IS NULL AND `LastName` IS NULL
 
-$rows = $query->fetchRows();
+print_r($query->fetchRows()); // result: UsersModel<UsersModel[]>
 ```
 
 Full documentation can be found [here](docs/ActiveRecordModel.md).
