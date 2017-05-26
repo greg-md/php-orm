@@ -390,6 +390,10 @@ Full documentation can be found [here](docs/ActiveRecordModel.md).
 
 ## Migrations
 
+_Under construction..._
+
+> You can use [Phinx](https://phinx.org/) for now.
+
 Full documentation can be found [here](docs/Migrations.md).
 
 # License
