@@ -3,7 +3,6 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Driver\DriverStrategy;
-use Greg\Support\Obj;
 
 abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 {
@@ -48,8 +47,8 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 
     protected function bootTraits()
     {
-        foreach (Obj::usesRecursive(static::class, self::class) as $trait) {
-            if (method_exists($this, $method = 'boot' . Obj::baseName($trait))) {
+        foreach ($this->usesRecursive(static::class, self::class) as $trait) {
+            if (method_exists($this, $method = 'boot' . $this->baseName($trait))) {
                 call_user_func_array([$this, $method], []);
             }
         }
@@ -64,5 +63,36 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         $cloned->cleanup();
 
         return $cloned;
+    }
+
+    private function uses($class)
+    {
+        $traits = class_uses($class);
+
+        foreach ($traits as $trait) {
+            $traits += $this->uses($trait);
+        }
+
+        return array_unique($traits);
+    }
+
+    private function usesRecursive($class, $breakOn = null)
+    {
+        $results = [];
+
+        foreach (array_merge([$class => $class], class_parents($class)) as $class) {
+            if ($breakOn === $class) {
+                break;
+            }
+
+            $results += $this->uses($class);
+        }
+
+        return array_unique($results);
+    }
+
+    private function baseName($class)
+    {
+        return basename(str_replace('\\', '/', is_object($class) ? get_class($class) : $class));
     }
 }

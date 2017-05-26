@@ -112,7 +112,9 @@ trait TableTrait
         }
 
         if ($this->unique) {
-            return $this->unique[0];
+            reset($this->unique);
+
+            return (array) $this->unique[key($this->unique)];
         }
 
         throw new \Exception('No unique keys found in `' . $this->name() . '`.');

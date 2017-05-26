@@ -1327,45 +1327,6 @@ class ModelTest extends TestCase
         $this->assertEquals('18:00:00', $row['Foo']);
     }
 
-    public function testCanFetchRowAndTransformToSystemNameValue()
-    {
-        $this->driverMock->method('describe')->willReturn([
-            'columns' => [
-                'Id' => [
-                    'name'    => 'Id',
-                    'type'    => 'int',
-                    'null'    => false,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => true,
-                    ],
-                ],
-                'Foo' => [
-                    'name'    => 'Foo',
-                    'type'    => 'text',
-                    'null'    => true,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => false,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => false,
-                    ],
-                ],
-            ],
-            'primary' => [
-                'Id',
-            ],
-        ]);
-
-        $this->model->setCast('Foo', 'systemName');
-
-        $this->assertEquals('foo-bar', $this->model->prepareValue('Foo', 'Foo Bar.', true));
-    }
-
     public function testCanFetchRowAndTransformToBooleanValue()
     {
         $this->driverMock->method('describe')->willReturn([

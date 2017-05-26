@@ -10,8 +10,7 @@
   ],
   "require": {
     "php": "^7.1",
-    "ext-pdo": "*",
-    "greg-md/php-support": "dev-master"
+    "ext-pdo": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "6.0.*",
