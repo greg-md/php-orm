@@ -82,6 +82,16 @@ class ModelTest extends TestCase
             protected $casts = [
                 'Active' => 'bool',
             ];
+
+            protected function getActiveAttribute()
+            {
+                return $this['Active'];
+            }
+
+            protected function setActiveAttribute($value)
+            {
+                $this['Active'] = $value;
+            }
         };
     }
 
@@ -1670,6 +1680,41 @@ class ModelTest extends TestCase
         $this->expectException(\Exception::class);
 
         $row['Id'] = 2;
+    }
+
+    public function testCanGetCustomAttribute()
+    {
+        $this->driverMock->method('describe')->willReturn([
+            'columns' => [
+                'Active' => [
+                    'name'    => 'Active',
+                    'type'    => 'tinyint',
+                    'null'    => false,
+                    'default' => null,
+                    'extra'   => [
+                        'isInt'         => true,
+                        'isFloat'       => false,
+                        'isNumeric'     => false,
+                        'autoIncrement' => false,
+                    ],
+                ],
+            ],
+            'primary' => [ ],
+        ]);
+
+        $row = $this->model->create(['Active' => true]);
+
+        $this->assertTrue($row['Active']);
+
+        $row['Active'] = false;
+
+        $this->assertFalse($row['Active']);
+
+        $this->assertFalse($row->get('Active')[0]);
+
+        $row->set('Active', true);
+
+        $this->assertTrue($row->get('Active')[0]);
     }
 
     protected function model(): Model

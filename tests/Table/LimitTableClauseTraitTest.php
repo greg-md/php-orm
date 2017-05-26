@@ -97,7 +97,7 @@ trait LimitTableClauseTraitTest
         $this->assertTrue($this->model()->select('Column')->limit(1)->hasLimit());
     }
 
-    public function testCanDetermineIfClauseExists()
+    public function testCanDetermineIfLimitClauseExists()
     {
         $this->assertFalse($this->model()->hasLimitClause());
 

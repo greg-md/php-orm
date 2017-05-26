@@ -204,7 +204,7 @@ trait RowTrait
         $k = 0;
 
         foreach (debug_backtrace() as $item) {
-            if ($item['object'] === $object and $item['function'] === $method) {
+            if (isset($item['object']) and $item['object'] === $object and $item['function'] === $method) {
                 ++$k;
             }
 

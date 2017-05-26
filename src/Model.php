@@ -27,10 +27,6 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function driver(): DriverStrategy
     {
-        if (!$this->driver) {
-            throw new \Exception('Table driver is not defined.');
-        }
-
         return $this->driver;
     }
 

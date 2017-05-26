@@ -146,7 +146,7 @@ trait OrderByTableClauseTraitTest
         $this->assertEquals('', $this->model()->orderByToString());
     }
 
-    public function testCanDetermineIfClauseExists()
+    public function testCanDetermineIfOrderByClauseExists()
     {
         $this->assertFalse($this->model()->hasOrderByClause());
 

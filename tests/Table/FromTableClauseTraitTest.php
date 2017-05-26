@@ -39,7 +39,7 @@ trait FromTableClauseTraitTest
         $this->assertTrue($query->hasFrom());
     }
 
-    public function testCanDetermineIfClauseExists()
+    public function testCanDetermineIfFromClauseExists()
     {
         $this->assertFalse($this->model()->hasFromClause());
 

@@ -112,7 +112,7 @@ trait SelectTableQueryTraitTest
         $this->assertTrue($this->model()->hasSelect());
     }
 
-    public function testCanGetColumns()
+    public function testCanGetSelectColumns()
     {
         $this->assertCount(0, $this->model()->getSelect());
 

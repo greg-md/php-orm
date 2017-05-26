@@ -105,7 +105,7 @@ trait OffsetTableClauseTraitTest
         $this->model()->updateTable('Column')->offset(1);
     }
 
-    public function testCanDetermineIfClauseExists()
+    public function testCanDetermineIfOffsetClauseExists()
     {
         $this->assertFalse($this->model()->hasOffsetClause());
 

@@ -821,7 +821,7 @@ trait WhereTableClauseTraitTest
         $this->assertEquals('SELECT `Column` FROM `Table` WHERE `Column` = ?', $query->toString());
     }
 
-    public function testCanDetermineIfClauseExists()
+    public function testCanDetermineIfWhereClauseExists()
     {
         $this->assertFalse($this->model()->hasWhereClause());
 

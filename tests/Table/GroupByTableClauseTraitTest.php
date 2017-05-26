@@ -31,7 +31,7 @@ trait GroupByTableClauseTraitTest
         $this->assertTrue($query->hasGroupBy());
     }
 
-    public function testCanDetermineIfClauseExists()
+    public function testCanDetermineIfGroupByClauseExists()
     {
         $this->assertFalse($this->model()->hasGroupByClause());
 

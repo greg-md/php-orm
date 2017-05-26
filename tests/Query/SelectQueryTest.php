@@ -270,6 +270,15 @@ class SelectQueryTest extends TestCase
         $this->assertEquals([$sql, ['foo', 'bar']], $query->toSql());
     }
 
+    public function testCanGetGeneratedSelect()
+    {
+        $query = $this->newQuery()->columns('Id', 'Name')->from('Table');
+
+        $this->assertEquals(['SELECT `Id`, `Name`', []], $query->selectToSql());
+
+        $this->assertEquals('SELECT `Id`, `Name`', $query->selectToString());
+    }
+
     protected function newQuery(): SelectQuery
     {
         return new SelectQuery();
