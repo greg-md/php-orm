@@ -148,6 +148,14 @@ trait RowsTrait
 
     public function set(string $column, $value)
     {
+        if (method_exists($this, $this->getAttributeSetMethod($column))) {
+            foreach ($this as $row) {
+                $row[$column] = $value;
+            }
+
+            return $this;
+        }
+
         $this->validateFillableColumn($column);
 
         $value = $this->prepareValue($column, $value);
@@ -171,6 +179,16 @@ trait RowsTrait
 
     public function get(string $column)
     {
+        if (method_exists($this, $this->getAttributeGetMethod($column))) {
+            $values = [];
+
+            foreach ($this as $row) {
+                $values[] = $row[$column];
+            }
+
+            return $values;
+        }
+
         $this->validateColumn($column);
 
         $values = [];
@@ -507,5 +525,15 @@ trait RowsTrait
         }
 
         return $record;
+    }
+
+    protected function getAttributeGetMethod(string $column): string
+    {
+        return 'get' . ucfirst($column) . 'Attribute';
+    }
+
+    protected function getAttributeSetMethod(string $column): string
+    {
+        return 'set' . ucfirst($column) . 'Attribute';
     }
 }

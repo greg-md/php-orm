@@ -148,6 +148,14 @@ trait RowTrait
 
     protected function setFirst(string $column, string $value)
     {
+        $method = $this->getAttributeSetMethod($column);
+
+        if (method_exists($this, $method) and !$this->methodWasCalled($this, $method)) {
+            $this->{$method}($value);
+
+            return $this;
+        }
+
         $this->validateFillableColumn($column);
 
         $value = $this->prepareValue($column, $value);
@@ -159,6 +167,12 @@ trait RowTrait
 
     protected function getFirst(string $column)
     {
+        $method = $this->getAttributeGetMethod($column);
+
+        if (method_exists($this, $method) and !$this->methodWasCalled($this, $method)) {
+            return $this->{$method}();
+        }
+
         $this->validateColumn($column);
 
         return $this->getFromRow($this->firstRow(), $column);
@@ -173,5 +187,22 @@ trait RowTrait
         }
 
         return $items;
+    }
+
+    protected function methodWasCalled($object, $method, $times = 1): bool
+    {
+        $k = 0;
+
+        foreach (debug_backtrace() as $item) {
+            if ($item['object'] === $object and $item['function'] === $method) {
+                ++$k;
+            }
+
+            if ($k >= $times) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

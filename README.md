@@ -230,6 +230,8 @@ CREATE TABLE `Users` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Email` varchar(255) NOT NULL,
   `Password` varchar(32) NOT NULL,
+  `FirstName` varchar(50) NULL,
+  `LastName` varchar(50) NULL,
   `Active` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`Id`),
   UNIQUE (`Email`),
@@ -255,6 +257,19 @@ class UsersModel extends \Greg\Orm\Model
     protected $casts = [
         'Active' => 'boolean',
     ];
+    
+    // Create an abstract attribute. (optional)
+    protected function getFullNameAttribute()
+    {
+        return implode(' ', array_filter([$this['FirstName'], $this['LastName']]));
+    }
+
+    // Change an attribute. (optional)
+    protected function getLastNameAttribute()
+    {
+        // Get only the first letter.
+        return $this['LastName'][0] . '.';
+    }
 }
 ```
 
@@ -282,13 +297,15 @@ print_r($model->unique()); // result: [['Email']]
 $row = $model->create([
     'Email' => 'john@doe.com',
     'Password' => password_hash('secret'),
+    'FirstName' => 'John',
+    'LastName' => 'Doe',
 ]);
 
 print_r($row['Email']); // result: john@doe.com
 
-print_r($row['Active']); // result: true
+print_r($row['FullName']); // result: John D.
 
-print_r($row['Id']); // result: 1
+print_r($row['Active']); // result: true
 
 print_r($row->getPrimary()); // result: ['Id' => 1]
 ```
