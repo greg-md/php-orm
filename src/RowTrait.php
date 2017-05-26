@@ -178,8 +178,6 @@ trait RowTrait
             return $this->{$method}();
         }
 
-        return '123456789';
-
         return $this->getFirstRow($column);
     }
 
