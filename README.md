@@ -219,8 +219,9 @@ The Active Record Model represents a full instance of a table and it's rows.
 It can work with table's schema, queries, rows and a specific row.
 The magic thing is that you have all this features into one powerful model.
 
-Forget about creating a separate classes.
-All you need, is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start) that deals will all of that.
+Forget about creating separate classes(repositories, entities, data mappers, etc) that works with the same table data.
+All you need is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start)
+that deals with all of them.
 
 Let say you have a `Users` table:
 
