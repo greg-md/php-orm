@@ -268,7 +268,7 @@ trait RowsTrait
         return $this;
     }
 
-    public function row(int $number = 1)
+    public function row(int $number = 0)
     {
         if (!isset($this->rows[$number])) {
             return null;
