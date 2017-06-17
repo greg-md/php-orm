@@ -24,7 +24,7 @@ class DriverManager implements DriverStrategy
 
     public function setDefaultDriverName(string $name)
     {
-        if (isset($this->drivers[$name])) {
+        if (!isset($this->drivers[$name])) {
             throw new \Exception('Driver `' . $name . '` was not defined.');
         }
 
