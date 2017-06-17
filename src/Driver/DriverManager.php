@@ -190,7 +190,7 @@ class DriverManager implements DriverStrategy
      *
      * @return string[][]|\Generator
      */
-    public function fetchYield(string $sql, array $params = [])
+    public function fetchYield(string $sql, array $params = []): \Generator
     {
         yield from $this->driver()->fetchYield($sql, $params);
     }
@@ -226,7 +226,7 @@ class DriverManager implements DriverStrategy
      *
      * @return mixed|\Generator
      */
-    public function columnYield(string $sql, array $params = [], string $column = '0')
+    public function columnYield(string $sql, array $params = [], string $column = '0'): \Generator
     {
         yield from $this->driver()->columnYield($sql, $params, $column);
     }
@@ -252,7 +252,7 @@ class DriverManager implements DriverStrategy
      *
      * @return mixed|\Generator
      */
-    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1')
+    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1'): \Generator
     {
         yield from $this->driver()->pairsYield($sql, $params, $key, $value);
     }
