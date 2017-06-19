@@ -4,7 +4,7 @@ namespace Greg\Orm;
 
 use Greg\Orm\Driver\DriverStrategy;
 
-abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
+abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \Serializable
 {
     use RowTrait;
 
@@ -24,8 +24,24 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
         return $this;
     }
 
+    public function setDriver(DriverStrategy $strategy)
+    {
+        $this->driver = $strategy;
+
+        return $this;
+    }
+
+    public function getDriver(): ?DriverStrategy
+    {
+        return $this->driver;
+    }
+
     public function driver(): DriverStrategy
     {
+        if (!$this->driver) {
+            throw new \Exception('Model driver is not defined.');
+        }
+
         return $this->driver;
     }
 
@@ -33,11 +49,65 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess
     {
         $this->rows = [];
 
+        $this->rowsTotal = 0;
+
+        $this->rowsOffset = 0;
+
+        $this->rowsLimit = 0;
+
         $this->query = null;
 
         $this->clauses = [];
 
         return $this;
+    }
+
+    public function serialize()
+    {
+        return serialize([
+            $this->prefix,
+            $this->name,
+            $this->alias,
+            $this->label,
+            $this->columns,
+            $this->primary,
+            $this->autoIncrement,
+            $this->unique,
+            $this->nameColumn,
+            $this->casts,
+            $this->defaults,
+
+            $this->fillable,
+            $this->guarded,
+            $this->rows,
+            $this->rowsTotal,
+            $this->rowsOffset,
+            $this->rowsLimit,
+        ]);
+    }
+
+    public function unserialize($serialized)
+    {
+        [
+            $this->prefix,
+            $this->name,
+            $this->alias,
+            $this->label,
+            $this->columns,
+            $this->primary,
+            $this->autoIncrement,
+            $this->unique,
+            $this->nameColumn,
+            $this->casts,
+            $this->defaults,
+
+            $this->fillable,
+            $this->guarded,
+            $this->rows,
+            $this->rowsTotal,
+            $this->rowsOffset,
+            $this->rowsLimit,
+        ] = unserialize($serialized);
     }
 
     protected function boot()
