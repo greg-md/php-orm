@@ -83,7 +83,7 @@ interface DialectStrategy
 
     public function dateTimeString(string $time): string;
 
-//    public function quoteLike(string $value, string $escape = '\\'): string;
+    //    public function quoteLike(string $value, string $escape = '\\'): string;
 //
 //    public function ifNullSql(string $sql, string $else = '""'): string;
 }

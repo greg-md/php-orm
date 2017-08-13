@@ -580,7 +580,7 @@ class SelectQuery extends SqlAbstract implements
     public function __toString(): string
     {
         return $this->toString();
-//        try {
+        //        try {
 //            return $this->toString();
 //        } catch (SqlException $e) {
 //            return $e->getMessage();

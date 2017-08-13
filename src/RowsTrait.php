@@ -406,7 +406,7 @@ trait RowsTrait
 
         $values = $this->getMultiple($tableKey);
 
-//        return $referenceTable->where($referenceTableKey, $values)->fetchRow();
+        //        return $referenceTable->where($referenceTableKey, $values)->fetchRow();
 
         $referenceTable->setWhereApplier(function (WhereClause $query) use ($referenceTableKey, $values) {
             $query->where($referenceTableKey, $values);

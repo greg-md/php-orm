@@ -315,8 +315,8 @@ trait JoinTableClauseTrait
     protected function needJoinStrategyInQuery(QueryStrategy $query)
     {
         //        if (!($query instanceof JoinClauseStrategy)) {
-//            throw new SqlException('Current query does not have a JOIN clause.');
-//        }
+        //            throw new SqlException('Current query does not have a JOIN clause.');
+        //        }
 
         return $this;
     }

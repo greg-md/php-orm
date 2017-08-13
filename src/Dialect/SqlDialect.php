@@ -170,7 +170,7 @@ class SqlDialect implements DialectStrategy
         return date($this->dateTimeFormat, ctype_digit($time) ? $time : strtotime($time));
     }
 
-//    public function quoteLike(string $value, string $escape = '\\'): string
+    //    public function quoteLike(string $value, string $escape = '\\'): string
 //    {
 //        return strtr($value, [
 //            '_' => $escape . '_',
