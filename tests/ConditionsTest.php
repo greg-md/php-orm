@@ -1,9 +1,7 @@
 <?php
 
-namespace Greg\Orm\Tests;
+namespace Greg\Orm;
 
-use Greg\Orm\Conditions;
-use Greg\Orm\SqlException;
 use PHPUnit\Framework\TestCase;
 
 class ConditionsTest extends TestCase

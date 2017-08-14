@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Orm\Tests;
+namespace Greg\Orm;
 
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Clause\GroupByClause;
@@ -12,13 +12,11 @@ use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\Driver\DriverStrategy;
-use Greg\Orm\Model;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\QueryStrategy;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
-use Greg\Orm\SqlException;
 use Greg\Orm\Table\DeleteTableQueryTraitTest;
 use Greg\Orm\Table\FromTableClauseTraitTest;
 use Greg\Orm\Table\GroupByTableClauseTraitTest;
