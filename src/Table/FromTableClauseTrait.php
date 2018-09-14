@@ -14,6 +14,10 @@ trait FromTableClauseTrait
 
     private $fromAppliers = [];
 
+    /**
+     * @param FromClauseStrategy $strategy
+     * @return $this
+     */
     public function assignFromAppliers(FromClauseStrategy $strategy)
     {
         if ($this->fromAppliers) {
@@ -39,6 +43,10 @@ trait FromTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setFromApplier(callable $callable)
     {
         $this->fromAppliers[] = $callable;
@@ -62,6 +70,9 @@ trait FromTableClauseTrait
         return $this->fromAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearFromAppliers()
     {
         $this->fromAppliers = [];
@@ -84,6 +95,12 @@ trait FromTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param null|string $alias
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function fromRaw(?string $alias, string $sql, string ...$params)
     {
         $instance = $this->fromStrategyInstance();
@@ -93,6 +110,9 @@ trait FromTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasFrom(): bool
     {
         if ($clause = $this->getFromStrategy()) {
@@ -102,6 +122,9 @@ trait FromTableClauseTrait
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function getFrom(): array
     {
         if ($clause = $this->getFromStrategy()) {

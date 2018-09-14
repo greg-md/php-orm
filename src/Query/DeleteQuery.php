@@ -143,7 +143,7 @@ class DeleteQuery extends SqlAbstract implements
         $sql = implode(' ', $sql);
 
         if ($limit = $this->getLimit()) {
-            $sql = $this->dialect()->addLimitToSql($sql, $limit);
+            $sql = $this->dialect()->limit($sql, $limit);
         }
 
         return [$sql, $params];

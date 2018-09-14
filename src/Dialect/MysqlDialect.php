@@ -9,7 +9,7 @@ class MysqlDialect extends SqlDialect
      *
      * @return string
      */
-    public function lockForUpdateSql(string $sql): string
+    public function lockForUpdate(string $sql): string
     {
         return $sql . ' FOR UPDATE';
     }
@@ -19,9 +19,9 @@ class MysqlDialect extends SqlDialect
      *
      * @return string
      */
-    public function lockInShareMode(string $sql): string
+    public function lockForShare(string $sql): string
     {
-        return $sql . ' LOCK IN SHARE MODE';
+        return $sql . ' FOR SHARE';
     }
 
     public function concat(array $values, string $delimiter = ''): string

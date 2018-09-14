@@ -42,7 +42,7 @@ class SelectQuery extends SqlAbstract implements
 
     const LOCK_FOR_UPDATE = 'FOR UPDATE';
 
-    const LOCK_IN_SHARE_MORE = 'LOCK IN SHARE MODE';
+    const LOCK_FOR_SHARE = 'FOR SHARE';
 
     /**
      * @var bool
@@ -188,7 +188,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function columnRaw(string $sql, string ...$params)
     {
-        $this->columnLogic($this->dialect()->quoteSql($sql), null, $params);
+        $this->columnLogic($this->dialect()->quote($sql), null, $params);
 
         return $this;
     }
@@ -201,11 +201,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function count(string $column = '*', string $alias = null)
     {
-        if ($alias) {
-            $alias = $this->dialect()->quoteName($alias);
-        }
-
-        $this->columnRaw('COUNT(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw($this->dialect()->count($column, $alias));
 
         return $this;
     }
@@ -395,7 +391,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function lockInShareMode()
     {
-        $this->lock = self::LOCK_IN_SHARE_MORE;
+        $this->lock = self::LOCK_FOR_SHARE;
 
         return $this;
     }
@@ -531,11 +527,11 @@ class SelectQuery extends SqlAbstract implements
         $sql = implode(' ', $sql);
 
         if ($limit = $this->getLimit()) {
-            $sql = $this->dialect()->addLimitToSql($sql, $limit);
+            $sql = $this->dialect()->limit($sql, $limit);
         }
 
         if ($offset = $this->getOffset()) {
-            $sql = $this->dialect()->addOffsetToSql($sql, $offset);
+            $sql = $this->dialect()->offset($sql, $offset);
         }
 
         if ($this->unions) {
@@ -554,11 +550,11 @@ class SelectQuery extends SqlAbstract implements
 
         switch ($this->lock) {
             case self::LOCK_FOR_UPDATE:
-                $sql = $this->dialect()->lockForUpdateSql($sql);
+                $sql = $this->dialect()->lockForUpdate($sql);
 
                 break;
-            case self::LOCK_IN_SHARE_MORE:
-                $sql = $this->dialect()->lockInShareMode($sql);
+            case self::LOCK_FOR_SHARE:
+                $sql = $this->dialect()->lockForShare($sql);
 
                 break;
         }

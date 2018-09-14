@@ -23,6 +23,65 @@ A powerful ORM(Object-Relational Mapping) for PHP.
 * **Multiple drivers support**
 * **It just makes your life better**
 
+# What makes it better than other stable and proven in time ORM's like Eloquent or Doctrine?
+
+### It works with big data without reaching memory/timeout limits.
+
+You can get use of [PHP Generators](http://php.net/manual/ro/language.generators.overview.php)
+to achieve the best results when working with big amount of data.
+
+Let's imagine we have thousands of records and we want to go though them and do something.
+At first, we can not ask to select all the records from database because we can reach the request or connection timeout limit,
+then we can not fetch all the records in PHP because we can reach the memory limit.
+
+With **Greg ORM** you can solve that with a few lines of code:
+
+```php
+$usersGenerator = $users->fetchRowsGenerator($chunkSize = 1000);
+
+foreach($usersGenerator as $user) {
+    // Do your business logic
+}
+```
+
+### It can automatically re-connect to databases when the session expires
+
+Forget about caring of keeping database connections alive and concentrate on your main business logic.
+Connection timeout exceptions are catch inside and re-connects you back to database.
+
+This is a very useful feature when you have listeners/long scripts that works with databases.
+
+### It connects to database on the first call
+
+It will not try to create a database connection until you send him a query.
+
+### It is faster and consumes much less memory
+
+**Connect and run a query:**
+
+This is the simplest use case it can do.
+
+| Package  | Time  | Memory |
+| -------- | ----- | ------ |
+| Greg ORM | ~5ms  | 0.24MB |
+| Eloquent | ~20ms | 1.28MB |
+
+**Create 1000 records using a model:**
+
+| Package  | Time   | Memory |
+| -------- | ------ | ------ |
+| Greg ORM | ~1.25s | 0.03MB |
+| Eloquent | ~1.35s | 0.67MB |
+
+**NOTE:** Memory used remains the same even if you create 1 record or 1000.
+
+**Select 10000 records using a model:**
+
+| Package  | Time   | Memory  |
+| -------- | ------ | ------- |
+| Greg ORM | ~45ms  | 11.36MB |
+| Eloquent | ~70ms  | 13.09MB |
+
 # Table of Contents:
 
 * [Requirements](#requirements)

@@ -612,7 +612,7 @@ class Conditions extends SqlAbstract
      */
     public function raw(string $sql, string ...$params)
     {
-        $this->logic('AND', '(' . $this->dialect()->quoteSql($sql) . ')', $params);
+        $this->logic('AND', '(' . $this->dialect()->quote($sql) . ')', $params);
 
         return $this;
     }
@@ -625,7 +625,7 @@ class Conditions extends SqlAbstract
      */
     public function orRaw(string $sql, string ...$params)
     {
-        $this->logic('OR', '(' . $this->dialect()->quoteSql($sql) . ')', $params);
+        $this->logic('OR', '(' . $this->dialect()->quote($sql) . ')', $params);
 
         return $this;
     }

@@ -281,7 +281,7 @@ trait QueryBuilderTrait
 
             $this->assignLimitAppliers($clause);
 
-            $sql = $this->driver()->dialect()->addLimitToSql($sql, $clause->getLimit());
+            $sql = $this->driver()->dialect()->limit($sql, $clause->getLimit());
         }
 
         if ($clause = $this->hasOffsetAppliers() ? $this->intoOffsetStrategy()->offsetClause() : $this->getOffsetClause()) {
@@ -289,7 +289,7 @@ trait QueryBuilderTrait
 
             $this->assignOffsetAppliers($clause);
 
-            $sql = $this->driver()->dialect()->addOffsetToSql($sql, $clause->getOffset());
+            $sql = $this->driver()->dialect()->offset($sql, $clause->getOffset());
         }
 
         return [$sql, $params];

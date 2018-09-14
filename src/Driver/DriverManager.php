@@ -22,6 +22,11 @@ class DriverManager implements DriverStrategy
 
     private $defaultDriverName;
 
+    /**
+     * @param string $name
+     * @return $this
+     * @throws \Exception
+     */
     public function setDefaultDriverName(string $name)
     {
         if (!isset($this->drivers[$name])) {
@@ -33,11 +38,20 @@ class DriverManager implements DriverStrategy
         return $this;
     }
 
-    public function getDefaultDriverName()
+    /**
+     * @return null|string
+     */
+    public function getDefaultDriverName(): ?string
     {
         return $this->defaultDriverName;
     }
 
+    /**
+     * @param $name
+     * @param callable $callable
+     * @param bool $default
+     * @return $this
+     */
     public function register($name, callable $callable, bool $default = false)
     {
         $this->drivers[$name] = $callable;
@@ -49,6 +63,12 @@ class DriverManager implements DriverStrategy
         return $this;
     }
 
+    /**
+     * @param $name
+     * @param DriverStrategy $strategy
+     * @param bool $default
+     * @return $this
+     */
     public function registerStrategy($name, DriverStrategy $strategy, bool $default = false)
     {
         $this->drivers[$name] = $strategy;

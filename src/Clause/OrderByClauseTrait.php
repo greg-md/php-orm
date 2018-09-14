@@ -67,7 +67,7 @@ trait OrderByClauseTrait
      */
     public function orderByRaw(string $sql, string ...$params)
     {
-        $this->orderByLogic($this->dialect()->quoteSql($sql), null, $params);
+        $this->orderByLogic($this->dialect()->quote($sql), null, $params);
 
         return $this;
     }

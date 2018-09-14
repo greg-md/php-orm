@@ -30,6 +30,9 @@ trait DeleteTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasRowsFrom(): bool
     {
         if ($query = $this->getDeleteQuery()) {
@@ -39,6 +42,9 @@ trait DeleteTableQueryTrait
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function getRowsFrom(): array
     {
         if ($query = $this->getDeleteQuery()) {
@@ -48,6 +54,9 @@ trait DeleteTableQueryTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearRowsFrom()
     {
         if ($query = $this->getDeleteQuery()) {
@@ -86,6 +95,9 @@ trait DeleteTableQueryTrait
         return $query;
     }
 
+    /**
+     * @return $this
+     */
     protected function deleteQueryInstance()
     {
         if ($query = $this->getQuery()) {
@@ -109,6 +121,11 @@ trait DeleteTableQueryTrait
         return $this->cleanClone()->setQuery($query);
     }
 
+    /**
+     * @param QueryStrategy|null $query
+     * @return $this
+     * @throws SqlException
+     */
     protected function needDeleteQuery(?QueryStrategy $query)
     {
         if (!($query instanceof DeleteQuery)) {
@@ -118,6 +135,11 @@ trait DeleteTableQueryTrait
         return $this;
     }
 
+    /**
+     * @param array $clauses
+     * @return $this
+     * @throws SqlException
+     */
     protected function needDeleteClauses(array $clauses)
     {
         foreach ($clauses as $clause) {
@@ -134,6 +156,11 @@ trait DeleteTableQueryTrait
         return $this;
     }
 
+    /**
+     * @param DeleteQuery $query
+     * @param array $clauses
+     * @return $this
+     */
     protected function assignClausesToDeleteQuery(DeleteQuery $query, array $clauses)
     {
         foreach ($clauses as $clause) {

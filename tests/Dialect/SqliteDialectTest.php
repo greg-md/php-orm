@@ -35,7 +35,7 @@ class SqliteDialectTest extends TestCase
 
     public function testCanQuoteSql()
     {
-        $this->assertEquals('select foo, `bar`', $this->dialect->quoteSql('select foo, !bar'));
+        $this->assertEquals('select foo, `bar`', $this->dialect->quote('select foo, !bar'));
     }
 
     public function testCanParseTable()
@@ -77,21 +77,21 @@ class SqliteDialectTest extends TestCase
 
     public function testCanAddLimitToSql()
     {
-        $this->assertEquals('SELECT 1 LIMIT 10', $this->dialect->addLimitToSql('SELECT 1', 10));
+        $this->assertEquals('SELECT 1 LIMIT 10', $this->dialect->limit('SELECT 1', 10));
     }
 
     public function testCanAddOffsetToSql()
     {
-        $this->assertEquals('SELECT 1 OFFSET 10', $this->dialect->addOffsetToSql('SELECT 1', 10));
+        $this->assertEquals('SELECT 1 OFFSET 10', $this->dialect->offset('SELECT 1', 10));
     }
 
     public function testCanLockForUpdate()
     {
-        $this->assertEquals('SELECT 1', $this->dialect->lockForUpdateSql('SELECT 1'));
+        $this->assertEquals('SELECT 1', $this->dialect->lockForUpdate('SELECT 1'));
     }
 
     public function testCanLockInShareMode()
     {
-        $this->assertEquals('SELECT 1', $this->dialect->lockInShareMode('SELECT 1'));
+        $this->assertEquals('SELECT 1', $this->dialect->lockForShare('SELECT 1'));
     }
 }

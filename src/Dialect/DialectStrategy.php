@@ -23,7 +23,7 @@ interface DialectStrategy
      *
      * @return string
      */
-    public function quoteSql(string $sql): string;
+    public function quote(string $sql): string;
 
     /**
      * @param $name
@@ -53,7 +53,7 @@ interface DialectStrategy
      *
      * @return string
      */
-    public function addLimitToSql(string $sql, int $limit): string;
+    public function limit(string $sql, int $limit): string;
 
     /**
      * @param string $sql
@@ -61,21 +61,21 @@ interface DialectStrategy
      *
      * @return string
      */
-    public function addOffsetToSql(string $sql, int $limit): string;
+    public function offset(string $sql, int $limit): string;
 
     /**
      * @param string $sql
      *
      * @return string
      */
-    public function lockForUpdateSql(string $sql): string;
+    public function lockForUpdate(string $sql): string;
 
     /**
      * @param string $sql
      *
      * @return string
      */
-    public function lockInShareMode(string $sql): string;
+    public function lockForShare(string $sql): string;
 
     public function dateString(string $time): string;
 
@@ -83,7 +83,9 @@ interface DialectStrategy
 
     public function dateTimeString(string $time): string;
 
-    //    public function quoteLike(string $value, string $escape = '\\'): string;
+    public function count(string $column = '*', string $alias = null): string;
+
+//    public function quoteLike(string $value, string $escape = '\\'): string;
 //
 //    public function ifNullSql(string $sql, string $else = '""'): string;
 }

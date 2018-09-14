@@ -97,7 +97,7 @@ trait RowsTrait
         $this->rowsOffset = $offset;
 
         foreach ($this->limit($limit)->offset($offset)->fetchYield() as $record) {
-            $record = $this->prepareRecord($record);
+//            $record = $this->prepareRecord($record);
 
             $this->appendRecord($record, false, [], true);
         }
@@ -479,7 +479,7 @@ trait RowsTrait
             return $row['modified'][$column];
         }
 
-        return $row['record'][$column] ?? null;
+        return $this->castValue($column, $row['record'][$column] ?? null);
     }
 
     protected function rowFirstUnique(array &$row)

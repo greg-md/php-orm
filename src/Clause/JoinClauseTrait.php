@@ -346,7 +346,7 @@ trait JoinClauseTrait
         }
 
         if (is_scalar($on)) {
-            $on = $this->dialect()->quoteSql($on);
+            $on = $this->dialect()->quote($on);
         }
 
         $this->joinLogic($tableKey, $type, $source, $tableName, $tableAlias, $on, $params);

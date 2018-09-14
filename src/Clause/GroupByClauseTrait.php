@@ -31,7 +31,7 @@ trait GroupByClauseTrait
      */
     public function groupByRaw(string $sql, string ...$params)
     {
-        $this->groupByLogic($this->dialect()->quoteSql($sql), $params);
+        $this->groupByLogic($this->dialect()->quote($sql), $params);
 
         return $this;
     }

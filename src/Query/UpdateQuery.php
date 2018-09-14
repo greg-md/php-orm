@@ -133,7 +133,7 @@ class UpdateQuery extends SqlAbstract implements
      */
     public function setRaw(string $sql, string ...$params)
     {
-        $this->setLogic($this->dialect()->quoteSql($sql), $params);
+        $this->setLogic($this->dialect()->quote($sql), $params);
 
         return $this;
     }
@@ -303,7 +303,7 @@ class UpdateQuery extends SqlAbstract implements
         $sql = implode(' ', $sql);
 
         if ($limit = $this->getLimit()) {
-            $sql = $this->dialect()->addLimitToSql($sql, $limit);
+            $sql = $this->dialect()->limit($sql, $limit);
         }
 
         return [$sql, $params];

@@ -180,7 +180,7 @@ trait TableTrait
 
     public function fetch(): ?array
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         return $this->driver()->fetch($sql, $params);
     }
@@ -196,57 +196,63 @@ trait TableTrait
 
     public function fetchAll(): array
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         return $this->driver()->fetchAll($sql, $params);
     }
 
     public function fetchYield()
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         yield from $this->driver()->fetchYield($sql, $params);
     }
 
     public function fetchColumn(string $column = '0'): string
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         return $this->driver()->column($sql, $params, $column);
     }
 
     public function fetchColumnAll(string $column = '0'): array
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         return $this->driver()->columnAll($sql, $params, $column);
     }
 
     public function fetchColumnYield(string $column = '0')
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         yield from $this->driver()->columnYield($sql, $params, $column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         return $this->driver()->pairs($sql, $params, $key, $value);
     }
 
     public function fetchPairsYield(string $key = '0', string $value = '1')
     {
-        [$sql, $params] = $this->selectQueryInstance()->toSql();
+        [$sql, $params] = $this->selectQueryInstanceToSql();
 
         yield from $this->driver()->pairsYield($sql, $params, $key, $value);
     }
 
     public function fetchRow()
     {
-        if ($record = $this->rowsQueryInstance()->fetch()) {
-            $record = $this->prepareRecord($record);
+        if ($this->query) {
+            $record = $this->rowsQueryInstance()->fetch();
+        } else {
+            $record = $this->driver()->fetch($this->selectAllSQL());
+        }
+
+        if ($record) {
+//            $record = $this->prepareRecord($record);
 
             return $this->cleanClone()->appendRecord($record, false, [], true);
         }
@@ -265,10 +271,16 @@ trait TableTrait
 
     public function fetchRows()
     {
+        if ($this->query) {
+            $records = $this->rowsQueryInstance()->fetchYield();
+        } else {
+            $records = $this->driver()->fetchYield($this->selectAllSQL());
+        }
+
         $rows = $this->cleanClone();
 
-        foreach ($this->rowsQueryInstance()->fetchYield() as $record) {
-            $record = $this->prepareRecord($record);
+        foreach ($records as $record) {
+//            $record = $this->prepareRecord($record);
 
             $rows->appendRecord($record, false, [], true);
         }
@@ -281,8 +293,14 @@ trait TableTrait
      */
     public function fetchRowsYield()
     {
-        foreach ($this->rowsQueryInstance()->fetchYield() as $record) {
-            $record = $this->prepareRecord($record);
+        if ($this->query) {
+            $records = $this->rowsQueryInstance()->fetchYield();
+        } else {
+            $records = $this->driver()->fetchYield($this->selectAllSQL());
+        }
+
+        foreach ($records as $record) {
+//            $record = $this->prepareRecord($record);
 
             yield $this->cleanClone()->appendRecord($record, false, [], true);
         }
@@ -290,7 +308,11 @@ trait TableTrait
 
     public function fetchCount(string $column = '*', string $alias = null): int
     {
-        return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
+        if ($this->query) {
+            return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
+        }
+
+        return $this->driver()->column('SELECT ' . $this->driver()->dialect()->count($column, $alias));
     }
 
     public function fetchMax(string $column, string $alias = null): int
@@ -555,6 +577,52 @@ trait TableTrait
         return $value;
     }
 
+    protected function castValue(string $columnName, $value)
+    {
+        if (is_null($value)) {
+            return $value;
+        }
+
+        switch ($this->cast($columnName)) {
+            case 'int':
+            case 'integer':
+                return (int) $value;
+            case 'real':
+            case 'float':
+            case 'double':
+                switch ((string) $value) {
+                    case 'Infinity':
+                        return INF;
+                    case '-Infinity':
+                        return -INF;
+                    case 'NaN':
+                        return NAN;
+                    default:
+                        return (float) $value;
+                }
+            case 'string':
+                return (string) $value;
+            case 'bool':
+            case 'boolean':
+                return (bool) $value;
+            case 'object':
+                return json_decode($value, false);
+            case 'array':
+            case 'json':
+                return json_decode($value, true);
+            case 'date':
+                return $this->driver()->dialect()->dateString($value);
+            case 'time':
+                return $this->driver()->dialect()->timeString($value);
+            case 'datetime':
+                return $this->driver()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+            case 'timestamp':
+                return ctype_digit((string) $value) ? $value : strtotime(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+            default:
+                return $value;
+        }
+    }
+
     protected function validateColumn(string $name)
     {
         if ($this->columns === false) {
@@ -667,5 +735,19 @@ trait TableTrait
         }
 
         return $this;
+    }
+
+    protected function selectQueryInstanceToSql()
+    {
+        if ($this->query) {
+            return $this->selectQueryInstance()->toSql();
+        }
+
+        return [$this->selectAllSQL(), []];
+    }
+
+    protected function selectAllSQL()
+    {
+        return 'SELECT * FROM `' . $this->name() . '`';
     }
 }

@@ -536,6 +536,9 @@ trait HavingClauseTrait
         return $this->hConditions;
     }
 
+    /**
+     * @return $this
+     */
     protected function havingClone()
     {
         if ($this->hConditions) {

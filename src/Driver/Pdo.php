@@ -27,6 +27,11 @@ class Pdo
     private $options;
 
     /**
+     * @var array
+     */
+    private $pdoClass;
+
+    /**
      * @var \PDO
      */
     private $connection;
@@ -36,7 +41,7 @@ class Pdo
      */
     private $onInit = [];
 
-    public function __construct(string $dsn, string $username = null, string $password = null, array $options = [])
+    public function __construct(string $dsn, string $username = null, string $password = null, array $options = [], $pdoClass = null)
     {
         $this->dsn = $dsn;
 
@@ -46,18 +51,37 @@ class Pdo
 
         $this->options = $options;
 
+        $this->setPdoClass($pdoClass);
+
+        return $this;
+    }
+
+    public function setPdoClass(?string $pdoClass)
+    {
+        if ($pdoClass and $pdoClass !== \PDO::class and !(new \ReflectionClass($pdoClass))->isSubclassOf(\PDO::class)) {
+            throw new \Exception('`' . $pdoClass . '` is not an instance of `' . \PDO::class . '`.');
+        }
+
+        $this->pdoClass = $pdoClass;
+
         return $this;
     }
 
     public function connect()
     {
-        $this->connection = new \PDO($this->dsn, $this->username, $this->password, $this->options);
+        $pdoClass = $this->pdoClass ?: \PDO::class;
+
+        $this->connection = new $pdoClass($this->dsn, $this->username, $this->password, $this->options);
 
         $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+        $this->connection->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
 
         $this->connection->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+
+        $this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+
+        $this->connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 
         foreach ($this->onInit as $callable) {
             call_user_func_array($callable, [$this->connection]);

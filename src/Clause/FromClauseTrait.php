@@ -67,7 +67,7 @@ trait FromClauseTrait
             $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->fromLogic($tableKey, $this->dialect()->quoteSql($sql), $alias, $params);
+        $this->fromLogic($tableKey, $this->dialect()->quote($sql), $alias, $params);
 
         return $this;
     }
