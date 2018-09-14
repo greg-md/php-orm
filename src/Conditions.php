@@ -766,13 +766,13 @@ class Conditions extends SqlAbstract
     {
         $column = $this->prepareRow($column);
 
-        $value = $this->prepareRow($value);
-
         if (is_array($column)) {
             $this->rowLogic($type, $column, $operator, (array) $value, $columnCallable, $valueCallable);
 
             return $this;
         }
+
+        $value = $this->prepareValue($value);
 
         $operator = $this->prepareOperator($operator, $value);
 
@@ -989,6 +989,29 @@ class Conditions extends SqlAbstract
     {
         if (is_array($value) and count($value) === 1) {
             $value = array_shift($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return array|string
+     */
+    protected function prepareValue($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as &$val) {
+                if (is_array($val) and count($val) === 1) {
+                    $val = array_shift($val);
+                }
+            }
+            unset($val);
+
+            if (count($value) === 1) {
+                $value = array_shift($value);
+            }
         }
 
         return $value;

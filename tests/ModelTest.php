@@ -1536,7 +1536,7 @@ class ModelTest extends TestCase
         $this->driverMock
             ->expects($this->once())
             ->method('execute')
-            ->with('DELETE FROM `Table` WHERE `Id` IN (?)', ['1']);
+            ->with('DELETE FROM `Table` WHERE `Id` = ?', ['1']);
 
         $rows->destroy();
     }
@@ -1588,7 +1588,7 @@ class ModelTest extends TestCase
 
         $this->assertInstanceOf(Model::class, $manyRows);
 
-        $this->assertEquals('SELECT * FROM `Table` WHERE (`Id` IN (?))', $manyRows->select('*')->toString());
+        $this->assertEquals('SELECT * FROM `Table` WHERE (`Id` = ?)', $manyRows->select('*')->toString());
     }
 
     public function testCanBelongsTo()
@@ -1601,7 +1601,7 @@ class ModelTest extends TestCase
 
         $this->assertInstanceOf(Model::class, $belongsTo);
 
-        $this->assertEquals('SELECT * FROM `Table` WHERE (`Id` IN (?))', $belongsTo->select('*')->toString());
+        $this->assertEquals('SELECT * FROM `Table` WHERE (`Id` = ?)', $belongsTo->select('*')->toString());
     }
 
     public function testCanSetUnmodified()
