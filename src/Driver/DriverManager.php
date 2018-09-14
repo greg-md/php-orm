@@ -24,8 +24,10 @@ class DriverManager implements DriverStrategy
 
     /**
      * @param string $name
-     * @return $this
+     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function setDefaultDriverName(string $name)
     {
@@ -49,7 +51,8 @@ class DriverManager implements DriverStrategy
     /**
      * @param $name
      * @param callable $callable
-     * @param bool $default
+     * @param bool     $default
+     *
      * @return $this
      */
     public function register($name, callable $callable, bool $default = false)
@@ -66,7 +69,8 @@ class DriverManager implements DriverStrategy
     /**
      * @param $name
      * @param DriverStrategy $strategy
-     * @param bool $default
+     * @param bool           $default
+     *
      * @return $this
      */
     public function registerStrategy($name, DriverStrategy $strategy, bool $default = false)

@@ -16,6 +16,7 @@ trait FromTableClauseTrait
 
     /**
      * @param FromClauseStrategy $strategy
+     *
      * @return $this
      */
     public function assignFromAppliers(FromClauseStrategy $strategy)
@@ -45,6 +46,7 @@ trait FromTableClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function setFromApplier(callable $callable)
@@ -97,8 +99,9 @@ trait FromTableClauseTrait
 
     /**
      * @param null|string $alias
-     * @param string $sql
-     * @param string[] ...$params
+     * @param string      $sql
+     * @param string[]    ...$params
+     *
      * @return $this
      */
     public function fromRaw(?string $alias, string $sql, string ...$params)

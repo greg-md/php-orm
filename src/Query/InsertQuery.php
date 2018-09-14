@@ -228,8 +228,9 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
     }
 
     /**
-     * @return array
      * @throws SqlException
+     *
+     * @return array
      */
     public function toSql(): array
     {

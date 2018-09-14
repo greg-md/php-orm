@@ -99,6 +99,7 @@ class SqlDialect implements DialectStrategy
 
     /**
      * @param string $name
+     *
      * @return array
      */
     public function parseName(string $name): array
@@ -109,8 +110,9 @@ class SqlDialect implements DialectStrategy
     }
 
     /**
-     * @param array $values
+     * @param array  $values
      * @param string $delimiter
+     *
      * @return string
      */
     public function concat(array $values, string $delimiter = ''): string
@@ -166,6 +168,7 @@ class SqlDialect implements DialectStrategy
 
     /**
      * @param string $time
+     *
      * @return string
      */
     public function dateString(string $time): string
@@ -175,6 +178,7 @@ class SqlDialect implements DialectStrategy
 
     /**
      * @param string $time
+     *
      * @return string
      */
     public function timeString(string $time): string
@@ -184,6 +188,7 @@ class SqlDialect implements DialectStrategy
 
     /**
      * @param string $time
+     *
      * @return string
      */
     public function dateTimeString(string $time): string

@@ -123,8 +123,10 @@ trait DeleteTableQueryTrait
 
     /**
      * @param QueryStrategy|null $query
-     * @return $this
+     *
      * @throws SqlException
+     *
+     * @return $this
      */
     protected function needDeleteQuery(?QueryStrategy $query)
     {
@@ -137,8 +139,10 @@ trait DeleteTableQueryTrait
 
     /**
      * @param array $clauses
-     * @return $this
+     *
      * @throws SqlException
+     *
+     * @return $this
      */
     protected function needDeleteClauses(array $clauses)
     {
@@ -158,7 +162,8 @@ trait DeleteTableQueryTrait
 
     /**
      * @param DeleteQuery $query
-     * @param array $clauses
+     * @param array       $clauses
+     *
      * @return $this
      */
     protected function assignClausesToDeleteQuery(DeleteQuery $query, array $clauses)
