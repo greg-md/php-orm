@@ -203,7 +203,7 @@ trait RowTrait
 
         foreach (debug_backtrace() as $item) {
             if (isset($item['object']) and $item['object'] === $object and $item['function'] === $method) {
-                ++$k;
+                $k++;
             }
 
             if ($k >= $times) {

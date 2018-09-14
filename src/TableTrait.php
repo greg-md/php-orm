@@ -647,7 +647,7 @@ trait TableTrait
                         break;
                     }
 
-                    ++$k;
+                    $k++;
                 }
             } else {
                 $records = $this->driver()->fetchAll($sql, $params);

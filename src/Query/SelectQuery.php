@@ -169,7 +169,7 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return $this
      */
-    public function columnSelect(SelectQuery $query, ?string $alias = null)
+    public function columnSelect(self $query, ?string $alias = null)
     {
         if ($alias) {
             $alias = $this->dialect()->quoteName($alias);
@@ -309,7 +309,7 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return $this
      */
-    public function union(SelectQuery $query)
+    public function union(self $query)
     {
         $this->unionLogic(null, $query);
 
@@ -321,7 +321,7 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return $this
      */
-    public function unionAll(SelectQuery $query)
+    public function unionAll(self $query)
     {
         $this->unionLogic('ALL', $query);
 

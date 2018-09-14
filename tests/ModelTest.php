@@ -366,7 +366,7 @@ class ModelTest extends TestCase
         $count = 0;
 
         $this->model->chunk(2, function ($records) use (&$count) {
-            ++$count;
+            $count++;
 
             $this->assertCount(2, $records);
         });
@@ -393,7 +393,7 @@ class ModelTest extends TestCase
         $count = 0;
 
         $this->model->chunk(2, function ($records) use (&$count) {
-            ++$count;
+            $count++;
 
             $this->assertCount(1, $records);
         }, true, false);
@@ -422,7 +422,7 @@ class ModelTest extends TestCase
         $count = 0;
 
         $this->model->chunk(2, function ($records) use (&$count) {
-            ++$count;
+            $count++;
 
             $this->assertCount(1, $records);
         }, true);
@@ -442,7 +442,7 @@ class ModelTest extends TestCase
         $count = 0;
 
         $this->model->chunk(2, function () use (&$count) {
-            ++$count;
+            $count++;
 
             return false;
         });
@@ -462,7 +462,7 @@ class ModelTest extends TestCase
         $count = 0;
 
         $this->model->chunk(2, function () use (&$count) {
-            ++$count;
+            $count++;
 
             return false;
         }, true, false);
@@ -491,7 +491,7 @@ class ModelTest extends TestCase
         $count = 0;
 
         $this->model->chunkRows(2, function ($records) use (&$count) {
-            ++$count;
+            $count++;
 
             $this->assertCount(2, $records);
         });
@@ -520,7 +520,7 @@ class ModelTest extends TestCase
         $count = 0;
 
         $this->model->chunkRows(2, function ($records) use (&$count) {
-            ++$count;
+            $count++;
 
             $this->assertCount(1, $records);
         }, true, false);
