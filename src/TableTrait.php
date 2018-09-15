@@ -350,6 +350,7 @@ trait TableTrait
 
     /**
      * @param $primary
+     *
      * @return $this|null
      */
     public function find($primary)

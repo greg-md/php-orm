@@ -60,6 +60,7 @@ trait LimitTableClauseTrait
 
     /**
      * @param int $number
+     *
      * @return $this
      */
     public function limit(int $number)
