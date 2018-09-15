@@ -48,6 +48,13 @@ class ConnectionManager implements Connection
         return $this->defaultConnectionName;
     }
 
+    public function actAs(string $connectionName)
+    {
+        $this->setDefaultConnectionName($connectionName);
+
+        return $this;
+    }
+
     /**
      * @param $name
      * @param callable $callable

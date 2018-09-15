@@ -9,30 +9,29 @@
 
 A powerful ORM(Object-Relational Mapping) for PHP.
 
-# Why you should use it?
+# Why you should choose it?
 
 * **Easy to understand and use**
 * **Fully IntelliSense**
 * **Best Performance with Big Data**
 * **Minimum Memory Usage**
 * **Lightweight Package**
+* **Powerful Database Connections**
 * **Powerful Query Builder**
 * **Powerful Active Record Model**
-* **Powerful Migrations**
-* **Easy to extend**
 * **Multiple drivers support**
-* **It just makes your life better**
+* **It just makes you happy!**
 
 # What makes it better than other stable and proven in time ORM's like Eloquent or Doctrine?
 
-### Works with big data without reaching memory/timeout limits.
+### Works with big data without reaching memory/timeout limit.
 
 You can get use of [PHP Generators](http://php.net/manual/ro/language.generators.overview.php)
 to achieve the best results when working with big amount of data.
 
 Let's imagine we have thousands of records and we want to go though them and do something.
-At first, we can not ask to select all the records from database because we can reach the request or connection timeout limit,
-then we can not fetch all the records in PHP because we can reach the memory limit.
+We know that we can not select all the records from database because we can reach the request or connection timeout limit,
+also we can not fetch all the records in PHP because we can reach the memory limit.
 
 With **Greg ORM** you can solve that with a few lines of code:
 
@@ -44,16 +43,16 @@ foreach($usersGenerator as $user) {
 }
 ```
 
-### Automatically re-connects to databases when the session expires
+### Auto-reconnects to database when session expires
 
-Forget about caring of keeping database connections alive and concentrate on your main business logic.
-Connection timeout exceptions are catch inside and re-connects you back to database.
+Forget about caring of keeping database connection alive and concentrate on your main business logic.
+Connection timeout exceptions are catch inside and reestablish your database connection back automatically.
 
-This is a very useful feature when you have listeners/long scripts that works with databases.
+This is a very useful feature when you have listeners/long scripts that works with database connections.
 
-### Connects to databases on the first call
+### No queries - no database connections
 
-It will not try to create a database connection until you send a query to it.
+It will not establish a database connection until you call a query.
 
 ### Is faster and consumes much less memory
 
@@ -82,11 +81,14 @@ This is the simplest use case you can have.
 | Greg ORM | ~45ms  | 11.36MB |
 | Eloquent | ~70ms  | 13.09MB |
 
+> More tests will be added soon...
+
 # Table of Contents:
 
 * [Requirements](#requirements)
-* [Supported Drivers](#supported-drivers)
 * [Installation](#installation)
+* [Supported Drivers](#supported-drivers)
+* [Quick Start](#quick-start)
 * [Documentation](#documentation)
 * [License](#license)
 * _[Huuuge Quote](#huuuge-quote)_
@@ -94,6 +96,12 @@ This is the simplest use case you can have.
 # Requirements
 
 * PHP Version `^7.1`
+
+# Installation
+
+You can add this library as a local, per-project dependency to your project using [Composer](https://getcomposer.org/):
+
+`composer require greg-md/php-orm`
 
 # Supported Drivers
 
@@ -106,81 +114,73 @@ In progress:
 - PostgreSQL
 - Oracle
 
-# Installation
+# Quick Start
 
-You can add this library as a local, per-project dependency to your project using [Composer](https://getcomposer.org/):
+* [Database Connection - Quick Start](#database-connection---quick-start)
+* [Query Builder - Quick Start](#query-builder---quick-start)
+* [Active Record Model - Quick Start](#active-record-model---quick-start)
 
-`composer require greg-md/php-orm`
+## Database Connection - Quick Start
 
-# Documentation
+There are two ways of creating a database connection:
 
-* [Driver Strategy](#driver-strategy---quick-start) - Works directly with database. [Full Documentation](docs/DriverStrategy.md).
-* [Query Builder](#query-builder---quick-start) - Build SQL queries. [Full Documentation](docs/QueryBuilder.md).
-* [Active Record Model](#active-record-model---quick-start) - All you need to work with a database table. [Full Documentation](docs/ActiveRecordModel.md).
-* [Migrations](#migrations---quick-start) - Database migrations. [Full Documentation](docs/Migrations.md).
+1. Instantiate a database connection for a specific driver;
+2. Instantiate a Connection Manager to store multiple database connections.
 
-## Driver Strategy - Quick Start
+> The Connection Manager implements the same connection strategy.
+> This means that you can define a connection to act like it.
 
-There are two ways of working with driver strategies. Directly or via a Driver Manager.
-
-> A driver manager could have many driver strategies and a default one.
-> The driver manager implements the same driver strategy and could act as default one if it's defined.
-
-In the next example we will use a driver manager with multiple driver strategies.
-
-**First of all**, you have to initialize a driver manager and register some strategies:
+In the next example we will use a Connection Manager to store multiple connections of different drivers.
 
 ```php
-$manager = new \Greg\Orm\Driver\DriverManager();
+// Instantiate a Connection Manager
+$manager = new \Greg\Orm\Connection\ConnectionManager();
 
-// Register a MySQL driver
-$manager->register('driver1', function() {
-    return new \Greg\Orm\Driver\MysqlDriver(
-        new \Greg\Orm\Driver\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
+// Register a MySQL connection
+$manager->register('mysql_connection', function() {
+    return new \Greg\Orm\Connection\MysqlConnection(
+        new \Greg\Orm\Connection\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
     );
 });
 
-// Register a SQLite driver
-$manager->register('driver2', function() {
-    return new \Greg\Orm\Driver\SqliteDriver(
-        new \Greg\Orm\Driver\Pdo('sqlite:/var/db/example_db.sqlite')
+// Register a SQLite connection
+$manager->register('sqlite_connection', function() {
+    return new \Greg\Orm\Connection\SqliteConnection(
+        new \Greg\Orm\Connection\Pdo('sqlite:/var/db/example_db.sqlite')
     );
 });
+
+// Make the manager to act as "mysql_connection"
+$manager->actAs('mysql_connection');
 ```
 
-**Optionally**, you can define a default driver to be used by the driver manager.
+Now you can work with this manager:
 
 ```php
-$manager->setDefaultDriverName('driver1');
-```
+// Fetch a statement from "sqlite_connection"
+$manager->connection('sqlite_connection')->fetchAll('SELECT * FROM `FooTable`');
 
-**Then**, you can work with this drivers:
-
-```php
-// Fetch a statement from SQLite(driver2)
-$manager->driver('driver2')->fetchAll('SELECT * FROM `FooTable`');
-
-// Fetch a statement from default driver, which is MySQL(driver1)
+// Fetch a statement from mysql_connection, which is used by default
 $manager->fetchAll('SELECT * FROM `BarTable`');
 ```
 
-Full documentation can be found [here](docs/DriverStrategy.md).
+Full documentation can be found [here](docs/DatabaseConnection.md).
 
 ## Query Builder - Quick Start
 
 The Query Builder provides an elegant way of creating SQL statements and clauses.
 
-> You can use Query Builder in standalone mode or via a Driver Strategy.
+> You can use Query Builder in standalone mode or via a Connection Manager.
 > In standalone mode you will have to define manually the SQL Dialect in constructor.
 
-In the next examples we will use the Driver Strategy to initialize queries.
+In the next examples we will use connections to initialize queries.
 
 _Example 1:_
 
 Let say you have students table and want to find students names that lives in Chisinau and were born in 1990:
 
 ```php
-$query = $driver->select()
+$query = $connection->select()
     ->columns('Id', 'Name')
     ->from('Students')
     ->where('City', 'Chisinau')
@@ -205,7 +205,7 @@ _Example 2:_
 Let say you have students table and want to update the grade of a student:
 
 ```php
-$query = $driver->update()
+$query = $connection->update()
     ->table('Students')
     ->set('Grade', 1400)
     ->where('Id', 10)
@@ -229,7 +229,7 @@ _Example 3:_
 Let say you have students table and want to delete students that were not admitted in the current year:
 
 ```php
-$query = $driver->delete()
+$query = $connection->delete()
     ->from('Students')
     ->whereIsNot('Admitted')
 ;
@@ -252,7 +252,7 @@ _Example 4:_
 Let say you have students table and want to add a new student:
 
 ```php
-$query = $driver->insert()
+$query = $connection->insert()
     ->into('Students')
     ->data(['Name' => 'John Doe', 'Year' => 2017])
 ;
@@ -310,9 +310,6 @@ CREATE TABLE `Users` (
 ```php
 class UsersModel extends \Greg\Orm\Model
 {
-    // Define table name. (required)
-    protected $name = 'Users';
-
     // Define table alias. (optional)
     protected $alias = 'u';
 
@@ -320,6 +317,11 @@ class UsersModel extends \Greg\Orm\Model
     protected $casts = [
         'Active' => 'boolean',
     ];
+
+    public function name(): string
+    {
+        return 'Users';
+    }
 
     // Create abstract attribute "FullName". (optional)
     protected function getFullNameAttribute()
@@ -447,13 +449,12 @@ print_r($query->fetchRows()); // result: UsersModel<UsersModel[]>
 
 Full documentation can be found [here](docs/ActiveRecordModel.md).
 
-## Migrations - Quick Start
+# Documentation
 
-_Under construction..._
-
-> You can use [Phinx](https://phinx.org/) for now.
-
-Full documentation can be found [here](docs/Migrations.md).
+* [Database Connection](docs/DatabaseConnections.md) - Connect and run queries.
+* [Query Builder](docs/QueryBuilder.md) - Build SQL queries.
+* [Active Record Model](docs/ActiveRecordModel.md) - All you need to work with a database table.
+* Migrations - _Under construction..._ You can use [Phinx](https://phinx.org/) for now.
 
 # License
 
