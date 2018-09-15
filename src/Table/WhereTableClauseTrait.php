@@ -16,6 +16,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param WhereClauseStrategy $strategy
+     *
      * @return $this
      */
     public function assignWhereAppliers(WhereClauseStrategy $strategy)
@@ -49,6 +50,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function setWhereApplier(callable $callable)
@@ -88,6 +90,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function where($column, $operator, $value = null)
@@ -103,6 +106,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orWhere($column, $operator, $value = null)
@@ -116,6 +120,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function whereMultiple(array $columns)
@@ -129,6 +134,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function orWhereMultiple(array $columns)
@@ -144,6 +150,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function whereDate($column, $operator, $value = null)
@@ -159,6 +166,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orWhereDate($column, $operator, $value = null)
@@ -174,6 +182,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function whereTime($column, $operator, $value = null)
@@ -189,6 +198,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orWhereTime($column, $operator, $value = null)
@@ -204,6 +214,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function whereYear($column, $operator, $value = null)
@@ -219,6 +230,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orWhereYear($column, $operator, $value = null)
@@ -234,6 +246,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function whereMonth($column, $operator, $value = null)
@@ -249,6 +262,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orWhereMonth($column, $operator, $value = null)
@@ -264,6 +278,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function whereDay($column, $operator, $value = null)
@@ -279,6 +294,7 @@ trait WhereTableClauseTrait
      * @param $column
      * @param $operator
      * @param null $value
+     *
      * @return $this
      */
     public function orWhereDay($column, $operator, $value = null)
@@ -294,6 +310,7 @@ trait WhereTableClauseTrait
      * @param $column1
      * @param $operator
      * @param null $column2
+     *
      * @return $this
      */
     public function whereRelation($column1, $operator, $column2 = null)
@@ -309,6 +326,7 @@ trait WhereTableClauseTrait
      * @param $column1
      * @param $operator
      * @param null $column2
+     *
      * @return $this
      */
     public function orWhereRelation($column1, $operator, $column2 = null)
@@ -322,6 +340,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param array $relations
+     *
      * @return $this
      */
     public function whereRelations(array $relations)
@@ -335,6 +354,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param array $relations
+     *
      * @return $this
      */
     public function orWhereRelations(array $relations)
@@ -348,6 +368,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function whereIs(string $column)
@@ -361,6 +382,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orWhereIs(string $column)
@@ -374,6 +396,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function whereIsNot(string $column)
@@ -387,6 +410,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orWhereIsNot(string $column)
@@ -400,6 +424,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function whereIsNull(string $column)
@@ -413,6 +438,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orWhereIsNull(string $column)
@@ -426,6 +452,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function whereIsNotNull(string $column)
@@ -439,6 +466,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orWhereIsNotNull(string $column)
@@ -452,8 +480,9 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function whereBetween(string $column, int $min, int $max)
@@ -467,8 +496,9 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function orWhereBetween(string $column, int $min, int $max)
@@ -482,8 +512,9 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function whereNotBetween(string $column, int $min, int $max)
@@ -497,8 +528,9 @@ trait WhereTableClauseTrait
 
     /**
      * @param string $column
-     * @param int $min
-     * @param int $max
+     * @param int    $min
+     * @param int    $max
+     *
      * @return $this
      */
     public function orWhereNotBetween(string $column, int $min, int $max)
@@ -512,6 +544,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param $strategy
+     *
      * @return $this
      */
     public function whereConditions($strategy)
@@ -525,6 +558,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param $strategy
+     *
      * @return $this
      */
     public function orWhereConditions($strategy)
@@ -537,8 +571,9 @@ trait WhereTableClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function whereRaw(string $sql, string ...$params)
@@ -551,8 +586,9 @@ trait WhereTableClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function orWhereRaw(string $sql, string ...$params)
@@ -599,6 +635,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param SelectQuery $sql
+     *
      * @return $this
      */
     public function whereExists(SelectQuery $sql)
@@ -612,6 +649,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param SelectQuery $sql
+     *
      * @return $this
      */
     public function whereNotExists(SelectQuery $sql)
@@ -624,8 +662,9 @@ trait WhereTableClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function whereExistsRaw(string $sql, string ...$params)
@@ -638,8 +677,9 @@ trait WhereTableClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function whereNotExistsRaw(string $sql, string ...$params)

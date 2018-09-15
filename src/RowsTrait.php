@@ -47,9 +47,10 @@ trait RowsTrait
 
     /**
      * @param array $record
-     * @param bool $isNew
+     * @param bool  $isNew
      * @param array $modified
-     * @param bool $isTrusted
+     * @param bool  $isTrusted
+     *
      * @return $this
      */
     public function appendRecord(array $record, bool $isNew = false, array $modified = [], bool $isTrusted = false)
@@ -73,9 +74,10 @@ trait RowsTrait
 
     /**
      * @param array $record
-     * @param bool $isNew
+     * @param bool  $isNew
      * @param array $modified
-     * @param bool $isTrusted
+     * @param bool  $isTrusted
+     *
      * @return $this
      */
     public function appendRecordRef(array &$record, bool &$isNew = false, array &$modified = [], bool $isTrusted = false)
@@ -98,9 +100,10 @@ trait RowsTrait
     }
 
     /**
-     * @param int $limit
-     * @param int $offset
+     * @param int           $limit
+     * @param int           $offset
      * @param callable|null $totalQuery
+     *
      * @return $this
      */
     public function pagination(int $limit = 20, int $offset = 0, ?callable $totalQuery = null)
@@ -111,9 +114,10 @@ trait RowsTrait
     }
 
     /**
-     * @param int $limit
-     * @param int $offset
+     * @param int           $limit
+     * @param int           $offset
      * @param callable|null $totalQuery
+     *
      * @return $this
      */
     public function paginate(int $limit = 20, int $offset = 0, ?callable $totalQuery = null)
@@ -173,6 +177,7 @@ trait RowsTrait
     /**
      * @param string $column
      * @param $value
+     *
      * @return $this
      */
     public function set(string $column, $value)
@@ -199,6 +204,7 @@ trait RowsTrait
 
     /**
      * @param array $values
+     *
      * @return $this
      */
     public function setMultiple(array $values)
@@ -247,6 +253,7 @@ trait RowsTrait
 
     /**
      * @param array $values
+     *
      * @return $this
      */
     public function save(array $values = [])
@@ -310,6 +317,7 @@ trait RowsTrait
 
     /**
      * @param int $number
+     *
      * @return $this|null
      */
     public function row(int $number = 0)
@@ -386,6 +394,7 @@ trait RowsTrait
      * @param string $column
      * @param $operator
      * @param null $value
+     *
      * @return $this|null
      */
     public function searchWhere(string $column, $operator, $value = null)
@@ -421,6 +430,7 @@ trait RowsTrait
      * @param Model $relationshipTable
      * @param $relationshipKey
      * @param null $tableKey
+     *
      * @return Model
      */
     public function hasMany(Model $relationshipTable, $relationshipKey, $tableKey = null)
@@ -456,6 +466,7 @@ trait RowsTrait
      * @param Model $referenceTable
      * @param $tableKey
      * @param null $referenceTableKey
+     *
      * @return Model
      */
     public function belongsTo(Model $referenceTable, $tableKey, $referenceTableKey = null)
