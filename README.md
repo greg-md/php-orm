@@ -56,7 +56,7 @@ It will not establish a database connection until you call a query.
 
 ### Is faster and consumes much less memory
 
-**Connect and run a query:**
+**Connect and run a simple query:**
 
 This is the simplest use case you can have.
 
