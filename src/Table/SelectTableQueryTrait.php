@@ -20,6 +20,7 @@ trait SelectTableQueryTrait
 
     /**
      * @param bool $value
+     *
      * @return $this
      */
     public function distinct(bool $value = true)
@@ -33,8 +34,9 @@ trait SelectTableQueryTrait
 
     /**
      * @param $table
-     * @param string $column
+     * @param string   $column
      * @param string[] ...$columns
+     *
      * @return $this
      */
     public function selectFrom($table, string $column, string ...$columns)
@@ -47,8 +49,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string   $column
      * @param string[] ...$columns
+     *
      * @return $this
      */
     public function select(string $column, string ...$columns)
@@ -61,8 +64,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string   $column
      * @param string[] ...$columns
+     *
      * @return $this
      */
     public function selectOnly(string $column, string ...$columns)
@@ -86,9 +90,10 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param array $columns
-     * @param string $delimiter
+     * @param array       $columns
+     * @param string      $delimiter
      * @param null|string $alias
+     *
      * @return $this
      */
     public function selectConcat(array $columns, string $delimiter = '', ?string $alias = null)
@@ -103,6 +108,7 @@ trait SelectTableQueryTrait
     /**
      * @param SelectQuery $column
      * @param null|string $alias
+     *
      * @return $this
      */
     public function selectSelect(SelectQuery $column, ?string $alias = null)
@@ -115,8 +121,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function selectRaw(string $sql, string ...$params)
@@ -129,8 +136,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function selectCount(string $column = '*', string $alias = null)
@@ -143,8 +151,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function selectMax(string $column, string $alias = null)
@@ -157,8 +166,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function selectMin(string $column, string $alias = null)
@@ -171,8 +181,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function selectAvg(string $column, string $alias = null)
@@ -185,8 +196,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return $this
      */
     public function selectSum(string $column, string $alias = null)
@@ -230,6 +242,7 @@ trait SelectTableQueryTrait
 
     /**
      * @param SelectQuery $query
+     *
      * @return $this
      */
     public function union(SelectQuery $query)
@@ -243,6 +256,7 @@ trait SelectTableQueryTrait
 
     /**
      * @param SelectQuery $query
+     *
      * @return $this
      */
     public function unionAll(SelectQuery $query)
@@ -255,8 +269,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function unionRaw(string $sql, string ...$params)
@@ -269,8 +284,9 @@ trait SelectTableQueryTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function unionAllRaw(string $sql, string ...$params)

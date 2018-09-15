@@ -15,6 +15,7 @@ trait LimitTableClauseTrait
 
     /**
      * @param LimitClauseStrategy $strategy
+     *
      * @return $this
      */
     public function assignLimitAppliers(LimitClauseStrategy $strategy)
@@ -34,6 +35,7 @@ trait LimitTableClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function setLimitApplier(callable $callable)

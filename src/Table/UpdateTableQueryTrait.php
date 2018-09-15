@@ -17,6 +17,7 @@ trait UpdateTableQueryTrait
     /**
      * @param $table
      * @param array ...$tables
+     *
      * @return $this
      */
     public function updateTable($table, ...$tables)
@@ -75,6 +76,7 @@ trait UpdateTableQueryTrait
 
     /**
      * @param array $columns
+     *
      * @return $this
      */
     public function setValues(array $columns)
@@ -87,8 +89,9 @@ trait UpdateTableQueryTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function setRawValue(string $sql, string ...$params)
@@ -102,7 +105,8 @@ trait UpdateTableQueryTrait
 
     /**
      * @param string $column
-     * @param int $value
+     * @param int    $value
+     *
      * @return $this
      */
     public function increment(string $column, int $value = 1)
@@ -116,7 +120,8 @@ trait UpdateTableQueryTrait
 
     /**
      * @param string $column
-     * @param int $value
+     * @param int    $value
+     *
      * @return $this
      */
     public function decrement(string $column, int $value = 1)

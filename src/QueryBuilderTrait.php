@@ -67,6 +67,7 @@ trait QueryBuilderTrait
 
     /**
      * @param QueryStrategy $query
+     *
      * @return $this
      */
     public function setQuery(QueryStrategy $query)
@@ -108,8 +109,9 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @param string $name
+     * @param string         $name
      * @param ClauseStrategy $query
+     *
      * @return $this
      */
     public function setClause(string $name, ClauseStrategy $query)
@@ -126,6 +128,7 @@ trait QueryBuilderTrait
 
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function clearClause(string $name)
@@ -156,8 +159,9 @@ trait QueryBuilderTrait
     }
 
     /**
-     * @param bool $condition
+     * @param bool     $condition
      * @param callable $callable
+     *
      * @return $this
      */
     public function when(bool $condition, callable $callable)

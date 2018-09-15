@@ -15,6 +15,7 @@ trait GroupByTableClauseTrait
 
     /**
      * @param GroupByClauseStrategy $strategy
+     *
      * @return $this
      */
     public function assignGroupByAppliers(GroupByClauseStrategy $strategy)
@@ -44,6 +45,7 @@ trait GroupByTableClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function setGroupByApplier(callable $callable)
@@ -81,6 +83,7 @@ trait GroupByTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function groupBy(string $column)
@@ -93,8 +96,9 @@ trait GroupByTableClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function groupByRaw(string $sql, string ...$params)

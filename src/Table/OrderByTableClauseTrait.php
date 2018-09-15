@@ -15,6 +15,7 @@ trait OrderByTableClauseTrait
 
     /**
      * @param OrderByClauseStrategy $strategy
+     *
      * @return $this
      */
     public function assignOrderByAppliers(OrderByClauseStrategy $strategy)
@@ -44,6 +45,7 @@ trait OrderByTableClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function setOrderByApplier(callable $callable)
@@ -80,8 +82,9 @@ trait OrderByTableClauseTrait
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $type
+     *
      * @return $this
      */
     public function orderBy(string $column, string $type = null)
@@ -95,6 +98,7 @@ trait OrderByTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orderAsc(string $column)
@@ -108,6 +112,7 @@ trait OrderByTableClauseTrait
 
     /**
      * @param string $column
+     *
      * @return $this
      */
     public function orderDesc(string $column)
@@ -120,8 +125,9 @@ trait OrderByTableClauseTrait
     }
 
     /**
-     * @param string $sql
+     * @param string   $sql
      * @param string[] ...$params
+     *
      * @return $this
      */
     public function orderByRaw(string $sql, string ...$params)

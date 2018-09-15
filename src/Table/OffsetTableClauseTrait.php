@@ -15,6 +15,7 @@ trait OffsetTableClauseTrait
 
     /**
      * @param OffsetClauseStrategy $strategy
+     *
      * @return $this
      */
     public function assignOffsetAppliers(OffsetClauseStrategy $strategy)
@@ -34,6 +35,7 @@ trait OffsetTableClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function setOffsetApplier(callable $callable)
@@ -71,6 +73,7 @@ trait OffsetTableClauseTrait
 
     /**
      * @param int $number
+     *
      * @return $this
      */
     public function offset(int $number)

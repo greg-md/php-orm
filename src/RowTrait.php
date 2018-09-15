@@ -26,8 +26,10 @@ trait RowTrait
 
     /**
      * @param int $value
-     * @return $this
+     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function setAutoIncrement(int $value)
     {
@@ -53,8 +55,10 @@ trait RowTrait
 
     /**
      * @param $value
-     * @return $this
+     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function setPrimary($value)
     {

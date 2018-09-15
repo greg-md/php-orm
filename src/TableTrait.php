@@ -153,6 +153,7 @@ trait TableTrait
 
     /**
      * @param array $defaults
+     *
      * @return $this
      */
     public function setDefaults(array $defaults)
@@ -174,6 +175,7 @@ trait TableTrait
 
     /**
      * @param array $record
+     *
      * @return $this
      */
     public function new(array $record = [])
@@ -183,6 +185,7 @@ trait TableTrait
 
     /**
      * @param array $record
+     *
      * @return $this
      */
     public function create(array $record = [])
@@ -265,8 +268,9 @@ trait TableTrait
     }
 
     /**
-     * @return $this|null
      * @throws SqlException
+     *
+     * @return $this|null
      */
     public function fetchRowOrFail()
     {
@@ -297,6 +301,7 @@ trait TableTrait
 
     /**
      * @param int|null $chunkSize
+     *
      * @return \Generator|$this[]
      */
     public function generateRows(?int $chunkSize = null): \Generator
@@ -316,6 +321,7 @@ trait TableTrait
 
     /**
      * @param int $chunkSize
+     *
      * @return \Generator|$this[]
      */
     public function generateRowsInChunks(int $chunkSize): \Generator
@@ -390,8 +396,10 @@ trait TableTrait
 
     /**
      * @param $primary
-     * @return $this|null
+     *
      * @throws SqlException
+     *
+     * @return $this|null
      */
     public function findOrFail($primary)
     {
@@ -404,6 +412,7 @@ trait TableTrait
 
     /**
      * @param array $data
+     *
      * @return $this|null
      */
     public function first(array $data)
@@ -413,8 +422,10 @@ trait TableTrait
 
     /**
      * @param array $data
-     * @return $this|null
+     *
      * @throws SqlException
+     *
+     * @return $this|null
      */
     public function firstOrFail(array $data)
     {
@@ -427,6 +438,7 @@ trait TableTrait
 
     /**
      * @param array $data
+     *
      * @return $this
      */
     public function firstOrNew(array $data)
@@ -440,6 +452,7 @@ trait TableTrait
 
     /**
      * @param array $data
+     *
      * @return $this
      */
     public function firstOrCreate(array $data)
@@ -452,8 +465,9 @@ trait TableTrait
     }
 
     /**
-     * @return array
      * @throws SqlException
+     *
+     * @return array
      */
     public function pairs()
     {

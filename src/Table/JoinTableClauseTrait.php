@@ -15,6 +15,7 @@ trait JoinTableClauseTrait
 
     /**
      * @param JoinClauseStrategy $strategy
+     *
      * @return $this
      */
     public function assignJoinAppliers(JoinClauseStrategy $strategy)
@@ -44,6 +45,7 @@ trait JoinTableClauseTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this
      */
     public function setJoinApplier(callable $callable)
@@ -82,7 +84,8 @@ trait JoinTableClauseTrait
     /**
      * @param $table
      * @param string|null $on
-     * @param string[] ...$params
+     * @param string[]    ...$params
+     *
      * @return $this
      */
     public function left($table, string $on = null, string ...$params)
@@ -97,6 +100,7 @@ trait JoinTableClauseTrait
     /**
      * @param $table
      * @param $on
+     *
      * @return $this
      */
     public function leftOn($table, $on)
@@ -111,7 +115,8 @@ trait JoinTableClauseTrait
     /**
      * @param $table
      * @param string|null $on
-     * @param string[] ...$params
+     * @param string[]    ...$params
+     *
      * @return $this
      */
     public function right($table, string $on = null, string ...$params)
@@ -126,6 +131,7 @@ trait JoinTableClauseTrait
     /**
      * @param $table
      * @param $on
+     *
      * @return $this
      */
     public function rightOn($table, $on)
@@ -140,7 +146,8 @@ trait JoinTableClauseTrait
     /**
      * @param $table
      * @param string|null $on
-     * @param string[] ...$params
+     * @param string[]    ...$params
+     *
      * @return $this
      */
     public function inner($table, string $on = null, string ...$params)
@@ -155,6 +162,7 @@ trait JoinTableClauseTrait
     /**
      * @param $table
      * @param $on
+     *
      * @return $this
      */
     public function innerOn($table, $on)
@@ -168,6 +176,7 @@ trait JoinTableClauseTrait
 
     /**
      * @param $table
+     *
      * @return $this
      */
     public function cross($table)
@@ -183,7 +192,8 @@ trait JoinTableClauseTrait
      * @param $source
      * @param $table
      * @param string|null $on
-     * @param string[] ...$params
+     * @param string[]    ...$params
+     *
      * @return $this
      */
     public function leftTo($source, $table, string $on = null, string ...$params)
@@ -199,6 +209,7 @@ trait JoinTableClauseTrait
      * @param $source
      * @param $table
      * @param $on
+     *
      * @return $this
      */
     public function leftToOn($source, $table, $on)
@@ -214,7 +225,8 @@ trait JoinTableClauseTrait
      * @param $source
      * @param $table
      * @param string|null $on
-     * @param string[] ...$params
+     * @param string[]    ...$params
+     *
      * @return $this
      */
     public function rightTo($source, $table, string $on = null, string ...$params)
@@ -230,6 +242,7 @@ trait JoinTableClauseTrait
      * @param $source
      * @param $table
      * @param $on
+     *
      * @return $this
      */
     public function rightToOn($source, $table, $on)
@@ -262,6 +275,7 @@ trait JoinTableClauseTrait
      * @param $source
      * @param $table
      * @param $on
+     *
      * @return $this
      */
     public function innerToOn($source, $table, $on)
@@ -276,6 +290,7 @@ trait JoinTableClauseTrait
     /**
      * @param $source
      * @param $table
+     *
      * @return $this
      */
     public function crossTo($source, $table)
@@ -325,6 +340,7 @@ trait JoinTableClauseTrait
 
     /**
      * @param string|null $source
+     *
      * @return array
      */
     public function joinToSql(string $source = null): array
@@ -338,6 +354,7 @@ trait JoinTableClauseTrait
 
     /**
      * @param string|null $source
+     *
      * @return string
      */
     public function joinToString(string $source = null): string
