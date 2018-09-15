@@ -27,7 +27,7 @@ trait WhereTableClauseTrait
             $strategy->clearWhere();
 
             foreach ($this->whereAppliers as $applier) {
-                $clause = $this->driver()->where();
+                $clause = $this->connection()->where();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -35,7 +35,7 @@ trait WhereTableClauseTrait
             }
 
             if ($items) {
-                $clause = $this->driver()->where();
+                $clause = $this->connection()->where();
 
                 foreach ($items as $where) {
                     $clause->whereLogic($where['logic'], $where['sql'], $where['params']);
@@ -786,7 +786,7 @@ trait WhereTableClauseTrait
     public function intoWhereStrategy()
     {
         if (!$this->hasClause('WHERE')) {
-            $this->setClause('WHERE', $this->driver()->where());
+            $this->setClause('WHERE', $this->connection()->where());
         }
 
         return $this;
@@ -804,7 +804,7 @@ trait WhereTableClauseTrait
             return $this->intoWhereStrategy();
         }
 
-        return $this->cleanClone()->setClause('WHERE', $this->driver()->where());
+        return $this->cleanClone()->setClause('WHERE', $this->connection()->where());
     }
 
     protected function needWhereStrategyInQuery(QueryStrategy $query)

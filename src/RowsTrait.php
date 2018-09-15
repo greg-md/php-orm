@@ -142,7 +142,7 @@ trait RowsTrait
         }
         [$sql, $params] = $query->clearColumns()->count()->toSql();
 
-        $this->rowsTotal = $this->driver()->column($sql, $params);
+        $this->rowsTotal = $this->connection()->column($sql, $params);
 
         return $this;
     }
@@ -266,10 +266,10 @@ trait RowsTrait
 
                 $query = $this->newInsertQuery()->data($record);
 
-                $this->driver()->execute(...$query->toSql());
+                $this->connection()->execute(...$query->toSql());
 
                 if (!$this->getAutoIncrement() and $column = $this->autoIncrement()) {
-                    $row['record'][$column] = (int) $this->driver()->lastInsertId();
+                    $row['record'][$column] = (int) $this->connection()->lastInsertId();
                 }
 
                 $row['isNew'] = false;
@@ -278,7 +278,7 @@ trait RowsTrait
                     ->setMultiple($modified)
                     ->whereMultiple($this->rowFirstUnique($row));
 
-                $this->driver()->execute(...$query->toSql());
+                $this->connection()->execute(...$query->toSql());
             }
 
             $row['modified'] = [];
@@ -309,7 +309,7 @@ trait RowsTrait
         if ($keys) {
             $query = $this->newDeleteQuery()->where($this->firstUnique(), $keys);
 
-            $this->driver()->execute(...$query->toSql());
+            $this->connection()->execute(...$query->toSql());
         }
 
         return $this;

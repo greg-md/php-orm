@@ -404,7 +404,7 @@ trait SelectTableQueryTrait
 
     public function newSelectQuery(): SelectQuery
     {
-        return $this->driver()->select()->from($this);
+        return $this->connection()->select()->from($this);
     }
 
     /**

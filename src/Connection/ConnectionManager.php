@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Orm\Driver;
+namespace Greg\Orm\Connection;
 
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Clause\GroupByClause;
@@ -16,11 +16,11 @@ use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 
-class DriverManager implements DriverStrategy
+class ConnectionManager implements Connection
 {
-    private $drivers = [];
+    private $connections = [];
 
-    private $defaultDriverName;
+    private $defaultConnectionName;
 
     /**
      * @param string $name
@@ -29,13 +29,13 @@ class DriverManager implements DriverStrategy
      *
      * @return $this
      */
-    public function setDefaultDriverName(string $name)
+    public function setDefaultConnectionName(string $name)
     {
-        if (!isset($this->drivers[$name])) {
-            throw new \Exception('Driver `' . $name . '` was not defined.');
+        if (!isset($this->connections[$name])) {
+            throw new \Exception('Connection `' . $name . '` was not defined.');
         }
 
-        $this->defaultDriverName = $name;
+        $this->defaultConnectionName = $name;
 
         return $this;
     }
@@ -43,9 +43,9 @@ class DriverManager implements DriverStrategy
     /**
      * @return null|string
      */
-    public function getDefaultDriverName(): ?string
+    public function getDefaultConnectionName(): ?string
     {
-        return $this->defaultDriverName;
+        return $this->defaultConnectionName;
     }
 
     /**
@@ -57,10 +57,10 @@ class DriverManager implements DriverStrategy
      */
     public function register($name, callable $callable, bool $default = false)
     {
-        $this->drivers[$name] = $callable;
+        $this->connections[$name] = $callable;
 
         if ($default) {
-            $this->setDefaultDriverName($name);
+            $this->setDefaultConnectionName($name);
         }
 
         return $this;
@@ -68,43 +68,43 @@ class DriverManager implements DriverStrategy
 
     /**
      * @param $name
-     * @param DriverStrategy $strategy
+     * @param Connection $strategy
      * @param bool           $default
      *
      * @return $this
      */
-    public function registerStrategy($name, DriverStrategy $strategy, bool $default = false)
+    public function registerStrategy($name, Connection $strategy, bool $default = false)
     {
-        $this->drivers[$name] = $strategy;
+        $this->connections[$name] = $strategy;
 
         if ($default) {
-            $this->setDefaultDriverName($name);
+            $this->setDefaultConnectionName($name);
         }
 
         return $this;
     }
 
-    public function driver(?string $name = null): DriverStrategy
+    public function connection(?string $name = null): Connection
     {
-        if (!$name = $name ?: $this->defaultDriverName) {
-            throw new \Exception('Default driver strategy was not defined.');
+        if (!$name = $name ?: $this->defaultConnectionName) {
+            throw new \Exception('Default connection was not defined.');
         }
 
-        if (!$strategy = $this->drivers[$name] ?? null) {
-            throw new \Exception('Driver strategy `' . $name . '` was not defined.');
+        if (!$strategy = $this->connections[$name] ?? null) {
+            throw new \Exception('Connection `' . $name . '` was not defined.');
         }
 
         if (is_callable($strategy)) {
             $strategy = call_user_func_array($strategy, []);
 
-            if (!($strategy instanceof DriverStrategy)) {
-                throw new \Exception('Driver strategy `' . $name . '` must be an instance of `' . DriverStrategy::class . '`');
+            if (!($strategy instanceof Connection)) {
+                throw new \Exception('Connection `' . $name . '` must be an instance of `' . Connection::class . '`');
             }
 
-            $this->drivers[$name] = $strategy;
+            $this->connections[$name] = $strategy;
         }
 
-        return $this->drivers[$name];
+        return $this->connections[$name];
     }
 
     /**
@@ -114,7 +114,7 @@ class DriverManager implements DriverStrategy
      */
     public function transaction(callable $callable)
     {
-        $this->driver()->transaction($callable);
+        $this->connection()->transaction($callable);
 
         return $this;
     }
@@ -124,7 +124,7 @@ class DriverManager implements DriverStrategy
      */
     public function inTransaction(): bool
     {
-        return $this->driver()->inTransaction();
+        return $this->connection()->inTransaction();
     }
 
     /**
@@ -132,7 +132,7 @@ class DriverManager implements DriverStrategy
      */
     public function beginTransaction(): bool
     {
-        return $this->driver()->beginTransaction();
+        return $this->connection()->beginTransaction();
     }
 
     /**
@@ -140,7 +140,7 @@ class DriverManager implements DriverStrategy
      */
     public function commit(): bool
     {
-        return $this->driver()->commit();
+        return $this->connection()->commit();
     }
 
     /**
@@ -148,7 +148,7 @@ class DriverManager implements DriverStrategy
      */
     public function rollBack(): bool
     {
-        return $this->driver()->rollBack();
+        return $this->connection()->rollBack();
     }
 
     /**
@@ -159,7 +159,7 @@ class DriverManager implements DriverStrategy
      */
     public function execute(string $sql, array $params = []): int
     {
-        return $this->driver()->execute($sql, $params);
+        return $this->connection()->execute($sql, $params);
     }
 
     /**
@@ -170,10 +170,10 @@ class DriverManager implements DriverStrategy
     public function lastInsertId(string $sequenceId = null): string
     {
         if ($sequenceId !== null) {
-            return $this->driver()->lastInsertId($sequenceId);
+            return $this->connection()->lastInsertId($sequenceId);
         }
 
-        return $this->driver()->lastInsertId();
+        return $this->connection()->lastInsertId();
     }
 
     /**
@@ -183,7 +183,7 @@ class DriverManager implements DriverStrategy
      */
     public function quote(string $value): string
     {
-        return $this->driver()->quote($value);
+        return $this->connection()->quote($value);
     }
 
     /**
@@ -194,7 +194,7 @@ class DriverManager implements DriverStrategy
      */
     public function fetch(string $sql, array $params = []): ?array
     {
-        return $this->driver()->fetch($sql, $params);
+        return $this->connection()->fetch($sql, $params);
     }
 
     /**
@@ -205,7 +205,7 @@ class DriverManager implements DriverStrategy
      */
     public function fetchAll(string $sql, array $params = []): array
     {
-        return $this->driver()->fetchAll($sql, $params);
+        return $this->connection()->fetchAll($sql, $params);
     }
 
     /**
@@ -216,7 +216,7 @@ class DriverManager implements DriverStrategy
      */
     public function generate(string $sql, array $params = []): \Generator
     {
-        yield from $this->driver()->generate($sql, $params);
+        yield from $this->connection()->generate($sql, $params);
     }
 
     /**
@@ -228,7 +228,7 @@ class DriverManager implements DriverStrategy
      */
     public function column(string $sql, array $params = [], string $column = '0')
     {
-        return $this->driver()->column($sql, $params, $column);
+        return $this->connection()->column($sql, $params, $column);
     }
 
     /**
@@ -240,7 +240,7 @@ class DriverManager implements DriverStrategy
      */
     public function columnAll(string $sql, array $params = [], string $column = '0'): array
     {
-        return $this->driver()->columnAll($sql, $params, $column);
+        return $this->connection()->columnAll($sql, $params, $column);
     }
 
     /**
@@ -253,7 +253,7 @@ class DriverManager implements DriverStrategy
      */
     public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array
     {
-        return $this->driver()->pairs($sql, $params, $key, $value);
+        return $this->connection()->pairs($sql, $params, $key, $value);
     }
 
     /**
@@ -261,7 +261,7 @@ class DriverManager implements DriverStrategy
      */
     public function dialect(): DialectStrategy
     {
-        return $this->driver()->dialect();
+        return $this->connection()->dialect();
     }
 
     /**
@@ -271,7 +271,7 @@ class DriverManager implements DriverStrategy
      */
     public function truncate(string $tableName): int
     {
-        return $this->driver()->truncate($tableName);
+        return $this->connection()->truncate($tableName);
     }
 
     /**
@@ -281,7 +281,7 @@ class DriverManager implements DriverStrategy
      */
     public function listen(callable $callable)
     {
-        $this->driver()->listen($callable);
+        $this->connection()->listen($callable);
 
         return $this;
     }
@@ -294,7 +294,7 @@ class DriverManager implements DriverStrategy
      */
     public function describe(string $tableName, bool $force = false): array
     {
-        return $this->driver()->describe($tableName, $force);
+        return $this->connection()->describe($tableName, $force);
     }
 
     /**
@@ -302,7 +302,7 @@ class DriverManager implements DriverStrategy
      */
     public function select(): SelectQuery
     {
-        return $this->driver()->select();
+        return $this->connection()->select();
     }
 
     /**
@@ -310,7 +310,7 @@ class DriverManager implements DriverStrategy
      */
     public function insert(): InsertQuery
     {
-        return $this->driver()->insert();
+        return $this->connection()->insert();
     }
 
     /**
@@ -318,7 +318,7 @@ class DriverManager implements DriverStrategy
      */
     public function delete(): DeleteQuery
     {
-        return $this->driver()->delete();
+        return $this->connection()->delete();
     }
 
     /**
@@ -326,7 +326,7 @@ class DriverManager implements DriverStrategy
      */
     public function update(): UpdateQuery
     {
-        return $this->driver()->update();
+        return $this->connection()->update();
     }
 
     /**
@@ -334,7 +334,7 @@ class DriverManager implements DriverStrategy
      */
     public function from(): FromClause
     {
-        return $this->driver()->from();
+        return $this->connection()->from();
     }
 
     /**
@@ -342,7 +342,7 @@ class DriverManager implements DriverStrategy
      */
     public function join(): JoinClause
     {
-        return $this->driver()->join();
+        return $this->connection()->join();
     }
 
     /**
@@ -350,7 +350,7 @@ class DriverManager implements DriverStrategy
      */
     public function where(): WhereClause
     {
-        return $this->driver()->where();
+        return $this->connection()->where();
     }
 
     /**
@@ -358,7 +358,7 @@ class DriverManager implements DriverStrategy
      */
     public function having(): HavingClause
     {
-        return $this->driver()->having();
+        return $this->connection()->having();
     }
 
     /**
@@ -366,7 +366,7 @@ class DriverManager implements DriverStrategy
      */
     public function orderBy(): OrderByClause
     {
-        return $this->driver()->orderBy();
+        return $this->connection()->orderBy();
     }
 
     /**
@@ -374,7 +374,7 @@ class DriverManager implements DriverStrategy
      */
     public function groupBy(): GroupByClause
     {
-        return $this->driver()->groupBy();
+        return $this->connection()->groupBy();
     }
 
     /**
@@ -382,7 +382,7 @@ class DriverManager implements DriverStrategy
      */
     public function limit(): LimitClause
     {
-        return $this->driver()->limit();
+        return $this->connection()->limit();
     }
 
     /**
@@ -390,6 +390,6 @@ class DriverManager implements DriverStrategy
      */
     public function offset(): OffsetClause
     {
-        return $this->driver()->offset();
+        return $this->connection()->offset();
     }
 }

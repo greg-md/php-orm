@@ -1,11 +1,11 @@
 <?php
 
-namespace Greg\Orm\Driver;
+namespace Greg\Orm\Connection;
 
 use Greg\Orm\Dialect\DialectStrategy;
 use Greg\Orm\Dialect\SqliteDialect;
 
-class SqliteDriver extends PdoDriverAbstract
+class SqliteConnection extends PdoConnectionAbstract
 {
     private $pdo;
 

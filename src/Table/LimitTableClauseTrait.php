@@ -22,7 +22,7 @@ trait LimitTableClauseTrait
     {
         if ($this->limitAppliers and !$strategy->hasLimit()) {
             foreach ($this->limitAppliers as $applier) {
-                $clause = $this->driver()->limit();
+                $clause = $this->connection()->limit();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -166,7 +166,7 @@ trait LimitTableClauseTrait
     public function intoLimitStrategy()
     {
         if (!$this->hasClause('LIMIT')) {
-            $this->setClause('LIMIT', $this->driver()->limit());
+            $this->setClause('LIMIT', $this->connection()->limit());
         }
 
         return $this;
@@ -184,7 +184,7 @@ trait LimitTableClauseTrait
             return $this->intoLimitStrategy();
         }
 
-        return $this->cleanClone()->setClause('LIMIT', $this->driver()->limit());
+        return $this->cleanClone()->setClause('LIMIT', $this->connection()->limit());
     }
 
     protected function needLimitStrategyInQuery(QueryStrategy $query)

@@ -1,8 +1,8 @@
 <?php
 
-namespace Greg\Orm\Driver;
+namespace Greg\Orm\Connection;
 
-abstract class PdoDriverAbstract extends DriverAbstract
+abstract class PdoConnectionAbstract extends ConnectionAbstract
 {
     /**
      * @param callable $callable

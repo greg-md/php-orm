@@ -4,7 +4,7 @@ namespace Greg\Orm\Table;
 
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Conditions;
-use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Connection\Connection;
 use Greg\Orm\Model;
 use Greg\Orm\SqlException;
 
@@ -754,14 +754,14 @@ trait WhereTableClauseTraitTest
 
     public function testCanSetExists()
     {
-        $query = $this->model()->whereExists($this->driverMock()->select());
+        $query = $this->model()->whereExists($this->connectionMock()->select());
 
         $this->assertEquals('WHERE EXISTS (SELECT *)', $query->whereToString());
     }
 
     public function testCanSetNotExists()
     {
-        $query = $this->model()->whereNotExists($this->driverMock()->select());
+        $query = $this->model()->whereNotExists($this->connectionMock()->select());
 
         $this->assertEquals('WHERE NOT EXISTS (SELECT *)', $query->whereToString());
     }
@@ -789,14 +789,14 @@ trait WhereTableClauseTraitTest
     {
         $this->assertFalse($this->model()->hasExists());
 
-        $query = $this->model()->whereExists($this->driverMock()->select());
+        $query = $this->model()->whereExists($this->connectionMock()->select());
 
         $this->assertTrue($query->hasExists());
     }
 
     public function testCanGetExists()
     {
-        $query = $this->model()->whereExists($this->driverMock()->select());
+        $query = $this->model()->whereExists($this->connectionMock()->select());
 
         $this->assertNotEmpty($query->getExists());
     }
@@ -807,7 +807,7 @@ trait WhereTableClauseTraitTest
 
         $this->assertNull($this->model()->getExists());
 
-        $query = $this->model()->whereExists($this->driverMock()->select());
+        $query = $this->model()->whereExists($this->connectionMock()->select());
 
         $query->clearExists();
 
@@ -838,7 +838,7 @@ trait WhereTableClauseTraitTest
     abstract protected function model(): Model;
 
     /**
-     * @return DriverStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @return Connection|\PHPUnit_Framework_MockObject_MockObject
      */
-    abstract protected function driverMock(): \PHPUnit_Framework_MockObject_MockObject;
+    abstract protected function connectionMock(): \PHPUnit_Framework_MockObject_MockObject;
 }

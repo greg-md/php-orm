@@ -27,7 +27,7 @@ trait FromTableClauseTrait
             $strategy->clearFrom();
 
             foreach ($this->fromAppliers as $applier) {
-                $clause = $this->driver()->from();
+                $clause = $this->connection()->from();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -214,7 +214,7 @@ trait FromTableClauseTrait
     public function intoFromStrategy()
     {
         if (!$this->hasClause('FROM')) {
-            $this->setClause('FROM', $this->driver()->from());
+            $this->setClause('FROM', $this->connection()->from());
         }
 
         return $this;
@@ -232,7 +232,7 @@ trait FromTableClauseTrait
             return $this->intoFromStrategy();
         }
 
-        return $this->cleanClone()->setClause('FROM', $this->driver()->from());
+        return $this->cleanClone()->setClause('FROM', $this->connection()->from());
     }
 
     protected function needFromStrategyInQuery(QueryStrategy $query)

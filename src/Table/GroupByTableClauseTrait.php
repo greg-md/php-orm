@@ -26,7 +26,7 @@ trait GroupByTableClauseTrait
             $strategy->clearGroupBy();
 
             foreach ($this->groupByAppliers as $applier) {
-                $clause = $this->driver()->groupBy();
+                $clause = $this->connection()->groupBy();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -211,7 +211,7 @@ trait GroupByTableClauseTrait
     public function intoGroupByStrategy()
     {
         if (!$this->hasClause('GROUP_BY')) {
-            $this->setClause('GROUP_BY', $this->driver()->groupBy());
+            $this->setClause('GROUP_BY', $this->connection()->groupBy());
         }
 
         return $this;
@@ -229,7 +229,7 @@ trait GroupByTableClauseTrait
             return $this->intoGroupByStrategy();
         }
 
-        return $this->cleanClone()->setClause('GROUP_BY', $this->driver()->groupBy());
+        return $this->cleanClone()->setClause('GROUP_BY', $this->connection()->groupBy());
     }
 
     protected function needGroupByStrategyInQuery(QueryStrategy $query)

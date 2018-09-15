@@ -163,7 +163,7 @@ trait TableTrait
 
     public function describe(): array
     {
-        return $this->driver()->describe($this->fullName());
+        return $this->connection()->describe($this->fullName());
     }
 
     /**
@@ -190,7 +190,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->driver()->fetch($sql, $params);
+        return $this->connection()->fetch($sql, $params);
     }
 
     public function fetchOrFail(): array
@@ -206,7 +206,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->driver()->fetchAll($sql, $params);
+        return $this->connection()->fetchAll($sql, $params);
     }
 
     public function generate(?int $chunkSize = null): \Generator
@@ -216,7 +216,7 @@ trait TableTrait
         } else {
             [$sql, $params] = $this->selectQueryInstanceToSql();
 
-            yield from $this->driver()->generate($sql, $params);
+            yield from $this->connection()->generate($sql, $params);
         }
     }
 
@@ -229,21 +229,21 @@ trait TableTrait
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->driver()->column($sql, $params, $column);
+        return $this->connection()->column($sql, $params, $column);
     }
 
     public function fetchColumnAll(string $column = '0'): array
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->driver()->columnAll($sql, $params, $column);
+        return $this->connection()->columnAll($sql, $params, $column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->driver()->pairs($sql, $params, $key, $value);
+        return $this->connection()->pairs($sql, $params, $key, $value);
     }
 
     /**
@@ -253,7 +253,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-        if ($record = $this->driver()->fetch($sql, $params)) {
+        if ($record = $this->connection()->fetch($sql, $params)) {
             return $this->cleanClone()->appendRecord($record, false, [], true);
         }
 
@@ -281,7 +281,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-        $recordsGenerator = $this->driver()->generate($sql, $params);
+        $recordsGenerator = $this->connection()->generate($sql, $params);
 
         $rows = $this->cleanClone();
 
@@ -304,7 +304,7 @@ trait TableTrait
         } else {
             [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-            $recordsGenerator = $this->driver()->generate($sql, $params);
+            $recordsGenerator = $this->connection()->generate($sql, $params);
         }
 
         foreach ($recordsGenerator as $record) {
@@ -338,7 +338,7 @@ trait TableTrait
             return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
         }
 
-        return $this->driver()->column($this->driver()->dialect()->selectCount($column, $alias));
+        return $this->connection()->column($this->connection()->dialect()->selectCount($column, $alias));
     }
 
     public function fetchMax(string $column, string $alias = null): int
@@ -347,7 +347,7 @@ trait TableTrait
             return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
         }
 
-        return $this->driver()->column($this->driver()->dialect()->selectMax($column, $alias));
+        return $this->connection()->column($this->connection()->dialect()->selectMax($column, $alias));
     }
 
     public function fetchMin(string $column, string $alias = null): int
@@ -356,7 +356,7 @@ trait TableTrait
             return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
         }
 
-        return $this->driver()->column($this->driver()->dialect()->selectMin($column, $alias));
+        return $this->connection()->column($this->connection()->dialect()->selectMin($column, $alias));
     }
 
     public function fetchAvg(string $column, string $alias = null): float
@@ -365,7 +365,7 @@ trait TableTrait
             return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
         }
 
-        return $this->driver()->column($this->driver()->dialect()->selectAvg($column, $alias));
+        return $this->connection()->column($this->connection()->dialect()->selectAvg($column, $alias));
     }
 
     public function fetchSum(string $column, string $alias = null): string
@@ -374,7 +374,7 @@ trait TableTrait
             return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
         }
 
-        return $this->driver()->column($this->driver()->dialect()->selectSum($column, $alias));
+        return $this->connection()->column($this->connection()->dialect()->selectSum($column, $alias));
     }
 
     /**
@@ -487,7 +487,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->setValues($columns)->toSql();
 
-        return $this->driver()->execute($sql, $params);
+        return $this->connection()->execute($sql, $params);
     }
 
     public function insert(array $data): int
@@ -496,7 +496,7 @@ trait TableTrait
 
         [$sql, $params] = $this->newInsertQuery()->data($data)->toSql();
 
-        return $this->driver()->execute($sql, $params);
+        return $this->connection()->execute($sql, $params);
     }
 
     public function insertSelect(array $columns, SelectQuery $query): int
@@ -507,12 +507,12 @@ trait TableTrait
             $query = clone $query;
 
             foreach ($this->defaults as $column => $value) {
-                $query->columnRaw('? as ' . $this->driver()->dialect()->quoteName($column), $value);
+                $query->columnRaw('? as ' . $this->connection()->dialect()->quoteName($column), $value);
             }
         }
         [$sql, $params] = $this->newInsertQuery()->columns($columns)->select($query)->toSql();
 
-        return $this->driver()->execute($sql, $params);
+        return $this->connection()->execute($sql, $params);
     }
 
     /**
@@ -530,7 +530,7 @@ trait TableTrait
 
         [$sql, $params] = $this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params)->toSql();
 
-        return $this->driver()->execute($sql, $params);
+        return $this->connection()->execute($sql, $params);
     }
 
     public function insertForEach(string $column, array $values, array $data = []): int
@@ -553,7 +553,7 @@ trait TableTrait
         }
         [$sql, $params] = $instance->toSql();
 
-        return $this->driver()->execute($sql, $params);
+        return $this->connection()->execute($sql, $params);
     }
 
     public function erase($primary)
@@ -562,12 +562,12 @@ trait TableTrait
 
         [$sql, $params] = $query->toSql();
 
-        return $this->driver()->execute($sql, $params);
+        return $this->connection()->execute($sql, $params);
     }
 
     public function truncate()
     {
-        return $this->driver()->truncate($this->fullName());
+        return $this->connection()->truncate($this->fullName());
     }
 
     public function prepareRecord(array $record, $reverse = false): array
@@ -607,15 +607,15 @@ trait TableTrait
         switch ($this->cast($columnName) ?: $column['type']) {
             case 'datetime':
             case 'timestamp':
-                $value = $this->driver()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+                $value = $this->connection()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
 
                 break;
             case 'date':
-                $value = $this->driver()->dialect()->dateString($value);
+                $value = $this->connection()->dialect()->dateString($value);
 
                 break;
             case 'time':
-                $value = $this->driver()->dialect()->timeString($value);
+                $value = $this->connection()->dialect()->timeString($value);
 
                 break;
             case 'bool':
@@ -666,11 +666,11 @@ trait TableTrait
             case 'json':
                 return json_decode($value, true);
             case 'date':
-                return $this->driver()->dialect()->dateString($value);
+                return $this->connection()->dialect()->dateString($value);
             case 'time':
-                return $this->driver()->dialect()->timeString($value);
+                return $this->connection()->dialect()->timeString($value);
             case 'datetime':
-                return $this->driver()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+                return $this->connection()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
             case 'timestamp':
                 return ctype_digit((string) $value) ? $value : strtotime(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
             default:
@@ -757,7 +757,7 @@ trait TableTrait
             [$sql, $params] = $query->limit($chunkSize)->offset($offset)->toSql();
 
             if ($oneByOne) {
-                $recordsGenerator = $this->driver()->generate($sql, $params);
+                $recordsGenerator = $this->connection()->generate($sql, $params);
 
                 $k = 0;
 
@@ -767,7 +767,7 @@ trait TableTrait
                     $k++;
                 }
             } else {
-                $records = $this->driver()->fetchAll($sql, $params);
+                $records = $this->connection()->fetchAll($sql, $params);
 
                 if (!$records) {
                     break;
@@ -792,7 +792,7 @@ trait TableTrait
             return $this->selectQueryInstance()->toSql();
         }
 
-        return [$this->driver()->dialect()->selectAll($this->name()), []];
+        return [$this->connection()->dialect()->selectAll($this->name()), []];
     }
 
     protected function rowsQueryInstanceToSql()
@@ -801,6 +801,6 @@ trait TableTrait
             return $this->rowsQueryInstance()->toSql();
         }
 
-        return [$this->driver()->dialect()->selectAll($this->name()), []];
+        return [$this->connection()->dialect()->selectAll($this->name()), []];
     }
 }

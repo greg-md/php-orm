@@ -2,20 +2,20 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Connection\Connection;
 
 abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \Serializable
 {
     use RowTrait;
 
     /**
-     * @var DriverStrategy|null
+     * @var Connection|null
      */
-    private $driver;
+    private $connection;
 
-    public function __construct(DriverStrategy $driver)
+    public function __construct(Connection $connection)
     {
-        $this->driver = $driver;
+        $this->connection = $connection;
 
         $this->boot();
 
@@ -24,25 +24,25 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         return $this;
     }
 
-    public function setDriver(DriverStrategy $strategy)
+    public function setConnection(Connection $strategy)
     {
-        $this->driver = $strategy;
+        $this->connection = $strategy;
 
         return $this;
     }
 
-    public function getDriver(): ?DriverStrategy
+    public function getConnection(): ?Connection
     {
-        return $this->driver;
+        return $this->connection;
     }
 
-    public function driver(): DriverStrategy
+    public function connection(): Connection
     {
-        if (!$this->driver) {
-            throw new \Exception('Model driver is not defined.');
+        if (!$this->connection) {
+            throw new \Exception('Model connection is not defined.');
         }
 
-        return $this->driver;
+        return $this->connection;
     }
 
     public function cleanup()

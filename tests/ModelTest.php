@@ -11,7 +11,7 @@ use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Dialect\SqlDialect;
-use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Connection\Connection;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\QueryStrategy;
@@ -50,23 +50,23 @@ class ModelTest extends TestCase
     protected $model;
 
     /**
-     * @var DriverStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @var Connection|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $driverMock;
+    protected $connectionMock;
 
     public function setUp()
     {
-        $driverMock = $this->driverMock = $this->createMock(DriverStrategy::class);
+        $connectionMock = $this->connectionMock = $this->createMock(Connection::class);
 
-        foreach ($this->driverSql() as $method => $class) {
-            $driverMock->method($method)->willReturnCallback(function () use ($class) {
+        foreach ($this->connectionSql() as $method => $class) {
+            $connectionMock->method($method)->willReturnCallback(function () use ($class) {
                 return new $class();
             });
         }
 
-        $this->driverMock->method('dialect')->willReturn(new SqlDialect());
+        $this->connectionMock->method('dialect')->willReturn(new SqlDialect());
 
-        $this->model = new class($driverMock) extends Model {
+        $this->model = new class($connectionMock) extends Model {
             protected $label = 'My Table';
 
             protected $nameColumn = 'Name';
@@ -248,17 +248,17 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
+        $this->connectionMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->model->pairs());
     }
 
     public function testCanThrowExceptionIfCanNotSelectPairs()
     {
-        $driverMock = $this->driverMock;
+        $connectionMock = $this->connectionMock;
 
         /** @var Model $model */
-        $model = new class($driverMock) extends Model {
+        $model = new class($connectionMock) extends Model {
             public function name(): string
             {
                 return 'Table';
@@ -285,10 +285,10 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $driverMock = $this->driverMock;
+        $connectionMock = $this->connectionMock;
 
         /** @var Model $rows */
-        $rows = new class($driverMock) extends Model {
+        $rows = new class($connectionMock) extends Model {
             public function name(): string
             {
                 return 'Table';
@@ -346,7 +346,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateInChunks()
     {
-        $this->driverMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
             [
                 ['Id' => 1],
                 ['Id' => 2],
@@ -375,7 +375,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateOneByOne()
     {
-        $this->driverMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
             (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
@@ -408,7 +408,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
             [
                 ['Id' => 1],
                 ['Id' => 2],
@@ -439,7 +439,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateRowsOneByOne()
     {
-        $this->driverMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
             (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
@@ -472,21 +472,21 @@ class ModelTest extends TestCase
 
     public function testCanFetch()
     {
-        $this->driverMock->method('fetch')->willReturn(['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn(['Id' => 1]);
 
         $this->assertEquals(['Id' => 1], $this->model->fetch());
     }
 
     public function testCanFetchOrFail()
     {
-        $this->driverMock->method('fetch')->willReturn(['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn(['Id' => 1]);
 
         $this->assertEquals(['Id' => 1], $this->model->fetchOrFail());
     }
 
     public function testCanThrowExceptionIfFetchFail()
     {
-        $this->driverMock->method('fetch')->willReturn(null);
+        $this->connectionMock->method('fetch')->willReturn(null);
 
         $this->expectException(\Exception::class);
 
@@ -495,84 +495,84 @@ class ModelTest extends TestCase
 
     public function testCanFetchAll()
     {
-        $this->driverMock->method('fetchAll')->willReturn([['Id' => 1]]);
+        $this->connectionMock->method('fetchAll')->willReturn([['Id' => 1]]);
 
         $this->assertCount(1, $this->model->fetchAll());
     }
 
     public function testCanFetchColumn()
     {
-        $this->driverMock->method('column')->willReturn(1);
+        $this->connectionMock->method('column')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchColumn());
     }
 
     public function testCanFetchAllColumn()
     {
-        $this->driverMock->method('columnAll')->willReturn([1, 2]);
+        $this->connectionMock->method('columnAll')->willReturn([1, 2]);
 
         $this->assertEquals([1, 2], $this->model->fetchColumnAll());
     }
 
     public function testCanFetchPairs()
     {
-        $this->driverMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
+        $this->connectionMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->model->fetchPairs());
     }
 
     public function testCanFetchCount()
     {
-        $this->driverMock->method('column')->willReturn(1);
+        $this->connectionMock->method('column')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchCount());
     }
 
     public function testCanFetchMax()
     {
-        $this->driverMock->method('column')->willReturn(1);
+        $this->connectionMock->method('column')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchMax('Column'));
     }
 
     public function testCanFetchMin()
     {
-        $this->driverMock->method('column')->willReturn(1);
+        $this->connectionMock->method('column')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchMin('Column'));
     }
 
     public function testCanFetchAvg()
     {
-        $this->driverMock->method('column')->willReturn(1);
+        $this->connectionMock->method('column')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchAvg('Column'));
     }
 
     public function testCanFetchSum()
     {
-        $this->driverMock->method('column')->willReturn(1);
+        $this->connectionMock->method('column')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchSum('Column'));
     }
 
     public function testCanFetchExists()
     {
-        $this->driverMock->method('column')->willReturn(1);
+        $this->connectionMock->method('column')->willReturn(1);
 
         $this->assertTrue($this->model->exists());
     }
 
     public function testCanUpdate()
     {
-        $this->driverMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('execute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->update(['Column' => 'foo']));
     }
 
     public function testCanDelete()
     {
-        $this->driverMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('execute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->delete());
 
@@ -634,37 +634,37 @@ class ModelTest extends TestCase
 
     public function testCanInsert()
     {
-        $this->driverMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('execute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->insert(['Column' => 'foo']));
     }
 
     public function testCanInsertSelectWithDefaults()
     {
-        $this->driverMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('execute')->willReturn(1);
 
         $this->model->setDefaults(['Foo' => 'bar']);
 
-        $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->driverMock->select()->columns('Column')));
+        $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->connectionMock->select()->columns('Column')));
     }
 
     public function testCanInsertSelect()
     {
-        $this->driverMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('execute')->willReturn(1);
 
-        $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->driverMock->select()->columns('Column')));
+        $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->connectionMock->select()->columns('Column')));
     }
 
     public function testCanInsertSelectRaw()
     {
-        $this->driverMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('execute')->willReturn(1);
 
-        $this->assertEquals(1, $this->model->insertSelectRaw(['Column'], $this->driverMock->select()->columns('Column')));
+        $this->assertEquals(1, $this->model->insertSelectRaw(['Column'], $this->connectionMock->select()->columns('Column')));
     }
 
     public function testCanInsertForEach()
     {
-        $this->driverMock->expects($this->exactly(2))->method('execute')->willReturn(1);
+        $this->connectionMock->expects($this->exactly(2))->method('execute')->willReturn(1);
 
         $this->model->insertForEach('Column', ['foo', 'bar']);
     }
@@ -673,12 +673,12 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
         })());
 
-        $this->driverMock->method('column')->willReturn(20);
+        $this->connectionMock->method('column')->willReturn(20);
 
         $pagination = $this->model->pagination(10, 10);
 
@@ -693,12 +693,12 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
         })());
 
-        $this->driverMock->method('column')->willReturn(20);
+        $this->connectionMock->method('column')->willReturn(20);
 
         $pagination = $this->model->pagination(10, 10, function (SelectQuery $query) {
             $query->where('foo', 'bar');
@@ -751,17 +751,17 @@ class ModelTest extends TestCase
 
     public function testCanGetUniqueForFirstUnique()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
             ],
             'primary' => [
             ],
         ]);
 
-        $driverMock = $this->driverMock;
+        $connectionMock = $this->connectionMock;
 
         /** @var Model $model */
-        $model = new class($driverMock) extends Model {
+        $model = new class($connectionMock) extends Model {
             protected $unique = ['Id'];
 
             public function name(): string
@@ -775,17 +775,17 @@ class ModelTest extends TestCase
 
     public function testCanThrowExceptionIfFirstUniqueNotFound()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
             ],
             'primary' => [
             ],
         ]);
 
-        $driverMock = $this->driverMock;
+        $connectionMock = $this->connectionMock;
 
         /** @var Model $model */
-        $model = new class($driverMock) extends Model {
+        $model = new class($connectionMock) extends Model {
             public function name(): string
             {
                 return 'Table';
@@ -810,7 +810,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
         $this->assertEquals($record, $this->model->fetchRow()->record());
     }
@@ -824,7 +824,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn(['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn(['Id' => 1]);
 
         $this->assertEquals(['Id' => 1], $this->model->fetchRowOrFail()->record());
     }
@@ -840,7 +840,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('generate')->willReturn((function () {
             if (false) {
                 yield;
             }
@@ -853,7 +853,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
 
             yield ['Id' => 2];
@@ -866,7 +866,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
 
             yield ['Id' => 2];
@@ -889,7 +889,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->find(1);
 
@@ -900,7 +900,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->findOrFail(1);
 
@@ -920,7 +920,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->first($record);
 
@@ -931,7 +931,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrFail($record);
 
@@ -951,7 +951,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrNew($record);
 
@@ -971,7 +971,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrCreate($record);
 
@@ -991,14 +991,14 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->expects($this->once())->method('execute')->with('DELETE FROM `Table` WHERE `Id` = ?', [1]);
+        $this->connectionMock->expects($this->once())->method('execute')->with('DELETE FROM `Table` WHERE `Id` = ?', [1]);
 
         $this->model->erase(1);
     }
 
     public function testCanTruncate()
     {
-        $this->driverMock->expects($this->once())->method('truncate')->with('Table');
+        $this->connectionMock->expects($this->once())->method('truncate')->with('Table');
 
         $this->model->truncate();
     }
@@ -1021,7 +1021,7 @@ class ModelTest extends TestCase
 
     public function testCanFetchRowAndTransformToDatetimeValue()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
                     'name'    => 'Id',
@@ -1055,7 +1055,7 @@ class ModelTest extends TestCase
 
         $this->model->setCast('Foo', 'datetime');
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017 18:00:00']);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017 18:00:00']);
 
         $row = $this->model->fetchRow();
 
@@ -1064,7 +1064,7 @@ class ModelTest extends TestCase
 
     public function testCanFetchRowAndTransformToDateValue()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
                     'name'    => 'Id',
@@ -1098,7 +1098,7 @@ class ModelTest extends TestCase
 
         $this->model->setCast('Foo', 'date');
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017']);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017']);
 
         $row = $this->model->fetchRow();
 
@@ -1107,7 +1107,7 @@ class ModelTest extends TestCase
 
     public function testCanFetchRowAndTransformToTimeValue()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
                     'name'    => 'Id',
@@ -1141,7 +1141,7 @@ class ModelTest extends TestCase
 
         $this->model->setCast('Foo', 'time');
 
-        $this->driverMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '18:00']);
+        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '18:00']);
 
         $row = $this->model->fetchRow();
 
@@ -1150,7 +1150,7 @@ class ModelTest extends TestCase
 
     public function testCanFetchRowAndTransformToBooleanValue()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
                     'name'    => 'Id',
@@ -1189,7 +1189,7 @@ class ModelTest extends TestCase
 
     public function testCanFetchRowAndTransformToArrayValue()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
                     'name'    => 'Id',
@@ -1327,7 +1327,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock
+        $this->connectionMock
             ->expects($this->once())
             ->method('lastInsertId')
             ->willReturn(1);
@@ -1338,7 +1338,7 @@ class ModelTest extends TestCase
 
         $this->assertFalse($rows->isNew());
 
-        $this->driverMock
+        $this->connectionMock
             ->expects($this->once())
             ->method('execute')
             ->with('UPDATE `Table` SET `Id` = ? WHERE `Id` = ?', ['2', '1']);
@@ -1356,7 +1356,7 @@ class ModelTest extends TestCase
 
         $rows->appendRecord(['Id' => 2], true);
 
-        $this->driverMock
+        $this->connectionMock
             ->expects($this->once())
             ->method('execute')
             ->with('DELETE FROM `Table` WHERE `Id` = ?', ['1']);
@@ -1448,10 +1448,10 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $driverMock = $this->driverMock;
+        $connectionMock = $this->connectionMock;
 
         /** @var Model $row */
-        $row = new class($driverMock) extends Model {
+        $row = new class($connectionMock) extends Model {
             protected $fillable = [];
 
             public function name(): string
@@ -1469,7 +1469,7 @@ class ModelTest extends TestCase
 
     public function testCanGetCustomAttribute()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Active' => [
                     'name'    => 'Active',
@@ -1507,14 +1507,14 @@ class ModelTest extends TestCase
         return $this->model;
     }
 
-    protected function driverMock(): \PHPUnit_Framework_MockObject_MockObject
+    protected function connectionMock(): \PHPUnit_Framework_MockObject_MockObject
     {
-        return $this->driverMock;
+        return $this->connectionMock;
     }
 
     protected function mockDescribe()
     {
-        $this->driverMock->method('describe')->willReturn([
+        $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
                     'name'    => 'Id',
@@ -1535,7 +1535,7 @@ class ModelTest extends TestCase
         ]);
     }
 
-    protected function driverSql()
+    protected function connectionSql()
     {
         yield 'select' => SelectQuery::class;
         yield 'insert' => InsertQuery::class;

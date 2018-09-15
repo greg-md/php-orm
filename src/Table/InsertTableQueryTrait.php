@@ -2,19 +2,19 @@
 
 namespace Greg\Orm\Table;
 
-use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Connection\Connection;
 use Greg\Orm\Query\InsertQuery;
 
 trait InsertTableQueryTrait
 {
     public function newInsertQuery(): InsertQuery
     {
-        $query = $this->driver()->insert();
+        $query = $this->connection()->insert();
 
         $query->into($this);
 
         return $query;
     }
 
-    abstract public function driver(): DriverStrategy;
+    abstract public function connection(): Connection;
 }

@@ -26,7 +26,7 @@ trait OrderByTableClauseTrait
             $strategy->clearOrderBy();
 
             foreach ($this->orderByAppliers as $applier) {
-                $clause = $this->driver()->orderBy();
+                $clause = $this->connection()->orderBy();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -237,7 +237,7 @@ trait OrderByTableClauseTrait
     public function intoOrderByStrategy()
     {
         if (!$this->hasClause('ORDER_BY')) {
-            $this->setClause('ORDER_BY', $this->driver()->orderBy());
+            $this->setClause('ORDER_BY', $this->connection()->orderBy());
         }
 
         return $this;
@@ -255,7 +255,7 @@ trait OrderByTableClauseTrait
             return $this->intoOrderByStrategy();
         }
 
-        return $this->cleanClone()->setClause('ORDER_BY', $this->driver()->orderBy());
+        return $this->cleanClone()->setClause('ORDER_BY', $this->connection()->orderBy());
     }
 
     protected function needOrderByStrategyInQuery(QueryStrategy $query)

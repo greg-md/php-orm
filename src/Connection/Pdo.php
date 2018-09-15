@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Orm\Driver;
+namespace Greg\Orm\Connection;
 
 class Pdo
 {

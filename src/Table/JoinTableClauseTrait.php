@@ -26,7 +26,7 @@ trait JoinTableClauseTrait
             $strategy->clearJoin();
 
             foreach ($this->joinAppliers as $applier) {
-                $clause = $this->driver()->join();
+                $clause = $this->connection()->join();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -416,7 +416,7 @@ trait JoinTableClauseTrait
     public function intoJoinStrategy()
     {
         if (!$this->hasClause('JOIN')) {
-            $this->setClause('JOIN', $this->driver()->join());
+            $this->setClause('JOIN', $this->connection()->join());
         }
 
         return $this;
@@ -434,7 +434,7 @@ trait JoinTableClauseTrait
             return $this->intoJoinStrategy();
         }
 
-        return $this->cleanClone()->setClause('JOIN', $this->driver()->join());
+        return $this->cleanClone()->setClause('JOIN', $this->connection()->join());
     }
 
     protected function needJoinStrategyInQuery(QueryStrategy $query)

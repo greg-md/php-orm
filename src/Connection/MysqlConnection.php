@@ -1,11 +1,11 @@
 <?php
 
-namespace Greg\Orm\Driver;
+namespace Greg\Orm\Connection;
 
 use Greg\Orm\Dialect\DialectStrategy;
 use Greg\Orm\Dialect\MysqlDialect;
 
-class MysqlDriver extends PdoDriverAbstract
+class MysqlConnection extends PdoConnectionAbstract
 {
     private $pdo;
 

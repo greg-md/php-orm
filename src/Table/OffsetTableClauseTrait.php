@@ -22,7 +22,7 @@ trait OffsetTableClauseTrait
     {
         if ($this->offsetAppliers and !$strategy->hasOffset()) {
             foreach ($this->offsetAppliers as $applier) {
-                $clause = $this->driver()->offset();
+                $clause = $this->connection()->offset();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -166,7 +166,7 @@ trait OffsetTableClauseTrait
     public function intoOffsetStrategy()
     {
         if (!$this->hasClause('OFFSET')) {
-            $this->setClause('OFFSET', $this->driver()->offset());
+            $this->setClause('OFFSET', $this->connection()->offset());
         }
 
         return $this;
@@ -184,7 +184,7 @@ trait OffsetTableClauseTrait
             return $this->intoOffsetStrategy();
         }
 
-        return $this->cleanClone()->setClause('OFFSET', $this->driver()->offset());
+        return $this->cleanClone()->setClause('OFFSET', $this->connection()->offset());
     }
 
     protected function needOffsetStrategyInQuery(QueryStrategy $query)

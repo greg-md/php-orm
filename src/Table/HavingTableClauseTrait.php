@@ -29,7 +29,7 @@ trait HavingTableClauseTrait
             $strategy->clearHaving();
 
             foreach ($this->havingAppliers as $applier) {
-                $clause = $this->driver()->having();
+                $clause = $this->connection()->having();
 
                 call_user_func_array($applier, [$clause]);
 
@@ -37,7 +37,7 @@ trait HavingTableClauseTrait
             }
 
             if ($items) {
-                $clause = $this->driver()->having();
+                $clause = $this->connection()->having();
 
                 foreach ($items as $where) {
                     $clause->havingLogic($where['logic'], $where['sql'], $where['params']);
@@ -700,7 +700,7 @@ trait HavingTableClauseTrait
     public function intoHavingStrategy()
     {
         if (!$this->hasClause('HAVING')) {
-            $this->setClause('HAVING', $this->driver()->having());
+            $this->setClause('HAVING', $this->connection()->having());
         }
 
         return $this;
@@ -718,7 +718,7 @@ trait HavingTableClauseTrait
             return $this->intoHavingStrategy();
         }
 
-        return $this->cleanClone()->setClause('HAVING', $this->driver()->having());
+        return $this->cleanClone()->setClause('HAVING', $this->connection()->having());
     }
 
     protected function needHavingStrategyInQuery(QueryStrategy $query)

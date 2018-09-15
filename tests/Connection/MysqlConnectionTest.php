@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Orm\Driver;
+namespace Greg\Orm\Connection;
 
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Clause\GroupByClause;
@@ -16,14 +16,14 @@ use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 use PHPUnit\Framework\TestCase;
 
-class MysqlDriverTest extends TestCase
+class MysqlConnectionTest extends TestCase
 {
     use PdoMock;
 
     /**
-     * @var MysqlDriver
+     * @var MysqlConnection
      */
-    private $driver;
+    private $connection;
 
     public function setUp()
     {
@@ -31,12 +31,12 @@ class MysqlDriverTest extends TestCase
 
         $this->initPdoMock();
 
-        $this->driver = new MysqlDriver($this->pdoMock);
+        $this->connection = new MysqlConnection($this->pdoMock);
     }
 
     public function testCanGetConnection()
     {
-        $this->assertInstanceOf(Pdo::class, $this->driver->pdo());
+        $this->assertInstanceOf(Pdo::class, $this->connection->pdo());
     }
 
     public function testCanCommitTransaction()
@@ -47,7 +47,7 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoMock->expects($this->once())->method('commit');
 
-        $this->driver->transaction(function () {
+        $this->connection->transaction(function () {
         });
     }
 
@@ -61,7 +61,7 @@ class MysqlDriverTest extends TestCase
 
         $this->expectException(\Exception::class);
 
-        $this->driver->transaction(function () {
+        $this->connection->transaction(function () {
             throw new \Exception('Call rollback.');
         });
     }
@@ -72,7 +72,7 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoMock->expects($this->once())->method('inTransaction');
 
-        $this->assertFalse($this->driver->inTransaction());
+        $this->assertFalse($this->connection->inTransaction());
     }
 
     public function testCanBeginTransaction()
@@ -81,7 +81,7 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoMock->expects($this->once())->method('beginTransaction');
 
-        $this->assertTrue($this->driver->beginTransaction());
+        $this->assertTrue($this->connection->beginTransaction());
     }
 
     public function testCanCommit()
@@ -90,9 +90,9 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoMock->expects($this->once())->method('commit');
 
-        $this->driver->beginTransaction();
+        $this->connection->beginTransaction();
 
-        $this->assertTrue($this->driver->commit());
+        $this->assertTrue($this->connection->commit());
     }
 
     public function testCanRollback()
@@ -101,9 +101,9 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoMock->expects($this->once())->method('rollBack');
 
-        $this->driver->beginTransaction();
+        $this->connection->beginTransaction();
 
-        $this->assertTrue($this->driver->rollBack());
+        $this->assertTrue($this->connection->rollBack());
     }
 
     public function testCanExecute()
@@ -114,21 +114,21 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoStatementMock->expects($this->once())->method('rowCount')->willReturn(1);
 
-        $this->assertEquals(1, $this->driver->execute('INSERT INTO `Table` (`Column`) VALUES ("foo")'));
+        $this->assertEquals(1, $this->connection->execute('INSERT INTO `Table` (`Column`) VALUES ("foo")'));
     }
 
     public function testCanGetLastInsertId()
     {
         $this->pdoMock->expects($this->once())->method('lastInsertId')->willReturn(1);
 
-        $this->assertEquals(1, $this->driver->lastInsertId());
+        $this->assertEquals(1, $this->connection->lastInsertId());
     }
 
     public function testCanQuote()
     {
         $this->pdoMock->method('quote')->willReturn('"foo"');
 
-        $this->assertEquals('"foo"', $this->driver->quote('foo'));
+        $this->assertEquals('"foo"', $this->connection->quote('foo'));
     }
 
     public function testCanFetch()
@@ -144,7 +144,7 @@ class MysqlDriverTest extends TestCase
             ->expects($this->once())
             ->method('bindValue');
 
-        $this->assertEquals([1], $this->driver->fetch('SELECT foo WHERE bar = ?', [1]));
+        $this->assertEquals([1], $this->connection->fetch('SELECT foo WHERE bar = ?', [1]));
     }
 
     public function testCanFetchAll()
@@ -156,7 +156,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetchAll')
             ->willReturn([[1], [1]]);
 
-        $this->assertEquals([[1], [1]], $this->driver->fetchAll('SELECT foo'));
+        $this->assertEquals([[1], [1]], $this->connection->fetchAll('SELECT foo'));
     }
 
     public function testCanGenerate()
@@ -168,7 +168,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetch')
             ->willReturnOnConsecutiveCalls([1], [1], false);
 
-        $generator = $this->driver->generate('SELECT foo');
+        $generator = $this->connection->generate('SELECT foo');
 
         $this->assertInstanceOf(\Generator::class, $generator);
 
@@ -186,7 +186,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetchColumn')
             ->willReturn(1);
 
-        $this->assertEquals(1, $this->driver->column('SELECT foo', [], 0));
+        $this->assertEquals(1, $this->connection->column('SELECT foo', [], 0));
     }
 
     public function testCanFetchColumnByName()
@@ -198,7 +198,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetch')
             ->willReturn(['foo' => 1]);
 
-        $this->assertEquals(1, $this->driver->column('SELECT foo', [], 'foo'));
+        $this->assertEquals(1, $this->connection->column('SELECT foo', [], 'foo'));
     }
 
     public function testCanFetchColumnAllByNumber()
@@ -210,7 +210,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetchColumn')
             ->willReturnOnConsecutiveCalls(1, 1, false);
 
-        $this->assertEquals([1, 1], $this->driver->columnAll('SELECT foo', [], 0));
+        $this->assertEquals([1, 1], $this->connection->columnAll('SELECT foo', [], 0));
     }
 
     public function testCanFetchColumnAllByName()
@@ -222,7 +222,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetch')
             ->willReturn(['foo' => 1], ['foo' => 1], false);
 
-        $this->assertEquals([1, 1], $this->driver->columnAll('SELECT foo', [], 'foo'));
+        $this->assertEquals([1, 1], $this->connection->columnAll('SELECT foo', [], 'foo'));
     }
 
     public function testCanFetchPairs()
@@ -234,7 +234,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetch')
             ->willReturnOnConsecutiveCalls([1, 1], [2, 2], false);
 
-        $this->assertEquals([1 => 1, 2 => 2], $this->driver->pairs('SELECT foo, bar'));
+        $this->assertEquals([1 => 1, 2 => 2], $this->connection->pairs('SELECT foo, bar'));
     }
 
     public function testCanTruncate()
@@ -243,7 +243,7 @@ class MysqlDriverTest extends TestCase
 
         $this->pdoStatementMock->method('rowCount')->willReturn(1);
 
-        $this->assertEquals(1, $this->driver->truncate('Table'));
+        $this->assertEquals(1, $this->connection->truncate('Table'));
     }
 
     public function testCanListen()
@@ -256,11 +256,11 @@ class MysqlDriverTest extends TestCase
 
         $mocker->expects($this->exactly(2))->method('call');
 
-        $this->driver->listen([$mocker, 'call']);
+        $this->connection->listen([$mocker, 'call']);
 
-        $this->driver->fetch('select 1');
+        $this->connection->fetch('select 1');
 
-        $this->driver->fetch('select 1');
+        $this->connection->fetch('select 1');
     }
 
     public function testCanDescribeTable()
@@ -286,7 +286,7 @@ class MysqlDriverTest extends TestCase
             ],
         ]);
 
-        $schema = $this->driver->describe('Table');
+        $schema = $this->connection->describe('Table');
 
         $this->assertEquals([
             'columns' => [
@@ -331,7 +331,7 @@ class MysqlDriverTest extends TestCase
      */
     public function testCanInstanceAQuery($name, $class)
     {
-        $this->assertInstanceOf($class, $this->driver->{$name}());
+        $this->assertInstanceOf($class, $this->connection->{$name}());
     }
 
     public function queries()

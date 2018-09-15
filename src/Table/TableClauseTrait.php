@@ -3,7 +3,7 @@
 namespace Greg\Orm\Table;
 
 use Greg\Orm\Clause\ClauseStrategy;
-use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Connection\Connection;
 use Greg\Orm\Model;
 use Greg\Orm\Query\QueryStrategy;
 
@@ -11,7 +11,7 @@ trait TableClauseTrait
 {
     abstract public function getQuery(): ?QueryStrategy;
 
-    abstract public function driver(): DriverStrategy;
+    abstract public function connection(): Connection;
 
     abstract public function clause(string $name): ClauseStrategy;
 

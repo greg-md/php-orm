@@ -88,7 +88,7 @@ trait DeleteTableQueryTrait
 
     public function newDeleteQuery(): DeleteQuery
     {
-        $query = $this->driver()->delete();
+        $query = $this->connection()->delete();
 
         $query->from($this);
 

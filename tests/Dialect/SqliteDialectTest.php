@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Dialect;
 
-use Greg\Orm\Driver\DriverStrategy;
+use Greg\Orm\Connection\Connection;
 use Greg\Orm\Model;
 use Greg\Orm\Query\SelectQuery;
 use PHPUnit\Framework\TestCase;
@@ -46,9 +46,9 @@ class SqliteDialectTest extends TestCase
 
         $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(['bar' => 'foo']));
 
-        $driverMock = $this->driverMock = $this->createMock(DriverStrategy::class);
+        $connectionMock = $this->createMock(Connection::class);
 
-        $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(new class($driverMock) extends Model {
+        $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(new class($connectionMock) extends Model {
             protected $alias = 'bar';
 
             public function name(): string

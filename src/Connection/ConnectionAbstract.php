@@ -1,6 +1,6 @@
 <?php
 
-namespace Greg\Orm\Driver;
+namespace Greg\Orm\Connection;
 
 use Greg\Orm\Clause\FromClause;
 use Greg\Orm\Clause\GroupByClause;
@@ -15,7 +15,7 @@ use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 
-abstract class DriverAbstract implements DriverStrategy
+abstract class ConnectionAbstract implements Connection
 {
     /**
      * @var callable[]

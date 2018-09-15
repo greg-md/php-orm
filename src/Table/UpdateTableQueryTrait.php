@@ -188,7 +188,7 @@ trait UpdateTableQueryTrait
 
     public function newUpdateQuery(): UpdateQuery
     {
-        $query = $this->driver()->update();
+        $query = $this->connection()->update();
 
         $query->table($this);
 
