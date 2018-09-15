@@ -159,7 +159,7 @@ class SqliteDriverTest extends TestCase
         $this->assertEquals([[1], [1]], $this->driver->fetchAll('SELECT foo'));
     }
 
-    public function testCanFetchYield()
+    public function testCanGenerate()
     {
         $this->mockStatements();
 
@@ -168,7 +168,7 @@ class SqliteDriverTest extends TestCase
             ->method('fetch')
             ->willReturnOnConsecutiveCalls([1], [1], false);
 
-        $generator = $this->driver->fetchYield('SELECT foo');
+        $generator = $this->driver->generate('SELECT foo');
 
         $this->assertInstanceOf(\Generator::class, $generator);
 
@@ -225,42 +225,6 @@ class SqliteDriverTest extends TestCase
         $this->assertEquals([1, 1], $this->driver->columnAll('SELECT foo', [], 'foo'));
     }
 
-    public function testCanFetchColumnYieldByNumber()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock
-            ->expects($this->exactly(3))
-            ->method('fetchColumn')
-            ->willReturnOnConsecutiveCalls(1, 1, false);
-
-        $generator = $this->driver->generateColumn('SELECT foo', [], 0);
-
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        foreach ($generator as $record) {
-            $this->assertEquals(1, $record);
-        }
-    }
-
-    public function testCanFetchColumnYieldByName()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock
-            ->expects($this->exactly(3))
-            ->method('fetch')
-            ->willReturnOnConsecutiveCalls(['foo' => 1], ['foo' => 1], false);
-
-        $generator = $this->driver->generateColumn('SELECT foo', [], 'foo');
-
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        foreach ($generator as $record) {
-            $this->assertEquals(1, $record);
-        }
-    }
-
     public function testCanFetchPairs()
     {
         $this->mockStatements();
@@ -271,24 +235,6 @@ class SqliteDriverTest extends TestCase
             ->willReturnOnConsecutiveCalls([1, 1], [2, 2], false);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->driver->pairs('SELECT foo, bar'));
-    }
-
-    public function testCanFetchPairsYield()
-    {
-        $this->mockStatements();
-
-        $this->pdoStatementMock
-            ->expects($this->exactly(3))
-            ->method('fetch')
-            ->willReturnOnConsecutiveCalls([1, 1], [2, 2], false);
-
-        $generator = $this->driver->pairsYield('SELECT foo, bar');
-
-        $result = [[1 => 1], [2 => 2]];
-
-        foreach ($generator as $key => $value) {
-            $this->assertEquals(array_shift($result), [$key => $value]);
-        }
     }
 
     public function testCanTruncate()

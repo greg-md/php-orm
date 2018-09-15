@@ -362,19 +362,13 @@ trait RowsTrait
     }
 
     /**
-     * @param callable|null $callable
-     * @param bool          $yield
-     *
+     * @param callable $callable
      * @return $this|null
      */
-    public function search(callable $callable = null, bool $yield = true)
+    public function search(callable $callable)
     {
-        foreach ($yield ? $this->getIterator() : $this->getRowsIterator() as $key => $row) {
-            if ($callable !== null) {
-                if (call_user_func_array($callable, [$row, $key])) {
-                    return $row;
-                }
-            } else {
+        foreach ($this as $key => $row) {
+            if (call_user_func_array($callable, [$row, $key])) {
                 return $row;
             }
         }
@@ -505,20 +499,6 @@ trait RowsTrait
                 true
             );
         }
-    }
-
-    /**
-     * @return $this[]
-     */
-    public function getRowsIterator()
-    {
-        $rows = [];
-
-        foreach ($this->rows as $row) {
-            $rows[] = $this->cleanClone()->appendRecordRef($row['record'], $row['isNew'], $row['modified'], true);
-        }
-
-        return $rows;
     }
 
     protected function hasInRow(array &$row, string $column): bool

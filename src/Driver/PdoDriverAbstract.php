@@ -119,7 +119,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
      *
      * @return string[][]|\Generator
      */
-    public function fetchYield(string $sql, array $params = []): \Generator
+    public function generate(string $sql, array $params = []): \Generator
     {
         $stmt = $this->prepare($sql, $params);
 
@@ -180,21 +180,6 @@ abstract class PdoDriverAbstract extends DriverAbstract
         return $values;
     }
 
-    public function generateColumn(string $sql, array $params = [], string $column = '0'): \Generator
-    {
-        $stmt = $this->prepare($sql, $params);
-
-        if (ctype_digit((string) $column)) {
-            while (($value = $stmt->fetchColumn($column)) !== false) {
-                yield $value;
-            }
-        } else {
-            while ($record = $stmt->fetch()) {
-                yield array_key_exists($column, $record) ? $record[$column] : null;
-            }
-        }
-    }
-
     /**
      * @param string $sql
      * @param array  $params
@@ -214,15 +199,6 @@ abstract class PdoDriverAbstract extends DriverAbstract
         }
 
         return $pairs;
-    }
-
-    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1'): \Generator
-    {
-        $stmt = $this->prepare($sql, $params);
-
-        while ($record = $stmt->fetch()) {
-            yield array_key_exists($key, $record) ? $record[$key] : null => array_key_exists($value, $record) ? $record[$value] : null;
-        }
     }
 
     /**

@@ -378,7 +378,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateOneByOne()
     {
-        $this->driverMock->expects($this->exactly(3))->method('fetchYield')->will($this->onConsecutiveCalls(
+        $this->driverMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
             (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
@@ -442,7 +442,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateRowsOneByOne()
     {
-        $this->driverMock->expects($this->exactly(3))->method('fetchYield')->will($this->onConsecutiveCalls(
+        $this->driverMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
             (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
@@ -676,7 +676,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function () {
+        $this->driverMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
         })());
@@ -696,7 +696,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function () {
+        $this->driverMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
         })());
@@ -837,7 +837,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function () {
+        $this->driverMock->method('generate')->willReturn((function () {
             if (false) {
                 yield;
             }
@@ -850,7 +850,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function () {
+        $this->driverMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
 
             yield ['Id' => 2];
@@ -863,7 +863,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->driverMock->method('fetchYield')->willReturn((function () {
+        $this->driverMock->method('generate')->willReturn((function () {
             yield ['Id' => 1];
 
             yield ['Id' => 2];

@@ -220,7 +220,7 @@ trait TableTrait
         } else {
             [$sql, $params] = $this->selectQueryInstanceToSql();
 
-            yield from $this->driver()->fetchYield($sql, $params);
+            yield from $this->driver()->generate($sql, $params);
         }
     }
 
@@ -284,7 +284,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-        $recordsGenerator = $this->driver()->fetchYield($sql, $params);
+        $recordsGenerator = $this->driver()->generate($sql, $params);
 
         $rows = $this->cleanClone();
 
@@ -306,7 +306,7 @@ trait TableTrait
         } else {
             [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-            $recordsGenerator = $this->driver()->fetchYield($sql, $params);
+            $recordsGenerator = $this->driver()->generate($sql, $params);
         }
 
         foreach ($recordsGenerator as $record) {
@@ -750,7 +750,7 @@ trait TableTrait
             [$sql, $params] = $query->limit($chunkSize)->offset($offset)->toSql();
 
             if ($oneByOne) {
-                $recordsGenerator = $this->driver()->fetchYield($sql, $params);
+                $recordsGenerator = $this->driver()->generate($sql, $params);
 
                 $k = 0;
 

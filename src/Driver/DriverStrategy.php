@@ -89,7 +89,7 @@ interface DriverStrategy
      *
      * @return string[][]|\Generator
      */
-    public function fetchYield(string $sql, array $params = []): \Generator;
+    public function generate(string $sql, array $params = []): \Generator;
 
     /**
      * @param string $sql
@@ -112,31 +112,12 @@ interface DriverStrategy
     /**
      * @param string $sql
      * @param array  $params
-     * @param string $column
-     *
-     * @return mixed|\Generator
-     */
-    public function generateColumn(string $sql, array $params = [], string $column = '0'): \Generator;
-
-    /**
-     * @param string $sql
-     * @param array  $params
      * @param string $key
      * @param string $value
      *
      * @return string[]
      */
     public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array;
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     * @param string $key
-     * @param string $value
-     *
-     * @return mixed|\Generator
-     */
-    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1'): \Generator;
 
     /**
      * @return DialectStrategy

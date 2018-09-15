@@ -214,9 +214,9 @@ class DriverManager implements DriverStrategy
      *
      * @return string[][]|\Generator
      */
-    public function fetchYield(string $sql, array $params = []): \Generator
+    public function generate(string $sql, array $params = []): \Generator
     {
-        yield from $this->driver()->fetchYield($sql, $params);
+        yield from $this->driver()->generate($sql, $params);
     }
 
     /**
@@ -246,18 +246,6 @@ class DriverManager implements DriverStrategy
     /**
      * @param string $sql
      * @param array  $params
-     * @param string $column
-     *
-     * @return mixed|\Generator
-     */
-    public function generateColumn(string $sql, array $params = [], string $column = '0'): \Generator
-    {
-        yield from $this->driver()->generateColumn($sql, $params, $column);
-    }
-
-    /**
-     * @param string $sql
-     * @param array  $params
      * @param string $key
      * @param string $value
      *
@@ -266,19 +254,6 @@ class DriverManager implements DriverStrategy
     public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array
     {
         return $this->driver()->pairs($sql, $params, $key, $value);
-    }
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     * @param string $key
-     * @param string $value
-     *
-     * @return mixed|\Generator
-     */
-    public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1'): \Generator
-    {
-        yield from $this->driver()->pairsYield($sql, $params, $key, $value);
     }
 
     /**
