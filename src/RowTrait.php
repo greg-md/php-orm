@@ -24,6 +24,11 @@ trait RowTrait
         return null;
     }
 
+    /**
+     * @param int $value
+     * @return $this
+     * @throws \Exception
+     */
     public function setAutoIncrement(int $value)
     {
         if (!$key = $this->autoIncrement()) {
@@ -46,6 +51,11 @@ trait RowTrait
         return $keys;
     }
 
+    /**
+     * @param $value
+     * @return $this
+     * @throws \Exception
+     */
     public function setPrimary($value)
     {
         if (!$keys = $this->primary()) {

@@ -13,6 +13,10 @@ trait OffsetTableClauseTrait
 
     private $offsetAppliers = [];
 
+    /**
+     * @param OffsetClauseStrategy $strategy
+     * @return $this
+     */
     public function assignOffsetAppliers(OffsetClauseStrategy $strategy)
     {
         if ($this->offsetAppliers and !$strategy->hasOffset()) {
@@ -28,6 +32,10 @@ trait OffsetTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setOffsetApplier(callable $callable)
     {
         $this->offsetAppliers[] = $callable;
@@ -51,6 +59,9 @@ trait OffsetTableClauseTrait
         return $this->offsetAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearOffsetAppliers()
     {
         $this->offsetAppliers = [];
@@ -58,6 +69,10 @@ trait OffsetTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param int $number
+     * @return $this
+     */
     public function offset(int $number)
     {
         $instance = $this->offsetStrategyInstance();
@@ -85,6 +100,9 @@ trait OffsetTableClauseTrait
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function clearOffset()
     {
         if ($clause = $this->getOffsetStrategy()) {
@@ -139,6 +157,9 @@ trait OffsetTableClauseTrait
         return $this->getOffsetClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoOffsetStrategy()
     {
         if (!$this->hasClause('OFFSET')) {

@@ -151,6 +151,10 @@ trait TableTrait
         return $name;
     }
 
+    /**
+     * @param array $defaults
+     * @return $this
+     */
     public function setDefaults(array $defaults)
     {
         $this->defaults = $defaults;
@@ -168,11 +172,19 @@ trait TableTrait
         return $this->driver()->describe($this->fullName());
     }
 
+    /**
+     * @param array $record
+     * @return $this
+     */
     public function new(array $record = [])
     {
         return $this->cleanClone()->appendRecord($record, true);
     }
 
+    /**
+     * @param array $record
+     * @return $this
+     */
     public function create(array $record = [])
     {
         return $this->cleanClone()->appendRecord($record, true)->save();
@@ -238,6 +250,9 @@ trait TableTrait
         return $this->driver()->pairs($sql, $params, $key, $value);
     }
 
+    /**
+     * @return $this|null
+     */
     public function fetchRow()
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
@@ -249,6 +264,10 @@ trait TableTrait
         return null;
     }
 
+    /**
+     * @return $this|null
+     * @throws SqlException
+     */
     public function fetchRowOrFail()
     {
         if (!$row = $this->fetchRow()) {
@@ -258,6 +277,9 @@ trait TableTrait
         return $row;
     }
 
+    /**
+     * @return $this
+     */
     public function fetchRows()
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
@@ -273,6 +295,10 @@ trait TableTrait
         return $rows;
     }
 
+    /**
+     * @param int|null $chunkSize
+     * @return \Generator|$this[]
+     */
     public function generateRows(?int $chunkSize = null): \Generator
     {
         if ($chunkSize) {
@@ -288,6 +314,10 @@ trait TableTrait
         }
     }
 
+    /**
+     * @param int $chunkSize
+     * @return \Generator|$this[]
+     */
     public function generateRowsInChunks(int $chunkSize): \Generator
     {
         $recordsGenerator = $this->generateQuery($this->rowsQueryInstance()->selectQuery(), $chunkSize, false);
@@ -358,6 +388,11 @@ trait TableTrait
         return $this->whereMultiple($this->combinePrimary($primary))->fetchRow();
     }
 
+    /**
+     * @param $primary
+     * @return $this|null
+     * @throws SqlException
+     */
     public function findOrFail($primary)
     {
         if (!$row = $this->find($primary)) {
@@ -367,11 +402,20 @@ trait TableTrait
         return $row;
     }
 
+    /**
+     * @param array $data
+     * @return $this|null
+     */
     public function first(array $data)
     {
         return $this->whereMultiple($data)->fetchRow();
     }
 
+    /**
+     * @param array $data
+     * @return $this|null
+     * @throws SqlException
+     */
     public function firstOrFail(array $data)
     {
         if (!$row = $this->first($data)) {
@@ -381,6 +425,10 @@ trait TableTrait
         return $row;
     }
 
+    /**
+     * @param array $data
+     * @return $this
+     */
     public function firstOrNew(array $data)
     {
         if (!$row = $this->first($data)) {
@@ -390,6 +438,10 @@ trait TableTrait
         return $row;
     }
 
+    /**
+     * @param array $data
+     * @return $this
+     */
     public function firstOrCreate(array $data)
     {
         if (!$row = $this->first($data)) {
@@ -399,6 +451,10 @@ trait TableTrait
         return $row;
     }
 
+    /**
+     * @return array
+     * @throws SqlException
+     */
     public function pairs()
     {
         if (!$columnName = $this->nameColumn()) {
@@ -729,7 +785,7 @@ trait TableTrait
             return $this->selectQueryInstance()->toSql();
         }
 
-        return [$this->selectAllSql(), []];
+        return [$this->driver()->dialect()->selectAll($this->name()), []];
     }
 
     protected function rowsQueryInstanceToSql()
@@ -738,11 +794,6 @@ trait TableTrait
             return $this->rowsQueryInstance()->toSql();
         }
 
-        return [$this->selectAllSql(), []];
-    }
-
-    protected function selectAllSql()
-    {
-        return 'SELECT * FROM `' . $this->name() . '`';
+        return [$this->driver()->dialect()->selectAll($this->name()), []];
     }
 }

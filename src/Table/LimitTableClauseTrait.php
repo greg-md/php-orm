@@ -13,6 +13,10 @@ trait LimitTableClauseTrait
 
     private $limitAppliers = [];
 
+    /**
+     * @param LimitClauseStrategy $strategy
+     * @return $this
+     */
     public function assignLimitAppliers(LimitClauseStrategy $strategy)
     {
         if ($this->limitAppliers and !$strategy->hasLimit()) {
@@ -28,6 +32,10 @@ trait LimitTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setLimitApplier(callable $callable)
     {
         $this->limitAppliers[] = $callable;
@@ -51,6 +59,9 @@ trait LimitTableClauseTrait
         return $this->limitAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearLimitAppliers()
     {
         $this->limitAppliers = [];
@@ -90,6 +101,9 @@ trait LimitTableClauseTrait
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function clearLimit()
     {
         if ($clause = $this->getLimitStrategy()) {
@@ -144,6 +158,9 @@ trait LimitTableClauseTrait
         return $this->getLimitClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoLimitStrategy()
     {
         if (!$this->hasClause('LIMIT')) {

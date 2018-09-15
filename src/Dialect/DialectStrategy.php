@@ -102,4 +102,6 @@ interface DialectStrategy
     public function sum(string $column, string $alias = null): string;
 
     public function selectSum(string $column, string $alias = null): string;
+
+    public function selectAll(string $from): string;
 }

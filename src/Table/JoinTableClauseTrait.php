@@ -13,6 +13,10 @@ trait JoinTableClauseTrait
 
     private $joinAppliers = [];
 
+    /**
+     * @param JoinClauseStrategy $strategy
+     * @return $this
+     */
     public function assignJoinAppliers(JoinClauseStrategy $strategy)
     {
         if ($this->joinAppliers) {
@@ -38,6 +42,10 @@ trait JoinTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setJoinApplier(callable $callable)
     {
         $this->joinAppliers[] = $callable;
@@ -61,6 +69,9 @@ trait JoinTableClauseTrait
         return $this->joinAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearJoinAppliers()
     {
         $this->joinAppliers = [];
@@ -68,6 +79,12 @@ trait JoinTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param $table
+     * @param string|null $on
+     * @param string[] ...$params
+     * @return $this
+     */
     public function left($table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
@@ -77,6 +94,11 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $table
+     * @param $on
+     * @return $this
+     */
     public function leftOn($table, $on)
     {
         $instance = $this->joinStrategyInstance();
@@ -86,6 +108,12 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $table
+     * @param string|null $on
+     * @param string[] ...$params
+     * @return $this
+     */
     public function right($table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
@@ -95,6 +123,11 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $table
+     * @param $on
+     * @return $this
+     */
     public function rightOn($table, $on)
     {
         $instance = $this->joinStrategyInstance();
@@ -104,6 +137,12 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $table
+     * @param string|null $on
+     * @param string[] ...$params
+     * @return $this
+     */
     public function inner($table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
@@ -113,6 +152,11 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $table
+     * @param $on
+     * @return $this
+     */
     public function innerOn($table, $on)
     {
         $instance = $this->joinStrategyInstance();
@@ -122,6 +166,10 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $table
+     * @return $this
+     */
     public function cross($table)
     {
         $instance = $this->joinStrategyInstance();
@@ -131,6 +179,13 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $source
+     * @param $table
+     * @param string|null $on
+     * @param string[] ...$params
+     * @return $this
+     */
     public function leftTo($source, $table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
@@ -140,6 +195,12 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $source
+     * @param $table
+     * @param $on
+     * @return $this
+     */
     public function leftToOn($source, $table, $on)
     {
         $instance = $this->joinStrategyInstance();
@@ -149,6 +210,13 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $source
+     * @param $table
+     * @param string|null $on
+     * @param string[] ...$params
+     * @return $this
+     */
     public function rightTo($source, $table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
@@ -158,6 +226,12 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $source
+     * @param $table
+     * @param $on
+     * @return $this
+     */
     public function rightToOn($source, $table, $on)
     {
         $instance = $this->joinStrategyInstance();
@@ -184,6 +258,12 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $source
+     * @param $table
+     * @param $on
+     * @return $this
+     */
     public function innerToOn($source, $table, $on)
     {
         $instance = $this->joinStrategyInstance();
@@ -193,6 +273,11 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $source
+     * @param $table
+     * @return $this
+     */
     public function crossTo($source, $table)
     {
         $instance = $this->joinStrategyInstance();
@@ -202,6 +287,9 @@ trait JoinTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasJoin(): bool
     {
         if ($clause = $this->getJoinStrategy()) {
@@ -211,6 +299,9 @@ trait JoinTableClauseTrait
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function getJoin(): array
     {
         if ($clause = $this->getJoinStrategy()) {
@@ -220,6 +311,9 @@ trait JoinTableClauseTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearJoin()
     {
         if ($clause = $this->getJoinStrategy()) {
@@ -229,6 +323,10 @@ trait JoinTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param string|null $source
+     * @return array
+     */
     public function joinToSql(string $source = null): array
     {
         if ($clause = $this->getJoinStrategy()) {
@@ -238,11 +336,18 @@ trait JoinTableClauseTrait
         return ['', []];
     }
 
+    /**
+     * @param string|null $source
+     * @return string
+     */
     public function joinToString(string $source = null): string
     {
         return $this->joinToSql($source)[0];
     }
 
+    /**
+     * @return JoinClause
+     */
     public function joinClause(): JoinClause
     {
         /** @var JoinClause $clause */
@@ -288,6 +393,9 @@ trait JoinTableClauseTrait
         return $this->getJoinClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoJoinStrategy()
     {
         if (!$this->hasClause('JOIN')) {

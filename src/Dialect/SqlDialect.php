@@ -301,4 +301,9 @@ class SqlDialect implements DialectStrategy
     {
         return 'SELECT ' . $this->sum($column, $alias);
     }
+
+    public function selectAll(string $from): string
+    {
+        return 'SELECT * FROM `' . $from . '`';
+    }
 }

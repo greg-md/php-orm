@@ -210,7 +210,7 @@ trait SelectTableQueryTraitTest
 
     public function testCanLockInSharedMode()
     {
-        $query = $this->model()->lockInShareMode();
+        $query = $this->model()->lockForShare();
 
         $this->assertEquals('SELECT * FROM `Table`', $query->toString());
     }

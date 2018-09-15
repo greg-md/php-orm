@@ -14,6 +14,10 @@ trait WhereTableClauseTrait
 
     private $whereAppliers = [];
 
+    /**
+     * @param WhereClauseStrategy $strategy
+     * @return $this
+     */
     public function assignWhereAppliers(WhereClauseStrategy $strategy)
     {
         if ($this->whereAppliers) {
@@ -43,6 +47,10 @@ trait WhereTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setWhereApplier(callable $callable)
     {
         $this->whereAppliers[] = $callable;
@@ -66,6 +74,9 @@ trait WhereTableClauseTrait
         return $this->whereAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearWhereAppliers()
     {
         $this->whereAppliers = [];
@@ -73,6 +84,12 @@ trait WhereTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function where($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -82,6 +99,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orWhere($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -91,6 +114,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $columns
+     * @return $this
+     */
     public function whereMultiple(array $columns)
     {
         $instance = $this->whereStrategyInstance();
@@ -100,6 +127,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $columns
+     * @return $this
+     */
     public function orWhereMultiple(array $columns)
     {
         $instance = $this->whereStrategyInstance();
@@ -109,6 +140,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function whereDate($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -118,6 +155,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orWhereDate($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -127,6 +170,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function whereTime($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -136,6 +185,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orWhereTime($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -145,6 +200,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function whereYear($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -154,6 +215,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orWhereYear($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -163,6 +230,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function whereMonth($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -172,6 +245,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orWhereMonth($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -181,6 +260,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function whereDay($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -190,6 +275,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orWhereDay($column, $operator, $value = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -199,6 +290,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column1
+     * @param $operator
+     * @param null $column2
+     * @return $this
+     */
     public function whereRelation($column1, $operator, $column2 = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -208,6 +305,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column1
+     * @param $operator
+     * @param null $column2
+     * @return $this
+     */
     public function orWhereRelation($column1, $operator, $column2 = null)
     {
         $instance = $this->whereStrategyInstance();
@@ -217,6 +320,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $relations
+     * @return $this
+     */
     public function whereRelations(array $relations)
     {
         $instance = $this->whereStrategyInstance();
@@ -226,6 +333,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $relations
+     * @return $this
+     */
     public function orWhereRelations(array $relations)
     {
         $instance = $this->whereStrategyInstance();
@@ -235,6 +346,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function whereIs(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -244,6 +359,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orWhereIs(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -253,6 +372,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function whereIsNot(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -262,6 +385,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orWhereIsNot(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -271,6 +398,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function whereIsNull(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -280,6 +411,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orWhereIsNull(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -289,6 +424,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function whereIsNotNull(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -298,6 +437,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orWhereIsNotNull(string $column)
     {
         $instance = $this->whereStrategyInstance();
@@ -307,6 +450,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function whereBetween(string $column, int $min, int $max)
     {
         $instance = $this->whereStrategyInstance();
@@ -316,6 +465,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function orWhereBetween(string $column, int $min, int $max)
     {
         $instance = $this->whereStrategyInstance();
@@ -325,6 +480,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function whereNotBetween(string $column, int $min, int $max)
     {
         $instance = $this->whereStrategyInstance();
@@ -334,6 +495,12 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function orWhereNotBetween(string $column, int $min, int $max)
     {
         $instance = $this->whereStrategyInstance();
@@ -343,6 +510,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $strategy
+     * @return $this
+     */
     public function whereConditions($strategy)
     {
         $instance = $this->whereStrategyInstance();
@@ -352,6 +523,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $strategy
+     * @return $this
+     */
     public function orWhereConditions($strategy)
     {
         $instance = $this->whereStrategyInstance();
@@ -361,6 +536,11 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function whereRaw(string $sql, string ...$params)
     {
         $instance = $this->whereStrategyInstance();
@@ -370,6 +550,11 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function orWhereRaw(string $sql, string ...$params)
     {
         $instance = $this->whereStrategyInstance();
@@ -379,6 +564,9 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasWhere(): bool
     {
         if ($clause = $this->getWhereStrategy()) {
@@ -397,6 +585,9 @@ trait WhereTableClauseTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearWhere()
     {
         if ($clause = $this->getWhereStrategy()) {
@@ -406,6 +597,10 @@ trait WhereTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param SelectQuery $sql
+     * @return $this
+     */
     public function whereExists(SelectQuery $sql)
     {
         $instance = $this->whereStrategyInstance();
@@ -415,6 +610,10 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param SelectQuery $sql
+     * @return $this
+     */
     public function whereNotExists(SelectQuery $sql)
     {
         $instance = $this->whereStrategyInstance();
@@ -424,6 +623,11 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function whereExistsRaw(string $sql, string ...$params)
     {
         $instance = $this->whereStrategyInstance();
@@ -433,6 +637,11 @@ trait WhereTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function whereNotExistsRaw(string $sql, string ...$params)
     {
         $instance = $this->whereStrategyInstance();
@@ -460,6 +669,9 @@ trait WhereTableClauseTrait
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function clearExists()
     {
         if ($clause = $this->getWhereStrategy()) {
@@ -528,6 +740,9 @@ trait WhereTableClauseTrait
         return $this->getWhereClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoWhereStrategy()
     {
         if (!$this->hasClause('WHERE')) {

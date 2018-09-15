@@ -45,6 +45,13 @@ trait RowsTrait
         return $this->rowsLimit;
     }
 
+    /**
+     * @param array $record
+     * @param bool $isNew
+     * @param array $modified
+     * @param bool $isTrusted
+     * @return $this
+     */
     public function appendRecord(array $record, bool $isNew = false, array $modified = [], bool $isTrusted = false)
     {
         if (!$isTrusted) {
@@ -64,6 +71,13 @@ trait RowsTrait
         return $this;
     }
 
+    /**
+     * @param array $record
+     * @param bool $isNew
+     * @param array $modified
+     * @param bool $isTrusted
+     * @return $this
+     */
     public function appendRecordRef(array &$record, bool &$isNew = false, array &$modified = [], bool $isTrusted = false)
     {
         if (!$isTrusted) {
@@ -83,6 +97,12 @@ trait RowsTrait
         return $this;
     }
 
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @param callable|null $totalQuery
+     * @return $this
+     */
     public function pagination(int $limit = 20, int $offset = 0, ?callable $totalQuery = null)
     {
         $query = clone $this->selectQueryInstance();
@@ -90,6 +110,12 @@ trait RowsTrait
         return $query->paginate($limit, $offset, $totalQuery);
     }
 
+    /**
+     * @param int $limit
+     * @param int $offset
+     * @param callable|null $totalQuery
+     * @return $this
+     */
     public function paginate(int $limit = 20, int $offset = 0, ?callable $totalQuery = null)
     {
         $this->rowsLimit = $limit;
@@ -97,8 +123,6 @@ trait RowsTrait
         $this->rowsOffset = $offset;
 
         foreach ($this->limit($limit)->offset($offset)->generate() as $record) {
-//            $record = $this->prepareRecord($record);
-
             $this->appendRecord($record, false, [], true);
         }
 
@@ -146,6 +170,11 @@ trait RowsTrait
         return (bool) $this->rows;
     }
 
+    /**
+     * @param string $column
+     * @param $value
+     * @return $this
+     */
     public function set(string $column, $value)
     {
         if (method_exists($this, $this->getAttributeSetMethod($column))) {
@@ -168,6 +197,10 @@ trait RowsTrait
         return $this;
     }
 
+    /**
+     * @param array $values
+     * @return $this
+     */
     public function setMultiple(array $values)
     {
         foreach ($values as $column => $value) {
@@ -212,6 +245,10 @@ trait RowsTrait
         return $values;
     }
 
+    /**
+     * @param array $values
+     * @return $this
+     */
     public function save(array $values = [])
     {
         $this->setMultiple($values);
@@ -244,6 +281,9 @@ trait RowsTrait
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function destroy()
     {
         $keys = [];
@@ -268,6 +308,10 @@ trait RowsTrait
         return $this;
     }
 
+    /**
+     * @param int $number
+     * @return $this|null
+     */
     public function row(int $number = 0)
     {
         if (!isset($this->rows[$number])) {
@@ -291,6 +335,9 @@ trait RowsTrait
         return array_column($this->rows, 'record');
     }
 
+    /**
+     * @return $this
+     */
     public function markAsNew()
     {
         foreach ($this->rows as &$row) {
@@ -301,6 +348,9 @@ trait RowsTrait
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function markAsOld()
     {
         foreach ($this->rows as &$row) {
@@ -332,6 +382,12 @@ trait RowsTrait
         return null;
     }
 
+    /**
+     * @param string $column
+     * @param $operator
+     * @param null $value
+     * @return $this|null
+     */
     public function searchWhere(string $column, $operator, $value = null)
     {
         if (func_num_args() < 3) {
@@ -361,6 +417,12 @@ trait RowsTrait
         });
     }
 
+    /**
+     * @param Model $relationshipTable
+     * @param $relationshipKey
+     * @param null $tableKey
+     * @return Model
+     */
     public function hasMany(Model $relationshipTable, $relationshipKey, $tableKey = null)
     {
         $relationshipTable = clone $relationshipTable;
@@ -390,6 +452,12 @@ trait RowsTrait
         return $relationshipTable;
     }
 
+    /**
+     * @param Model $referenceTable
+     * @param $tableKey
+     * @param null $referenceTableKey
+     * @return Model
+     */
     public function belongsTo(Model $referenceTable, $tableKey, $referenceTableKey = null)
     {
         $referenceTable = clone $referenceTable;

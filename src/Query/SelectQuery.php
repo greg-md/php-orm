@@ -373,7 +373,7 @@ class SelectQuery extends SqlAbstract implements
     /**
      * @return $this
      */
-    public function lockInShareMode()
+    public function lockForShare()
     {
         $this->lock = self::LOCK_FOR_SHARE;
 

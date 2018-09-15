@@ -13,6 +13,10 @@ trait GroupByTableClauseTrait
 
     private $groupByAppliers = [];
 
+    /**
+     * @param GroupByClauseStrategy $strategy
+     * @return $this
+     */
     public function assignGroupByAppliers(GroupByClauseStrategy $strategy)
     {
         if ($this->groupByAppliers) {
@@ -38,6 +42,10 @@ trait GroupByTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setGroupByApplier(callable $callable)
     {
         $this->groupByAppliers[] = $callable;
@@ -61,6 +69,9 @@ trait GroupByTableClauseTrait
         return $this->groupByAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearGroupByAppliers()
     {
         $this->groupByAppliers = [];
@@ -68,6 +79,10 @@ trait GroupByTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function groupBy(string $column)
     {
         $instance = $this->groupByStrategyInstance();
@@ -77,6 +92,11 @@ trait GroupByTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function groupByRaw(string $sql, string ...$params)
     {
         $instance = $this->groupByStrategyInstance();
@@ -86,6 +106,9 @@ trait GroupByTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasGroupBy(): bool
     {
         if ($clause = $this->getGroupByStrategy()) {
@@ -95,6 +118,9 @@ trait GroupByTableClauseTrait
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function getGroupBy(): array
     {
         if ($clause = $this->getGroupByStrategy()) {
@@ -104,6 +130,9 @@ trait GroupByTableClauseTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearGroupBy()
     {
         if ($clause = $this->getGroupByStrategy()) {
@@ -172,6 +201,9 @@ trait GroupByTableClauseTrait
         return $this->getGroupByClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoGroupByStrategy()
     {
         if (!$this->hasClause('GROUP_BY')) {

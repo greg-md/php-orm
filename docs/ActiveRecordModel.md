@@ -72,8 +72,10 @@ List of **supported methods**:
         * [firstOrNew](#firstOrNew)
         * [firstOrCreate](#firstOrCreate)
         * [pairs](#pairs)
-        * [chunk](#chunk)
-        * [chunkRows](#chunkRows)
+        * [generate](#generate)
+        * [generateInChunks](#generateInChunks)
+        * [generateRows](#generateRows)
+        * [generateRowsInChunks](#generateRowsInChunks)
         * [exists](#exists)
     * **Update**
         * [update](#update)

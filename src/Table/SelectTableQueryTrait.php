@@ -18,6 +18,10 @@ trait SelectTableQueryTrait
 {
     use TableQueryTrait;
 
+    /**
+     * @param bool $value
+     * @return $this
+     */
     public function distinct(bool $value = true)
     {
         $instance = $this->selectQueryInstance();
@@ -27,6 +31,12 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param $table
+     * @param string $column
+     * @param string[] ...$columns
+     * @return $this
+     */
     public function selectFrom($table, string $column, string ...$columns)
     {
         $instance = $this->selectQueryInstance();
@@ -36,6 +46,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param string[] ...$columns
+     * @return $this
+     */
     public function select(string $column, string ...$columns)
     {
         $instance = $this->selectQueryInstance();
@@ -45,6 +60,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param string[] ...$columns
+     * @return $this
+     */
     public function selectOnly(string $column, string ...$columns)
     {
         return $this->selectFrom($this, $column, ...$columns);
@@ -65,6 +85,12 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param array $columns
+     * @param string $delimiter
+     * @param null|string $alias
+     * @return $this
+     */
     public function selectConcat(array $columns, string $delimiter = '', ?string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -74,6 +100,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param SelectQuery $column
+     * @param null|string $alias
+     * @return $this
+     */
     public function selectSelect(SelectQuery $column, ?string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -83,6 +114,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function selectRaw(string $sql, string ...$params)
     {
         $instance = $this->selectQueryInstance();
@@ -92,6 +128,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
     public function selectCount(string $column = '*', string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -101,6 +142,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
     public function selectMax(string $column, string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -110,6 +156,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
     public function selectMin(string $column, string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -119,6 +170,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
     public function selectAvg(string $column, string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -128,6 +184,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return $this
+     */
     public function selectSum(string $column, string $alias = null)
     {
         $instance = $this->selectQueryInstance();
@@ -155,6 +216,9 @@ trait SelectTableQueryTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearSelect()
     {
         if ($query = $this->getSelectQuery()) {
@@ -164,6 +228,10 @@ trait SelectTableQueryTrait
         return $this;
     }
 
+    /**
+     * @param SelectQuery $query
+     * @return $this
+     */
     public function union(SelectQuery $query)
     {
         $instance = $this->selectQueryInstance();
@@ -173,6 +241,10 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param SelectQuery $query
+     * @return $this
+     */
     public function unionAll(SelectQuery $query)
     {
         $instance = $this->selectQueryInstance();
@@ -182,6 +254,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function unionRaw(string $sql, string ...$params)
     {
         $instance = $this->selectQueryInstance();
@@ -191,6 +268,11 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function unionAllRaw(string $sql, string ...$params)
     {
         $instance = $this->selectQueryInstance();
@@ -218,6 +300,9 @@ trait SelectTableQueryTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearUnions()
     {
         if ($query = $this->getSelectQuery()) {
@@ -227,6 +312,9 @@ trait SelectTableQueryTrait
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function lockForUpdate()
     {
         $instance = $this->selectQueryInstance();
@@ -236,11 +324,14 @@ trait SelectTableQueryTrait
         return $instance;
     }
 
-    public function lockInShareMode()
+    /**
+     * @return $this
+     */
+    public function lockForShare()
     {
         $instance = $this->selectQueryInstance();
 
-        $instance->selectQuery()->lockInShareMode();
+        $instance->selectQuery()->lockForShare();
 
         return $instance;
     }
@@ -263,6 +354,9 @@ trait SelectTableQueryTrait
         return '';
     }
 
+    /**
+     * @return $this
+     */
     public function clearLock()
     {
         if ($query = $this->getSelectQuery()) {
@@ -297,6 +391,9 @@ trait SelectTableQueryTrait
         return $this->driver()->select()->from($this);
     }
 
+    /**
+     * @return $this
+     */
     public function intoSelectQuery()
     {
         if ($query = $this->needNewSelectQuery()) {

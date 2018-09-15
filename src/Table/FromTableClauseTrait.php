@@ -137,6 +137,9 @@ trait FromTableClauseTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearFrom()
     {
         if ($clause = $this->getFromStrategy()) {
@@ -205,6 +208,9 @@ trait FromTableClauseTrait
         return $this->getFromClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoFromStrategy()
     {
         if (!$this->hasClause('FROM')) {

@@ -302,9 +302,6 @@ interface WhereClauseStrategy extends ClauseStrategy
      */
     public function getWhere(): array;
 
-    /**
-     * @return $this
-     */
     public function clearWhere();
 
     /**

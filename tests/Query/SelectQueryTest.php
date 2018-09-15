@@ -197,7 +197,7 @@ class SelectQueryTest extends TestCase
 
     public function testCanLockInShareMode()
     {
-        $query = $this->newQuery()->lockInShareMode();
+        $query = $this->newQuery()->lockForShare();
 
         $this->assertEquals('SELECT *', $query->toString());
     }

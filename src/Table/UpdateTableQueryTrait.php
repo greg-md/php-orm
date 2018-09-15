@@ -14,6 +14,11 @@ trait UpdateTableQueryTrait
 {
     use TableQueryTrait;
 
+    /**
+     * @param $table
+     * @param array ...$tables
+     * @return $this
+     */
     public function updateTable($table, ...$tables)
     {
         $instance = $this->updateQueryInstance();
@@ -41,6 +46,9 @@ trait UpdateTableQueryTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearUpdateTables()
     {
         if ($query = $this->getUpdateQuery()) {
@@ -65,6 +73,10 @@ trait UpdateTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param array $columns
+     * @return $this
+     */
     public function setValues(array $columns)
     {
         $instance = $this->updateQueryInstance();
@@ -74,6 +86,11 @@ trait UpdateTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function setRawValue(string $sql, string ...$params)
     {
         $instance = $this->updateQueryInstance();
@@ -83,6 +100,11 @@ trait UpdateTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $value
+     * @return $this
+     */
     public function increment(string $column, int $value = 1)
     {
         $instance = $this->updateQueryInstance();
@@ -92,6 +114,11 @@ trait UpdateTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $value
+     * @return $this
+     */
     public function decrement(string $column, int $value = 1)
     {
         $instance = $this->updateQueryInstance();
@@ -101,6 +128,9 @@ trait UpdateTableQueryTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasSetValues(): bool
     {
         if ($query = $this->getUpdateQuery()) {
@@ -119,6 +149,9 @@ trait UpdateTableQueryTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearSetValues()
     {
         if ($query = $this->getUpdateQuery()) {

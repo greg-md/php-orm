@@ -13,6 +13,10 @@ trait OrderByTableClauseTrait
 
     private $orderByAppliers = [];
 
+    /**
+     * @param OrderByClauseStrategy $strategy
+     * @return $this
+     */
     public function assignOrderByAppliers(OrderByClauseStrategy $strategy)
     {
         if ($this->orderByAppliers) {
@@ -38,6 +42,10 @@ trait OrderByTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setOrderByApplier(callable $callable)
     {
         $this->orderByAppliers[] = $callable;
@@ -61,6 +69,9 @@ trait OrderByTableClauseTrait
         return $this->orderByAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearOrderByAppliers()
     {
         $this->orderByAppliers = [];
@@ -68,6 +79,11 @@ trait OrderByTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param string $column
+     * @param string|null $type
+     * @return $this
+     */
     public function orderBy(string $column, string $type = null)
     {
         $instance = $this->orderByStrategyInstance();
@@ -77,6 +93,10 @@ trait OrderByTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orderAsc(string $column)
     {
         $instance = $this->orderByStrategyInstance();
@@ -86,6 +106,10 @@ trait OrderByTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orderDesc(string $column)
     {
         $instance = $this->orderByStrategyInstance();
@@ -95,6 +119,11 @@ trait OrderByTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function orderByRaw(string $sql, string ...$params)
     {
         $instance = $this->orderByStrategyInstance();
@@ -104,6 +133,9 @@ trait OrderByTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasOrderBy(): bool
     {
         if ($clause = $this->getOrderByStrategy()) {
@@ -122,6 +154,9 @@ trait OrderByTableClauseTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearOrderBy()
     {
         if ($clause = $this->getOrderByStrategy()) {
@@ -190,6 +225,9 @@ trait OrderByTableClauseTrait
         return $this->orderByClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoOrderByStrategy()
     {
         if (!$this->hasClause('ORDER_BY')) {

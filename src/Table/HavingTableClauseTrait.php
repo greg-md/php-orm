@@ -16,6 +16,10 @@ trait HavingTableClauseTrait
      */
     private $havingAppliers = [];
 
+    /**
+     * @param HavingClauseStrategy $strategy
+     * @return $this
+     */
     public function assignHavingAppliers(HavingClauseStrategy $strategy)
     {
         if ($this->havingAppliers) {
@@ -45,6 +49,10 @@ trait HavingTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @return $this
+     */
     public function setHavingApplier(callable $callable)
     {
         $this->havingAppliers[] = $callable;
@@ -68,6 +76,9 @@ trait HavingTableClauseTrait
         return $this->havingAppliers;
     }
 
+    /**
+     * @return $this
+     */
     public function clearHavingAppliers()
     {
         $this->havingAppliers = [];
@@ -75,6 +86,12 @@ trait HavingTableClauseTrait
         return $this;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function having($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -84,6 +101,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orHaving($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -93,6 +116,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $columns
+     * @return $this
+     */
     public function havingMultiple(array $columns)
     {
         $instance = $this->havingStrategyInstance();
@@ -102,6 +129,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $columns
+     * @return $this
+     */
     public function orHavingMultiple(array $columns)
     {
         $instance = $this->havingStrategyInstance();
@@ -111,6 +142,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function havingDate($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -120,6 +157,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orHavingDate($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -129,6 +172,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function havingTime($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -138,6 +187,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orHavingTime($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -147,6 +202,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function havingYear($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -156,6 +217,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orHavingYear($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -165,6 +232,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function havingMonth($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -174,6 +247,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orHavingMonth($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -183,6 +262,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function havingDay($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -192,6 +277,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param null $value
+     * @return $this
+     */
     public function orHavingDay($column, $operator, $value = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -201,6 +292,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column1
+     * @param $operator
+     * @param null $column2
+     * @return $this
+     */
     public function havingRelation($column1, $operator, $column2 = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -210,6 +307,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $column1
+     * @param $operator
+     * @param null $column2
+     * @return $this
+     */
     public function orHavingRelation($column1, $operator, $column2 = null)
     {
         $instance = $this->havingStrategyInstance();
@@ -219,6 +322,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $relations
+     * @return $this
+     */
     public function havingRelations(array $relations)
     {
         $instance = $this->havingStrategyInstance();
@@ -228,6 +335,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param array $relations
+     * @return $this
+     */
     public function orHavingRelations(array $relations)
     {
         $instance = $this->havingStrategyInstance();
@@ -237,6 +348,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function havingIs(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -246,6 +361,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orHavingIs(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -255,6 +374,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function havingIsNot(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -264,6 +387,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orHavingIsNot(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -273,6 +400,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function havingIsNull(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -282,6 +413,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orHavingIsNull(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -291,6 +426,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function havingIsNotNull(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -300,6 +439,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @return $this
+     */
     public function orHavingIsNotNull(string $column)
     {
         $instance = $this->havingStrategyInstance();
@@ -309,6 +452,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function havingBetween(string $column, int $min, int $max)
     {
         $instance = $this->havingStrategyInstance();
@@ -318,6 +467,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function orHavingBetween(string $column, int $min, int $max)
     {
         $instance = $this->havingStrategyInstance();
@@ -327,6 +482,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function havingNotBetween(string $column, int $min, int $max)
     {
         $instance = $this->havingStrategyInstance();
@@ -336,6 +497,12 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $column
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
     public function orHavingNotBetween(string $column, int $min, int $max)
     {
         $instance = $this->havingStrategyInstance();
@@ -345,6 +512,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $strategy
+     * @return $this
+     */
     public function havingConditions($strategy)
     {
         $instance = $this->havingStrategyInstance();
@@ -354,6 +525,10 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param $strategy
+     * @return $this
+     */
     public function orHavingConditions($strategy)
     {
         $instance = $this->havingStrategyInstance();
@@ -363,6 +538,11 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function havingRaw(string $sql, string ...$params)
     {
         $instance = $this->havingStrategyInstance();
@@ -372,6 +552,11 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @param string $sql
+     * @param string[] ...$params
+     * @return $this
+     */
     public function orHavingRaw(string $sql, string ...$params)
     {
         $instance = $this->havingStrategyInstance();
@@ -381,6 +566,9 @@ trait HavingTableClauseTrait
         return $instance;
     }
 
+    /**
+     * @return bool
+     */
     public function hasHaving(): bool
     {
         if ($clause = $this->getHavingStrategy()) {
@@ -399,6 +587,9 @@ trait HavingTableClauseTrait
         return [];
     }
 
+    /**
+     * @return $this
+     */
     public function clearHaving()
     {
         if ($clause = $this->getHavingStrategy()) {
@@ -467,6 +658,9 @@ trait HavingTableClauseTrait
         return $this->getHavingClause();
     }
 
+    /**
+     * @return $this
+     */
     public function intoHavingStrategy()
     {
         if (!$this->hasClause('HAVING')) {

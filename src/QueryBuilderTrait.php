@@ -65,6 +65,10 @@ trait QueryBuilderTrait
         return (bool) $this->query;
     }
 
+    /**
+     * @param QueryStrategy $query
+     * @return $this
+     */
     public function setQuery(QueryStrategy $query)
     {
         $this->query = $query;
@@ -79,6 +83,9 @@ trait QueryBuilderTrait
         return $this->query;
     }
 
+    /**
+     * @return $this
+     */
     public function clearQuery()
     {
         $this->query = null;
@@ -100,6 +107,11 @@ trait QueryBuilderTrait
         return isset($this->clauses[$name]);
     }
 
+    /**
+     * @param string $name
+     * @param ClauseStrategy $query
+     * @return $this
+     */
     public function setClause(string $name, ClauseStrategy $query)
     {
         $this->clauses[$name] = $query;
@@ -112,6 +124,10 @@ trait QueryBuilderTrait
         return $this->clauses[$name] ?? null;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function clearClause(string $name)
     {
         unset($this->clauses[$name]);
@@ -129,6 +145,9 @@ trait QueryBuilderTrait
         return $this->clauses;
     }
 
+    /**
+     * @return $this
+     */
     public function clearClauses()
     {
         $this->clauses = [];
@@ -136,6 +155,11 @@ trait QueryBuilderTrait
         return $this;
     }
 
+    /**
+     * @param bool $condition
+     * @param callable $callable
+     * @return $this
+     */
     public function when(bool $condition, callable $callable)
     {
         if ($condition) {
