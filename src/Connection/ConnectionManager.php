@@ -76,7 +76,7 @@ class ConnectionManager implements Connection
     /**
      * @param $name
      * @param Connection $strategy
-     * @param bool           $default
+     * @param bool       $default
      *
      * @return $this
      */
