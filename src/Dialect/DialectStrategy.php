@@ -85,7 +85,21 @@ interface DialectStrategy
 
     public function count(string $column = '*', string $alias = null): string;
 
-//    public function quoteLike(string $value, string $escape = '\\'): string;
-//
-//    public function ifNullSql(string $sql, string $else = '""'): string;
+    public function selectCount(string $column = '*', string $alias = null): string;
+
+    public function max(string $column, string $alias = null): string;
+
+    public function selectMax(string $column, string $alias = null): string;
+
+    public function min(string $column, string $alias = null): string;
+
+    public function selectMin(string $column, string $alias = null): string;
+
+    public function avg(string $column, string $alias = null): string;
+
+    public function selectAvg(string $column, string $alias = null): string;
+
+    public function sum(string $column, string $alias = null): string;
+
+    public function selectSum(string $column, string $alias = null): string;
 }

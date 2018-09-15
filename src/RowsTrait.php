@@ -96,7 +96,7 @@ trait RowsTrait
 
         $this->rowsOffset = $offset;
 
-        foreach ($this->limit($limit)->offset($offset)->fetchYield() as $record) {
+        foreach ($this->limit($limit)->offset($offset)->generate() as $record) {
 //            $record = $this->prepareRecord($record);
 
             $this->appendRecord($record, false, [], true);

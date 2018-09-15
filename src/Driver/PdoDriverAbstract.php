@@ -180,7 +180,7 @@ abstract class PdoDriverAbstract extends DriverAbstract
         return $values;
     }
 
-    public function columnYield(string $sql, array $params = [], string $column = '0'): \Generator
+    public function generateColumn(string $sql, array $params = [], string $column = '0'): \Generator
     {
         $stmt = $this->prepare($sql, $params);
 

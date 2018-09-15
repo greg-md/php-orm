@@ -211,16 +211,89 @@ class SqlDialect implements DialectStrategy
         return 'COUNT(' . $this->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : '');
     }
 
-//    public function quoteLike(string $value, string $escape = '\\'): string
-//    {
-//        return strtr($value, [
-//            '_' => $escape . '_',
-//            '%' => $escape . '%',
-//        ]);
-//    }
-//
-//    public function ifNullSql(string $sql, string $else = '""'): string
-//    {
-//        return 'IFNULL(' . $sql . ', ' . $else . ')';
-//    }
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return string
+     */
+    public function selectCount(string $column = '*', string $alias = null): string
+    {
+        return 'SELECT ' . $this->count($column, $alias);
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return string
+     */
+    public function max(string $column, string $alias = null): string
+    {
+        if ($alias) {
+            $alias = $this->quoteName($alias);
+        }
+
+        return 'MAX(' . $this->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : '');
+    }
+
+    public function selectMax(string $column, string $alias = null): string
+    {
+        return 'SELECT ' . $this->max($column, $alias);
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return string
+     */
+    public function min(string $column, string $alias = null): string
+    {
+        if ($alias) {
+            $alias = $this->quoteName($alias);
+        }
+
+        return 'MIN(' . $this->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : '');
+    }
+
+    public function selectMin(string $column, string $alias = null): string
+    {
+        return 'SELECT ' . $this->min($column, $alias);
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return string
+     */
+    public function avg(string $column, string $alias = null): string
+    {
+        if ($alias) {
+            $alias = $this->quoteName($alias);
+        }
+
+        return 'AVG(' . $this->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : '');
+    }
+
+    public function selectAvg(string $column, string $alias = null): string
+    {
+        return 'SELECT ' . $this->avg($column, $alias);
+    }
+
+    /**
+     * @param string $column
+     * @param string|null $alias
+     * @return string
+     */
+    public function sum(string $column, string $alias = null): string
+    {
+        if ($alias) {
+            $alias = $this->quoteName($alias);
+        }
+
+        return 'SUM(' . $this->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : '');
+    }
+
+    public function selectSum(string $column, string $alias = null): string
+    {
+        return 'SELECT ' . $this->sum($column, $alias);
+    }
 }

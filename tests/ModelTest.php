@@ -347,7 +347,7 @@ class ModelTest extends TestCase
         $this->assertEquals(2, $row['Id']);
     }
 
-    public function testCanChunk()
+    public function testCanGenerateInChunks()
     {
         $this->driverMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
             [
@@ -365,43 +365,18 @@ class ModelTest extends TestCase
 
         $count = 0;
 
-        $this->model->chunk(2, function ($records) use (&$count) {
+        $recordsGenerator = $this->model->generateInChunks(2);
+
+        foreach ($recordsGenerator as $records) {
             $count++;
 
             $this->assertCount(2, $records);
-        });
+        }
 
         $this->assertEquals(2, $count);
     }
 
-    public function testCanChunkOneByOne()
-    {
-        $this->driverMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
-            [
-                ['Id' => 1],
-                ['Id' => 2],
-            ],
-            [
-                ['Id' => 3],
-                ['Id' => 4],
-            ],
-            [
-
-            ]
-        ));
-
-        $count = 0;
-
-        $this->model->chunk(2, function ($records) use (&$count) {
-            $count++;
-
-            $this->assertCount(1, $records);
-        }, true, false);
-
-        $this->assertEquals(4, $count);
-    }
-
-    public function testCanChunkYieldOneByOne()
+    public function testCanGenerateOneByOne()
     {
         $this->driverMock->expects($this->exactly(3))->method('fetchYield')->will($this->onConsecutiveCalls(
             (function () {
@@ -421,56 +396,18 @@ class ModelTest extends TestCase
 
         $count = 0;
 
-        $this->model->chunk(2, function ($records) use (&$count) {
+        $recordsGenerator = $this->model->generate(2);
+
+        foreach ($recordsGenerator as $record) {
             $count++;
 
-            $this->assertCount(1, $records);
-        }, true);
+            $this->assertArrayHasKey('Id', $record);
+        }
 
         $this->assertEquals(4, $count);
     }
 
-    public function testCanStopChunk()
-    {
-        $this->driverMock->method('fetchAll')->will($this->onConsecutiveCalls(
-            [
-                ['Id' => 1],
-                ['Id' => 2],
-            ]
-        ));
-
-        $count = 0;
-
-        $this->model->chunk(2, function () use (&$count) {
-            $count++;
-
-            return false;
-        });
-
-        $this->assertEquals(1, $count);
-    }
-
-    public function testCanStopChunk1By1()
-    {
-        $this->driverMock->method('fetchAll')->will($this->onConsecutiveCalls(
-            [
-                ['Id' => 1],
-                ['Id' => 2],
-            ]
-        ));
-
-        $count = 0;
-
-        $this->model->chunk(2, function () use (&$count) {
-            $count++;
-
-            return false;
-        }, true, false);
-
-        $this->assertEquals(1, $count);
-    }
-
-    public function testCanChunkRows()
+    public function testCanGenerateRowsInChunks()
     {
         $this->mockDescribe();
 
@@ -490,40 +427,48 @@ class ModelTest extends TestCase
 
         $count = 0;
 
-        $this->model->chunkRows(2, function ($records) use (&$count) {
+        $rowsGenerator = $this->model->generateRowsInChunks(2);
+
+        foreach ($rowsGenerator as $rows) {
             $count++;
 
-            $this->assertCount(2, $records);
-        });
+            $this->assertInstanceOf(Model::class, $rows);
+
+            $this->assertCount(2, $rows);
+        }
 
         $this->assertEquals(2, $count);
     }
 
-    public function testCanChunkRowsOneByOne()
+    public function testCanGenerateRowsOneByOne()
     {
-        $this->mockDescribe();
-
-        $this->driverMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
-            [
-                ['Id' => 1],
-                ['Id' => 2],
-            ],
-            [
-                ['Id' => 3],
-                ['Id' => 4],
-            ],
-            [
-
-            ]
+        $this->driverMock->expects($this->exactly(3))->method('fetchYield')->will($this->onConsecutiveCalls(
+            (function () {
+                yield ['Id' => 1];
+                yield ['Id' => 2];
+            })(),
+            (function () {
+                yield ['Id' => 1];
+                yield ['Id' => 2];
+            })(),
+            (function () {
+                if (false) {
+                    yield;
+                }
+            })()
         ));
 
         $count = 0;
 
-        $this->model->chunkRows(2, function ($records) use (&$count) {
+        $rowsGenerator = $this->model->generateRows(2);
+
+        foreach ($rowsGenerator as $row) {
             $count++;
 
-            $this->assertCount(1, $records);
-        }, true, false);
+            $this->assertInstanceOf(Model::class, $row);
+
+            $this->assertArrayHasKey('Id', $row);
+        }
 
         $this->assertEquals(4, $count);
     }
@@ -572,53 +517,11 @@ class ModelTest extends TestCase
         $this->assertEquals([1, 2], $this->model->fetchColumnAll());
     }
 
-    public function testCanFetchAllColumnYield()
-    {
-        $this->driverMock->method('columnYield')->willReturn((function () {
-            yield 1;
-            yield 2;
-        })());
-
-        $generator = $this->model->fetchColumnYield();
-
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        $array = [1, 2];
-
-        foreach ($generator as $column) {
-            $this->assertEquals(array_shift($array), $column);
-        }
-
-        $this->assertEmpty($array);
-    }
-
     public function testCanFetchPairs()
     {
         $this->driverMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->model->fetchPairs());
-    }
-
-    public function testCanFetchPairsYield()
-    {
-        $this->driverMock->method('pairsYield')->willReturn((function () {
-            yield 1 => 1;
-            yield 2 => 2;
-        })());
-
-        $generator = $this->model->fetchPairsYield();
-
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        $array = [1 => 1, 2 => 2];
-
-        foreach ($generator as $key => $value) {
-            $this->assertEquals(key($array), current($array));
-
-            next($array);
-        }
-
-        $this->assertFalse(next($array));
     }
 
     public function testCanFetchCount()
@@ -679,12 +582,11 @@ class ModelTest extends TestCase
         $this->assertEquals(1, $this->model->delete('Table2'));
     }
 
-    public function testThrowExceptionIfChunkCountIsLessThanZero()
+    public function testThrowExceptionIfChunkSizeIsLessThanZero()
     {
         $this->expectException(\Exception::class);
 
-        $this->model->chunk(-1, function () {
-        });
+        $this->model->generate(-1)->valid();
     }
 
     public function testCanGetColumns()
@@ -957,7 +859,7 @@ class ModelTest extends TestCase
         $this->assertEquals([['Id' => 1], ['Id' => 2]], $this->model->fetchRows()->records());
     }
 
-    public function testCanFetchRowsYield()
+    public function testCanGenerateRows()
     {
         $this->mockDescribe();
 
@@ -969,7 +871,7 @@ class ModelTest extends TestCase
 
         $rows = [['Id' => 1], ['Id' => 2]];
 
-        $generator = $this->model->fetchRowsYield();
+        $generator = $this->model->generateRows();
 
         $this->assertInstanceOf(\Generator::class, $generator);
 

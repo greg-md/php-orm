@@ -188,7 +188,7 @@ trait TableTrait
     public function fetchOrFail(): array
     {
         if (!$record = $this->fetch()) {
-            throw new SqlException('Row was not found.');
+            throw new SqlException('Record not found.');
         }
 
         return $record;
@@ -201,11 +201,20 @@ trait TableTrait
         return $this->driver()->fetchAll($sql, $params);
     }
 
-    public function fetchYield()
+    public function generate(?int $chunkSize = null): \Generator
     {
-        [$sql, $params] = $this->selectQueryInstanceToSql();
+        if ($chunkSize) {
+            yield from $this->generateQuery($this->selectQueryInstance()->selectQuery(), $chunkSize);
+        } else {
+            [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        yield from $this->driver()->fetchYield($sql, $params);
+            yield from $this->driver()->fetchYield($sql, $params);
+        }
+    }
+
+    public function generateInChunks(int $chunkSize): \Generator
+    {
+        yield from $this->generateQuery($this->selectQueryInstance()->selectQuery(), $chunkSize, false);
     }
 
     public function fetchColumn(string $column = '0'): string
@@ -222,13 +231,6 @@ trait TableTrait
         return $this->driver()->columnAll($sql, $params, $column);
     }
 
-    public function fetchColumnYield(string $column = '0')
-    {
-        [$sql, $params] = $this->selectQueryInstanceToSql();
-
-        yield from $this->driver()->columnYield($sql, $params, $column);
-    }
-
     public function fetchPairs(string $key = '0', string $value = '1'): array
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
@@ -236,24 +238,11 @@ trait TableTrait
         return $this->driver()->pairs($sql, $params, $key, $value);
     }
 
-    public function fetchPairsYield(string $key = '0', string $value = '1')
-    {
-        [$sql, $params] = $this->selectQueryInstanceToSql();
-
-        yield from $this->driver()->pairsYield($sql, $params, $key, $value);
-    }
-
     public function fetchRow()
     {
-        if ($this->query) {
-            $record = $this->rowsQueryInstance()->fetch();
-        } else {
-            $record = $this->driver()->fetch($this->selectAllSQL());
-        }
+        [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-        if ($record) {
-//            $record = $this->prepareRecord($record);
-
+        if ($record = $this->driver()->fetch($sql, $params)) {
             return $this->cleanClone()->appendRecord($record, false, [], true);
         }
 
@@ -271,38 +260,46 @@ trait TableTrait
 
     public function fetchRows()
     {
-        if ($this->query) {
-            $records = $this->rowsQueryInstance()->fetchYield();
-        } else {
-            $records = $this->driver()->fetchYield($this->selectAllSQL());
-        }
+        [$sql, $params] = $this->rowsQueryInstanceToSql();
+
+        $recordsGenerator = $this->driver()->fetchYield($sql, $params);
 
         $rows = $this->cleanClone();
 
-        foreach ($records as $record) {
-//            $record = $this->prepareRecord($record);
-
+        foreach ($recordsGenerator as $record) {
             $rows->appendRecord($record, false, [], true);
         }
 
         return $rows;
     }
 
-    /**
-     * @return \Generator|$this[]
-     */
-    public function fetchRowsYield()
+    public function generateRows(?int $chunkSize = null): \Generator
     {
-        if ($this->query) {
-            $records = $this->rowsQueryInstance()->fetchYield();
+        if ($chunkSize) {
+            $recordsGenerator = $this->generateQuery($this->rowsQueryInstance()->selectQuery(), $chunkSize);
         } else {
-            $records = $this->driver()->fetchYield($this->selectAllSQL());
+            [$sql, $params] = $this->rowsQueryInstanceToSql();
+
+            $recordsGenerator = $this->driver()->fetchYield($sql, $params);
         }
 
-        foreach ($records as $record) {
-//            $record = $this->prepareRecord($record);
-
+        foreach ($recordsGenerator as $record) {
             yield $this->cleanClone()->appendRecord($record, false, [], true);
+        }
+    }
+
+    public function generateRowsInChunks(int $chunkSize): \Generator
+    {
+        $recordsGenerator = $this->generateQuery($this->rowsQueryInstance()->selectQuery(), $chunkSize, false);
+
+        foreach ($recordsGenerator as $records) {
+            $rows = $this->cleanClone();
+
+            foreach ($records as $record) {
+                $rows->appendRecord($record, false, [], true);
+            }
+
+            yield $rows;
         }
     }
 
@@ -312,29 +309,49 @@ trait TableTrait
             return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
         }
 
-        return $this->driver()->column('SELECT ' . $this->driver()->dialect()->count($column, $alias));
+        return $this->driver()->column($this->driver()->dialect()->selectCount($column, $alias));
     }
 
     public function fetchMax(string $column, string $alias = null): int
     {
-        return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
+        if ($this->query) {
+            return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
+        }
+
+        return $this->driver()->column($this->driver()->dialect()->selectMax($column, $alias));
     }
 
     public function fetchMin(string $column, string $alias = null): int
     {
-        return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
+        if ($this->query) {
+            return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
+        }
+
+        return $this->driver()->column($this->driver()->dialect()->selectMin($column, $alias));
     }
 
     public function fetchAvg(string $column, string $alias = null): float
     {
-        return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
+        if ($this->query) {
+            return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
+        }
+
+        return $this->driver()->column($this->driver()->dialect()->selectAvg($column, $alias));
     }
 
     public function fetchSum(string $column, string $alias = null): string
     {
-        return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
+        if ($this->query) {
+            return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
+        }
+
+        return $this->driver()->column($this->driver()->dialect()->selectSum($column, $alias));
     }
 
+    /**
+     * @param $primary
+     * @return $this|null
+     */
     public function find($primary)
     {
         return $this->whereMultiple($this->combinePrimary($primary))->fetchRow();
@@ -397,35 +414,9 @@ trait TableTrait
             ->fetchPairs();
     }
 
-    public function chunk(int $count, callable $callable, bool $callOneByOne = false, bool $yield = true)
-    {
-        $this->chunkQuery($this->selectQueryInstance()->selectQuery(), $count, $callable, $callOneByOne, $yield);
-
-        return $this;
-    }
-
-    public function chunkRows($count, callable $callable, $callOneByOne = false, bool $yield = true)
-    {
-        $this->chunkQuery($this->rowsQueryInstance()->selectQuery(), $count, function ($record) use ($callable, $callOneByOne) {
-            if ($callOneByOne) {
-                return call_user_func_array($callable, [$this->cleanClone()->appendRecord($record)]);
-            }
-
-            $rows = $this->cleanClone();
-
-            foreach ($record as $item) {
-                $rows->appendRecord($item);
-            }
-
-            return call_user_func_array($callable, [$rows]);
-        }, $callOneByOne, $yield);
-
-        return $this;
-    }
-
     public function exists(): bool
     {
-        return (bool) $this->clearSelect()->selectRaw(1)->fetchColumn();
+        return (bool) $this->clearSelect()->selectRaw(1)->limit(1)->fetchColumn();
     }
 
     public function update(array $columns = []): int
@@ -688,9 +679,9 @@ trait TableTrait
         return $this->selectOnly('*');
     }
 
-    protected function chunkQuery(SelectQuery $query, int $count, callable $callable, bool $callOneByOne = false, bool $yield = true)
+    protected function generateQuery(SelectQuery $query, int $chunkSize, bool $oneByOne = true): \Generator
     {
-        if ($count < 1) {
+        if ($chunkSize < 1) {
             throw new SqlException('Chunk count should be greater than 0.');
         }
 
@@ -699,42 +690,36 @@ trait TableTrait
         $query = clone $query;
 
         while (true) {
-            [$sql, $params] = $query->limit($count)->offset($offset)->toSql();
+            [$sql, $params] = $query->limit($chunkSize)->offset($offset)->toSql();
 
-            if ($callOneByOne) {
-                $records = $yield
-                    ? $this->driver()->fetchYield($sql, $params)
-                    : $this->driver()->fetchAll($sql, $params);
+            if ($oneByOne) {
+                $recordsGenerator = $this->driver()->fetchYield($sql, $params);
 
                 $k = 0;
 
-                foreach ($records as $record) {
-                    if (call_user_func_array($callable, [$record]) === false) {
-                        $k = 0;
-
-                        break;
-                    }
+                foreach ($recordsGenerator as $record) {
+                    yield $record;
 
                     $k++;
                 }
             } else {
                 $records = $this->driver()->fetchAll($sql, $params);
 
-                $k = count($records);
-
-                if ($records and call_user_func_array($callable, [$records]) === false) {
-                    $k = 0;
+                if (!$records) {
+                    break;
                 }
+
+                yield $records;
+
+                $k = count($records);
             }
 
-            if ($k < $count) {
+            if ($k < $chunkSize) {
                 break;
             }
 
-            $offset += $count;
+            $offset += $chunkSize;
         }
-
-        return $this;
     }
 
     protected function selectQueryInstanceToSql()
@@ -743,10 +728,19 @@ trait TableTrait
             return $this->selectQueryInstance()->toSql();
         }
 
-        return [$this->selectAllSQL(), []];
+        return [$this->selectAllSql(), []];
     }
 
-    protected function selectAllSQL()
+    protected function rowsQueryInstanceToSql()
+    {
+        if ($this->query) {
+            return $this->rowsQueryInstance()->toSql();
+        }
+
+        return [$this->selectAllSql(), []];
+    }
+
+    protected function selectAllSql()
     {
         return 'SELECT * FROM `' . $this->name() . '`';
     }

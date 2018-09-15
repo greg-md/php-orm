@@ -214,11 +214,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function max(string $column, string $alias = null)
     {
-        if ($alias) {
-            $alias = $this->dialect()->quoteName($alias);
-        }
-
-        $this->columnRaw('MAX(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw($this->dialect()->max($column, $alias));
 
         return $this;
     }
@@ -231,11 +227,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function min(string $column, string $alias = null)
     {
-        if ($alias) {
-            $alias = $this->dialect()->quoteName($alias);
-        }
-
-        $this->columnRaw('MIN(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw($this->dialect()->min($column, $alias));
 
         return $this;
     }
@@ -248,11 +240,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function avg(string $column, string $alias = null)
     {
-        if ($alias) {
-            $alias = $this->dialect()->quoteName($alias);
-        }
-
-        $this->columnRaw('AVG(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw($this->dialect()->avg($column, $alias));
 
         return $this;
     }
@@ -265,11 +253,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function sum(string $column, string $alias = null)
     {
-        if ($alias) {
-            $alias = $this->dialect()->quoteName($alias);
-        }
-
-        $this->columnRaw('SUM(' . $this->dialect()->quoteName($column) . ')' . ($alias ? ' AS ' . $alias : ''));
+        $this->columnRaw($this->dialect()->sum($column, $alias));
 
         return $this;
     }

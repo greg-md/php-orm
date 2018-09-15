@@ -250,9 +250,9 @@ class DriverManager implements DriverStrategy
      *
      * @return mixed|\Generator
      */
-    public function columnYield(string $sql, array $params = [], string $column = '0'): \Generator
+    public function generateColumn(string $sql, array $params = [], string $column = '0'): \Generator
     {
-        yield from $this->driver()->columnYield($sql, $params, $column);
+        yield from $this->driver()->generateColumn($sql, $params, $column);
     }
 
     /**

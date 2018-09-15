@@ -116,7 +116,7 @@ interface DriverStrategy
      *
      * @return mixed|\Generator
      */
-    public function columnYield(string $sql, array $params = [], string $column = '0'): \Generator;
+    public function generateColumn(string $sql, array $params = [], string $column = '0'): \Generator;
 
     /**
      * @param string $sql

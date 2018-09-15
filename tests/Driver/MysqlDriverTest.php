@@ -234,7 +234,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetchColumn')
             ->willReturnOnConsecutiveCalls(1, 1, false);
 
-        $generator = $this->driver->columnYield('SELECT foo', [], 0);
+        $generator = $this->driver->generateColumn('SELECT foo', [], 0);
 
         $this->assertInstanceOf(\Generator::class, $generator);
 
@@ -252,7 +252,7 @@ class MysqlDriverTest extends TestCase
             ->method('fetch')
             ->willReturnOnConsecutiveCalls(['foo' => 1], ['foo' => 1], false);
 
-        $generator = $this->driver->columnYield('SELECT foo', [], 'foo');
+        $generator = $this->driver->generateColumn('SELECT foo', [], 'foo');
 
         $this->assertInstanceOf(\Generator::class, $generator);
 
