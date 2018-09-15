@@ -35,14 +35,7 @@ trait TableTrait
         return $this->prefix;
     }
 
-    public function name(): string
-    {
-        if (!$this->name) {
-            throw new \Exception('Table name is required in model.');
-        }
-
-        return $this->name;
-    }
+    abstract public function name(): string;
 
     public function fullName(): string
     {

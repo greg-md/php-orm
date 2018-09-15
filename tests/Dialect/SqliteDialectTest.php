@@ -49,9 +49,12 @@ class SqliteDialectTest extends TestCase
         $driverMock = $this->driverMock = $this->createMock(DriverStrategy::class);
 
         $this->assertEquals(['bar', 'foo'], $this->dialect->parseTable(new class($driverMock) extends Model {
-            protected $name = 'foo';
-
             protected $alias = 'bar';
+
+            public function name(): string
+            {
+                return 'foo';
+            }
         }));
 
         $query = new SelectQuery($this->dialect);

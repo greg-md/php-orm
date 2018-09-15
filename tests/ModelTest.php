@@ -67,8 +67,6 @@ class ModelTest extends TestCase
         $this->driverMock->method('dialect')->willReturn(new SqlDialect());
 
         $this->model = new class($driverMock) extends Model {
-            protected $name = 'Table';
-
             protected $label = 'My Table';
 
             protected $nameColumn = 'Name';
@@ -80,6 +78,11 @@ class ModelTest extends TestCase
             protected $casts = [
                 'Active' => 'bool',
             ];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
 
             protected function getActiveAttribute()
             {
@@ -190,19 +193,6 @@ class ModelTest extends TestCase
         $this->assertFalse($query->hasClause('WHERE'));
     }
 
-    public function testCanThrowExceptionIfNameNotDefined()
-    {
-        $driverMock = $this->driverMock;
-
-        /** @var Model $model */
-        $model = new class($driverMock) extends Model {
-        };
-
-        $this->expectException(\Exception::class);
-
-        $model->name();
-    }
-
     public function testCanGetLabel()
     {
         $this->assertEquals('My Table', $this->model->label());
@@ -269,6 +259,10 @@ class ModelTest extends TestCase
 
         /** @var Model $model */
         $model = new class($driverMock) extends Model {
+            public function name(): string
+            {
+                return 'Table';
+            }
         };
 
         $this->expectException(\Exception::class);
@@ -295,7 +289,10 @@ class ModelTest extends TestCase
 
         /** @var Model $rows */
         $rows = new class($driverMock) extends Model {
-            protected $name = 'Table';
+            public function name(): string
+            {
+                return 'Table';
+            }
         };
 
         $rows->appendRecord([
@@ -765,9 +762,12 @@ class ModelTest extends TestCase
 
         /** @var Model $model */
         $model = new class($driverMock) extends Model {
-            protected $name = 'Table';
-
             protected $unique = ['Id'];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
         };
 
         $this->assertEquals(['Id'], $model->firstUnique());
@@ -786,7 +786,10 @@ class ModelTest extends TestCase
 
         /** @var Model $model */
         $model = new class($driverMock) extends Model {
-            protected $name = 'Table';
+            public function name(): string
+            {
+                return 'Table';
+            }
         };
 
         $this->expectException(\Exception::class);
@@ -1449,9 +1452,12 @@ class ModelTest extends TestCase
 
         /** @var Model $row */
         $row = new class($driverMock) extends Model {
-            protected $name = 'Table';
-
             protected $fillable = [];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
         };
 
         $row->appendRecord(['Id' => 1]);
