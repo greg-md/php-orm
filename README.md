@@ -279,7 +279,7 @@ It can work with table's schema, queries, rows and a specific row.
 The magic thing is that you have all this features into one powerful model.
 
 Forget about creating separate classes(repositories, entities, data mappers, etc) that works with the same table data.
-All you need is to instantiate the Model with the specific [Driver Strategy](#driver-strategy---quick-start)
+All you need is to instantiate the Model with the specific [Database Connection](#database-connection---quick-start)
 that deals with all of them.
 
 Let say you have an `Users` table:
@@ -318,19 +318,20 @@ class UsersModel extends \Greg\Orm\Model
         'Active' => 'boolean',
     ];
 
+    // Table name (required)
     public function name(): string
     {
         return 'Users';
     }
 
     // Create abstract attribute "FullName". (optional)
-    protected function getFullNameAttribute()
+    public function getFullNameAttribute()
     {
         return implode(' ', array_filter([$this['FirstName'], $this['LastName']]));
     }
 
     // Change "SSN" attribute. (optional)
-    protected function getSSNAttribute()
+    public function getSSNAttribute()
     {
         // Display only last 3 digits of the SSN.
         return str_repeat('*', 6) . substr($this['SSN'], -3, 3);
@@ -349,13 +350,8 @@ class UsersModel extends \Greg\Orm\Model
 ***Then***, we can instantiate and work with it:
 
 ```php
-// Create or use an existent driver strategy.
-$driver = new \Greg\Orm\Driver\MysqlDriver(
-    new \Greg\Orm\Driver\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
-);
-
 // Initialize the model.
-$model = new UsersModel($driver);
+$model = new UsersModel($connection);
 
 // Display table name.
 print_r($model->name()); // result: Users
@@ -454,7 +450,7 @@ Full documentation can be found [here](docs/ActiveRecordModel.md).
 * [Database Connection](docs/DatabaseConnections.md) - Connect and run queries.
 * [Query Builder](docs/QueryBuilder.md) - Build SQL queries.
 * [Active Record Model](docs/ActiveRecordModel.md) - All you need to work with a database table.
-* Migrations - _Under construction..._ You can use [Phinx](https://phinx.org/) for now.
+* Migrations - _Under construction..._ You can use [Phinx](https://phinx.org/) in the meantime.
 
 # License
 
