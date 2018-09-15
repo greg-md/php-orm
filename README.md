@@ -44,16 +44,16 @@ foreach($usersGenerator as $user) {
 }
 ```
 
-### Automatically re-connect to databases when the session expires
+### Automatically re-connects to databases when the session expires
 
 Forget about caring of keeping database connections alive and concentrate on your main business logic.
 Connection timeout exceptions are catch inside and re-connects you back to database.
 
 This is a very useful feature when you have listeners/long scripts that works with databases.
 
-### Connects to database on the first call
+### Connects to databases on the first call
 
-It will not try to create a database connection until you send him a query.
+It will not try to create a database connection until you send a query to it.
 
 ### Is faster and consumes much less memory
 
