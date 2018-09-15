@@ -371,6 +371,7 @@ trait RowsTrait
 
     /**
      * @param callable $callable
+     *
      * @return $this|null
      */
     public function search(callable $callable)
