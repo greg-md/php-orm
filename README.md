@@ -59,7 +59,7 @@ It will not try to create a database connection until you send a query to it.
 
 **Connect and run a query:**
 
-This is the simplest use case it can do.
+This is the simplest use case you can have.
 
 | Package  | Time  | Memory |
 | -------- | ----- | ------ |
@@ -73,7 +73,7 @@ This is the simplest use case it can do.
 | Greg ORM | ~1.25s | 0.03MB |
 | Eloquent | ~1.35s | 0.67MB |
 
-**NOTE:** Memory used remains the same even if you create 1 record or 1000.
+**NOTE:** Memory used is the same even if you create 1 record or 1000.
 
 **Select 10000 records using a model:**
 
