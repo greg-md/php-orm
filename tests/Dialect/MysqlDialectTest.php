@@ -92,6 +92,6 @@ class MysqlDialectTest extends TestCase
 
     public function testCanLockInShareMode()
     {
-        $this->assertEquals('SELECT 1 LOCK IN SHARE MODE', $this->dialect->lockForShare('SELECT 1'));
+        $this->assertEquals('SELECT 1 FOR SHARE', $this->dialect->lockForShare('SELECT 1'));
     }
 }

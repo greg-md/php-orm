@@ -640,7 +640,7 @@ $query->lockInShareMode()->from('Table');
 
 echo $query->toString();
 // SQL: SELECT * FROM `Table`
-// MySQL: SELECT * FROM `Table` LOCK IN SHARE MODE
+// MySQL: SELECT * FROM `Table` FOR SHARE
 ```
 
 ## hasLock
@@ -668,7 +668,7 @@ Get the select lock. Available values:
 ```php
 const LOCK_FOR_UPDATE = 'FOR UPDATE';
 
-const LOCK_IN_SHARE_MORE = 'LOCK IN SHARE MODE';
+const LOCK_IN_SHARE_MORE = 'FOR SHARE';
 ```
 
 ```php
