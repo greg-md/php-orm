@@ -212,8 +212,9 @@ class SqlDialect implements DialectStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return string
      */
     public function selectCount(string $column = '*', string $alias = null): string
@@ -222,8 +223,9 @@ class SqlDialect implements DialectStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return string
      */
     public function max(string $column, string $alias = null): string
@@ -241,8 +243,9 @@ class SqlDialect implements DialectStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return string
      */
     public function min(string $column, string $alias = null): string
@@ -260,8 +263,9 @@ class SqlDialect implements DialectStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return string
      */
     public function avg(string $column, string $alias = null): string
@@ -279,8 +283,9 @@ class SqlDialect implements DialectStrategy
     }
 
     /**
-     * @param string $column
+     * @param string      $column
      * @param string|null $alias
+     *
      * @return string
      */
     public function sum(string $column, string $alias = null): string
