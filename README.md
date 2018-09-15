@@ -30,7 +30,7 @@ You can get use of [PHP Generators](http://php.net/manual/ro/language.generators
 to achieve the best results when working with big amount of data.
 
 Let's imagine we have thousands of records and we want to go though them and do something.
-We know that we can not select all the records from database because we can reach the request or connection timeout limit,
+We know that we can not select all the records from database because we can reach the request/connection timeout limit,
 also we can not fetch all the records in PHP because we can reach the memory limit.
 
 With **Greg ORM** you can solve that with a few lines of code:
