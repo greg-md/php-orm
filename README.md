@@ -25,7 +25,7 @@ A powerful ORM(Object-Relational Mapping) for PHP.
 
 # What makes it better than other stable and proven in time ORM's like Eloquent or Doctrine?
 
-### It works with big data without reaching memory/timeout limits.
+### Works with big data without reaching memory/timeout limits.
 
 You can get use of [PHP Generators](http://php.net/manual/ro/language.generators.overview.php)
 to achieve the best results when working with big amount of data.
@@ -37,25 +37,25 @@ then we can not fetch all the records in PHP because we can reach the memory lim
 With **Greg ORM** you can solve that with a few lines of code:
 
 ```php
-$usersGenerator = $users->fetchRowsGenerator($chunkSize = 1000);
+$usersGenerator = $users->generateRows($chunkSize = 1000);
 
 foreach($usersGenerator as $user) {
     // Do your business logic
 }
 ```
 
-### It can automatically re-connect to databases when the session expires
+### Automatically re-connect to databases when the session expires
 
 Forget about caring of keeping database connections alive and concentrate on your main business logic.
 Connection timeout exceptions are catch inside and re-connects you back to database.
 
 This is a very useful feature when you have listeners/long scripts that works with databases.
 
-### It connects to database on the first call
+### Connects to database on the first call
 
 It will not try to create a database connection until you send him a query.
 
-### It is faster and consumes much less memory
+### Is faster and consumes much less memory
 
 **Connect and run a query:**
 
