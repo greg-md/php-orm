@@ -89,75 +89,6 @@ foreach($usersGenerator as $users) {
 
 This is the simplest use case you can have.
 
-<table>
-    <tr>
-        <th>Package</th>
-        <th>Time</th>
-        <th>Memory</th>
-        <th>Code</th>
-    </tr>
-    <tr>
-        <td>Greg ORM</td>
-        <td>~5ms</td>
-        <td>0.24MB</td>
-        <td>
-<pre>
-$manager = new Greg\Orm\Connection\ConnectionManager();
-
-$manager->register('mysql', function() {
-    return new Greg\Orm\Connection\MysqlConnection(
-        new Greg\Orm\Connection\Pdo('mysql:dbname=performance;host=127.0.0.1;port=33060', 'root')
-    );
-});
-
-$manager->actAs('mysql');
-</pre>
-        </td>
-    </tr>
-    <tr>
-        <td>Eloquent</td>
-        <td>~20ms</td>
-        <td>1.28MB</td>
-        <td>
-<pre>
-$manager = new \Illuminate\Database\Capsule\Manager();
-
-$manager->addConnection([
-    "driver" => "mysql",
-    "host" => "127.0.0.1",
-    "port" => "33060",
-    "database" => "performance",
-    "username" => "root",
-    "password" => ""
-]);
-
-$manager->setAsGlobal();
-
-$manager->bootEloquent();
-</pre>
-        </td>
-    </tr>
-    <tr>
-        <td>Doctrine</td>
-        <td>~33ms</td>
-        <td>1.60MB</td>
-        <td>
-<pre>
-$config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(__DIR__ . '/../../src'));
-
-$manager = \Doctrine\ORM\EntityManager::create([
-    'driver'   => 'pdo_mysql',
-    'host'     => '127.0.0.1',
-    'port'     => '33060',
-    'user'     => 'root',
-    'password' => '',
-    'dbname'   => 'performance',
-], $config);
-</pre>
-        </td>
-    </tr>
-</table>
-
 | Package  | Time  | Memory |
 | -------- | ----- | ------ |
 | Greg ORM | ~5ms  | 0.24MB |
@@ -174,8 +105,8 @@ Without transactions:
 | Eloquent | ~1.35s | 0.67MB |
 | Doctrine | ~4.20s | 2.20MB |
 
-> For Greg ORM and Eloquent memory used remains the same even if you create 1 record or 1000.
-> Doctrine 
+> For Greg ORM and Eloquent, memory used remains the same even if you create 1 record or 1000.
+> With doctrine, memory used depends on entities count.
 
 With transactions:
 
