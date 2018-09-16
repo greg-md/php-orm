@@ -281,7 +281,7 @@ trait OrderByTableClauseTrait
 
     protected function getPreparedOrderByClause()
     {
-        if ($this->hasOrderByAppliers()) {
+        if ($this->orderByAppliers) {
             $clause = clone $this->intoOrderByStrategy()->orderByClause();
 
             $this->assignOrderByAppliers($clause);

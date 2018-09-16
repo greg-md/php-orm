@@ -297,32 +297,48 @@ trait QueryBuilderTrait
 
     protected function hasAppliers()
     {
-        return $this->hasFromAppliers()
-            || $this->hasJoinAppliers()
-            || $this->hasWhereAppliers()
-            || $this->hasHavingAppliers()
-            || $this->hasOrderByAppliers()
-            || $this->hasGroupByAppliers()
-            || $this->hasLimitAppliers()
-            || $this->hasOffsetAppliers();
+        return $this->fromAppliers
+            || $this->joinAppliers
+            || $this->whereAppliers
+            || $this->havingAppliers
+            || $this->orderByAppliers
+            || $this->groupByAppliers
+            || $this->limitAppliers
+            || $this->offsetAppliers;
     }
 
     protected function transferAppliersTo(Model $model)
     {
-        $model->setFromAppliers($this->getFromAppliers());
+        if ($this->fromAppliers) {
+            $model->setFromAppliers($this->fromAppliers);
+        }
 
-        $model->setGroupByAppliers($this->getGroupByAppliers());
+        if ($this->groupByAppliers) {
+            $model->setGroupByAppliers($this->groupByAppliers);
+        }
 
-        $model->setHavingAppliers($this->getHavingAppliers());
+        if ($this->havingAppliers) {
+            $model->setHavingAppliers($this->havingAppliers);
+        }
 
-        $model->setJoinAppliers($this->getJoinAppliers());
+        if ($this->joinAppliers) {
+            $model->setJoinAppliers($this->joinAppliers);
+        }
 
-        $model->setLimitAppliers($this->getLimitAppliers());
+        if ($this->limitAppliers) {
+            $model->setLimitAppliers($this->limitAppliers);
+        }
 
-        $model->setOffsetAppliers($this->getOffsetAppliers());
+        if ($this->offsetAppliers) {
+            $model->setOffsetAppliers($this->offsetAppliers);
+        }
 
-        $model->setOrderByAppliers($this->getOrderByAppliers());
+        if ($this->orderByAppliers) {
+            $model->setOrderByAppliers($this->orderByAppliers);
+        }
 
-        $model->setWhereAppliers($this->getWhereAppliers());
+        if ($this->whereAppliers) {
+            $model->setWhereAppliers($this->whereAppliers);
+        }
     }
 }

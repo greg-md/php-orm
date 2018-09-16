@@ -258,7 +258,7 @@ trait FromTableClauseTrait
 
     protected function getPreparedFromClause()
     {
-        if ($this->hasFromAppliers()) {
+        if ($this->fromAppliers) {
             $clause = clone $this->intoFromStrategy()->fromClause();
 
             $this->assignFromAppliers($clause);

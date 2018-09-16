@@ -460,7 +460,7 @@ trait JoinTableClauseTrait
 
     protected function getPreparedJoinClause()
     {
-        if ($this->hasJoinAppliers()) {
+        if ($this->joinAppliers) {
             $clause = clone $this->intoJoinStrategy()->joinClause();
 
             $this->assignJoinAppliers($clause);

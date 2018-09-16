@@ -830,7 +830,7 @@ trait WhereTableClauseTrait
 
     protected function getPreparedWhereClause()
     {
-        if ($this->hasWhereAppliers()) {
+        if ($this->whereAppliers) {
             $clause = clone $this->intoWhereStrategy()->whereClause();
 
             $this->assignWhereAppliers($clause);

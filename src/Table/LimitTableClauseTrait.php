@@ -210,7 +210,7 @@ trait LimitTableClauseTrait
 
     protected function getPreparedLimitClause()
     {
-        if ($this->hasLimitAppliers()) {
+        if ($this->limitAppliers) {
             $clause = clone $this->intoLimitStrategy()->limitClause();
 
             $this->assignLimitAppliers($clause);

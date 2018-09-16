@@ -255,7 +255,7 @@ trait GroupByTableClauseTrait
 
     protected function getPreparedGroupByClause()
     {
-        if ($this->hasGroupByAppliers()) {
+        if ($this->groupByAppliers) {
             $clause = clone $this->intoGroupByStrategy()->groupByClause();
 
             $this->assignGroupByAppliers($clause);

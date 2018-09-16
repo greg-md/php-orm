@@ -210,7 +210,7 @@ trait OffsetTableClauseTrait
 
     protected function getPreparedOffsetClause()
     {
-        if ($this->hasOffsetAppliers()) {
+        if ($this->offsetAppliers) {
             $clause = clone $this->intoOffsetStrategy()->offsetClause();
 
             $this->assignOffsetAppliers($clause);
