@@ -107,7 +107,7 @@ This is the simplest use case you can have.
 
 | Package  | Time   | Memory  |
 | -------- | ------ | ------- |
-| Greg ORM | ~45ms  | 11.36MB |
+| Greg ORM | ~40ms  | 7.77MB |
 | Eloquent | ~70ms  | 13.09MB |
 
 > More tests will be added soon...
