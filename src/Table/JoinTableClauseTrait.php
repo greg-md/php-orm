@@ -73,6 +73,7 @@ trait JoinTableClauseTrait
 
     /**
      * @param array $appliers
+     *
      * @return $this
      */
     public function setJoinAppliers(array $appliers)

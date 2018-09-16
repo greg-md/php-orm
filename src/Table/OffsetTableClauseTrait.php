@@ -63,6 +63,7 @@ trait OffsetTableClauseTrait
 
     /**
      * @param array $appliers
+     *
      * @return $this
      */
     public function setOffsetAppliers(array $appliers)

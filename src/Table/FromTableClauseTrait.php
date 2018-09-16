@@ -74,6 +74,7 @@ trait FromTableClauseTrait
 
     /**
      * @param array $appliers
+     *
      * @return $this
      */
     public function setFromAppliers(array $appliers)
