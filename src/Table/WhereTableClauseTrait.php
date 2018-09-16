@@ -78,6 +78,7 @@ trait WhereTableClauseTrait
 
     /**
      * @param array $appliers
+     *
      * @return $this
      */
     public function setWhereAppliers(array $appliers)

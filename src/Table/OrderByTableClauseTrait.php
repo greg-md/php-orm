@@ -73,6 +73,7 @@ trait OrderByTableClauseTrait
 
     /**
      * @param array $appliers
+     *
      * @return $this
      */
     public function setOrderByAppliers(array $appliers)

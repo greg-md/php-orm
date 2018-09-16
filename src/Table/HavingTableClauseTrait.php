@@ -80,6 +80,7 @@ trait HavingTableClauseTrait
 
     /**
      * @param array $appliers
+     *
      * @return $this
      */
     public function setHavingAppliers(array $appliers)

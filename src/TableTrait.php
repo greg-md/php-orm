@@ -140,6 +140,7 @@ trait TableTrait
      *
      * @param string $name
      * @param string $type
+     *
      * @return null|string
      */
     public function setCast(string $name, string $type): ?string

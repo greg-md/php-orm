@@ -63,6 +63,7 @@ trait LimitTableClauseTrait
 
     /**
      * @param array $appliers
+     *
      * @return $this
      */
     public function setLimitAppliers(array $appliers)
