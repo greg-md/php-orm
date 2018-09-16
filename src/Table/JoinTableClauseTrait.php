@@ -72,6 +72,17 @@ trait JoinTableClauseTrait
     }
 
     /**
+     * @param array $appliers
+     * @return $this
+     */
+    public function setJoinAppliers(array $appliers)
+    {
+        $this->joinAppliers = $appliers;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function clearJoinAppliers()

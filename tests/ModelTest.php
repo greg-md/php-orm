@@ -1052,11 +1052,11 @@ class ModelTest extends TestCase
             ],
         ]);
 
-        $this->model->setCast('Foo', 'datetime');
-
         $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017 18:00:00']);
 
         $row = $this->model->fetchRow();
+
+        $row->setCast('Foo', 'datetime');
 
         $this->assertEquals('2017-01-01 18:00:00', $row['Foo']);
     }
@@ -1095,11 +1095,11 @@ class ModelTest extends TestCase
             ],
         ]);
 
-        $this->model->setCast('Foo', 'date');
-
         $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017']);
 
         $row = $this->model->fetchRow();
+
+        $row->setCast('Foo', 'date');
 
         $this->assertEquals('2017-01-01', $row['Foo']);
     }
@@ -1138,11 +1138,11 @@ class ModelTest extends TestCase
             ],
         ]);
 
-        $this->model->setCast('Foo', 'time');
-
         $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '18:00']);
 
         $row = $this->model->fetchRow();
+
+        $row->setCast('Foo', 'time');
 
         $this->assertEquals('18:00:00', $row['Foo']);
     }

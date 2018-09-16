@@ -77,6 +77,17 @@ trait WhereTableClauseTrait
     }
 
     /**
+     * @param array $appliers
+     * @return $this
+     */
+    public function setWhereAppliers(array $appliers)
+    {
+        $this->whereAppliers = $appliers;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function clearWhereAppliers()

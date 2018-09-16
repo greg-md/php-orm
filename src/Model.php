@@ -66,7 +66,6 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
     {
         return serialize([
             $this->prefix,
-            $this->name,
             $this->alias,
             $this->label,
             $this->columns,
@@ -90,7 +89,6 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
     {
         [
             $this->prefix,
-            $this->name,
             $this->alias,
             $this->label,
             $this->columns,
@@ -112,7 +110,16 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
 
     public function cleanClone()
     {
+        /*
+         * New instance is faster then clone.
+        $cloned = clone $this;
+
+        $cloned->cleanup();
+        */
+
         $cloned = new static($this->connection);
+
+        $this->transferAppliersTo($cloned);
 
         return $cloned;
     }

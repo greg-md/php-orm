@@ -72,6 +72,17 @@ trait GroupByTableClauseTrait
     }
 
     /**
+     * @param array $appliers
+     * @return $this
+     */
+    public function setGroupByAppliers(array $appliers)
+    {
+        $this->groupByAppliers = $appliers;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function clearGroupByAppliers()

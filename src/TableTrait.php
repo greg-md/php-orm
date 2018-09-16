@@ -10,8 +10,6 @@ trait TableTrait
 
     protected $prefix;
 
-    protected $name;
-
     protected $alias;
 
     protected $label;
@@ -137,6 +135,13 @@ trait TableTrait
         return $this->casts[$name] ?? null;
     }
 
+    /**
+     * @TODO remove it. not needed.
+     *
+     * @param string $name
+     * @param string $type
+     * @return null|string
+     */
     public function setCast(string $name, string $type): ?string
     {
         $this->casts[$name] = $type;
@@ -258,7 +263,7 @@ trait TableTrait
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
         if ($record = $this->connection()->fetch($sql, $params)) {
-            return $this->cleanClone()->setPristineRecords([$record]);
+            return $this->cleanClone()->addPristineRecord($record);
         }
 
         return null;

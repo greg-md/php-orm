@@ -79,6 +79,17 @@ trait HavingTableClauseTrait
     }
 
     /**
+     * @param array $appliers
+     * @return $this
+     */
+    public function setHavingAppliers(array $appliers)
+    {
+        $this->havingAppliers = $appliers;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function clearHavingAppliers()

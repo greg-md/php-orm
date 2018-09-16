@@ -322,4 +322,23 @@ trait QueryBuilderTrait
 
         return [$sql, $params];
     }
+
+    protected function transferAppliersTo(Model $model)
+    {
+        $model->setFromAppliers($this->fromAppliers);
+
+        $model->setGroupByAppliers($this->groupByAppliers);
+
+        $model->setHavingAppliers($this->havingAppliers);
+
+        $model->setJoinAppliers($this->joinAppliers);
+
+        $model->setLimitAppliers($this->limitAppliers);
+
+        $model->setOffsetAppliers($this->offsetAppliers);
+
+        $model->setOrderByAppliers($this->orderByAppliers);
+
+        $model->setWhereAppliers($this->whereAppliers);
+    }
 }

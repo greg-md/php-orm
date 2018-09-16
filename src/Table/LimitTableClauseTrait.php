@@ -62,6 +62,17 @@ trait LimitTableClauseTrait
     }
 
     /**
+     * @param array $appliers
+     * @return $this
+     */
+    public function setLimitAppliers(array $appliers)
+    {
+        $this->limitAppliers = $appliers;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function clearLimitAppliers()

@@ -73,6 +73,17 @@ trait FromTableClauseTrait
     }
 
     /**
+     * @param array $appliers
+     * @return $this
+     */
+    public function setFromAppliers(array $appliers)
+    {
+        $this->fromAppliers = $appliers;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function clearFromAppliers()

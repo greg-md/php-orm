@@ -418,7 +418,9 @@ trait RowsTrait
      */
     public function hasMany(Model $relationshipTable, $relationshipKey, $tableKey = null)
     {
-        $relationshipTable = $relationshipTable->cleanClone();
+        $relationshipTable = clone $relationshipTable;
+
+        $relationshipTable->cleanup();
 
         if ($this->count()) {
             $relationshipKey = (array) $relationshipKey;
@@ -452,7 +454,9 @@ trait RowsTrait
      */
     public function belongsTo(Model $referenceTable, $tableKey, $referenceTableKey = null)
     {
-        $referenceTable = $referenceTable->cleanClone();
+        $referenceTable = clone $referenceTable;
+
+        $referenceTable->cleanup();
 
         $tableKey = (array) $tableKey;
 
