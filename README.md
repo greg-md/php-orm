@@ -89,19 +89,101 @@ foreach($usersGenerator as $users) {
 
 This is the simplest use case you can have.
 
+<table>
+    <th>
+        <td>Package</td>
+        <td>Time</td>
+        <td>Memory</td>
+        <td>Code</td>
+    </th>
+    <tr>
+        <td>Greg ORM</td>
+        <td>~5ms</td>
+        <td>0.24MB</td>
+        <td>
+<pre>
+$manager = new Greg\Orm\Connection\ConnectionManager();
+
+$manager->register('mysql', function() {
+    return new Greg\Orm\Connection\MysqlConnection(
+        new Greg\Orm\Connection\Pdo('mysql:dbname=performance;host=127.0.0.1;port=33060', 'root')
+    );
+});
+
+$manager->actAs('mysql');
+</pre>
+        </td>
+    </tr>
+    <tr>
+        <td>Eloquent</td>
+        <td>~20ms</td>
+        <td>1.28MB</td>
+        <td>
+<pre>
+$manager = new \Illuminate\Database\Capsule\Manager();
+
+$manager->addConnection([
+    "driver" => "mysql",
+    "host" => "127.0.0.1",
+    "port" => "33060",
+    "database" => "performance",
+    "username" => "root",
+    "password" => ""
+]);
+
+$manager->setAsGlobal();
+
+$manager->bootEloquent();
+</pre>
+        </td>
+    </tr>
+    <tr>
+        <td>Doctrine</td>
+        <td>~33ms</td>
+        <td>1.60MB</td>
+        <td>
+<pre>
+$config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(__DIR__ . '/../../src'));
+
+$manager = \Doctrine\ORM\EntityManager::create([
+    'driver'   => 'pdo_mysql',
+    'host'     => '127.0.0.1',
+    'port'     => '33060',
+    'user'     => 'root',
+    'password' => '',
+    'dbname'   => 'performance',
+], $config);
+</pre>
+        </td>
+    </tr>
+</table>
+
 | Package  | Time  | Memory |
 | -------- | ----- | ------ |
 | Greg ORM | ~5ms  | 0.24MB |
 | Eloquent | ~20ms | 1.28MB |
+| Doctrine | ~33ms | 1.60MB |
 
-#### Create 1000 records using a model.
+#### Create 1000 entities.
+
+Without transactions:
 
 | Package  | Time   | Memory |
 | -------- | ------ | ------ |
 | Greg ORM | ~1.25s | 0.03MB |
 | Eloquent | ~1.35s | 0.67MB |
+| Doctrine | ~4.20s | 2.20MB |
 
-**NOTE:** Memory used is the same even if you create 1 record or 1000.
+> For Greg ORM and Eloquent memory used remains the same even if you create 1 record or 1000.
+> Doctrine 
+
+With transactions:
+
+| Package  | Time   | Memory |
+| -------- | ------ | ------ |
+| Greg ORM | ~830ms | 0.04MB |
+| Eloquent | ~880ms | 0.67MB |
+| Doctrine | ~490ms | 5.32MB |
 
 ### Select 10000 records using a model.
 
