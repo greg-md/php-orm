@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Connection;
 
-use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\Dialect\MysqlDialect;
+use Greg\Orm\Dialect\SqlDialect;
 
 class MysqlConnection extends PdoConnectionAbstract
 {
