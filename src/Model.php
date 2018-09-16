@@ -111,7 +111,8 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
     public function cleanClone()
     {
         /*
-         * New instance is faster then clone.
+         * New instance is much faster then clone in php 7.1
+         *
         $cloned = clone $this;
 
         $cloned->cleanup();
