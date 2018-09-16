@@ -76,7 +76,7 @@ foreach($usersGenerator as $users) {
 }
 ```
 
-# Performance tests in comparison with other ORM's 
+# Performance tests against popular ORM's 
 
 ### Connect and run a simple query
 
