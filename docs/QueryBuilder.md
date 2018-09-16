@@ -1,6 +1,6 @@
 # Query Builder
 
-A powerful query builder for web-artisans. The Query Builder provides an elegant way of creating SQL statements and clauses.
+The Query Builder provides an elegant way of creating SQL statements and clauses on different levels of complexity.
 
 Next, you will find a list of available statements and clauses:
 
