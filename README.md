@@ -90,12 +90,12 @@ foreach($usersGenerator as $users) {
 This is the simplest use case you can have.
 
 <table>
-    <th>
-        <td>Package</td>
-        <td>Time</td>
-        <td>Memory</td>
-        <td>Code</td>
-    </th>
+    <tr>
+        <th>Package</th>
+        <th>Time</th>
+        <th>Memory</th>
+        <th>Code</th>
+    </tr>
     <tr>
         <td>Greg ORM</td>
         <td>~5ms</td>
