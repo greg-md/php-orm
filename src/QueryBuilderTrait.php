@@ -304,8 +304,7 @@ trait QueryBuilderTrait
             || $this->hasOrderByAppliers()
             || $this->hasGroupByAppliers()
             || $this->hasLimitAppliers()
-            || $this->hasOffsetAppliers()
-        ;
+            || $this->hasOffsetAppliers();
     }
 
     protected function transferAppliersTo(Model $model)
