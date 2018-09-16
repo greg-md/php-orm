@@ -15,33 +15,33 @@ and write your first query using the [Query Builder](#query-builder---quick-star
 
 # Why use Greg PHP ORM?
 
-### :heavy_check_mark: Easy to understand and use
+### :heavy_check_mark: Easy to understand and use.
 
 You can establish a database connection and run the first query in minutes. [Get Started](#get-started)
 
-### :heavy_check_mark: Intelligent code completion
+### :heavy_check_mark: Intelligent code completion.
 
 Everybody loves that. **IntelliSense** speeds up your coding process and reduces typos and other common mistakes.
 
-### :heavy_check_mark: Powerful Query Builder
+### :heavy_check_mark: Powerful Query Builder.
 
 The Query Builder provides you an elegant way of creating SQL statements and clauses on different levels of complexity.
 You will not find a better Query Builder on the Internet today. See the [Quick Start](#query-builder---quick-start).
 
-### :heavy_check_mark: Powerful Active Record Model
+### :heavy_check_mark: Powerful Active Record Model.
 
 Everything you need is now in one place.
 The Active Record Model represents a table schema, an entity or a collection of entities of that table,
 integrated with the Query Builder to speed up your coding process.
 
-### :heavy_check_mark: Auto-reconnects to database when session expires
+### :heavy_check_mark: Auto-reconnects to database when session expires.
 
 Forget about caring of keeping database connections alive and concentrate on your main business logic.
 When a connection timeout exception occurs, it is reestablished back automatically.
 
 This is a very useful feature when you work with long processes that require database connections.
 
-### :heavy_check_mark: Connects to database when needed only
+### :heavy_check_mark: Connects to database when needed only.
 
 It will not establish a database connection until you call a query.
 
@@ -76,9 +76,9 @@ foreach($usersGenerator as $users) {
 }
 ```
 
-# Performance tests against popular ORM's 
+# Performance tests against popular ORM's
 
-### Connect and run a simple query
+### Connect and run a simple query.
 
 This is the simplest use case you can have.
 
@@ -87,7 +87,7 @@ This is the simplest use case you can have.
 | Greg ORM | ~5ms  | 0.24MB |
 | Eloquent | ~20ms | 1.28MB |
 
-### Create 1000 records using a model
+### Create 1000 records using a model.
 
 | Package  | Time   | Memory |
 | -------- | ------ | ------ |
@@ -96,7 +96,7 @@ This is the simplest use case you can have.
 
 **NOTE:** Memory used is the same even if you create 1 record or 1000.
 
-### Select 10000 records using a model
+### Select 10000 records using a model.
 
 | Package  | Time   | Memory  |
 | -------- | ------ | ------- |
