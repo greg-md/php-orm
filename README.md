@@ -272,9 +272,7 @@ class UsersModel extends \Greg\Orm\Model
 }
 ```
 
-Now, let's instantiate that model:
-
-> The only thing you need is a [Database Connection](#database-connection---quick-start).
+Now, let's instantiate that model. The only thing you need is a [Database Connection](#database-connection---quick-start):
 
 ```php
 // Initialize the model.
