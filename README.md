@@ -13,11 +13,18 @@ A lightweight but powerful ORM(Object-Relational Mapping) library for PHP.
 create an [Active Record Model](#active-record-model---quick-start) of a database table
 and write your first query using the [Query Builder](#query-builder---quick-start).
 
+# Table of Contents:
+
+* [Get Started](#get-started)
+* [Documentation](#documentation)
+* [License](#license)
+* _[Huuuge Quote](#huuuge-quote)_
+
 # Why use Greg PHP ORM?
 
 ### :heavy_check_mark: Easy to understand and use.
 
-You can establish a database connection and run the first query in minutes. [Get Started](#get-started)
+You can establish a database connection and run the first query in minutes. [Get Started](#get-started).
 
 ### :heavy_check_mark: Intelligent code completion.
 
@@ -26,13 +33,13 @@ Everybody loves that. **IntelliSense** speeds up your coding process and reduces
 ### :heavy_check_mark: Powerful Query Builder.
 
 The Query Builder provides you an elegant way of creating SQL statements and clauses on different levels of complexity.
-You will not find a better Query Builder on the Internet today. See the [Quick Start](#query-builder---quick-start).
+You will not find a better Query Builder on the Internet today. [Quick Start](#query-builder---quick-start).
 
 ### :heavy_check_mark: Powerful Active Record Model.
 
 Everything you need is now in one place.
 The Active Record Model represents a table schema, an entity or a collection of entities of that table,
-integrated with the Query Builder to speed up your coding process.
+integrated with the Query Builder to speed up your coding process. [Quick Start](#active-record-model---quick-start).
 
 ### :heavy_check_mark: Auto-reconnects to database when session expires.
 
@@ -78,7 +85,7 @@ foreach($usersGenerator as $users) {
 
 # Performance tests against popular ORM's
 
-### Connect and run a simple query.
+#### Connect and run a simple query.
 
 This is the simplest use case you can have.
 
@@ -87,7 +94,7 @@ This is the simplest use case you can have.
 | Greg ORM | ~5ms  | 0.24MB |
 | Eloquent | ~20ms | 1.28MB |
 
-### Create 1000 records using a model.
+#### Create 1000 records using a model.
 
 | Package  | Time   | Memory |
 | -------- | ------ | ------ |
@@ -105,27 +112,26 @@ This is the simplest use case you can have.
 
 > More tests will be added soon...
 
-# Table of Contents:
+# Get Started
 
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Supported Drivers](#supported-drivers)
-* [Quick Start](#quick-start)
-* [Documentation](#documentation)
-* [License](#license)
-* _[Huuuge Quote](#huuuge-quote)_
+* [Database Connection - Quick Start](#database-connection---quick-start)
+* [Query Builder - Quick Start](#query-builder---quick-start)
+* [Active Record Model - Quick Start](#active-record-model---quick-start)
 
-# Requirements
+## Requirements
 
 * PHP Version `^7.1`
 
-# Installation
+## Installation
 
 You can add this library as a local, per-project dependency to your project using [Composer](https://getcomposer.org/):
 
 `composer require greg-md/php-orm`
 
-# Supported Drivers
+## Supported Drivers
 
 - **MySQL**
 - **SQLite**
@@ -135,12 +141,6 @@ In progress:
 - MS SQL
 - PostgreSQL
 - Oracle
-
-# Get Started
-
-* [Database Connection - Quick Start](#database-connection---quick-start)
-* [Query Builder - Quick Start](#query-builder---quick-start)
-* [Active Record Model - Quick Start](#active-record-model---quick-start)
 
 ## Database Connection - Quick Start
 
