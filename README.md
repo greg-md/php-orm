@@ -118,7 +118,7 @@ One by one, in a transaction:
 > For Greg ORM and Eloquent, memory used remains the same even if you create 1 record or 1000.
 > With Doctrine, memory used depends on entities count.
 
-### Select 10000 records using a model.
+### Select 10000 entities.
 
 | Package  | Time   | Memory  |
 | -------- | ------ | ------- |
