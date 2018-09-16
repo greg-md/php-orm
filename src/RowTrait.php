@@ -6,6 +6,8 @@ trait RowTrait
 {
     use RowsTrait;
 
+    private $mutatorTracer = [];
+
     public function record(): array
     {
         return $this->firstRow();
@@ -149,8 +151,12 @@ trait RowTrait
     {
         $method = $this->getAttributeSetMethod($column);
 
-        if (method_exists($this, $method) and !$this->methodWasCalled($this, $method)) {
+        if (method_exists($this, $method) and !isset($this->mutatorTracer[$column])) { // and !$this->methodWasCalled($this, $method)
+            $this->mutatorTracer[$column] = true;
+
             $this->{$method}($value);
+
+            unset($this->mutatorTracer[$column]);
 
             return $this;
         }
@@ -173,8 +179,14 @@ trait RowTrait
     {
         $method = $this->getAttributeGetMethod($column);
 
-        if (method_exists($this, $method) and !$this->methodWasCalled($this, $method)) {
-            return $this->{$method}();
+        if (method_exists($this, $method) and !isset($this->mutatorTracer[$column])) { // and !$this->methodWasCalled($this, $method)
+            $this->mutatorTracer[$column] = true;
+
+            $value = $this->hasColumn($column) ? $this->{$method}($this->getFirstRow($column)) : $this->{$method}();
+
+            unset($this->mutatorTracer[$column]);
+
+            return $value;
         }
 
         return $this->getFirstRow($column);
@@ -198,20 +210,20 @@ trait RowTrait
         return $items;
     }
 
-    protected function methodWasCalled($object, $method, $times = 1): bool
-    {
-        $k = 0;
-
-        foreach (debug_backtrace() as $item) {
-            if (isset($item['object']) and $item['object'] === $object and $item['function'] === $method) {
-                $k++;
-            }
-
-            if ($k >= $times) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+//    protected function methodWasCalled($object, $method, $times = 1): bool
+//    {
+//        $k = 0;
+//
+//        foreach (debug_backtrace() as $item) {
+//            if (isset($item['object']) and $item['object'] === $object and $item['function'] === $method) {
+//                $k++;
+//            }
+//
+//            if ($k >= $times) {
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 }
