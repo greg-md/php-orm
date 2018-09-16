@@ -10,7 +10,7 @@ use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Dialect\DialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
@@ -120,9 +120,9 @@ interface Connection
     public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array;
 
     /**
-     * @return DialectStrategy
+     * @return SqlDialect
      */
-    public function dialect(): DialectStrategy;
+    public function dialect(): SqlDialect;
 
     /**
      * @param string $tableName

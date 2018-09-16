@@ -10,7 +10,7 @@ use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Dialect\DialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
@@ -264,9 +264,9 @@ class ConnectionManager implements Connection
     }
 
     /**
-     * @return DialectStrategy
+     * @return SqlDialect
      */
-    public function dialect(): DialectStrategy
+    public function dialect(): SqlDialect
     {
         return $this->connection()->dialect();
     }

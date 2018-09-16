@@ -2,6 +2,6 @@
 
 namespace Greg\Orm\Dialect;
 
-class SqliteDialect extends SqlDialect
+class SqliteDialect extends SqlDialectAbstract
 {
 }

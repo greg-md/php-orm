@@ -11,7 +11,7 @@ use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Connection\Connection;
-use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectAbstract;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\QueryStrategy;
@@ -64,7 +64,7 @@ class ModelTest extends TestCase
             });
         }
 
-        $this->connectionMock->method('dialect')->willReturn(new SqlDialect());
+        $this->connectionMock->method('dialect')->willReturn(new SqlDialectAbstract());
 
         $this->model = new class($connectionMock) extends Model {
             protected $label = 'My Table';

@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\Dialect\DialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\SqlException;
 
 trait OrderByClauseTrait
@@ -151,7 +151,7 @@ trait OrderByClauseTrait
     }
 
     /**
-     * @return DialectStrategy
+     * @return SqlDialect
      */
-    abstract public function dialect(): DialectStrategy;
+    abstract public function dialect(): SqlDialect;
 }

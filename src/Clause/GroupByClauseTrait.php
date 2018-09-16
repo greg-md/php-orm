@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\Dialect\DialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 
 trait GroupByClauseTrait
 {
@@ -113,7 +113,7 @@ trait GroupByClauseTrait
     }
 
     /**
-     * @return DialectStrategy
+     * @return SqlDialect
      */
-    abstract public function dialect(): DialectStrategy;
+    abstract public function dialect(): SqlDialect;
 }

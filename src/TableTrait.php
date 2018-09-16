@@ -28,12 +28,12 @@ trait TableTrait
 
     protected $defaults = [];
 
+    abstract public function name(): string;
+
     public function prefix(): ?string
     {
         return $this->prefix;
     }
-
-    abstract public function name(): string;
 
     public function fullName(): string
     {

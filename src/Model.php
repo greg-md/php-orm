@@ -62,6 +62,23 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         return $this;
     }
 
+    public function cleanClone()
+    {
+        /*
+         * New instance is much faster then clone in php 7.1
+         *
+        $cloned = clone $this;
+
+        $cloned->cleanup();
+        */
+
+        $cloned = new static($this->connection);
+
+        $this->transferAppliersTo($cloned);
+
+        return $cloned;
+    }
+
     public function serialize()
     {
         return serialize([
@@ -106,23 +123,6 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
             $this->rowsOffset,
             $this->rowsLimit,
         ] = unserialize($serialized);
-    }
-
-    public function cleanClone()
-    {
-        /*
-         * New instance is much faster then clone in php 7.1
-         *
-        $cloned = clone $this;
-
-        $cloned->cleanup();
-        */
-
-        $cloned = new static($this->connection);
-
-        $this->transferAppliersTo($cloned);
-
-        return $cloned;
     }
 
     protected function boot()

@@ -1,93 +1,22 @@
 # Active Record Model
 
-The Active Record Model represents a full instance of a table and it's rows.
-It can work with table's schema, queries, rows and a specific row.
-The magic thing is that you have all this features into one powerful model.
+Everything you need is now in one place.
+The Active Record Model represents a table schema, an entity or a collection of entities of that table,
+integrated with the Query Builder to speed up your coding process. [Quick Start](#active-record-model---quick-start).
 
 **Implements:** [\IteratorAggregate](http://php.net/manual/en/class.iteratoraggregate.php),
                 [\Countable](http://php.net/manual/en/class.countable.php),
-                [\ArrayAccess](http://php.net/manual/en/class.arrayaccess.php)
+                [\ArrayAccess](http://php.net/manual/en/class.arrayaccess.php),
+                [\Serializable](http://php.net/manual/en/class.serializable.php)
 
 # Table of Contents:
 
-List of **magic methods**:
-
-* **Row**
-    * [__get](#__get)
-    * [__set](#__set)
-* **Query Builder**
-    * [__toString](#__tostring)
-
-List of **supported methods**:
-
+* [setConnection](#setconnection)
+* [getConnection](#getconnection)
+* [connection](#connection)
 * [driver](#driver)
 * [cleanup](#cleanup)
-* **Table**
-    * [prefix](#prefix)
-    * [name](#name)
-    * [fullName](#fullName)
-    * [alias](#alias)
-    * [label](#label)
-    * [columns](#columns)
-    * [hasColumn](#hasColumn)
-    * [column](#column)
-    * [primary](#primary)
-    * [unique](#unique)
-    * [firstUnique](#firstUnique)
-    * [autoIncrement](#autoIncrement)
-    * [nameColumn](#nameColumn)
-    * [casts](#casts)
-    * [cast](#cast)
-    * [setCast](#setCast)
-    * [setDefaults](#setDefaults)
-    * [getDefaults](#getDefaults)
-    * [describe](#describe)
-    * [new](#new)
-    * [create](#create)
-    * [prepareRecord](#prepareRecord)
-    * [prepareValue](#prepareValue)
-    * **Select**
-        * [fetch](#fetch)
-        * [fetchOrFail](#fetchOrFail)
-        * [fetchAll](#fetchAll)
-        * [fetchYield](#fetchYield)
-        * [fetchColumn](#fetchColumn)
-        * [fetchColumnAll](#fetchColumnAll)
-        * [fetchColumnYield](#fetchColumnYield)
-        * [fetchPairs](#fetchPairs)
-        * [fetchPairsYield](#fetchPairsYield)
-        * [fetchRow](#fetchRow)
-        * [fetchRowOrFail](#fetchRowOrFail)
-        * [fetchRows](#fetchRows)
-        * [fetchRowsYield](#fetchRowsYield)
-        * [fetchCount](#fetchCount)
-        * [fetchMax](#fetchMax)
-        * [fetchMin](#fetchMin)
-        * [fetchAvg](#fetchAvg)
-        * [fetchSum](#fetchSum)
-        * [find](#find)
-        * [findOrFail](#findOrFail)
-        * [first](#first)
-        * [firstOrFail](#firstOrFail)
-        * [firstOrNew](#firstOrNew)
-        * [firstOrCreate](#firstOrCreate)
-        * [pairs](#pairs)
-        * [generate](#generate)
-        * [generateInChunks](#generateInChunks)
-        * [generateRows](#generateRows)
-        * [generateRowsInChunks](#generateRowsInChunks)
-        * [exists](#exists)
-    * **Update**
-        * [update](#update)
-    * **Insert**
-        * [insert](#insert)
-        * [insertSelect](#insertSelect)
-        * [insertSelectRaw](#insertSelectRaw)
-        * [insertForEach](#insertForEach)
-    * **Delete**
-        * [delete](#delete)
-        * [erase](#erase)
-        * [truncate](#truncate)
+* [cleanClone](#cleanClone)
 * **Row**
     * [record](#record)
     * [getAutoIncrement](#getautoincrement)
@@ -99,14 +28,15 @@ List of **supported methods**:
     * [isNew](#isnew)
     * [original](#original)
     * [originalModified](#originalmodified)
-* **Rows**
+* **Row Set**
     * [fillable](#fillable)
     * [guarded](#guarded)
     * [rowsTotal](#rowstotal)
     * [rowsOffset](#rowsoffset)
     * [rowsLimit](#rowslimit)
-    * [appendRecord](#appendrecord)
-    * [appendRecordRef](#appendrecordref)
+    * [setPristineRecords](#setpristinerecords)
+    * [addPristineRecord](#addpristinerecord)
+    * [addPristineRecordRef](#addpristinerecordref)
     * [pagination](#pagination)
     * [paginate](#paginate)
     * [has](#has)
@@ -125,6 +55,67 @@ List of **supported methods**:
     * [searchWhere](#searchwhere)
     * [hasMany](#hasmany)
     * [belongsTo](#belongsto)
+* **Table**
+    * [name](#name)
+    * [prefix](#prefix)
+    * [fullName](#fullName)
+    * [alias](#alias)
+    * [label](#label)
+    * [columns](#columns)
+    * [hasColumn](#hasColumn)
+    * [column](#column)
+    * [primary](#primary)
+    * [unique](#unique)
+    * [firstUnique](#firstUnique)
+    * [autoIncrement](#autoIncrement)
+    * [nameColumn](#nameColumn)
+    * [casts](#casts)
+    * [cast](#cast)
+    * [setDefaults](#setDefaults)
+    * [getDefaults](#getDefaults)
+    * [describe](#describe)
+    * [new](#new)
+    * [create](#create)
+    * [prepareRecord](#prepareRecord)
+    * [prepareValue](#prepareValue)
+    * **Select**
+        * [fetch](#fetch)
+        * [fetchOrFail](#fetchOrFail)
+        * [fetchAll](#fetchAll)
+        * [generate](#generate)
+        * [generateInChunks](#generateinchunks)
+        * [fetchColumn](#fetchColumn)
+        * [fetchColumnAll](#fetchColumnAll)
+        * [fetchPairs](#fetchPairs)
+        * [fetchRow](#fetchRow)
+        * [fetchRowOrFail](#fetchRowOrFail)
+        * [fetchRows](#fetchRows)
+        * [generateRows](#generaterows)
+        * [generateRowsInChunks](#generaterowsinchunks)
+        * [fetchCount](#fetchcount)
+        * [fetchMax](#fetchMax)
+        * [fetchMin](#fetchMin)
+        * [fetchAvg](#fetchAvg)
+        * [fetchSum](#fetchSum)
+        * [find](#find)
+        * [findOrFail](#findOrFail)
+        * [first](#first)
+        * [firstOrFail](#firstOrFail)
+        * [firstOrNew](#firstOrNew)
+        * [firstOrCreate](#firstOrCreate)
+        * [pairs](#pairs)
+        * [exists](#exists)
+    * **Update**
+        * [update](#update)
+    * **Insert**
+        * [insert](#insert)
+        * [insertSelect](#insertSelect)
+        * [insertSelectRaw](#insertSelectRaw)
+        * [insertForEach](#insertForEach)
+    * **Delete**
+        * [delete](#delete)
+        * [erase](#erase)
+        * [truncate](#truncate)
 * **Query Builder**
     * [query](#query)
     * [hasQuery](#hasQuery)

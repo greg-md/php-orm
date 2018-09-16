@@ -1,35 +1,41 @@
-# Driver Strategy
+# Database Connection
 
-`Greg\Orm\Driver\DriverStrategy` works directly with the database.
+There are two ways of creating a database connection:
 
-**Available Drivers:**
+1. Instantiate a database connection for a specific driver;
+2. Instantiate a Connection Manager to store multiple database connections.
 
-* [Mysql](#mysql-driver)
-* [Sqlite](#sqlite-driver)
+> The Connection Manager implements the same connection strategy.
+> This means that you can define a connection to act like it.
 
-### Mysql Driver
+## Supported Drivers
 
-Mysql use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
+* [MySQL](#mysql-connection)
+* [SQLite](#sqlite-connection)
+
+### MySQL Connection
+
+MySQL use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
 
 Let say you have a database named `example_db` on `127.0.0.1` with username `john` and password `doe`.
-All you have to do is to initialize the driver with a `PDO` connector strategy.
+All you have to do is to initialize a connection with a `PDO` connector.
 
 ```php
-$driver = new new \Greg\Orm\Driver\MysqlDriver(
-    new \Greg\Orm\Driver\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
+$connection = new new \Greg\Orm\Connection\MysqlConnection(
+    new \Greg\Orm\Connection\Pdo('mysql:dbname=example_db;host=127.0.0.1', 'john', 'doe')
 );
 ```
 
-### Sqlite Driver
+### SQLite Connection
 
 Sqlite use [PDO](http://php.net/manual/en/class.pdo.php) as a connector.
 
 Let say your database is in `/var/db/example_db.sqlite`.
-All you have to do is to initialize the driver with a `PDO` connector strategy.
+All you have to do is to initialize a connection with a `PDO` connector.
 
 ```php
-$driver = new \Greg\Orm\Driver\SqliteDriver(
-    new \Greg\Orm\Driver\Pdo('sqlite:/var/db/example_db.sqlite')
+$connection = new \Greg\Orm\Connection\SqliteConnection(
+    new \Greg\Orm\Connection\Pdo('sqlite:/var/db/example_db.sqlite')
 );
 ```
 
@@ -47,13 +53,11 @@ Below you can find a list of supported methods.
 * [quote](#quote) - Quotes a string for use in a query;
 * [fetch](#fetch) - Fetches the next row from a result set;
 * [fetchAll](#fetchAll) - Returns an array containing all of the result set rows;
-* [fetchYield](#fetchYield) - Returns a generator containing all of the result set rows;
+* [generate](#generate) - Returns a generator containing all of the result set rows;
 * [column](#column) - Returns a single column from the next row of a result set;
 * [columnAll](#columnAll) - Returns an array containing a single column from all of the result set rows;
-* [columnYield](#columnYield) - Returns a generator containing a single column from all of the result set rows;
 * [pairs](#pairs) - Returns an array containing a pair of key-value column from all of the result set rows;
-* [pairsYield](#pairsYield) - Returns a generator containing a pair of key-value column from all of the result set rows;
-* [dialect](#dialect) - Returns the dialect strategy of the current driver;
+* [dialect](#dialect) - Returns the sql dialect of the current driver;
 * [truncate](#truncate) - Truncates a table and returns the number of affected rows;
 * [listen](#listen) - Listens for executed queries;
 * [describe](#describe) - Describes a table;
@@ -84,14 +88,14 @@ public function transaction(callable($this): void $callable): $this;
 _Example:_
 
 ```php
-$driver->transaction(function(Greg\Orm\Driver\DriverStrategy $driver) {
-    $driver->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
+$connection->transaction(function(Greg\Orm\Connection\Connection $connection) {
+    $connection->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
 });
 ```
 
 ## inTransaction
 
-Determine if a transaction is currently active within the driver.
+Determine if a transaction is currently active within the connection.
 This method only works for database drivers that support transactions.
 
 ```php
@@ -101,11 +105,11 @@ public function inTransaction(): bool
 _Example:_
 
 ```php
-$driver->inTransaction(); // result: false
+$connection->inTransaction(); // result: false
 
-$driver->beginTransaction();
+$connection->beginTransaction();
 
-$driver->inTransaction(); // result: true
+$connection->inTransaction(); // result: true
 ```
 
 ## beginTransaction
@@ -122,14 +126,14 @@ public function beginTransaction(): bool
 _Example:_
 
 ```php
-$driver->beginTransaction();
+$connection->beginTransaction();
 
 try {
-    $driver->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
+    $connection->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
 
-    $driver->commit();
+    $connection->commit();
 } catch(Exception $e) {
-    $driver->rollBack();
+    $connection->rollBack();
 }
 ```
 
@@ -175,7 +179,7 @@ public function execute(string $sql, array $params = []): int
 _Example:_
 
 ```php
-$driver->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
+$connection->execute("UPDATE `Table` SET `Foo` = ?", ['foo']);
 ```
 
 ## lastInsertId
@@ -193,9 +197,9 @@ public function lastInsertId(string $sequenceId = null): string
 _Example:_
 
 ```php
-$driver->execute("INSERT INTO `Table` (`Column`) VALUES (?)", ['foo']);
+$connection->execute("INSERT INTO `Table` (`Column`) VALUES (?)", ['foo']);
 
-$id = $driver->lastInsertId(); // result: 1
+$id = $connection->lastInsertId(); // result: 1
 ```
 
 ## quote
@@ -212,7 +216,7 @@ public function quote(string $value): string
 _Example:_
 
 ```php
-$driver->quote('I use "quotes".'); // result: I use ""quotes"".
+$connection->quote('I use "quotes".'); // result: I use ""quotes"".
 ```
 
 ## fetch
@@ -229,7 +233,7 @@ public function fetch(string $sql, array $params = []): ?array
 _Example:_
 
 ```php
-$driver->fetch('Select `Column` from `Table`'); // result: ["Column" => 'foo']
+$connection->fetch('Select `Column` from `Table`'); // result: ["Column" => 'foo']
 ```
 
 ## fetchAll
@@ -249,10 +253,10 @@ public function fetchAll(string $sql, array $params = []): array
 _Example:_
 
 ```php
-$driver->fetchAll('Select `Column` from `Table`'); // result: [["Column" => 'foo'], ["Column" => 'bar']]
+$connection->fetchAll('Select `Column` from `Table`'); // result: [["Column" => 'foo'], ["Column" => 'bar']]
 ```
 
-## fetchYield
+## generate
 
 Returns a generator containing all of the remaining rows in the result set.
 The generator represents each row as either an array of column values
@@ -260,7 +264,7 @@ or an object with properties corresponding to each column name.
 An empty generator is returned if there are zero results to fetch.
 
 ```php
-public function fetchYield(string $sql, array $params = []): \Generator
+public function generate(string $sql, array $params = []): \Generator
 ```
 
 `$sql` - The SQL statement to prepare and execute;  
@@ -269,7 +273,7 @@ public function fetchYield(string $sql, array $params = []): \Generator
 _Example:_
 
 ```php
-$generator = $driver->fetchYield('Select `Column` from `Table`');
+$generator = $connection->generate('Select `Column` from `Table`');
 
 foreach($generator as $row) {
     // 1st result: ["Column" => 'foo']
@@ -292,7 +296,7 @@ public function column(string $sql, array $params = [], string $column = '0'): m
 _Example:_
 
 ```php
-$driver->column('Select `Column` from `Table`'); // result: foo
+$connection->column('Select `Column` from `Table`'); // result: foo
 ```
 
 ## columnAll
@@ -311,32 +315,7 @@ public function columnAll(string $sql, array $params = [], string $column = '0')
 _Example:_
 
 ```php
-$driver->columnAll('Select `Column` from `Table`'); // result: ['foo', 'bar']
-```
-
-## columnYield
-
-Returns a generator containing a single column from all of the result set rows.
-The generator represents each row as either a column value.
-An empty generator is returned if there are zero results to fetch.
-
-```php
-public function columnYield(string $sql, array $params = [], string $column = '0'): \Generator
-```
-
-`$sql` - The SQL statement to prepare and execute;  
-`$params` - SQL statement parameters;  
-`$column` - The column you wish to retrieve from the row. If no value is supplied, it fetches the first column.
-
-_Example:_
-
-```php
-$generator = $driver->fetchYield('Select `Column` from `Table`');
-
-foreach($generator as $column) {
-    // 1st result: 'foo'
-    // 2nd result: 'bar'
-}
+$connection->columnAll('Select `Column` from `Table`'); // result: ['foo', 'bar']
 ```
 
 ## pairs
@@ -356,46 +335,21 @@ public function pairs(string $sql, array $params = [], string $key = '0', string
 _Example:_
 
 ```php
-$driver->pairs('Select `Id`, `Column` from `Table`'); // result: [1 => 'foo', 2 => 'bar']
-```
-
-## pairsYield
-
-Returns a generator containing a pair of key-value column from all of the result set rows.
-An empty generator is returned if there are zero results to fetch.
-
-```php
-public function pairsYield(string $sql, array $params = [], string $key = '0', string $value = '1'): \Generator
-```
-
-`$sql` - The SQL statement to prepare and execute;  
-`$params` - SQL statement parameters;  
-`$key` - The key column you wish to retrieve from the row. If no value is supplied, it fetches the first column;  
-`$value` - The value column you wish to retrieve from the row. If no value is supplied, it fetches the second column.
-
-_Example:_
-
-```php
-$generator = $driver->fetchYield('Select `Id`, `Column` from `Table`');
-
-foreach($generator as $id => $column) {
-    // 1st result: 1 => 'foo'
-    // 2nd result: 2 => 'bar'
-}
+$connection->pairs('Select `Id`, `Column` from `Table`'); // result: [1 => 'foo', 2 => 'bar']
 ```
 
 ## dialect
 
-Returns the dialect strategy of the current driver.
+Returns the dialect of the current connection.
 
 ```php
-public function dialect(): Greg\Orm\Dialect\DialectStrategy
+public function dialect(): Greg\Orm\Dialect\SqlDialect
 ```
 
 _Example:_
 
 ```php
-$driver->dialect()->concat(['`Column1`', '`Column2`'], '","');
+$connection->dialect()->concat(['`Column1`', '`Column2`'], '","');
 ```
 
 ## truncate
@@ -411,7 +365,7 @@ public function truncate(string $tableName): int
 _Example:_
 
 ```php
-$driver->truncate('Table');
+$connection->truncate('Table');
 ```
 
 ## listen
@@ -427,7 +381,7 @@ public function listen(callable(string $sql, array $params, $this): void $callab
 _Example:_
 
 ```php
-$driver->truncate('Table');
+$connection->truncate('Table');
 ```
 
 ## describe
@@ -439,13 +393,13 @@ public function describe(string $tableName, bool $force = false): array
 ```
 
 `$tableName` - Table name;  
-`$force` - By default driver will save in memory the table description.
+`$force` - By default connection will save in memory the table description.
             Set it to `true` if you want to fetch from database new description.
 
 _Example:_
 
 ```php
-$driver->describe('Table'); // result: ['columns' => [...], 'primary' => [...]]
+$connection->describe('Table'); // result: ['columns' => [...], 'primary' => [...]]
 ```
 
 ## select
@@ -459,7 +413,7 @@ public function select(): Greg\Orm\Query\SelectQuery
 _Example:_
 
 ```php
-$query = $driver->select()->from('Table');
+$query = $connection->select()->from('Table');
 
 echo $query->toString(); // result: SELECT * FROM `Table`
 ```
@@ -475,7 +429,7 @@ public function insert(): Greg\Orm\Query\InsertQuery
 _Example:_
 
 ```php
-$query = $driver->insert()->into('Table')->data(['Column' => 'foo']);
+$query = $connection->insert()->into('Table')->data(['Column' => 'foo']);
 
 echo $query->toString(); // result: INSERT INTO `Table` (`Column`) VALUES (?)
 ```
@@ -491,7 +445,7 @@ public function delete(): Greg\Orm\Query\DeleteQuery
 _Example:_
 
 ```php
-$query = $driver->delete()->from('Table');
+$query = $connection->delete()->from('Table');
 
 echo $query->toString(); // result: DELETE FROM `Table`
 ```
@@ -507,7 +461,7 @@ public function update(): Greg\Orm\Query\UpdateQuery
 _Example:_
 
 ```php
-$query = $driver->update()->table('Table')->set(['Column' => 'foo']);
+$query = $connection->update()->table('Table')->set(['Column' => 'foo']);
 
 echo $query->toString(); // result: UPDATE `Table` SET `Column` = ?
 ```
@@ -523,7 +477,7 @@ public function from(): Greg\Orm\Clause\FromClause
 _Example:_
 
 ```php
-$query = $driver->from()->from('Table');
+$query = $connection->from()->from('Table');
 
 echo $query->toString(); // result: FROM `Table`
 ```
@@ -539,7 +493,7 @@ public function join(): Greg\Orm\Clause\JoinClause
 _Example:_
 
 ```php
-$query = $driver->join()->inner('Table');
+$query = $connection->join()->inner('Table');
 
 echo $query->toString(); // result: INNER JOIN `Table`
 ```
@@ -555,7 +509,7 @@ public function where(): Greg\Orm\Clause\WhereClause
 _Example:_
 
 ```php
-$query = $driver->where()->where('Column', 1);
+$query = $connection->where()->where('Column', 1);
 
 echo $query->toString(); // result: WHERE `Column` = ?
 ```
@@ -571,7 +525,7 @@ public function having(): Greg\Orm\Clause\HavingClause
 _Example:_
 
 ```php
-$query = $driver->having()->having('Column', 1);
+$query = $connection->having()->having('Column', 1);
 
 echo $query->toString(); // result: HAVING `Column` = ?
 ```
@@ -587,7 +541,7 @@ public function orderBy(): Greg\Orm\Clause\OrderByClause
 _Example:_
 
 ```php
-$query = $driver->orderBy()->orderAsc('Column');
+$query = $connection->orderBy()->orderAsc('Column');
 
 echo $query->toString(); // result: ORDER BY `Column` ASC
 ```
@@ -603,7 +557,7 @@ public function groupBy(): Greg\Orm\Clause\GroupByClause
 _Example:_
 
 ```php
-$query = $driver->groupBy()->groupBy('Column');
+$query = $connection->groupBy()->groupBy('Column');
 
 echo $query->toString(); // result: GROUP BY `Column`
 ```
@@ -619,7 +573,7 @@ public function limit(): Greg\Orm\Clause\LimitClause
 _Example:_
 
 ```php
-$query = $driver->limit()->limit(10');
+$query = $connection->limit()->limit(10');
 
 echo $query->toString(); // result: LIMIT `Column`
 ```
@@ -635,7 +589,7 @@ public function offset(): Greg\Orm\Clause\OffsetClause
 _Example:_
 
 ```php
-$query = $driver->offset()->offset(10');
+$query = $connection->offset()->offset(10');
 
 echo $query->toString(); // result: OFFSET `Column`
 ```
