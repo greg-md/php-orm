@@ -144,15 +144,6 @@ trait RowTrait
         return $this->setFirst($name, $value);
     }
 
-    protected function &firstRow(): array
-    {
-        if (!$this->rows) {
-            throw new \Exception('Model row is not found.');
-        }
-
-        return $this->rows[0];
-    }
-
     protected function hasFirst(string $column): bool
     {
         return $this->hasInRow($this->firstRow(), $column);

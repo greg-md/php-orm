@@ -513,6 +513,15 @@ trait RowsTrait
         }
     }
 
+    protected function &firstRow(): array
+    {
+        if (!$this->rows) {
+            throw new \Exception('Model row is not found.');
+        }
+
+        return $this->rows[0];
+    }
+
     protected function hasInRow(array &$row, string $column): bool
     {
         return (bool) ($row['record'][$column] ?? false);
