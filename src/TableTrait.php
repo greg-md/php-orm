@@ -136,7 +136,7 @@ trait TableTrait
     }
 
     /**
-     * @TODO remove it. not needed.
+     * @TODO remove and fix tests. You should not be able to cast values dynamically.
      *
      * @param string $name
      * @param string $type

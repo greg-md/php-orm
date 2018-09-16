@@ -741,4 +741,17 @@ trait HavingTableClauseTrait
 
         return $this;
     }
+
+    protected function getPreparedHavingClause()
+    {
+        if ($this->hasHavingAppliers()) {
+            $clause = clone $this->intoHavingStrategy()->havingClause();
+
+            $this->assignHavingAppliers($clause);
+        } else {
+            $clause = $this->getHavingClause();
+        }
+
+        return $clause;
+    }
 }

@@ -207,4 +207,17 @@ trait OffsetTableClauseTrait
 
         return $this;
     }
+
+    protected function getPreparedOffsetClause()
+    {
+        if ($this->hasOffsetAppliers()) {
+            $clause = clone $this->intoOffsetStrategy()->offsetClause();
+
+            $this->assignOffsetAppliers($clause);
+        } else {
+            $clause = $this->getOffsetClause();
+        }
+
+        return $clause;
+    }
 }

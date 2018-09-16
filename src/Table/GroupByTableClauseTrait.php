@@ -252,4 +252,17 @@ trait GroupByTableClauseTrait
 
         return $this;
     }
+
+    protected function getPreparedGroupByClause()
+    {
+        if ($this->hasGroupByAppliers()) {
+            $clause = clone $this->intoGroupByStrategy()->groupByClause();
+
+            $this->assignGroupByAppliers($clause);
+        } else {
+            $clause = $this->getGroupByClause();
+        }
+
+        return $clause;
+    }
 }

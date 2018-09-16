@@ -457,4 +457,17 @@ trait JoinTableClauseTrait
 
         return $this;
     }
+
+    protected function getPreparedJoinClause()
+    {
+        if ($this->hasJoinAppliers()) {
+            $clause = clone $this->intoJoinStrategy()->joinClause();
+
+            $this->assignJoinAppliers($clause);
+        } else {
+            $clause = $this->getJoinClause();
+        }
+
+        return $clause;
+    }
 }

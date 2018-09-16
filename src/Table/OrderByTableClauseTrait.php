@@ -278,4 +278,17 @@ trait OrderByTableClauseTrait
 
         return $this;
     }
+
+    protected function getPreparedOrderByClause()
+    {
+        if ($this->hasOrderByAppliers()) {
+            $clause = clone $this->intoOrderByStrategy()->orderByClause();
+
+            $this->assignOrderByAppliers($clause);
+        } else {
+            $clause = $this->getOrderByClause();
+        }
+
+        return $clause;
+    }
 }

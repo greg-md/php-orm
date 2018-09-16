@@ -179,38 +179,42 @@ trait QueryBuilderTrait
             return $this->clausesToSql();
         }
 
-        $query = clone $this->query();
+        $query = $this->query();
 
-        if ($query instanceof FromClauseStrategy) {
-            $this->assignFromAppliers($query);
-        }
+        if ($this->hasAppliers()) {
+            $query = clone $query;
 
-        if ($query instanceof JoinClauseStrategy) {
-            $this->assignJoinAppliers($query);
-        }
+            if ($query instanceof FromClauseStrategy) {
+                $this->assignFromAppliers($query);
+            }
 
-        if ($query instanceof WhereClauseStrategy) {
-            $this->assignWhereAppliers($query);
-        }
+            if ($query instanceof JoinClauseStrategy) {
+                $this->assignJoinAppliers($query);
+            }
 
-        if ($query instanceof HavingClauseStrategy) {
-            $this->assignHavingAppliers($query);
-        }
+            if ($query instanceof WhereClauseStrategy) {
+                $this->assignWhereAppliers($query);
+            }
 
-        if ($query instanceof OrderByClauseStrategy) {
-            $this->assignOrderByAppliers($query);
-        }
+            if ($query instanceof HavingClauseStrategy) {
+                $this->assignHavingAppliers($query);
+            }
 
-        if ($query instanceof GroupByClauseStrategy) {
-            $this->assignGroupByAppliers($query);
-        }
+            if ($query instanceof OrderByClauseStrategy) {
+                $this->assignOrderByAppliers($query);
+            }
 
-        if ($query instanceof LimitClauseStrategy) {
-            $this->assignLimitAppliers($query);
-        }
+            if ($query instanceof GroupByClauseStrategy) {
+                $this->assignGroupByAppliers($query);
+            }
 
-        if ($query instanceof OffsetClauseStrategy) {
-            $this->assignOffsetAppliers($query);
+            if ($query instanceof LimitClauseStrategy) {
+                $this->assignLimitAppliers($query);
+            }
+
+            if ($query instanceof OffsetClauseStrategy) {
+                $this->assignOffsetAppliers($query);
+            }
         }
 
         return $query->toSql();
@@ -230,11 +234,7 @@ trait QueryBuilderTrait
     {
         $sql = $params = [];
 
-        if ($clause = $this->hasFromAppliers() ? $this->intoFromStrategy()->getFromClause() : $this->getFromClause()) {
-            $clause = clone $clause;
-
-            $this->assignFromAppliers($clause);
-
+        if ($clause = $this->getPreparedFromClause()) {
             list($s, $p) = $clause->toSql();
 
             $sql[] = $s;
@@ -242,11 +242,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasJoinAppliers() ? $this->intoJoinStrategy()->joinClause() : $this->getJoinClause()) {
-            $clause = clone $clause;
-
-            $this->assignJoinAppliers($clause);
-
+        if ($clause = $this->getPreparedJoinClause()) {
             list($s, $p) = $clause->toSql();
 
             $sql[] = $s;
@@ -254,11 +250,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasWhereAppliers() ? $this->intoWhereStrategy()->whereClause() : $this->getWhereClause()) {
-            $clause = clone $clause;
-
-            $this->assignWhereAppliers($clause);
-
+        if ($clause = $this->getPreparedWhereClause()) {
             list($s, $p) = $clause->toSql();
 
             $sql[] = $s;
@@ -266,11 +258,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasGroupByAppliers() ? $this->intoGroupByStrategy()->groupByClause() : $this->getGroupByClause()) {
-            $clause = clone $clause;
-
-            $this->assignGroupByAppliers($clause);
-
+        if ($clause = $this->getPreparedGroupByClause()) {
             list($s, $p) = $clause->toSql();
 
             $sql[] = $s;
@@ -278,11 +266,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasHavingAppliers() ? $this->intoHavingStrategy()->havingClause() : $this->getHavingClause()) {
-            $clause = clone $clause;
-
-            $this->assignHavingAppliers($clause);
-
+        if ($clause = $this->getPreparedHavingClause()) {
             list($s, $p) = $clause->toSql();
 
             $sql[] = $s;
@@ -290,11 +274,7 @@ trait QueryBuilderTrait
             $params = array_merge($params, $p);
         }
 
-        if ($clause = $this->hasOrderByAppliers() ? $this->intoOrderByStrategy()->orderByClause() : $this->getOrderByClause()) {
-            $clause = clone $clause;
-
-            $this->assignOrderByAppliers($clause);
-
+        if ($clause = $this->getPreparedOrderByClause()) {
             list($s, $p) = $clause->toSql();
 
             $sql[] = $s;
@@ -304,41 +284,46 @@ trait QueryBuilderTrait
 
         $sql = implode(' ', $sql);
 
-        if ($clause = $this->hasLimitAppliers() ? $this->intoLimitStrategy()->limitClause() : $this->getLimitClause()) {
-            $clause = clone $clause;
-
-            $this->assignLimitAppliers($clause);
-
+        if ($clause = $this->getPreparedLimitClause()) {
             $sql = $this->connection()->dialect()->limit($sql, $clause->getLimit());
         }
 
-        if ($clause = $this->hasOffsetAppliers() ? $this->intoOffsetStrategy()->offsetClause() : $this->getOffsetClause()) {
-            $clause = clone $clause;
-
-            $this->assignOffsetAppliers($clause);
-
+        if ($clause = $this->getPreparedOffsetClause()) {
             $sql = $this->connection()->dialect()->offset($sql, $clause->getOffset());
         }
 
         return [$sql, $params];
     }
 
+    protected function hasAppliers()
+    {
+        return $this->hasFromAppliers()
+            || $this->hasJoinAppliers()
+            || $this->hasWhereAppliers()
+            || $this->hasHavingAppliers()
+            || $this->hasOrderByAppliers()
+            || $this->hasGroupByAppliers()
+            || $this->hasLimitAppliers()
+            || $this->hasOffsetAppliers()
+        ;
+    }
+
     protected function transferAppliersTo(Model $model)
     {
-        $model->setFromAppliers($this->fromAppliers);
+        $model->setFromAppliers($this->getFromAppliers());
 
-        $model->setGroupByAppliers($this->groupByAppliers);
+        $model->setGroupByAppliers($this->getGroupByAppliers());
 
-        $model->setHavingAppliers($this->havingAppliers);
+        $model->setHavingAppliers($this->getHavingAppliers());
 
-        $model->setJoinAppliers($this->joinAppliers);
+        $model->setJoinAppliers($this->getJoinAppliers());
 
-        $model->setLimitAppliers($this->limitAppliers);
+        $model->setLimitAppliers($this->getLimitAppliers());
 
-        $model->setOffsetAppliers($this->offsetAppliers);
+        $model->setOffsetAppliers($this->getOffsetAppliers());
 
-        $model->setOrderByAppliers($this->orderByAppliers);
+        $model->setOrderByAppliers($this->getOrderByAppliers());
 
-        $model->setWhereAppliers($this->whereAppliers);
+        $model->setWhereAppliers($this->getWhereAppliers());
     }
 }

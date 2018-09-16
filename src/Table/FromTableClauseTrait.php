@@ -255,4 +255,17 @@ trait FromTableClauseTrait
 
         return $this;
     }
+
+    protected function getPreparedFromClause()
+    {
+        if ($this->hasFromAppliers()) {
+            $clause = clone $this->intoFromStrategy()->fromClause();
+
+            $this->assignFromAppliers($clause);
+        } else {
+            $clause = $this->getFromClause();
+        }
+
+        return $clause;
+    }
 }
