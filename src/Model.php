@@ -110,6 +110,13 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         ] = unserialize($serialized);
     }
 
+    public function cleanClone()
+    {
+        $cloned = new static($this->connection);
+
+        return $cloned;
+    }
+
     protected function boot()
     {
         return $this;
@@ -124,15 +131,6 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         }
 
         return $this;
-    }
-
-    protected function cleanClone()
-    {
-        $cloned = clone $this;
-
-        $cloned->cleanup();
-
-        return $cloned;
     }
 
     private function uses($class)

@@ -418,9 +418,7 @@ trait RowsTrait
      */
     public function hasMany(Model $relationshipTable, $relationshipKey, $tableKey = null)
     {
-        $relationshipTable = clone $relationshipTable;
-
-        $relationshipTable->cleanup();
+        $relationshipTable = $relationshipTable->cleanClone();
 
         if ($this->count()) {
             $relationshipKey = (array) $relationshipKey;
@@ -454,9 +452,7 @@ trait RowsTrait
      */
     public function belongsTo(Model $referenceTable, $tableKey, $referenceTableKey = null)
     {
-        $referenceTable = clone $referenceTable;
-
-        $referenceTable->cleanup();
+        $referenceTable = $referenceTable->cleanClone();
 
         $tableKey = (array) $tableKey;
 
@@ -491,7 +487,7 @@ trait RowsTrait
      */
     public function getIterator()
     {
-        foreach (array_keys($this->rows) as $key) {
+        foreach ($this->rows as $key => $row) {
             yield $key => $this->cleanClone()->addPristineRecordRef(
                 $this->rows[$key],
                 $this->rowGetState($key)
