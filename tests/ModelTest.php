@@ -732,7 +732,7 @@ class ModelTest extends TestCase
         $record = ['Id' => 1];
 
         $recordState = [
-            'isNew' => false,
+            'isNew'    => false,
             'modified' => [],
         ];
 

@@ -609,7 +609,7 @@ trait RowsTrait
     {
         if (!isset($this->rowsState[$key])) {
             $this->rowsState[$key] = [
-                'isNew' => false,
+                'isNew'    => false,
                 'modified' => [],
             ];
         }
