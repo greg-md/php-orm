@@ -306,7 +306,7 @@ trait TableTrait
         }
 
         foreach ($recordsGenerator as $record) {
-            yield $this->cleanClone()->setPristineRecords([$record]);
+            yield $this->cleanClone()->addPristineRecord($record);
         }
     }
 
