@@ -85,6 +85,8 @@ foreach($usersGenerator as $users) {
 
 # Performance tests against popular ORM's
 
+The next tests were made on some simple use cases.
+
 #### Connect and run a simple query.
 
 This is the simplest use case you can have.
@@ -97,7 +99,7 @@ This is the simplest use case you can have.
 
 #### Create 1000 entities.
 
-Without transactions:
+One by one, without a transaction:
 
 | Package  | Time   | Memory |
 | -------- | ------ | ------ |
@@ -105,16 +107,16 @@ Without transactions:
 | Eloquent | ~1.35s | 0.67MB |
 | Doctrine | ~4.20s | 2.20MB |
 
-> For Greg ORM and Eloquent, memory used remains the same even if you create 1 record or 1000.
-> With doctrine, memory used depends on entities count.
-
-With transactions:
+One by one, in a transaction:
 
 | Package  | Time   | Memory |
 | -------- | ------ | ------ |
 | Greg ORM | ~830ms | 0.04MB |
 | Eloquent | ~880ms | 0.67MB |
 | Doctrine | ~490ms | 5.32MB |
+
+> For Greg ORM and Eloquent, memory used remains the same even if you create 1 record or 1000.
+> With doctrine, memory used depends on entities count.
 
 ### Select 10000 records using a model.
 
