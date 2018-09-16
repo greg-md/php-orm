@@ -23,29 +23,29 @@ You can establish a database connection and run the first query in minutes. [Get
 
 Everybody loves that. **IntelliSense** speeds up your coding process and reduces typos and other common mistakes.
 
-### Powerful Query Builder
+### :heavy_check_mark: Powerful Query Builder
 
 The Query Builder provides you an elegant way of creating SQL statements and clauses on different levels of complexity.
 You will not find a better Query Builder on the Internet today. See the [Quick Start](#query-builder---quick-start).
 
-### Powerful Active Record Model
+### :heavy_check_mark: Powerful Active Record Model
 
 Everything you need is now in one place.
 The Active Record Model represents a table schema, an entity or a collection of entities of that table,
 integrated with the Query Builder to speed up your coding process.
 
-### Auto-reconnects to database when session expires
+### :heavy_check_mark: Auto-reconnects to database when session expires
 
 Forget about caring of keeping database connections alive and concentrate on your main business logic.
 When a connection timeout exception occurs, it is reestablished back automatically.
 
 This is a very useful feature when you work with long processes that require database connections.
 
-### Connects to database when needed only
+### :heavy_check_mark: Connects to database when needed only
 
 It will not establish a database connection until you call a query.
 
-### Best performance with big amount of data.
+### :heavy_check_mark: Best performance with big amount of data.
 
 You can get use of [PHP Generators](http://php.net/manual/ro/language.generators.overview.php)
 to achieve the best results when working with big amount of data.
