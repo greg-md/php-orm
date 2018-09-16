@@ -492,7 +492,7 @@ trait RowsTrait
     public function getIterator()
     {
         foreach (array_keys($this->rows) as $key) {
-            yield $this->cleanClone()->addPristineRecordRef(
+            yield $key => $this->cleanClone()->addPristineRecordRef(
                 $this->rows[$key],
                 $this->rowGetState($key)
             );
