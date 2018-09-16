@@ -7,24 +7,45 @@
 [![Latest Unstable Version](https://poser.pugx.org/greg-md/php-orm/v/unstable.svg)](https://packagist.org/packages/greg-md/php-orm)
 [![License](https://poser.pugx.org/greg-md/php-orm/license.svg)](https://packagist.org/packages/greg-md/php-orm)
 
-A powerful ORM(Object-Relational Mapping) for PHP.
+A lightweight but powerful ORM(Object-Relational Mapping) library for PHP.
 
-# Why you should choose it?
+[Gest Started](#get-started) with establishing a [Database Connection](#database-connection---quick-start),
+create an [Active Record Model](#active-record-model---quick-start) of a database table
+and write your first query using the [Query Builder](#query-builder---quick-start).
 
-* **Easy to understand and use**
-* **Fully IntelliSense**
-* **Best Performance with Big Data**
-* **Minimum Memory Usage**
-* **Lightweight Package**
-* **Powerful Database Connections**
-* **Powerful Query Builder**
-* **Powerful Active Record Model**
-* **Multiple drivers support**
-* **It just makes you happy!**
+# Why use Greg PHP ORM?
 
-# What makes it better than other stable and proven in time ORM's like Eloquent or Doctrine?
+### :heavy_check_mark: Easy to understand and use
 
-### Works with big data without reaching memory/timeout limit.
+You can establish a database connection and run the first query in minutes. [Get Started](#get-started)
+
+### :heavy_check_mark: Intelligent code completion
+
+Everybody loves that. **IntelliSense** speeds up your coding process and reduces typos and other common mistakes.
+
+### Powerful Query Builder
+
+The Query Builder provides you an elegant way of creating SQL statements and clauses on different levels of complexity.
+You will not find a better Query Builder on the Internet today. See the [Quick Start](#query-builder---quick-start).
+
+### Powerful Active Record Model
+
+Everything you need is now in one place.
+The Active Record Model represents a table schema, an entity or a collection of entities of that table,
+integrated with the Query Builder to speed up your coding process.
+
+### Auto-reconnects to database when session expires
+
+Forget about caring of keeping database connections alive and concentrate on your main business logic.
+When a connection timeout exception occurs, it is reestablished back automatically.
+
+This is a very useful feature when you work with long processes that require database connections.
+
+### Connects to database when needed only
+
+It will not establish a database connection until you call a query.
+
+### Best performance with big amount of data.
 
 You can get use of [PHP Generators](http://php.net/manual/ro/language.generators.overview.php)
 to achieve the best results when working with big amount of data.
@@ -33,30 +54,31 @@ Let's imagine we have thousands of records and we want to go though them and do 
 We know that we can not select all the records from database because we can reach the request/connection timeout limit,
 also we can not fetch all the records in PHP because we can reach the memory limit.
 
-With **Greg ORM** you can solve that with a few lines of code:
+**Greg ORM** provides elegant ways to accomplish that:
 
 ```php
+// Way 1
+// Create a Generator that will fetch rows one by one, selecting them in chunks of 1000
 $usersGenerator = $users->generateRows($chunkSize = 1000);
 
 foreach($usersGenerator as $user) {
     // Do your business logic
 }
+
+// Way 2
+// Create a Generator that will fetch rows in chunks of 1000
+$usersGenerator = $users->generateRowsInChunks($chunkSize = 1000);
+
+foreach($usersGenerator as $users) {
+    foreach($users as $user) {
+        // Do your business logic
+    }
+}
 ```
 
-### Auto-reconnects to database when session expires
+# Performance tests in comparison with other ORM's 
 
-Forget about caring of keeping database connection alive and concentrate on your main business logic.
-Connection timeout exceptions are catch inside and reestablish your database connection back automatically.
-
-This is a very useful feature when you have listeners/long scripts that works with database connections.
-
-### No queries - no database connections
-
-It will not establish a database connection until you call a query.
-
-### Is faster and consumes much less memory
-
-**Connect and run a simple query:**
+### Connect and run a simple query
 
 This is the simplest use case you can have.
 
@@ -65,7 +87,7 @@ This is the simplest use case you can have.
 | Greg ORM | ~5ms  | 0.24MB |
 | Eloquent | ~20ms | 1.28MB |
 
-**Create 1000 records using a model:**
+### Create 1000 records using a model
 
 | Package  | Time   | Memory |
 | -------- | ------ | ------ |
@@ -74,7 +96,7 @@ This is the simplest use case you can have.
 
 **NOTE:** Memory used is the same even if you create 1 record or 1000.
 
-**Select 10000 records using a model:**
+### Select 10000 records using a model
 
 | Package  | Time   | Memory  |
 | -------- | ------ | ------- |
@@ -114,7 +136,7 @@ In progress:
 - PostgreSQL
 - Oracle
 
-# Quick Start
+# Get Started
 
 * [Database Connection - Quick Start](#database-connection---quick-start)
 * [Query Builder - Quick Start](#query-builder---quick-start)
