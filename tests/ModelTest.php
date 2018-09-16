@@ -295,22 +295,20 @@ class ModelTest extends TestCase
             }
         };
 
-        $rows->appendRecord([
-                'Id' => 1,
-            ])
-            ->appendRecord([
-                'Id' => 2,
-            ]);
+        $rows->setPristineRecords([
+            ['Id' => 1],
+            ['Id' => 2],
+        ]);
 
         $row = $rows->search(function (Model $row) {
             return $row['Id'] === 2;
-        }, false);
+        });
 
         $this->assertEquals(2, $row['Id']);
 
         $row = $rows->search(function (Model $row) {
             return $row['Id'] === 3;
-        }, false);
+        });
 
         $this->assertNull($row);
     }
@@ -321,7 +319,7 @@ class ModelTest extends TestCase
 
         $rows = $this->model->new(['Id' => 1]);
 
-        $rows->appendRecord(['Id' => 2]);
+        $rows->addPristineRecord(['Id' => 2]);
 
         $row = $rows->searchWhere('Id', 2);
 
@@ -715,9 +713,10 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->model->appendRecord(['Id' => 1]);
-
-        $this->model->appendRecord(['Id' => 2]);
+        $this->model->setPristineRecords([
+            ['Id' => 1],
+            ['Id' => 2],
+        ]);
 
         $ids = [1, 2];
 
@@ -726,17 +725,18 @@ class ModelTest extends TestCase
         }
     }
 
-    public function testCanAppendRecordReference()
+    public function testCanAddPristineRecordReference()
     {
         $this->mockDescribe();
 
         $record = ['Id' => 1];
 
-        $isNew = false;
+        $recordState = [
+            'isNew' => false,
+            'modified' => [],
+        ];
 
-        $modified = [];
-
-        $this->model->appendRecordRef($record, $isNew, $modified);
+        $this->model->addPristineRecordRef($record, $recordState);
 
         $this->assertEquals(1, $this->model['Id']);
 
@@ -746,7 +746,7 @@ class ModelTest extends TestCase
 
         $this->model['Id'] = 3;
 
-        $this->assertEquals(3, $modified['Id']);
+        $this->assertEquals(3, $recordState['modified']['Id']);
     }
 
     public function testCanGetUniqueForFirstUnique()
@@ -853,11 +853,10 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('generate')->willReturn((function () {
-            yield ['Id' => 1];
-
-            yield ['Id' => 2];
-        })());
+        $this->connectionMock->method('fetchAll')->willReturn([
+            ['Id' => 1],
+            ['Id' => 2],
+        ]);
 
         $this->assertEquals([['Id' => 1], ['Id' => 2]], $this->model->fetchRows()->records());
     }
@@ -1262,7 +1261,7 @@ class ModelTest extends TestCase
 
         $rows = $this->model->new(['Id' => 1]);
 
-        $rows->appendRecord(['Id' => 2]);
+        $rows->addPristineRecord(['Id' => 2]);
 
         $rows->set('Id', 3);
 
@@ -1277,7 +1276,7 @@ class ModelTest extends TestCase
 
         $rows = $this->model->new(['Id' => 1]);
 
-        $rows->appendRecord(['Id' => 2]);
+        $rows->addPristineRecord(['Id' => 2]);
 
         $rows->setMultiple([
             'Id' => 3,
@@ -1294,7 +1293,7 @@ class ModelTest extends TestCase
 
         $rows = $this->model->new(['Id' => 1]);
 
-        $rows->appendRecord(['Id' => 2]);
+        $rows->addPristineRecord(['Id' => 2]);
 
         $this->assertEquals([1, 2], $rows->get('Id'));
     }
@@ -1318,7 +1317,7 @@ class ModelTest extends TestCase
 
         $rows = $this->model->new(['Id' => 1]);
 
-        $rows->appendRecord(['Id' => 2]);
+        $rows->addPristineRecord(['Id' => 2]);
 
         $this->assertEquals(['Id' => [1, 2]], $rows->getMultiple(['Id']));
     }
@@ -1354,7 +1353,7 @@ class ModelTest extends TestCase
 
         $rows = $this->model->create(['Id' => 1]);
 
-        $rows->appendRecord(['Id' => 2], true);
+        $rows->addPristineRecord(['Id' => 2], ['isNew' => true, 'modified' => false]);
 
         $this->connectionMock
             ->expects($this->once())
@@ -1382,8 +1381,6 @@ class ModelTest extends TestCase
         $rows = $this->model->new(['Id' => 1]);
 
         $this->assertEquals([['Id' => 1]], $rows->records());
-
-        $this->assertEquals([['record' => ['Id' => 1], 'isNew' => true, 'modified' => []]], $rows->records(true));
     }
 
     public function testCanChangeRowStatus()
@@ -1460,7 +1457,7 @@ class ModelTest extends TestCase
             }
         };
 
-        $row->appendRecord(['Id' => 1]);
+        $row->addPristineRecord(['Id' => 1]);
 
         $this->expectException(\Exception::class);
 

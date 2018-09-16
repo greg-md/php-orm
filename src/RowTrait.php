@@ -6,13 +6,9 @@ trait RowTrait
 {
     use RowsTrait;
 
-    public function record(bool $full = false): array
+    public function record(): array
     {
-        if ($full) {
-            return $this->firstRow();
-        }
-
-        return $this->firstRow()['record'];
+        return $this->firstRow();
     }
 
     public function getAutoIncrement(): ?int
@@ -101,17 +97,17 @@ trait RowTrait
 
     public function isNew(): bool
     {
-        return $this->firstRow()['isNew'];
+        return $this->rowStateIsNew($this->firstRowKey());
     }
 
     public function original(): array
     {
-        return $this->prepareRecord($this->firstRow()['record'], true);
+        return $this->prepareRecord($this->firstRow(), true);
     }
 
     public function originalModified(): array
     {
-        return $this->prepareRecord($this->firstRow()['modified'], true);
+        return $this->prepareRecord($this->rowStateGetModified($this->firstRowKey()), true);
     }
 
     public function offsetExists($offset): bool
@@ -168,7 +164,7 @@ trait RowTrait
 
         $value = $this->prepareValue($column, $value);
 
-        $this->setInRow($this->firstRow(), $column, $value);
+        $this->setInRow($this->firstRowKey(), $column, $value);
 
         return $this;
     }
@@ -188,7 +184,7 @@ trait RowTrait
     {
         $this->validateColumn($column);
 
-        return $this->getFromRow($this->firstRow(), $column);
+        return $this->getFromRow($this->firstRowKey(), $column);
     }
 
     protected function getFirstMultiple(array $columns)

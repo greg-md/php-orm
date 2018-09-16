@@ -173,7 +173,11 @@ trait TableTrait
      */
     public function new(array $record = [])
     {
-        return $this->cleanClone()->appendRecord($record, true);
+        $record = $this->prepareRecord($record);
+
+        $record = array_merge($this->defaultRecord(), $record);
+
+        return $this->cleanClone()->addPristineRecord($record)->markAsNew();
     }
 
     /**
@@ -183,7 +187,7 @@ trait TableTrait
      */
     public function create(array $record = [])
     {
-        return $this->cleanClone()->appendRecord($record, true)->save();
+        return $this->new($record)->save();
     }
 
     public function fetch(): ?array
@@ -254,7 +258,7 @@ trait TableTrait
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
         if ($record = $this->connection()->fetch($sql, $params)) {
-            return $this->cleanClone()->appendRecord($record, false, [], true);
+            return $this->cleanClone()->setPristineRecords([$record]);
         }
 
         return null;
@@ -281,15 +285,9 @@ trait TableTrait
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-        $recordsGenerator = $this->connection()->generate($sql, $params);
+        $records = $this->connection()->fetchAll($sql, $params);
 
-        $rows = $this->cleanClone();
-
-        foreach ($recordsGenerator as $record) {
-            $rows->appendRecord($record, false, [], true);
-        }
-
-        return $rows;
+        return $this->cleanClone()->setPristineRecords($records);
     }
 
     /**
@@ -308,7 +306,7 @@ trait TableTrait
         }
 
         foreach ($recordsGenerator as $record) {
-            yield $this->cleanClone()->appendRecord($record, false, [], true);
+            yield $this->cleanClone()->setPristineRecords([$record]);
         }
     }
 
@@ -322,13 +320,7 @@ trait TableTrait
         $recordsGenerator = $this->generateQuery($this->rowsQueryInstance()->selectQuery(), $chunkSize, false);
 
         foreach ($recordsGenerator as $records) {
-            $rows = $this->cleanClone();
-
-            foreach ($records as $record) {
-                $rows->appendRecord($record, false, [], true);
-            }
-
-            yield $rows;
+            yield $this->cleanClone()->setPristineRecords($records);
         }
     }
 

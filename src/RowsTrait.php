@@ -20,6 +20,8 @@ trait RowsTrait
 
     private $rowsLimit = 0;
 
+    private $rowsState = [];
+
     public function fillable()
     {
         return $this->fillable === '*' ? $this->fillable : (array) $this->fillable;
@@ -45,56 +47,43 @@ trait RowsTrait
         return $this->rowsLimit;
     }
 
-    /**
-     * @param array $record
-     * @param bool  $isNew
-     * @param array $modified
-     * @param bool  $isTrusted
-     *
-     * @return $this
-     */
-    public function appendRecord(array $record, bool $isNew = false, array $modified = [], bool $isTrusted = false)
+    public function setPristineRecords(array $records, array $recordsState = [])
     {
-        if (!$isTrusted) {
-            $record = array_merge($this->defaultRecord(), $record);
+        $this->rows = $records;
 
-            $record = $this->prepareRecord($record);
+        $this->rowsState = $recordsState;
 
-            $modified = $this->prepareRecord($modified);
+        return $this;
+    }
+
+    public function addPristineRecord(array $record, array $recordState = null)
+    {
+        $this->rows[] = $record;
+
+        if ($recordState) {
+            end($this->rows);
+
+            $this->rowsState[key($this->rows)] = $recordState;
         }
-
-        $this->rows[] = [
-            'record'   => $record,
-            'isNew'    => $isNew,
-            'modified' => $modified,
-        ];
 
         return $this;
     }
 
     /**
      * @param array $record
-     * @param bool  $isNew
-     * @param array $modified
-     * @param bool  $isTrusted
+     * @param array $recordState
      *
      * @return $this
      */
-    public function appendRecordRef(array &$record, bool &$isNew = false, array &$modified = [], bool $isTrusted = false)
+    public function addPristineRecordRef(array &$record, array &$recordState = null)
     {
-        if (!$isTrusted) {
-            $record = array_merge($this->defaultRecord(), $record);
+        $this->rows[] = &$record;
 
-            $record = $this->prepareRecord($record);
+        if ($recordState) {
+            end($this->rows);
 
-            $modified = $this->prepareRecord($modified);
+            $this->rowsState[key($this->rows)] = &$recordState;
         }
-
-        $this->rows[] = [
-            'record'   => &$record,
-            'isNew'    => &$isNew,
-            'modified' => &$modified,
-        ];
 
         return $this;
     }
@@ -126,9 +115,9 @@ trait RowsTrait
 
         $this->rowsOffset = $offset;
 
-        foreach ($this->limit($limit)->offset($offset)->generate() as $record) {
-            $this->appendRecord($record, false, [], true);
-        }
+        $records = $this->limit($limit)->offset($offset)->fetchAll();
+
+        $this->setPristineRecords($records);
 
         if ($totalQuery) {
             $query = $this->newSelectQuery();
@@ -153,12 +142,11 @@ trait RowsTrait
             return false;
         }
 
-        foreach ($this->rows as &$row) {
+        foreach ($this->rows as $row) {
             if (!$this->hasInRow($row, $column)) {
                 return false;
             }
         }
-        unset($row);
 
         return true;
     }
@@ -194,8 +182,8 @@ trait RowsTrait
 
         $value = $this->prepareValue($column, $value);
 
-        foreach ($this->rows as &$row) {
-            $this->setInRow($row, $column, $value);
+        foreach (array_keys($this->rows) as $key) {
+            $this->setInRow($key, $column, $value);
         }
         unset($row);
 
@@ -232,10 +220,9 @@ trait RowsTrait
 
         $values = [];
 
-        foreach ($this->rows as &$row) {
-            $values[] = $this->getFromRow($row, $column);
+        foreach (array_keys($this->rows) as $key) {
+            $values[] = $this->getFromRow($key, $column);
         }
-        unset($row);
 
         return $values;
     }
@@ -260,28 +247,36 @@ trait RowsTrait
     {
         $this->setMultiple($values);
 
-        foreach ($this->rows as &$row) {
-            if ($row['isNew']) {
-                $record = $this->prepareRecord($row['record'], true);
+        foreach ($this->rows as $key => &$row) {
+            if ($this->rowStateIsNew($key)) {
+                $record = $this->prepareRecord($row, true);
 
                 $query = $this->newInsertQuery()->data($record);
 
                 $this->connection()->execute(...$query->toSql());
 
                 if (!$this->getAutoIncrement() and $column = $this->autoIncrement()) {
-                    $row['record'][$column] = (int) $this->connection()->lastInsertId();
+                    $row[$column] = (int) $this->connection()->lastInsertId();
                 }
 
-                $row['isNew'] = false;
-            } elseif ($modified = $this->prepareRecord($row['modified'], true)) {
-                $query = $this->newUpdateQuery()
-                    ->setMultiple($modified)
-                    ->whereMultiple($this->rowFirstUnique($row));
+                unset($this->rowsState[$key]);
+            } else {
+                $modified = $this->rowStateGetModified($key);
 
-                $this->connection()->execute(...$query->toSql());
+                if ($modified) {
+                    $modified = $this->prepareRecord($modified, true);
+                }
+
+                if ($modified) {
+                    $query = $this->newUpdateQuery()
+                        ->setMultiple($modified)
+                        ->whereMultiple($this->rowFirstUnique($row));
+
+                    $this->connection()->execute(...$query->toSql());
+
+                    unset($this->rowsState[$key]);
+                }
             }
-
-            $row['modified'] = [];
         }
         unset($row);
 
@@ -295,21 +290,20 @@ trait RowsTrait
     {
         $keys = [];
 
-        foreach ($this->rows as &$row) {
-            if ($row['isNew']) {
+        foreach ($this->rows as $key => $row) {
+            if ($this->rowStateIsNew($key)) {
                 continue;
             }
 
             $keys[] = $this->rowFirstUnique($row);
 
-            $this->markRowAsNew($row);
+            $this->markRowAsNew($key);
         }
-        unset($row);
 
         if ($keys) {
-            $query = $this->newDeleteQuery()->where($this->firstUnique(), $keys);
+            [$sql, $params] = $this->newDeleteQuery()->where($this->firstUnique(), $keys)->toSql();
 
-            $this->connection()->execute(...$query->toSql());
+            $this->connection()->execute($sql, $params);
         }
 
         return $this;
@@ -326,21 +320,15 @@ trait RowsTrait
             return null;
         }
 
-        return $this->cleanClone()->appendRecordRef(
-            $this->rows[$number]['record'],
-            $this->rows[$number]['isNew'],
-            $this->rows[$number]['modified'],
-            true
+        return $this->cleanClone()->addPristineRecordRef(
+            $this->rows[$number],
+            $this->rowGetState($number)
         );
     }
 
-    public function records(bool $full = false): array
+    public function records(): array
     {
-        if ($full) {
-            return $this->rows;
-        }
-
-        return array_column($this->rows, 'record');
+        return $this->rows;
     }
 
     /**
@@ -348,10 +336,9 @@ trait RowsTrait
      */
     public function markAsNew()
     {
-        foreach ($this->rows as &$row) {
-            $this->markRowAsNew($row);
+        foreach (array_keys($this->rows) as $key) {
+            $this->markRowAsNew($key);
         }
-        unset($row);
 
         return $this;
     }
@@ -361,10 +348,11 @@ trait RowsTrait
      */
     public function markAsOld()
     {
-        foreach ($this->rows as &$row) {
-            $row['isNew'] = false;
+        foreach ($this->rowsState as $key => $rowState) {
+            if ($rowState['isNew']) {
+                unset($this->rowsState[$key]);
+            }
         }
-        unset($row);
 
         return $this;
     }
@@ -504,71 +492,82 @@ trait RowsTrait
     public function getIterator()
     {
         foreach (array_keys($this->rows) as $key) {
-            yield $this->cleanClone()->appendRecordRef(
-                $this->rows[$key]['record'],
-                $this->rows[$key]['isNew'],
-                $this->rows[$key]['modified'],
-                true
+            yield $this->cleanClone()->addPristineRecordRef(
+                $this->rows[$key],
+                $this->rowGetState($key)
             );
         }
     }
 
-    protected function &firstRow(): array
+    protected function firstRowKey(): int
     {
         if (!$this->rows) {
             throw new \Exception('Model row is not found.');
         }
 
-        return $this->rows[0];
+        reset($this->rows);
+
+        return key($this->rows);
     }
 
-    protected function hasInRow(array &$row, string $column): bool
+    protected function &firstRow(): array
     {
-        return (bool) ($row['record'][$column] ?? false);
+        return $this->rows[$this->firstRowKey()];
     }
 
-    protected function setInRow(array &$row, string $column, $value)
+    protected function hasInRow(array $row, string $column): bool
     {
-        if ($row['record'][$column] !== $value) {
-            if ($row['isNew']) {
-                $row['record'][$column] = $value;
+        return (bool) ($row[$column] ?? false);
+    }
+
+    protected function setInRow(int $key, string $column, $value)
+    {
+        if ($this->rows[$key][$column] !== $value) {
+            if ($this->rowStateIsNew($key)) {
+                $this->rows[$key][$column] = $value;
             } else {
-                $row['modified'][$column] = $value;
+                $rowsState = &$this->rowGetState($key);
+
+                $rowsState['modified'][$column] = $value;
             }
         } else {
-            unset($row['modified'][$column]);
+            unset($this->rowsState[$key]['modified'][$column]);
         }
 
         return $this;
     }
 
-    protected function getFromRow(array &$row, string $column)
+    protected function getFromRow(int $key, string $column)
     {
-        if (array_key_exists($column, $row['modified'])) {
-            return $row['modified'][$column];
+        if (isset($this->rowsState[$key]) and array_key_exists($column, $this->rowsState[$key]['modified'])) {
+            return $this->rowsState[$key]['modified'][$column];
         }
 
-        return $this->castValue($column, $row['record'][$column] ?? null);
+        return $this->castValue($column, $this->rows[$key][$column] ?? null);
     }
 
-    protected function rowFirstUnique(array &$row)
+    protected function rowFirstUnique(array $row)
     {
         $keys = [];
 
         foreach ($this->firstUnique() as $key) {
-            $keys[$key] = $row['record'][$key];
+            $keys[$key] = $row[$key];
         }
 
         return $keys;
     }
 
-    protected function markRowAsNew(array &$row)
+    protected function markRowAsNew(int $key)
     {
-        $row['isNew'] = true;
+        $rowState = &$this->rowGetState($key);
 
-        $row['record'] = array_merge($row['record'], $row['modified']);
+        $rowState['isNew'] = true;
 
-        $row['modified'] = [];
+        if ($rowState['modified']) {
+            $this->rows[$key] = array_merge($this->rows[$key], $rowState['modified']);
+
+            $rowState['modified'] = [];
+        }
 
         return $this;
     }
@@ -604,5 +603,27 @@ trait RowsTrait
     protected function getAttributeSetMethod(string $column): string
     {
         return 'set' . ucfirst($column) . 'Attribute';
+    }
+
+    protected function &rowGetState(int $key)
+    {
+        if (!isset($this->rowsState[$key])) {
+            $this->rowsState[$key] = [
+                'isNew' => false,
+                'modified' => [],
+            ];
+        }
+
+        return $this->rowsState[$key];
+    }
+
+    protected function rowStateIsNew(int $key)
+    {
+        return $this->rowsState[$key]['isNew'] ?? false;
+    }
+
+    protected function rowStateGetModified(int $key)
+    {
+        return $this->rowsState[$key]['modified'] ?? [];
     }
 }
