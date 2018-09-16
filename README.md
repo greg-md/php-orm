@@ -122,8 +122,9 @@ One by one, in a transaction:
 
 | Package  | Time   | Memory  |
 | -------- | ------ | ------- |
-| Greg ORM | ~40ms  | 7.77MB |
+| Greg ORM | ~40ms  | 7.77MB  |
 | Eloquent | ~70ms  | 13.09MB |
+| Doctrine | ~120ms | 20.09MB |
 
 > More tests will be added soon...
 
