@@ -1,4 +1,4 @@
-# Greg PHP ORM
+# Greg ORM
 
 [![StyleCI](https://styleci.io/repos/66441719/shield?style=flat)](https://styleci.io/repos/66441719)
 [![Build Status](https://travis-ci.org/greg-md/php-orm.svg)](https://travis-ci.org/greg-md/php-orm)
@@ -20,7 +20,7 @@ and write your first queries using the [Query Builder](#query-builder---quick-st
 * [License](#license)
 * _[Huuuge Quote](#huuuge-quote)_
 
-# Why use Greg PHP ORM?
+# Why use Greg ORM?
 
 ### :heavy_check_mark: Easy to understand and use.
 
