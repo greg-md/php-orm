@@ -480,7 +480,7 @@ Full documentation can be found [here](docs/QueryBuilder.md).
 
 # Documentation
 
-* [Database Connection](docs/DatabaseConnections.md)
+* [Database Connection](docs/DatabaseConnection.md)
 * [Active Record Model](docs/ActiveRecordModel.md)
 * [Query Builder](docs/QueryBuilder.md)
 * **Migrations** are under construction, but you can use [Phinx](https://phinx.org/) in the meantime.
