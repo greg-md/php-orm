@@ -3,8 +3,8 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\Connection\ConnectionStrategy;
-use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\SqlAbstract;
 use Greg\Orm\SqlException;
 

@@ -4,8 +4,8 @@ namespace Greg\Orm;
 
 use Greg\Orm\Clause\HavingClauseStrategy;
 use Greg\Orm\Clause\WhereClauseStrategy;
-use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 
 class Conditions extends SqlAbstract
 {

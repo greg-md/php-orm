@@ -2,8 +2,8 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\SqlAbstract;
 
 class JoinClause extends SqlAbstract implements ClauseStrategy, JoinClauseStrategy

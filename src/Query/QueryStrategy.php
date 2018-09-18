@@ -3,7 +3,6 @@
 namespace Greg\Orm\Query;
 
 use Greg\Orm\Connection\ConnectionStrategy;
-
 use Greg\Orm\SqlStrategy;
 
 interface QueryStrategy extends SqlStrategy

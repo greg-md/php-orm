@@ -13,8 +13,8 @@ use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\Connection\ConnectionStrategy;
-use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\SqlAbstract;
 use Greg\Orm\SqlException;
 
