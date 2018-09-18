@@ -5,7 +5,7 @@ namespace Greg\Orm\Clause;
 trait LimitClauseTrait
 {
     /**
-     * @var
+     * @var int
      */
     private $limit;
 

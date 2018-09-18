@@ -19,6 +19,7 @@ use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\SqlAbstract;
+use Greg\Orm\SqlException;
 
 class SelectQuery extends SqlAbstract implements
     QueryStrategy,
@@ -31,7 +32,8 @@ class SelectQuery extends SqlAbstract implements
     LimitClauseStrategy,
     OffsetClauseStrategy
 {
-    use FromClauseTrait,
+    use QueryTrait,
+        FromClauseTrait,
         JoinClauseTrait,
         WhereClauseTrait,
         HavingClauseTrait,
@@ -406,6 +408,91 @@ class SelectQuery extends SqlAbstract implements
         return $this;
     }
 
+    public function fetch(): ?array
+    {
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->fetch($sql, $params);
+    }
+
+    public function fetchOrFail(): array
+    {
+        if (!$record = $this->fetch()) {
+            throw new SqlException('Record not found.');
+        }
+
+        return $record;
+    }
+
+    public function fetchAll(): array
+    {
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->fetchAll($sql, $params);
+    }
+
+    public function generate(?int $chunkSize = null): \Generator
+    {
+        if ($chunkSize) {
+            yield from $this->generateQuery($chunkSize);
+        } else {
+            [$sql, $params] = $this->toSql();
+
+            yield from $this->connection()->generate($sql, $params);
+        }
+    }
+
+    public function generateInChunks(int $chunkSize): \Generator
+    {
+        yield from $this->generateQuery($chunkSize, false);
+    }
+
+    public function fetchColumn(string $column = '0'): string
+    {
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->column($sql, $params, $column);
+    }
+
+    public function fetchColumnAll(string $column = '0'): array
+    {
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->columnAll($sql, $params, $column);
+    }
+
+    public function fetchPairs(string $key = '0', string $value = '1'): array
+    {
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->pairs($sql, $params, $key, $value);
+    }
+
+    public function fetchCount(string $column = '*', string $alias = null): int
+    {
+        return $this->clearColumns()->count($column, $alias)->fetchColumn();
+    }
+
+    public function fetchMax(string $column, string $alias = null): int
+    {
+        return $this->clearColumns()->max($column, $alias)->fetchColumn();
+    }
+
+    public function fetchMin(string $column, string $alias = null): int
+    {
+        return $this->clearColumns()->min($column, $alias)->fetchColumn();
+    }
+
+    public function fetchAvg(string $column, string $alias = null): float
+    {
+        return $this->clearColumns()->avg($column, $alias)->fetchColumn();
+    }
+
+    public function fetchSum(string $column, string $alias = null): string
+    {
+        return $this->clearColumns()->sum($column, $alias)->fetchColumn();
+    }
+
     /**
      * @return array
      */
@@ -560,7 +647,7 @@ class SelectQuery extends SqlAbstract implements
     public function __toString(): string
     {
         return $this->toString();
-        //        try {
+//        try {
 //            return $this->toString();
 //        } catch (SqlException $e) {
 //            return $e->getMessage();
@@ -572,6 +659,75 @@ class SelectQuery extends SqlAbstract implements
         $this->whereClone();
 
         $this->havingClone();
+    }
+
+    protected function generateQuery(int $chunkSize, bool $oneByOne = true): \Generator
+    {
+        if ($chunkSize < 1) {
+            throw new SqlException('Chunk count should be greater than 0.');
+        }
+
+        $originalLimit = $this->limit;
+        $originalOffset = $this->offset;
+
+        $offset = $originalOffset;
+
+        while (true) {
+            $limit = $this->getMaxLimit($originalOffset, $originalLimit, $offset, $chunkSize);
+
+            if ($limit <= 0) {
+                break;
+            }
+
+            [$sql, $params] = $this->limit($limit)->offset($offset)->toSql();
+
+            if ($oneByOne) {
+                $recordsGenerator = $this->connection()->generate($sql, $params);
+
+                $recordsCount = 0;
+
+                foreach ($recordsGenerator as $record) {
+                    yield $record;
+
+                    $recordsCount++;
+                }
+            } else {
+                $records = $this->connection()->fetchAll($sql, $params);
+
+                if (!$records) {
+                    break;
+                }
+
+                yield $records;
+
+                $recordsCount = count($records);
+            }
+
+            if ($recordsCount < $chunkSize) {
+                break;
+            }
+
+            $offset += $chunkSize;
+        }
+
+        $this->limit = $originalLimit;
+        $this->offset = $originalOffset;
+    }
+
+    private function getMaxLimit(?int $originalOffset, ?int $originalLimit, int $currentOffset, int $currentLimit): int
+    {
+        $limit = $currentLimit;
+
+        if ($originalLimit) {
+            $originalMaxOffset = $originalOffset + $originalLimit;
+            $maxOffset = $currentOffset + $currentLimit;
+
+            if ($maxOffset > $originalMaxOffset) {
+                $limit -= $maxOffset - $originalMaxOffset;
+            }
+        }
+
+        return $limit;
     }
 
     /**

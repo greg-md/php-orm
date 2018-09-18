@@ -7,6 +7,8 @@ use Greg\Orm\SqlException;
 
 class InsertQuery extends SqlAbstract implements QueryStrategy
 {
+    use QueryTrait;
+
     /**
      * @var string
      */
@@ -225,6 +227,17 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
         $this->select = [];
 
         return $this;
+    }
+
+    public function insert(array $data = []): int
+    {
+        if ($data) {
+            $this->data($data);
+        }
+
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->execute($sql, $params);
     }
 
     /**

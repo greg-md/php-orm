@@ -20,7 +20,8 @@ class UpdateQuery extends SqlAbstract implements
     OrderByClauseStrategy,
     LimitClauseStrategy
 {
-    use JoinClauseTrait,
+    use QueryTrait,
+        JoinClauseTrait,
         WhereClauseTrait,
         OrderByClauseTrait,
         LimitClauseTrait;
@@ -192,6 +193,17 @@ class UpdateQuery extends SqlAbstract implements
         $this->set = [];
 
         return $this;
+    }
+
+    public function update(array $columns = []): int
+    {
+        if ($columns) {
+            $this->setMultiple($columns);
+        }
+
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->execute($sql, $params);
     }
 
     public function updateToSql(): array

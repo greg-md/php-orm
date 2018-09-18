@@ -23,7 +23,8 @@ class DeleteQuery extends SqlAbstract implements
     OrderByClauseStrategy,
     LimitClauseStrategy
 {
-    use FromClauseTrait,
+    use QueryTrait,
+        FromClauseTrait,
         JoinClauseTrait,
         WhereClauseTrait,
         OrderByClauseTrait,
@@ -75,6 +76,17 @@ class DeleteQuery extends SqlAbstract implements
         $this->rowsFrom = [];
 
         return $this;
+    }
+
+    public function delete(string ...$tables)
+    {
+        if ($tables) {
+            $this->rowsFrom(...$tables);
+        }
+
+        [$sql, $params] = $this->toSql();
+
+        return $this->connection()->execute($sql, $params);
     }
 
     /**
