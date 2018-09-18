@@ -16,7 +16,7 @@ use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 
-class ConnectionManager implements Connection
+class ConnectionManager implements ConnectionStrategy
 {
     private $connections = [];
 
@@ -75,12 +75,12 @@ class ConnectionManager implements Connection
 
     /**
      * @param $name
-     * @param Connection $strategy
+     * @param ConnectionStrategy $strategy
      * @param bool       $default
      *
      * @return $this
      */
-    public function registerStrategy($name, Connection $strategy, bool $default = false)
+    public function registerStrategy($name, ConnectionStrategy $strategy, bool $default = false)
     {
         $this->connections[$name] = $strategy;
 
@@ -91,7 +91,7 @@ class ConnectionManager implements Connection
         return $this;
     }
 
-    public function connection(?string $name = null): Connection
+    public function connection(?string $name = null): ConnectionStrategy
     {
         if (!$name = $name ?: $this->defaultConnectionName) {
             throw new \Exception('Default connection was not defined.');
@@ -104,8 +104,8 @@ class ConnectionManager implements Connection
         if (is_callable($strategy)) {
             $strategy = call_user_func_array($strategy, []);
 
-            if (!($strategy instanceof Connection)) {
-                throw new \Exception('Connection `' . $name . '` must be an instance of `' . Connection::class . '`');
+            if (!($strategy instanceof ConnectionStrategy)) {
+                throw new \Exception('Connection `' . $name . '` must be an instance of `' . ConnectionStrategy::class . '`');
             }
 
             $this->connections[$name] = $strategy;

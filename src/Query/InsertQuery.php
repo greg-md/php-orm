@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Connection\Connection;
+use Greg\Orm\Connection\ConnectionStrategy;
 use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\SqlAbstract;
 use Greg\Orm\SqlException;
@@ -31,7 +31,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      */
     private $select = [];
 
-    public function __construct(SqlDialect $dialect = null, Connection $connection = null)
+    public function __construct(SqlDialect $dialect = null, ConnectionStrategy $connection = null)
     {
         if (!$dialect) {
             $dialect = new SqlDialect();

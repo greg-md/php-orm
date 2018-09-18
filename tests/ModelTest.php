@@ -10,7 +10,7 @@ use Greg\Orm\Clause\LimitClause;
 use Greg\Orm\Clause\OffsetClause;
 use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
-use Greg\Orm\Connection\Connection;
+use Greg\Orm\Connection\ConnectionStrategy;
 use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
@@ -50,13 +50,13 @@ class ModelTest extends TestCase
     protected $model;
 
     /**
-     * @var Connection|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConnectionStrategy|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $connectionMock;
 
     public function setUp()
     {
-        $connectionMock = $this->connectionMock = $this->createMock(Connection::class);
+        $connectionMock = $this->connectionMock = $this->createMock(ConnectionStrategy::class);
 
         foreach ($this->connectionSql() as $method => $class) {
             $connectionMock->method($method)->willReturnCallback(function () use ($class) {
