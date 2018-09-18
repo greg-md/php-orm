@@ -12,7 +12,7 @@ use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
-use Greg\Orm\Connection\Connection;
+use Greg\Orm\Connection\ConnectionStrategy;
 use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\SqlAbstract;
@@ -38,7 +38,7 @@ class DeleteQuery extends SqlAbstract implements
      */
     private $rowsFrom = [];
 
-    public function __construct(SqlDialectStrategy $dialect = null, Connection $connection = null)
+    public function __construct(SqlDialectStrategy $dialect = null, ConnectionStrategy $connection = null)
     {
         if (!$dialect) {
             $dialect = new SqlDialect();
