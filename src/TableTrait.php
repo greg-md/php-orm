@@ -136,21 +136,6 @@ trait TableTrait
     }
 
     /**
-     * @TODO remove and fix tests. You should not be able to cast values dynamically.
-     *
-     * @param string $name
-     * @param string $type
-     *
-     * @return null|string
-     */
-    public function setCast(string $name, string $type): ?string
-    {
-        $this->casts[$name] = $type;
-
-        return $name;
-    }
-
-    /**
      * @param array $defaults
      *
      * @return $this

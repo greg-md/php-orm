@@ -1020,6 +1020,36 @@ class ModelTest extends TestCase
 
     public function testCanFetchRowAndTransformToDatetimeValue()
     {
+        $this->model = new class($this->connectionMock) extends Model {
+            protected $label = 'My Table';
+
+            protected $nameColumn = 'Name';
+
+            protected $unique = [
+                'SystemName',
+            ];
+
+            protected $casts = [
+                'Active' => 'bool',
+                'Foo' => 'datetime',
+            ];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
+
+            protected function getActiveAttribute()
+            {
+                return $this['Active'];
+            }
+
+            protected function setActiveAttribute($value)
+            {
+                $this['Active'] = $value;
+            }
+        };
+
         $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
@@ -1056,13 +1086,41 @@ class ModelTest extends TestCase
 
         $row = $this->model->fetchRow();
 
-        $row->setCast('Foo', 'datetime');
-
         $this->assertEquals('2017-01-01 18:00:00', $row['Foo']);
     }
 
     public function testCanFetchRowAndTransformToDateValue()
     {
+        $this->model = new class($this->connectionMock) extends Model {
+            protected $label = 'My Table';
+
+            protected $nameColumn = 'Name';
+
+            protected $unique = [
+                'SystemName',
+            ];
+
+            protected $casts = [
+                'Active' => 'bool',
+                'Foo' => 'date',
+            ];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
+
+            protected function getActiveAttribute()
+            {
+                return $this['Active'];
+            }
+
+            protected function setActiveAttribute($value)
+            {
+                $this['Active'] = $value;
+            }
+        };
+
         $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
@@ -1099,13 +1157,41 @@ class ModelTest extends TestCase
 
         $row = $this->model->fetchRow();
 
-        $row->setCast('Foo', 'date');
-
         $this->assertEquals('2017-01-01', $row['Foo']);
     }
 
     public function testCanFetchRowAndTransformToTimeValue()
     {
+        $this->model = new class($this->connectionMock) extends Model {
+            protected $label = 'My Table';
+
+            protected $nameColumn = 'Name';
+
+            protected $unique = [
+                'SystemName',
+            ];
+
+            protected $casts = [
+                'Active' => 'bool',
+                'Foo' => 'time',
+            ];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
+
+            protected function getActiveAttribute()
+            {
+                return $this['Active'];
+            }
+
+            protected function setActiveAttribute($value)
+            {
+                $this['Active'] = $value;
+            }
+        };
+
         $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
@@ -1142,13 +1228,41 @@ class ModelTest extends TestCase
 
         $row = $this->model->fetchRow();
 
-        $row->setCast('Foo', 'time');
-
         $this->assertEquals('18:00:00', $row['Foo']);
     }
 
     public function testCanFetchRowAndTransformToBooleanValue()
     {
+        $this->model = new class($this->connectionMock) extends Model {
+            protected $label = 'My Table';
+
+            protected $nameColumn = 'Name';
+
+            protected $unique = [
+                'SystemName',
+            ];
+
+            protected $casts = [
+                'Active' => 'bool',
+                'Foo' => 'boolean',
+            ];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
+
+            protected function getActiveAttribute()
+            {
+                return $this['Active'];
+            }
+
+            protected function setActiveAttribute($value)
+            {
+                $this['Active'] = $value;
+            }
+        };
+
         $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
@@ -1181,13 +1295,41 @@ class ModelTest extends TestCase
             ],
         ]);
 
-        $this->model->setCast('Foo', 'boolean');
-
         $this->assertTrue($this->model->prepareValue('Foo', 1));
     }
 
     public function testCanFetchRowAndTransformToArrayValue()
     {
+        $this->model = new class($this->connectionMock) extends Model {
+            protected $label = 'My Table';
+
+            protected $nameColumn = 'Name';
+
+            protected $unique = [
+                'SystemName',
+            ];
+
+            protected $casts = [
+                'Active' => 'bool',
+                'Foo' => 'array',
+            ];
+
+            public function name(): string
+            {
+                return 'Table';
+            }
+
+            protected function getActiveAttribute()
+            {
+                return $this['Active'];
+            }
+
+            protected function setActiveAttribute($value)
+            {
+                $this['Active'] = $value;
+            }
+        };
+
         $this->connectionMock->method('describe')->willReturn([
             'columns' => [
                 'Id' => [
@@ -1219,8 +1361,6 @@ class ModelTest extends TestCase
                 'Id',
             ],
         ]);
-
-        $this->model->setCast('Foo', 'array');
 
         $this->assertEquals($value = ['Foo' => 'bar'], $this->model->prepareValue('Foo', json_encode($value)));
 
