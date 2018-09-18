@@ -4,7 +4,7 @@ namespace Greg\Orm\Dialect;
 
 use Greg\Orm\Model;
 
-class SqlDialect
+class SqlDialect implements SqlDialectStrategy
 {
     /**
      * @var string

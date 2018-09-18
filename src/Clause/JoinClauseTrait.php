@@ -3,7 +3,7 @@
 namespace Greg\Orm\Clause;
 
 use Greg\Orm\Conditions;
-use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\SqlException;
 
@@ -399,7 +399,7 @@ trait JoinClauseTrait
     }
 
     /**
-     * @return SqlDialect
+     * @return SqlDialectStrategy
      */
-    abstract public function dialect(): SqlDialect;
+    abstract public function dialect(): SqlDialectStrategy;
 }

@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Connection;
 
-use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqliteDialect;
 
 class SqliteConnection extends PdoConnectionAbstract
@@ -11,7 +11,7 @@ class SqliteConnection extends PdoConnectionAbstract
 
     private $dialect;
 
-    public function __construct(Pdo $pdo, SqliteDialect $dialect = null)
+    public function __construct(Pdo $pdo, SqlDialectStrategy $dialect = null)
     {
         $this->pdo = $pdo;
 
@@ -29,7 +29,7 @@ class SqliteConnection extends PdoConnectionAbstract
         return $this->pdo;
     }
 
-    public function dialect(): SqlDialect
+    public function dialect(): SqlDialectStrategy
     {
         return $this->dialect;
     }

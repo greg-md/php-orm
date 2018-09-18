@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
-use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\SqlException;
 
@@ -191,7 +191,7 @@ trait FromClauseTrait
     }
 
     /**
-     * @return SqlDialect
+     * @return SqlDialectStrategy
      */
-    abstract public function dialect(): SqlDialect;
+    abstract public function dialect(): SqlDialectStrategy;
 }

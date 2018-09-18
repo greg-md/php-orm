@@ -11,6 +11,7 @@ use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
 use Greg\Orm\Connection\Connection;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\SqlAbstract;
 use Greg\Orm\SqlException;
@@ -38,7 +39,7 @@ class UpdateQuery extends SqlAbstract implements
      */
     private $set = [];
 
-    public function __construct(SqlDialect $dialect = null, Connection $connection = null)
+    public function __construct(SqlDialectStrategy $dialect = null, Connection $connection = null)
     {
         if (!$dialect) {
             $dialect = new SqlDialect();

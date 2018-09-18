@@ -4,6 +4,7 @@ namespace Greg\Orm;
 
 use Greg\Orm\Clause\HavingClauseStrategy;
 use Greg\Orm\Clause\WhereClauseStrategy;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
 
 class Conditions extends SqlAbstract
@@ -13,7 +14,7 @@ class Conditions extends SqlAbstract
      */
     private $conditions = [];
 
-    public function __construct(SqlDialect $dialect = null)
+    public function __construct(SqlDialectStrategy $dialect = null)
     {
         if (!$dialect) {
             $dialect = new SqlDialect();

@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\SqlAbstract;
 
@@ -9,7 +10,7 @@ class FromClause extends SqlAbstract implements ClauseStrategy, FromClauseStrate
 {
     use FromClauseTrait;
 
-    public function __construct(SqlDialect $dialect = null)
+    public function __construct(SqlDialectStrategy $dialect = null)
     {
         if (!$dialect) {
             $dialect = new SqlDialect();
