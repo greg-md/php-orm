@@ -184,7 +184,7 @@ trait OffsetTableClauseTrait
         return $this;
     }
 
-    protected function offsetStrategyInstance()
+    private function offsetStrategyInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateOffsetStrategyInQuery($query);
@@ -199,7 +199,7 @@ trait OffsetTableClauseTrait
         return $this->cleanClone()->setClause('OFFSET', $this->connection()->offset());
     }
 
-    protected function validateOffsetStrategyInQuery(QueryStrategy $query)
+    private function validateOffsetStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof OffsetClauseStrategy)) {
             throw new SqlException('Current query does not have an OFFSET clause.');
@@ -208,7 +208,7 @@ trait OffsetTableClauseTrait
         return $this;
     }
 
-    protected function getPreparedOffsetClause()
+    private function getPreparedOffsetClause()
     {
         if ($this->offsetAppliers) {
             $clause = clone $this->intoOffsetStrategy()->offsetClause();

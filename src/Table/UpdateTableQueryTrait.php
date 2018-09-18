@@ -195,7 +195,7 @@ trait UpdateTableQueryTrait
         return $query;
     }
 
-    protected function updateQueryInstance()
+    private function updateQueryInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateUpdateQuery($query);
@@ -218,7 +218,7 @@ trait UpdateTableQueryTrait
         return $this->cleanClone()->setQuery($query);
     }
 
-    protected function validateUpdateQuery(?QueryStrategy $query)
+    private function validateUpdateQuery(?QueryStrategy $query)
     {
         if (!($query instanceof UpdateQuery)) {
             throw new SqlException('Current query is not an UPDATE statement.');
@@ -227,7 +227,7 @@ trait UpdateTableQueryTrait
         return $this;
     }
 
-    protected function validateUpdateClauses(array $clauses)
+    private function validateUpdateClauses(array $clauses)
     {
         foreach ($clauses as $clause) {
             if (!($clause instanceof JoinClause)
@@ -242,7 +242,7 @@ trait UpdateTableQueryTrait
         return $this;
     }
 
-    protected function assignClausesToUpdateQuery(UpdateQuery $query, array $clauses)
+    private function assignClausesToUpdateQuery(UpdateQuery $query, array $clauses)
     {
         foreach ($clauses as $clause) {
             if ($clause instanceof JoinClause) {

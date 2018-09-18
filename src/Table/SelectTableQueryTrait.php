@@ -419,7 +419,7 @@ trait SelectTableQueryTrait
         return $this;
     }
 
-    protected function selectQueryInstance()
+    private function selectQueryInstance()
     {
         if ($query = $this->getNewSelectQuery()) {
             return $this->cleanClone()->setQuery($query);
@@ -428,7 +428,7 @@ trait SelectTableQueryTrait
         return $this;
     }
 
-    protected function getNewSelectQuery()
+    private function getNewSelectQuery()
     {
         if ($query = $this->getQuery()) {
             $this->validateSelectQuery($query);
@@ -451,7 +451,7 @@ trait SelectTableQueryTrait
         return $query;
     }
 
-    protected function validateSelectQuery(?QueryStrategy $query)
+    private function validateSelectQuery(?QueryStrategy $query)
     {
         if (!($query instanceof SelectQuery)) {
             throw new SqlException('Current query is not a SELECT statement.');
@@ -460,7 +460,7 @@ trait SelectTableQueryTrait
         return $this;
     }
 
-    protected function validateSelectClauses(array $clauses)
+    private function validateSelectClauses(array $clauses)
     {
         foreach ($clauses as $clause) {
             if (!($clause instanceof FromClause)
@@ -479,7 +479,7 @@ trait SelectTableQueryTrait
         return $this;
     }
 
-    protected function assignClausesToSelectQuery(SelectQuery $query, array $clauses)
+    private function assignClausesToSelectQuery(SelectQuery $query, array $clauses)
     {
         foreach ($clauses as $clause) {
             if ($clause instanceof FromClause) {

@@ -804,7 +804,7 @@ trait WhereTableClauseTrait
         return $this;
     }
 
-    protected function whereStrategyInstance()
+    private function whereStrategyInstance()
     {
         if ($query = $this->getQuery()) {
 //            $this->validateWhereStrategyInQuery($query);
@@ -819,7 +819,7 @@ trait WhereTableClauseTrait
         return $this->cleanClone()->setClause('WHERE', $this->connection()->where());
     }
 
-//    protected function validateWhereStrategyInQuery(QueryStrategy $query)
+//    private function validateWhereStrategyInQuery(QueryStrategy $query)
 //    {
 //        if (!($query instanceof WhereClauseStrategy)) {
 //            throw new SqlException('Current query does not have a WHERE clause.');
@@ -828,7 +828,7 @@ trait WhereTableClauseTrait
 //        return $this;
 //    }
 
-    protected function getPreparedWhereClause()
+    private function getPreparedWhereClause()
     {
         if ($this->whereAppliers) {
             $clause = clone $this->intoWhereStrategy()->whereClause();

@@ -402,7 +402,7 @@ trait JoinTableClauseTrait
     {
         /** @var QueryStrategy|JoinClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->validateJoinStrategyInQuery($query);
+            //$this->validateJoinStrategyInQuery($query);
 
             return $query;
         }
@@ -414,7 +414,7 @@ trait JoinTableClauseTrait
     {
         /** @var QueryStrategy|JoinClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->validateJoinStrategyInQuery($query);
+            //$this->validateJoinStrategyInQuery($query);
 
             return $query;
         }
@@ -434,10 +434,10 @@ trait JoinTableClauseTrait
         return $this;
     }
 
-    protected function joinStrategyInstance()
+    private function joinStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->validateJoinStrategyInQuery($query);
+            //$this->validateJoinStrategyInQuery($query);
 
             return $this;
         }
@@ -449,16 +449,16 @@ trait JoinTableClauseTrait
         return $this->cleanClone()->setClause('JOIN', $this->connection()->join());
     }
 
-    protected function validateJoinStrategyInQuery(QueryStrategy $query)
-    {
-        //        if (!($query instanceof JoinClauseStrategy)) {
-        //            throw new SqlException('Current query does not have a JOIN clause.');
-        //        }
+//    private function validateJoinStrategyInQuery(QueryStrategy $query)
+//    {
+//        if (!($query instanceof JoinClauseStrategy)) {
+//            throw new SqlException('Current query does not have a JOIN clause.');
+//        }
+//
+//        return $this;
+//    }
 
-        return $this;
-    }
-
-    protected function getPreparedJoinClause()
+    private function getPreparedJoinClause()
     {
         if ($this->joinAppliers) {
             $clause = clone $this->intoJoinStrategy()->joinClause();

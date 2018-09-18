@@ -718,7 +718,7 @@ trait HavingTableClauseTrait
         return $this;
     }
 
-    protected function havingStrategyInstance()
+    private function havingStrategyInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateHavingStrategyInQuery($query);
@@ -733,7 +733,7 @@ trait HavingTableClauseTrait
         return $this->cleanClone()->setClause('HAVING', $this->connection()->having());
     }
 
-    protected function validateHavingStrategyInQuery(QueryStrategy $query)
+    private function validateHavingStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof HavingClauseStrategy)) {
             throw new SqlException('Current query does not have a HAVING clause.');
@@ -742,7 +742,7 @@ trait HavingTableClauseTrait
         return $this;
     }
 
-    protected function getPreparedHavingClause()
+    private function getPreparedHavingClause()
     {
         if ($this->havingAppliers) {
             $clause = clone $this->intoHavingStrategy()->havingClause();

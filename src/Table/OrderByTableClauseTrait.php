@@ -223,7 +223,7 @@ trait OrderByTableClauseTrait
     {
         /** @var QueryStrategy|OrderByClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->validateOrderByStrategyInQuery($query);
+            //$this->validateOrderByStrategyInQuery($query);
 
             return $query;
         }
@@ -235,7 +235,7 @@ trait OrderByTableClauseTrait
     {
         /** @var QueryStrategy|OrderByClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->validateOrderByStrategyInQuery($query);
+            //$this->validateOrderByStrategyInQuery($query);
 
             return $query;
         }
@@ -255,10 +255,10 @@ trait OrderByTableClauseTrait
         return $this;
     }
 
-    protected function orderByStrategyInstance()
+    private function orderByStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->validateOrderByStrategyInQuery($query);
+            //$this->validateOrderByStrategyInQuery($query);
 
             return $this;
         }
@@ -270,16 +270,16 @@ trait OrderByTableClauseTrait
         return $this->cleanClone()->setClause('ORDER_BY', $this->connection()->orderBy());
     }
 
-    protected function validateOrderByStrategyInQuery(QueryStrategy $query)
-    {
-        //        if (!($query instanceof OrderByClauseStrategy)) {
-        //            throw new SqlException('Current query does not have an ORDER BY clause.');
-        //        }
+//    private function validateOrderByStrategyInQuery(QueryStrategy $query)
+//    {
+//        if (!($query instanceof OrderByClauseStrategy)) {
+//            throw new SqlException('Current query does not have an ORDER BY clause.');
+//        }
+//
+//        return $this;
+//    }
 
-        return $this;
-    }
-
-    protected function getPreparedOrderByClause()
+    private function getPreparedOrderByClause()
     {
         if ($this->orderByAppliers) {
             $clause = clone $this->intoOrderByStrategy()->orderByClause();

@@ -152,7 +152,7 @@ trait LimitTableClauseTrait
     {
         /** @var QueryStrategy|LimitClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->validateLimitStrategyInQuery($query);
+            //$this->validateLimitStrategyInQuery($query);
 
             return $query;
         }
@@ -164,7 +164,7 @@ trait LimitTableClauseTrait
     {
         /** @var QueryStrategy|LimitClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->validateLimitStrategyInQuery($query);
+            //$this->validateLimitStrategyInQuery($query);
 
             return $query;
         }
@@ -184,10 +184,10 @@ trait LimitTableClauseTrait
         return $this;
     }
 
-    protected function limitStrategyInstance()
+    private function limitStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->validateLimitStrategyInQuery($query);
+            //$this->validateLimitStrategyInQuery($query);
 
             return $this;
         }
@@ -199,16 +199,16 @@ trait LimitTableClauseTrait
         return $this->cleanClone()->setClause('LIMIT', $this->connection()->limit());
     }
 
-    protected function validateLimitStrategyInQuery(QueryStrategy $query)
-    {
-        //        if (!($query instanceof LimitClauseStrategy)) {
-        //            throw new SqlException('Current query does not have a LIMIT clause.');
-        //        }
+//    private function validateLimitStrategyInQuery(QueryStrategy $query)
+//    {
+//        if (!($query instanceof LimitClauseStrategy)) {
+//            throw new SqlException('Current query does not have a LIMIT clause.');
+//        }
+//
+//        return $this;
+//    }
 
-        return $this;
-    }
-
-    protected function getPreparedLimitClause()
+    private function getPreparedLimitClause()
     {
         if ($this->limitAppliers) {
             $clause = clone $this->intoLimitStrategy()->limitClause();

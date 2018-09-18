@@ -98,7 +98,7 @@ trait DeleteTableQueryTrait
     /**
      * @return $this
      */
-    protected function deleteQueryInstance()
+    private function deleteQueryInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateDeleteQuery($query);
@@ -128,7 +128,7 @@ trait DeleteTableQueryTrait
      *
      * @return $this
      */
-    protected function validateDeleteQuery(?QueryStrategy $query)
+    private function validateDeleteQuery(?QueryStrategy $query)
     {
         if (!($query instanceof DeleteQuery)) {
             throw new SqlException('Current query is not a DELETE statement.');
@@ -144,7 +144,7 @@ trait DeleteTableQueryTrait
      *
      * @return $this
      */
-    protected function validateDeleteClauses(array $clauses)
+    private function validateDeleteClauses(array $clauses)
     {
         foreach ($clauses as $clause) {
             if (!($clause instanceof FromClause)
@@ -166,7 +166,7 @@ trait DeleteTableQueryTrait
      *
      * @return $this
      */
-    protected function assignClausesToDeleteQuery(DeleteQuery $query, array $clauses)
+    private function assignClausesToDeleteQuery(DeleteQuery $query, array $clauses)
     {
         foreach ($clauses as $clause) {
             if ($clause instanceof FromClause) {

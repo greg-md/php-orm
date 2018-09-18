@@ -229,7 +229,7 @@ trait GroupByTableClauseTrait
         return $this;
     }
 
-    protected function groupByStrategyInstance()
+    private function groupByStrategyInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateGroupByStrategyInQuery($query);
@@ -244,7 +244,7 @@ trait GroupByTableClauseTrait
         return $this->cleanClone()->setClause('GROUP_BY', $this->connection()->groupBy());
     }
 
-    protected function validateGroupByStrategyInQuery(QueryStrategy $query)
+    private function validateGroupByStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof GroupByClauseStrategy)) {
             throw new SqlException('Current query does not have a GROUP BY clause.');
@@ -253,7 +253,7 @@ trait GroupByTableClauseTrait
         return $this;
     }
 
-    protected function getPreparedGroupByClause()
+    private function getPreparedGroupByClause()
     {
         if ($this->groupByAppliers) {
             $clause = clone $this->intoGroupByStrategy()->groupByClause();

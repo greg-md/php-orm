@@ -232,7 +232,7 @@ trait FromTableClauseTrait
         return $this;
     }
 
-    protected function fromStrategyInstance()
+    private function fromStrategyInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateFromStrategyInQuery($query);
@@ -247,7 +247,7 @@ trait FromTableClauseTrait
         return $this->cleanClone()->setClause('FROM', $this->connection()->from());
     }
 
-    protected function validateFromStrategyInQuery(QueryStrategy $query)
+    private function validateFromStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof FromClauseStrategy)) {
             throw new SqlException('Current query does not have a FROM clause.');
@@ -256,7 +256,7 @@ trait FromTableClauseTrait
         return $this;
     }
 
-    protected function getPreparedFromClause()
+    private function getPreparedFromClause()
     {
         if ($this->fromAppliers) {
             $clause = clone $this->intoFromStrategy()->fromClause();
