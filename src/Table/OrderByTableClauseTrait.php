@@ -223,7 +223,7 @@ trait OrderByTableClauseTrait
     {
         /** @var QueryStrategy|OrderByClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needOrderByStrategyInQuery($query);
+            $this->validateOrderByStrategyInQuery($query);
 
             return $query;
         }
@@ -235,7 +235,7 @@ trait OrderByTableClauseTrait
     {
         /** @var QueryStrategy|OrderByClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needOrderByStrategyInQuery($query);
+            $this->validateOrderByStrategyInQuery($query);
 
             return $query;
         }
@@ -258,7 +258,7 @@ trait OrderByTableClauseTrait
     protected function orderByStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->needOrderByStrategyInQuery($query);
+            $this->validateOrderByStrategyInQuery($query);
 
             return $this;
         }
@@ -270,7 +270,7 @@ trait OrderByTableClauseTrait
         return $this->cleanClone()->setClause('ORDER_BY', $this->connection()->orderBy());
     }
 
-    protected function needOrderByStrategyInQuery(QueryStrategy $query)
+    protected function validateOrderByStrategyInQuery(QueryStrategy $query)
     {
         //        if (!($query instanceof OrderByClauseStrategy)) {
         //            throw new SqlException('Current query does not have an ORDER BY clause.');

@@ -171,7 +171,7 @@ trait UpdateTableQueryTrait
         /** @var UpdateQuery $query */
         $query = $this->getQuery();
 
-        $this->needUpdateQuery($query);
+        $this->validateUpdateQuery($query);
 
         return $query;
     }
@@ -180,7 +180,7 @@ trait UpdateTableQueryTrait
     {
         /** @var UpdateQuery $query */
         if ($query = $this->getQuery()) {
-            $this->needUpdateQuery($query);
+            $this->validateUpdateQuery($query);
         }
 
         return $query;
@@ -198,7 +198,7 @@ trait UpdateTableQueryTrait
     protected function updateQueryInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->needUpdateQuery($query);
+            $this->validateUpdateQuery($query);
 
             return $this;
         }
@@ -206,7 +206,7 @@ trait UpdateTableQueryTrait
         $query = $this->newUpdateQuery();
 
         if ($clauses = $this->getClauses()) {
-            $this->needUpdateClauses($clauses);
+            $this->validateUpdateClauses($clauses);
 
             $this->assignClausesToUpdateQuery($query, $clauses);
 
@@ -218,7 +218,7 @@ trait UpdateTableQueryTrait
         return $this->cleanClone()->setQuery($query);
     }
 
-    protected function needUpdateQuery(?QueryStrategy $query)
+    protected function validateUpdateQuery(?QueryStrategy $query)
     {
         if (!($query instanceof UpdateQuery)) {
             throw new SqlException('Current query is not an UPDATE statement.');
@@ -227,7 +227,7 @@ trait UpdateTableQueryTrait
         return $this;
     }
 
-    protected function needUpdateClauses(array $clauses)
+    protected function validateUpdateClauses(array $clauses)
     {
         foreach ($clauses as $clause) {
             if (!($clause instanceof JoinClause)

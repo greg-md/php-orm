@@ -19,5 +19,5 @@ trait TableQueryTrait
     /**
      * @return Model
      */
-    abstract protected function cleanClone();
+    abstract public function cleanClone();
 }

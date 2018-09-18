@@ -686,7 +686,7 @@ trait HavingTableClauseTrait
     {
         /** @var QueryStrategy|HavingClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needHavingStrategyInQuery($query);
+            $this->validateHavingStrategyInQuery($query);
 
             return $query;
         }
@@ -698,7 +698,7 @@ trait HavingTableClauseTrait
     {
         /** @var QueryStrategy|HavingClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needHavingStrategyInQuery($query);
+            $this->validateHavingStrategyInQuery($query);
 
             return $query;
         }
@@ -721,7 +721,7 @@ trait HavingTableClauseTrait
     protected function havingStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->needHavingStrategyInQuery($query);
+            $this->validateHavingStrategyInQuery($query);
 
             return $this;
         }
@@ -733,7 +733,7 @@ trait HavingTableClauseTrait
         return $this->cleanClone()->setClause('HAVING', $this->connection()->having());
     }
 
-    protected function needHavingStrategyInQuery(QueryStrategy $query)
+    protected function validateHavingStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof HavingClauseStrategy)) {
             throw new SqlException('Current query does not have a HAVING clause.');

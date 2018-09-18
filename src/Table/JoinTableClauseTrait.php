@@ -402,7 +402,7 @@ trait JoinTableClauseTrait
     {
         /** @var QueryStrategy|JoinClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needJoinStrategyInQuery($query);
+            $this->validateJoinStrategyInQuery($query);
 
             return $query;
         }
@@ -414,7 +414,7 @@ trait JoinTableClauseTrait
     {
         /** @var QueryStrategy|JoinClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needJoinStrategyInQuery($query);
+            $this->validateJoinStrategyInQuery($query);
 
             return $query;
         }
@@ -437,7 +437,7 @@ trait JoinTableClauseTrait
     protected function joinStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->needJoinStrategyInQuery($query);
+            $this->validateJoinStrategyInQuery($query);
 
             return $this;
         }
@@ -449,7 +449,7 @@ trait JoinTableClauseTrait
         return $this->cleanClone()->setClause('JOIN', $this->connection()->join());
     }
 
-    protected function needJoinStrategyInQuery(QueryStrategy $query)
+    protected function validateJoinStrategyInQuery(QueryStrategy $query)
     {
         //        if (!($query instanceof JoinClauseStrategy)) {
         //            throw new SqlException('Current query does not have a JOIN clause.');

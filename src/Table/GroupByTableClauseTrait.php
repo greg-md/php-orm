@@ -197,7 +197,7 @@ trait GroupByTableClauseTrait
     {
         /** @var QueryStrategy|GroupByClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needGroupByStrategyInQuery($query);
+            $this->validateGroupByStrategyInQuery($query);
 
             return $query;
         }
@@ -209,7 +209,7 @@ trait GroupByTableClauseTrait
     {
         /** @var QueryStrategy|GroupByClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needGroupByStrategyInQuery($query);
+            $this->validateGroupByStrategyInQuery($query);
 
             return $query;
         }
@@ -232,7 +232,7 @@ trait GroupByTableClauseTrait
     protected function groupByStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->needGroupByStrategyInQuery($query);
+            $this->validateGroupByStrategyInQuery($query);
 
             return $this;
         }
@@ -244,7 +244,7 @@ trait GroupByTableClauseTrait
         return $this->cleanClone()->setClause('GROUP_BY', $this->connection()->groupBy());
     }
 
-    protected function needGroupByStrategyInQuery(QueryStrategy $query)
+    protected function validateGroupByStrategyInQuery(QueryStrategy $query)
     {
         if (!($query instanceof GroupByClauseStrategy)) {
             throw new SqlException('Current query does not have a GROUP BY clause.');

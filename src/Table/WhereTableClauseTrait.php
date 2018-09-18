@@ -772,7 +772,7 @@ trait WhereTableClauseTrait
     {
         /** @var QueryStrategy|WhereClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needWhereStrategyInQuery($query);
+//            $this->validateWhereStrategyInQuery($query);
 
             return $query;
         }
@@ -784,7 +784,7 @@ trait WhereTableClauseTrait
     {
         /** @var QueryStrategy|WhereClauseStrategy $query */
         if ($query = $this->getQuery()) {
-            $this->needWhereStrategyInQuery($query);
+//            $this->validateWhereStrategyInQuery($query);
 
             return $query;
         }
@@ -807,7 +807,7 @@ trait WhereTableClauseTrait
     protected function whereStrategyInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->needWhereStrategyInQuery($query);
+//            $this->validateWhereStrategyInQuery($query);
 
             return $this;
         }
@@ -819,14 +819,14 @@ trait WhereTableClauseTrait
         return $this->cleanClone()->setClause('WHERE', $this->connection()->where());
     }
 
-    protected function needWhereStrategyInQuery(QueryStrategy $query)
-    {
-        //        if (!($query instanceof WhereClauseStrategy)) {
-        //            throw new SqlException('Current query does not have a WHERE clause.');
-        //        }
-
-        return $this;
-    }
+//    protected function validateWhereStrategyInQuery(QueryStrategy $query)
+//    {
+//        if (!($query instanceof WhereClauseStrategy)) {
+//            throw new SqlException('Current query does not have a WHERE clause.');
+//        }
+//
+//        return $this;
+//    }
 
     protected function getPreparedWhereClause()
     {

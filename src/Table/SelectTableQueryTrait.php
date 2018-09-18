@@ -387,7 +387,7 @@ trait SelectTableQueryTrait
         /** @var SelectQuery $query */
         $query = $this->getQuery();
 
-        $this->needSelectQuery($query);
+        $this->validateSelectQuery($query);
 
         return $query;
     }
@@ -396,7 +396,7 @@ trait SelectTableQueryTrait
     {
         /** @var SelectQuery $query */
         if ($query = $this->getQuery()) {
-            $this->needSelectQuery($query);
+            $this->validateSelectQuery($query);
         }
 
         return $query;
@@ -412,7 +412,7 @@ trait SelectTableQueryTrait
      */
     public function intoSelectQuery()
     {
-        if ($query = $this->needNewSelectQuery()) {
+        if ($query = $this->getNewSelectQuery()) {
             return $this->setQuery($query);
         }
 
@@ -421,17 +421,17 @@ trait SelectTableQueryTrait
 
     protected function selectQueryInstance()
     {
-        if ($query = $this->needNewSelectQuery()) {
+        if ($query = $this->getNewSelectQuery()) {
             return $this->cleanClone()->setQuery($query);
         }
 
         return $this;
     }
 
-    protected function needNewSelectQuery()
+    protected function getNewSelectQuery()
     {
         if ($query = $this->getQuery()) {
-            $this->needSelectQuery($query);
+            $this->validateSelectQuery($query);
 
             return false;
         }
@@ -439,7 +439,7 @@ trait SelectTableQueryTrait
         $query = $this->newSelectQuery();
 
         if ($clauses = $this->getClauses()) {
-            $this->needSelectClauses($clauses);
+            $this->validateSelectClauses($clauses);
 
             $this->assignClausesToSelectQuery($query, $clauses);
 
@@ -451,7 +451,7 @@ trait SelectTableQueryTrait
         return $query;
     }
 
-    protected function needSelectQuery(?QueryStrategy $query)
+    protected function validateSelectQuery(?QueryStrategy $query)
     {
         if (!($query instanceof SelectQuery)) {
             throw new SqlException('Current query is not a SELECT statement.');
@@ -460,7 +460,7 @@ trait SelectTableQueryTrait
         return $this;
     }
 
-    protected function needSelectClauses(array $clauses)
+    protected function validateSelectClauses(array $clauses)
     {
         foreach ($clauses as $clause) {
             if (!($clause instanceof FromClause)

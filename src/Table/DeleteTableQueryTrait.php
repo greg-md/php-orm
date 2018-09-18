@@ -71,7 +71,7 @@ trait DeleteTableQueryTrait
         /** @var DeleteQuery $query */
         $query = $this->getQuery();
 
-        $this->needDeleteQuery($query);
+        $this->validateDeleteQuery($query);
 
         return $query;
     }
@@ -80,7 +80,7 @@ trait DeleteTableQueryTrait
     {
         /** @var DeleteQuery $query */
         if ($query = $this->getQuery()) {
-            $this->needDeleteQuery($query);
+            $this->validateDeleteQuery($query);
         }
 
         return $query;
@@ -101,7 +101,7 @@ trait DeleteTableQueryTrait
     protected function deleteQueryInstance()
     {
         if ($query = $this->getQuery()) {
-            $this->needDeleteQuery($query);
+            $this->validateDeleteQuery($query);
 
             return $this;
         }
@@ -109,7 +109,7 @@ trait DeleteTableQueryTrait
         $query = $this->newDeleteQuery();
 
         if ($clauses = $this->getClauses()) {
-            $this->needDeleteClauses($clauses);
+            $this->validateDeleteClauses($clauses);
 
             $this->assignClausesToDeleteQuery($query, $clauses);
 
@@ -128,7 +128,7 @@ trait DeleteTableQueryTrait
      *
      * @return $this
      */
-    protected function needDeleteQuery(?QueryStrategy $query)
+    protected function validateDeleteQuery(?QueryStrategy $query)
     {
         if (!($query instanceof DeleteQuery)) {
             throw new SqlException('Current query is not a DELETE statement.');
@@ -144,7 +144,7 @@ trait DeleteTableQueryTrait
      *
      * @return $this
      */
-    protected function needDeleteClauses(array $clauses)
+    protected function validateDeleteClauses(array $clauses)
     {
         foreach ($clauses as $clause) {
             if (!($clause instanceof FromClause)
