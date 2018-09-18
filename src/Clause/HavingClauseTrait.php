@@ -3,7 +3,7 @@
 namespace Greg\Orm\Clause;
 
 use Greg\Orm\Conditions;
-use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectStrategy;
 
 trait HavingClauseTrait
 {
@@ -549,7 +549,7 @@ trait HavingClauseTrait
     }
 
     /**
-     * @return SqlDialect
+     * @return SqlDialectStrategy
      */
-    abstract public function dialect(): SqlDialect;
+    abstract public function dialect(): SqlDialectStrategy;
 }

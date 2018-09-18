@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Dialect;
 
-class MysqlDialect extends SqlDialectAbstract
+class MysqlDialect extends SqlDialect
 {
     /**
      * @param string $sql

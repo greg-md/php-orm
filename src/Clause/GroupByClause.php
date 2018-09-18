@@ -2,18 +2,18 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\Dialect\SqlDialect;
-use Greg\Orm\Dialect\SqlDialectAbstract;
 use Greg\Orm\SqlAbstract;
 
 class GroupByClause extends SqlAbstract implements ClauseStrategy, GroupByClauseStrategy
 {
     use GroupByClauseTrait;
 
-    public function __construct(SqlDialect $dialect = null)
+    public function __construct(SqlDialectStrategy $dialect = null)
     {
         if (!$dialect) {
-            $dialect = new SqlDialectAbstract();
+            $dialect = new SqlDialect();
         }
 
         $this->setDialect($dialect);
