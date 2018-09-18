@@ -4,7 +4,7 @@ namespace Greg\Orm;
 
 use Greg\Orm\Dialect\SqlDialectStrategy;
 
-abstract class SqlAbstract implements SqlStrategy
+abstract class SqlAbstract
 {
     /**
      * @var SqlDialectStrategy

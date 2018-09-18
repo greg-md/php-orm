@@ -247,7 +247,7 @@ trait UpdateTableQueryTrait
         foreach ($clauses as $clause) {
             if ($clause instanceof JoinClause) {
                 foreach ($clause->getJoin() as $tableKey => $join) {
-                    $query->joinLogic($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
+                    $query->addJoin($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
                 }
 
                 continue;
@@ -255,7 +255,7 @@ trait UpdateTableQueryTrait
 
             if ($clause instanceof WhereClause) {
                 foreach ($clause->getWhere() as $where) {
-                    $query->whereLogic($where['logic'], $where['sql'], $where['params']);
+                    $query->addWhere($where['logic'], $where['sql'], $where['params']);
                 }
 
                 continue;
@@ -263,7 +263,7 @@ trait UpdateTableQueryTrait
 
             if ($clause instanceof OrderByClause) {
                 foreach ($clause->getOrderBy() as $orderBy) {
-                    $query->orderByLogic($orderBy['sql'], $orderBy['type'], $orderBy['params']);
+                    $query->addOrderBy($orderBy['sql'], $orderBy['type'], $orderBy['params']);
                 }
 
                 continue;

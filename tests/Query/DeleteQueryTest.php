@@ -54,7 +54,7 @@ class DeleteQueryTest extends TestCase
     {
         $query = $this->newQuery()
             ->from('Table1')
-            ->innerOn('Table2', function (Conditions $strategy) {
+            ->innerJoinOn('Table2', function (Conditions $strategy) {
                 $strategy->isNull('Column');
             })
             ->where('Foo', 'foo')

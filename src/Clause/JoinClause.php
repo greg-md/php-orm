@@ -2,6 +2,7 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\ClauseStrategy;
 use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\Dialect\SqlDialectStrategy;
 use Greg\Orm\SqlAbstract;

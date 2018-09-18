@@ -127,10 +127,10 @@ class UpdateQueryTest extends TestCase
     {
         $query = $this->newQuery()
             ->table('Table1 as t')
-            ->innerToOn('t', 'Table2', function (Conditions $strategy) {
+            ->innerJoinOnTo('t', 'Table2', function (Conditions $strategy) {
                 $strategy->isNull('Column');
             })
-            ->inner('Table3')
+            ->innerJoin('Table3')
             ->limit(1)
             ->where('Column', 'bar')
             ->orderAsc('Column')

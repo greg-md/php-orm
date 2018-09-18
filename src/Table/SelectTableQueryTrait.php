@@ -484,7 +484,7 @@ trait SelectTableQueryTrait
         foreach ($clauses as $clause) {
             if ($clause instanceof FromClause) {
                 foreach ($clause->getFrom() as $from) {
-                    $query->fromLogic($from['tableKey'], $from['table'], $from['alias'], $from['params']);
+                    $query->addFrom($from['tableKey'], $from['table'], $from['alias'], $from['params']);
                 }
 
                 continue;
@@ -492,7 +492,7 @@ trait SelectTableQueryTrait
 
             if ($clause instanceof JoinClause) {
                 foreach ($clause->getJoin() as $tableKey => $join) {
-                    $query->joinLogic($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
+                    $query->addJoin($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
                 }
 
                 continue;
@@ -500,7 +500,7 @@ trait SelectTableQueryTrait
 
             if ($clause instanceof WhereClause) {
                 foreach ($clause->getWhere() as $where) {
-                    $query->whereLogic($where['logic'], $where['sql'], $where['params']);
+                    $query->addWhere($where['logic'], $where['sql'], $where['params']);
                 }
 
                 continue;
@@ -508,7 +508,7 @@ trait SelectTableQueryTrait
 
             if ($clause instanceof HavingClause) {
                 foreach ($clause->getHaving() as $having) {
-                    $query->havingLogic($having['logic'], $having['sql'], $having['params']);
+                    $query->addHaving($having['logic'], $having['sql'], $having['params']);
                 }
 
                 continue;
@@ -516,7 +516,7 @@ trait SelectTableQueryTrait
 
             if ($clause instanceof OrderByClause) {
                 foreach ($clause->getOrderBy() as $orderBy) {
-                    $query->orderByLogic($orderBy['sql'], $orderBy['type'], $orderBy['params']);
+                    $query->addOrderBy($orderBy['sql'], $orderBy['type'], $orderBy['params']);
                 }
 
                 continue;
@@ -524,7 +524,7 @@ trait SelectTableQueryTrait
 
             if ($clause instanceof GroupByClause) {
                 foreach ($clause->getGroupBy() as $groupBy) {
-                    $query->groupByLogic($groupBy['sql'], $groupBy['params']);
+                    $query->addGroupBy($groupBy['sql'], $groupBy['params']);
                 }
 
                 continue;

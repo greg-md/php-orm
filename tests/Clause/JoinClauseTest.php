@@ -20,7 +20,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type}('Foo');
+        $query->{$type . 'Join'}('Foo');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->toString());
     }
@@ -36,7 +36,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type}('Foo', '`Foo`.`Id` = !Bar.Id');
+        $query->{$type . 'Join'}('Foo', '`Foo`.`Id` = !Bar.Id');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->toString());
     }
@@ -52,7 +52,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type . 'On'}('Foo', function (Conditions $query) {
+        $query->{$type . 'JoinOn'}('Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -61,7 +61,7 @@ class JoinClauseTest extends TestCase
 
     public function testCanCross()
     {
-        $query = $this->newClause()->cross('Foo');
+        $query = $this->newClause()->crossJoin('Foo');
 
         $this->assertEquals('CROSS JOIN `Foo`', $query->toString());
     }
@@ -77,7 +77,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type . 'To'}('bar', 'Foo');
+        $query->{$type . 'JoinTo'}('bar', 'Foo');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->joinToString('bar'));
 
@@ -95,7 +95,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type . 'To'}('bar', 'Foo', '`Foo`.`Id` = !Bar.Id');
+        $query->{$type . 'JoinTo'}('bar', 'Foo', '`Foo`.`Id` = !Bar.Id');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->joinToString('bar'));
     }
@@ -111,7 +111,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->{$type . 'ToOn'}('bar', 'Foo', function (Conditions $query) {
+        $query->{$type . 'JoinOnTo'}('bar', 'Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -120,7 +120,7 @@ class JoinClauseTest extends TestCase
 
     public function testCanCrossTo()
     {
-        $query = $this->newClause()->crossTo('bar', 'Foo');
+        $query = $this->newClause()->crossJoinTo('bar', 'Foo');
 
         $this->assertEquals('CROSS JOIN `Foo`', $query->joinToString('bar'));
     }
@@ -131,7 +131,7 @@ class JoinClauseTest extends TestCase
 
         $this->assertFalse($query->hasJoin());
 
-        $query->inner('Foo');
+        $query->innerJoin('Foo');
 
         $this->assertTrue($query->hasJoin());
     }
@@ -140,7 +140,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->inner('Foo');
+        $query->innerJoin('Foo');
 
         $this->assertCount(1, $query->getJoin());
     }
@@ -149,7 +149,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->inner('Foo');
+        $query->innerJoin('Foo');
 
         $query->clearJoin();
 
@@ -160,7 +160,7 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->inner(['f' => 'Foo']);
+        $query->innerJoin(['f' => 'Foo']);
 
         $this->assertEquals('INNER JOIN `Foo` AS `f`', $query->toString());
     }
@@ -169,14 +169,14 @@ class JoinClauseTest extends TestCase
     {
         $query = $this->newClause();
 
-        $query->inner(['f' => 'Foo']);
+        $query->innerJoin(['f' => 'Foo']);
 
         $this->assertEquals('INNER JOIN `Foo` AS `f`', (string) $query);
     }
 
     public function testCanCombineClauses()
     {
-        $query = $this->newClause()->inner(['t' => new SelectQuery()]);
+        $query = $this->newClause()->innerJoin(['t' => new SelectQuery()]);
 
         $this->assertEquals('INNER JOIN (SELECT *) AS `t`', $query->toString());
     }
@@ -185,14 +185,14 @@ class JoinClauseTest extends TestCase
     {
         $this->expectException(SqlException::class);
 
-        $this->newClause()->inner(new SelectQuery());
+        $this->newClause()->innerJoin(new SelectQuery());
     }
 
     public function testCanThrowExceptionIfDerivedTableNotHaveAliasInSource()
     {
         $this->expectException(SqlException::class);
 
-        $this->newClause()->innerTo(new SelectQuery(), 'Table');
+        $this->newClause()->innerJoinTo(new SelectQuery(), 'Table');
     }
 
     public function joins()

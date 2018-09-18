@@ -289,7 +289,7 @@ interface HavingClauseStrategy
      *
      * @return $this
      */
-    public function havingLogic(string $type, $sql, array $params);
+    public function addHaving(string $type, $sql, array $params);
 
     /**
      * @return bool

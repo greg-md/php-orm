@@ -31,12 +31,12 @@ trait JoinTableClauseTrait
                 call_user_func_array($applier, [$clause]);
 
                 foreach ($clause->getJoin() as $tableKey => $join) {
-                    $strategy->joinLogic($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
+                    $strategy->addJoin($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
                 }
             }
 
             foreach ($items as $tableKey => $join) {
-                $strategy->joinLogic($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
+                $strategy->addJoin($tableKey, $join['type'], $join['source'], $join['table'], $join['alias'], $join['on'], $join['params']);
             }
         }
 
@@ -104,7 +104,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->left($table, $on, ...$params);
+        $instance->joinStrategy()->leftJoin($table, $on, ...$params);
 
         return $instance;
     }
@@ -119,7 +119,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->leftOn($table, $on);
+        $instance->joinStrategy()->leftJoinOn($table, $on);
 
         return $instance;
     }
@@ -135,7 +135,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->right($table, $on, ...$params);
+        $instance->joinStrategy()->rightJoin($table, $on, ...$params);
 
         return $instance;
     }
@@ -150,7 +150,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->rightOn($table, $on);
+        $instance->joinStrategy()->rightJoinOn($table, $on);
 
         return $instance;
     }
@@ -166,7 +166,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->inner($table, $on, ...$params);
+        $instance->joinStrategy()->innerJoin($table, $on, ...$params);
 
         return $instance;
     }
@@ -181,7 +181,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->innerOn($table, $on);
+        $instance->joinStrategy()->innerJoinOn($table, $on);
 
         return $instance;
     }
@@ -195,7 +195,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->cross($table);
+        $instance->joinStrategy()->crossJoin($table);
 
         return $instance;
     }
@@ -212,7 +212,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->leftTo($source, $table, $on, ...$params);
+        $instance->joinStrategy()->leftJoinTo($source, $table, $on, ...$params);
 
         return $instance;
     }
@@ -228,7 +228,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->leftToOn($source, $table, $on);
+        $instance->joinStrategy()->leftJoinOnTo($source, $table, $on);
 
         return $instance;
     }
@@ -245,7 +245,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->rightTo($source, $table, $on, ...$params);
+        $instance->joinStrategy()->rightJoinTo($source, $table, $on, ...$params);
 
         return $instance;
     }
@@ -261,7 +261,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->rightToOn($source, $table, $on);
+        $instance->joinStrategy()->rightJoinOnTo($source, $table, $on);
 
         return $instance;
     }
@@ -278,7 +278,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->innerTo($source, $table, $on, ...$params);
+        $instance->joinStrategy()->innerJoinTo($source, $table, $on, ...$params);
 
         return $instance;
     }
@@ -294,7 +294,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->innerToOn($source, $table, $on);
+        $instance->joinStrategy()->innerJoinOnTo($source, $table, $on);
 
         return $instance;
     }
@@ -309,7 +309,7 @@ trait JoinTableClauseTrait
     {
         $instance = $this->joinStrategyInstance();
 
-        $instance->joinStrategy()->crossTo($source, $table);
+        $instance->joinStrategy()->crossJoinTo($source, $table);
 
         return $instance;
     }

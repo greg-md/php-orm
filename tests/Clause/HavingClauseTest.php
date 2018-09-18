@@ -721,7 +721,7 @@ class HavingClauseTest extends TestCase
     {
         $query = $this->newQuery();
 
-        $query->havingLogic('and', '`Foo` = ?', ['foo']);
+        $query->addHaving('and', '`Foo` = ?', ['foo']);
 
         $this->assertEquals('HAVING `Foo` = ?', (string) $query);
     }

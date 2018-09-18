@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Table;
 
-use Greg\Orm\Clause\ClauseStrategy;
+use Greg\Orm\ClauseStrategy;
 use Greg\Orm\Connection\ConnectionStrategy;
 use Greg\Orm\Model;
 use Greg\Orm\Query\QueryStrategy;

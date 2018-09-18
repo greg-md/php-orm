@@ -44,7 +44,7 @@ trait FromClauseTrait
                 $tableAlias = $this->dialect()->quoteName($tableAlias);
             }
 
-            $this->fromLogic($tableKey, $tableName, $tableAlias);
+            $this->addFrom($tableKey, $tableName, $tableAlias);
         }
 
         return $this;
@@ -67,7 +67,7 @@ trait FromClauseTrait
             $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->fromLogic($tableKey, $this->dialect()->quote($sql), $alias, $params);
+        $this->addFrom($tableKey, $this->dialect()->quote($sql), $alias, $params);
 
         return $this;
     }
@@ -80,7 +80,7 @@ trait FromClauseTrait
      *
      * @return $this
      */
-    public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = [])
+    public function addFrom(?string $tableKey, $table, ?string $alias, array $params = [])
     {
         $this->from[$tableKey] = [
             'tableKey' => $tableKey,
@@ -177,7 +177,7 @@ trait FromClauseTrait
      *
      * @return array
      */
-    protected function prepareFrom(array $from): array
+    private function prepareFrom(array $from): array
     {
         if ($from['table'] instanceof SelectQuery) {
             [$sql, $params] = $from['table']->toSql();

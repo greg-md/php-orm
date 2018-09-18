@@ -465,7 +465,7 @@ trait HavingClauseTrait
      *
      * @return $this
      */
-    public function havingLogic(string $logic, $sql, array $params = [])
+    public function addHaving(string $logic, $sql, array $params = [])
     {
         $this->hConditions()->logic($logic, $sql, $params);
 
@@ -527,7 +527,7 @@ trait HavingClauseTrait
     /**
      * @return Conditions
      */
-    protected function hConditions(): Conditions
+    private function hConditions(): Conditions
     {
         if (!$this->hConditions) {
             $this->hConditions = new Conditions($this->dialect());
@@ -539,7 +539,7 @@ trait HavingClauseTrait
     /**
      * @return $this
      */
-    protected function havingClone()
+    private function havingClone()
     {
         if ($this->hConditions) {
             $this->hConditions = clone $this->hConditions;

@@ -5,7 +5,7 @@ namespace Greg\Orm\Clause;
 use Greg\Orm\Conditions;
 use Greg\Orm\Query\SelectQuery;
 
-interface WhereClauseStrategy extends ClauseStrategy
+interface WhereClauseStrategy
 {
     /**
      * @param $column
@@ -290,7 +290,7 @@ interface WhereClauseStrategy extends ClauseStrategy
      *
      * @return $this
      */
-    public function whereLogic(string $type, $sql, array $params);
+    public function addWhere(string $type, $sql, array $params);
 
     /**
      * @return bool

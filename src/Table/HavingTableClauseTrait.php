@@ -40,7 +40,7 @@ trait HavingTableClauseTrait
                 $clause = $this->connection()->having();
 
                 foreach ($items as $where) {
-                    $clause->havingLogic($where['logic'], $where['sql'], $where['params']);
+                    $clause->addHaving($where['logic'], $where['sql'], $where['params']);
                 }
 
                 $strategy->havingConditions($clause);

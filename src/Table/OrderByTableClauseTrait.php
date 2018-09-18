@@ -31,12 +31,12 @@ trait OrderByTableClauseTrait
                 call_user_func_array($applier, [$clause]);
 
                 foreach ($clause->getOrderBy() as $orderBy) {
-                    $strategy->orderByLogic($orderBy['sql'], $orderBy['type'], $orderBy['params']);
+                    $strategy->addOrderBy($orderBy['sql'], $orderBy['type'], $orderBy['params']);
                 }
             }
 
             foreach ($items as $orderBy) {
-                $strategy->orderByLogic($orderBy['sql'], $orderBy['type'], $orderBy['params']);
+                $strategy->addOrderBy($orderBy['sql'], $orderBy['type'], $orderBy['params']);
             }
         }
 

@@ -62,7 +62,7 @@ class FromClauseTest extends TestCase
 
     public function testCanJoin()
     {
-        $join = (new JoinClause())->innerTo('Foo', 'Bar');
+        $join = (new JoinClause())->innerJoinTo('Foo', 'Bar');
 
         $query = $this->newClause()->from('Foo');
 

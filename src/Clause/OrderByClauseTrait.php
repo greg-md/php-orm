@@ -30,7 +30,7 @@ trait OrderByClauseTrait
             }
         }
 
-        $this->orderByLogic($this->dialect()->quoteName($column), $type);
+        $this->addOrderBy($this->dialect()->quoteName($column), $type);
 
         return $this;
     }
@@ -67,7 +67,7 @@ trait OrderByClauseTrait
      */
     public function orderByRaw(string $sql, string ...$params)
     {
-        $this->orderByLogic($this->dialect()->quote($sql), null, $params);
+        $this->addOrderBy($this->dialect()->quote($sql), null, $params);
 
         return $this;
     }
@@ -79,7 +79,7 @@ trait OrderByClauseTrait
      *
      * @return $this
      */
-    public function orderByLogic(string $sql, ?string $type, array $params = [])
+    public function addOrderBy(string $sql, ?string $type, array $params = [])
     {
         $this->orderBy[] = [
             'sql'    => $sql,

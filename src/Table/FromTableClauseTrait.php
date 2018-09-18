@@ -32,12 +32,12 @@ trait FromTableClauseTrait
                 call_user_func_array($applier, [$clause]);
 
                 foreach ($clause->getFrom() as $from) {
-                    $strategy->fromLogic($from['tableKey'], $from['table'], $from['alias'], $from['params']);
+                    $strategy->addFrom($from['tableKey'], $from['table'], $from['alias'], $from['params']);
                 }
             }
 
             foreach ($items as $from) {
-                $strategy->fromLogic($from['tableKey'], $from['table'], $from['alias'], $from['params']);
+                $strategy->addFrom($from['tableKey'], $from['table'], $from['alias'], $from['params']);
             }
         }
 

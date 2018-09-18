@@ -250,7 +250,7 @@ class SelectQueryTest extends TestCase
     {
         $query = $this->newQuery()
             ->from('Table1')
-            ->innerOn('Table2', function (Conditions $conditions) {
+            ->innerJoinOn('Table2', function (Conditions $conditions) {
                 $conditions->isNull('Column');
             })
             ->when(true, function (SelectQuery $query) {

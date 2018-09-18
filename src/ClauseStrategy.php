@@ -1,8 +1,6 @@
 <?php
 
-namespace Greg\Orm\Clause;
-
-use Greg\Orm\SqlStrategy;
+namespace Greg\Orm;
 
 interface ClauseStrategy extends SqlStrategy
 {

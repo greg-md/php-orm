@@ -461,7 +461,7 @@ trait WhereClauseTrait
      *
      * @return $this
      */
-    public function whereLogic(string $logic, $sql, array $params = [])
+    public function addWhere(string $logic, $sql, array $params = [])
     {
         $this->wConditions()->logic($logic, $sql, $params);
 
@@ -630,7 +630,7 @@ trait WhereClauseTrait
         return $this->whereToSql($useClause)[0];
     }
 
-    protected function whereClone()
+    private function whereClone()
     {
         if ($this->wConditions) {
             $this->wConditions = clone $this->wConditions;
@@ -643,7 +643,7 @@ trait WhereClauseTrait
      * @return Conditions|null
      * @return Conditions|null
      */
-    protected function wConditions()
+    private function wConditions()
     {
         if (!$this->wConditions) {
             $this->exists = null;
@@ -659,7 +659,7 @@ trait WhereClauseTrait
      *
      * @return array
      */
-    protected function prepareExists(array $exists)
+    private function prepareExists(array $exists)
     {
         if ($exists['sql'] instanceof SelectQuery) {
             [$sql, $params] = $exists['sql']->toSql();
@@ -675,5 +675,5 @@ trait WhereClauseTrait
     /**
      * @return SqlDialectStrategy
      */
-    abstract protected function dialect(): SqlDialectStrategy;
+    abstract public function dialect(): SqlDialectStrategy;
 }

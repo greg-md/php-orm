@@ -31,12 +31,12 @@ trait GroupByTableClauseTrait
                 call_user_func_array($applier, [$clause]);
 
                 foreach ($clause->getGroupBy() as $groupBy) {
-                    $strategy->groupByLogic($groupBy['sql'], $groupBy['params']);
+                    $strategy->addGroupBy($groupBy['sql'], $groupBy['params']);
                 }
             }
 
             foreach ($items as $groupBy) {
-                $strategy->groupByLogic($groupBy['sql'], $groupBy['params']);
+                $strategy->addGroupBy($groupBy['sql'], $groupBy['params']);
             }
         }
 

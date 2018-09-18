@@ -199,7 +199,7 @@ trait JoinTableClauseTraitTest
     public function testCanAssignJoinAppliers()
     {
         $this->model()->setJoinApplier(function (JoinClause $clause) {
-            $clause->inner('Table1');
+            $clause->innerJoin('Table1');
         });
 
         $query = $this->model()->inner('Table2');

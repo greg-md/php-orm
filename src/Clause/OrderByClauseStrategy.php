@@ -41,7 +41,7 @@ interface OrderByClauseStrategy
      *
      * @return $this
      */
-    public function orderByLogic(string $sql, ?string $type, array $params = []);
+    public function addOrderBy(string $sql, ?string $type, array $params = []);
 
     /**
      * @return bool

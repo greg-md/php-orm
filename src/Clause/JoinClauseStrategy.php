@@ -13,7 +13,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function left($table, string $on = null, string ...$params);
+    public function leftJoin($table, string $on = null, string ...$params);
 
     /**
      * @param $table
@@ -21,7 +21,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function leftOn($table, $on);
+    public function leftJoinOn($table, $on);
 
     /**
      * @param $table
@@ -30,7 +30,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function right($table, string $on = null, string ...$params);
+    public function rightJoin($table, string $on = null, string ...$params);
 
     /**
      * @param $table
@@ -38,7 +38,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function rightOn($table, $on);
+    public function rightJoinOn($table, $on);
 
     /**
      * @param $table
@@ -47,7 +47,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function inner($table, string $on = null, string ...$params);
+    public function innerJoin($table, string $on = null, string ...$params);
 
     /**
      * @param $table
@@ -55,33 +55,14 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function innerOn($table, $on);
+    public function innerJoinOn($table, $on);
 
     /**
      * @param $table
      *
      * @return $this
      */
-    public function cross($table);
-
-    /**
-     * @param $source
-     * @param $table
-     * @param string|null $on
-     * @param string[]    ...$params
-     *
-     * @return $this
-     */
-    public function leftTo($source, $table, string $on = null, string ...$params);
-
-    /**
-     * @param $source
-     * @param $table
-     * @param callable|Conditions $on
-     *
-     * @return $this
-     */
-    public function leftToOn($source, $table, $on);
+    public function crossJoin($table);
 
     /**
      * @param $source
@@ -91,7 +72,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function rightTo($source, $table, string $on = null, string ...$params);
+    public function leftJoinTo($source, $table, string $on = null, string ...$params);
 
     /**
      * @param $source
@@ -100,7 +81,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function rightToOn($source, $table, $on);
+    public function leftJoinOnTo($source, $table, $on);
 
     /**
      * @param $source
@@ -110,7 +91,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function innerTo($source, $table, string $on = null, string ...$params);
+    public function rightJoinTo($source, $table, string $on = null, string ...$params);
 
     /**
      * @param $source
@@ -119,7 +100,26 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function innerToOn($source, $table, $on);
+    public function rightJoinOnTo($source, $table, $on);
+
+    /**
+     * @param $source
+     * @param $table
+     * @param string|null $on
+     * @param string[]    ...$params
+     *
+     * @return $this
+     */
+    public function innerJoinTo($source, $table, string $on = null, string ...$params);
+
+    /**
+     * @param $source
+     * @param $table
+     * @param callable|Conditions $on
+     *
+     * @return $this
+     */
+    public function innerJoinOnTo($source, $table, $on);
 
     /**
      * @param $source
@@ -127,7 +127,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function crossTo($source, $table);
+    public function crossJoinTo($source, $table);
 
     /**
      * @param string      $tableKey
@@ -140,7 +140,7 @@ interface JoinClauseStrategy
      *
      * @return $this
      */
-    public function joinLogic(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = []);
+    public function addJoin(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = []);
 
     /**
      * @return string

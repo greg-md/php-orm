@@ -38,7 +38,7 @@ trait WhereTableClauseTrait
                 $clause = $this->connection()->where();
 
                 foreach ($items as $where) {
-                    $clause->whereLogic($where['logic'], $where['sql'], $where['params']);
+                    $clause->addWhere($where['logic'], $where['sql'], $where['params']);
                 }
 
                 $strategy->whereConditions($clause);

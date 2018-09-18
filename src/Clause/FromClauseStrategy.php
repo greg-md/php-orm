@@ -21,7 +21,7 @@ interface FromClauseStrategy
      */
     public function fromRaw(?string $alias, string $sql, string ...$params);
 
-    public function fromLogic(?string $tableKey, $table, ?string $alias, array $params = []);
+    public function addFrom(?string $tableKey, $table, ?string $alias, array $params = []);
 
     /**
      * @return bool

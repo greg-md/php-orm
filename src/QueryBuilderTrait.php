@@ -2,7 +2,6 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Clause\ClauseStrategy;
 use Greg\Orm\Clause\FromClauseStrategy;
 use Greg\Orm\Clause\GroupByClauseStrategy;
 use Greg\Orm\Clause\HavingClauseStrategy;

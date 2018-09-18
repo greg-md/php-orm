@@ -21,7 +21,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function left($table, string $on = null, string ...$params)
+    public function leftJoin($table, string $on = null, string ...$params)
     {
         $this->join('LEFT', null, $table, $on, $params);
 
@@ -34,7 +34,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function leftOn($table, $on)
+    public function leftJoinOn($table, $on)
     {
         $this->join('LEFT', null, $table, $on);
 
@@ -48,7 +48,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function right($table, string $on = null, string ...$params)
+    public function rightJoin($table, string $on = null, string ...$params)
     {
         $this->join('RIGHT', null, $table, $on, $params);
 
@@ -61,7 +61,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function rightOn($table, $on)
+    public function rightJoinOn($table, $on)
     {
         $this->join('RIGHT', null, $table, $on);
 
@@ -75,7 +75,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function inner($table, string $on = null, string ...$params)
+    public function innerJoin($table, string $on = null, string ...$params)
     {
         $this->join('INNER', null, $table, $on, $params);
 
@@ -88,7 +88,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function innerOn($table, $on)
+    public function innerJoinOn($table, $on)
     {
         $this->join('INNER', null, $table, $on);
 
@@ -100,7 +100,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function cross($table)
+    public function crossJoin($table)
     {
         $this->join('CROSS', null, $table);
 
@@ -115,7 +115,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function leftTo($source, $table, string $on = null, string ...$params)
+    public function leftJoinTo($source, $table, string $on = null, string ...$params)
     {
         $this->join('LEFT', $source, $table, $on, $params);
 
@@ -129,7 +129,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function leftToOn($source, $table, $on)
+    public function leftJoinOnTo($source, $table, $on)
     {
         $this->join('LEFT', $source, $table, $on);
 
@@ -144,7 +144,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function rightTo($source, $table, string $on = null, string ...$params)
+    public function rightJoinTo($source, $table, string $on = null, string ...$params)
     {
         $this->join('RIGHT', $source, $table, $on, $params);
 
@@ -158,7 +158,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function rightToOn($source, $table, $on)
+    public function rightJoinOnTo($source, $table, $on)
     {
         $this->join('RIGHT', $source, $table, $on);
 
@@ -173,7 +173,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function innerTo($source, $table, string $on = null, string ...$params)
+    public function innerJoinTo($source, $table, string $on = null, string ...$params)
     {
         $this->join('INNER', $source, $table, $on, $params);
 
@@ -187,7 +187,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function innerToOn($source, $table, $on)
+    public function innerJoinOnTo($source, $table, $on)
     {
         $this->join('INNER', $source, $table, $on);
 
@@ -200,7 +200,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function crossTo($source, $table)
+    public function crossJoinTo($source, $table)
     {
         $this->join('CROSS', $source, $table);
 
@@ -218,7 +218,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    public function joinLogic(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = [])
+    public function addJoin(string $tableKey, string $type, ?string $source, $table, ?string $alias, $on = null, array $params = [])
     {
         $this->join[$tableKey] = [
             'type'   => $type,
@@ -313,7 +313,7 @@ trait JoinClauseTrait
      *
      * @return $this
      */
-    protected function join(string $type, $source, $table, $on = null, array $params = [])
+    private function join(string $type, $source, $table, $on = null, array $params = [])
     {
         if ($source) {
             $source = $this->getSourceName($source);
@@ -349,7 +349,7 @@ trait JoinClauseTrait
             $on = $this->dialect()->quote($on);
         }
 
-        $this->joinLogic($tableKey, $type, $source, $tableName, $tableAlias, $on, $params);
+        $this->addJoin($tableKey, $type, $source, $tableName, $tableAlias, $on, $params);
 
         return $this;
     }
@@ -361,7 +361,7 @@ trait JoinClauseTrait
      *
      * @return string
      */
-    protected function getSourceName($source): string
+    private function getSourceName($source): string
     {
         list($sourceAlias, $sourceName) = $this->dialect()->parseTable($source);
 
@@ -377,7 +377,7 @@ trait JoinClauseTrait
      *
      * @return array
      */
-    protected function prepareJoin(array $join)
+    private function prepareJoin(array $join)
     {
         if ($join['table'] instanceof SelectQuery) {
             [$sql, $params] = $join['table']->toSql();

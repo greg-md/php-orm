@@ -25,7 +25,7 @@ interface GroupByClauseStrategy
      *
      * @return $this
      */
-    public function groupByLogic(string $sql, array $params = []);
+    public function addGroupBy(string $sql, array $params = []);
 
     /**
      * @return bool
