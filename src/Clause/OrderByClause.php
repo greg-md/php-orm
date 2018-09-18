@@ -2,11 +2,22 @@
 
 namespace Greg\Orm\Clause;
 
+use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectAbstract;
 use Greg\Orm\SqlAbstract;
 
 class OrderByClause extends SqlAbstract implements ClauseStrategy, OrderByClauseStrategy
 {
     use OrderByClauseTrait;
+
+    public function __construct(SqlDialect $dialect = null)
+    {
+        if (!$dialect) {
+            $dialect = new SqlDialectAbstract();
+        }
+
+        $this->setDialect($dialect);
+    }
 
     /**
      * @param bool $useClause

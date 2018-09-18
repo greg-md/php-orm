@@ -50,7 +50,7 @@ abstract class ConnectionAbstract implements Connection
      */
     public function select(): SelectQuery
     {
-        return new SelectQuery($this->dialect());
+        return new SelectQuery($this->dialect(), $this);
     }
 
     /**
@@ -58,7 +58,7 @@ abstract class ConnectionAbstract implements Connection
      */
     public function insert(): InsertQuery
     {
-        return new InsertQuery($this->dialect());
+        return new InsertQuery($this->dialect(), $this);
     }
 
     /**
@@ -66,7 +66,7 @@ abstract class ConnectionAbstract implements Connection
      */
     public function delete(): DeleteQuery
     {
-        return new DeleteQuery($this->dialect());
+        return new DeleteQuery($this->dialect(), $this);
     }
 
     /**
@@ -74,7 +74,7 @@ abstract class ConnectionAbstract implements Connection
      */
     public function update(): UpdateQuery
     {
-        return new UpdateQuery($this->dialect());
+        return new UpdateQuery($this->dialect(), $this);
     }
 
     /**

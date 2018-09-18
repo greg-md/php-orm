@@ -18,6 +18,9 @@ use Greg\Orm\Clause\OrderByClauseStrategy;
 use Greg\Orm\Clause\OrderByClauseTrait;
 use Greg\Orm\Clause\WhereClauseStrategy;
 use Greg\Orm\Clause\WhereClauseTrait;
+use Greg\Orm\Connection\Connection;
+use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Dialect\SqlDialectAbstract;
 use Greg\Orm\SqlAbstract;
 use Greg\Orm\SqlException;
 
@@ -65,6 +68,19 @@ class SelectQuery extends SqlAbstract implements
      * @var string
      */
     private $lock;
+
+    public function __construct(SqlDialect $dialect = null, Connection $connection = null)
+    {
+        if (!$dialect) {
+            $dialect = new SqlDialectAbstract();
+        }
+
+        $this->setDialect($dialect);
+
+        if ($connection) {
+            $this->setConnection($connection);
+        }
+    }
 
     /**
      * @param bool $value
