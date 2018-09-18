@@ -1031,7 +1031,7 @@ class ModelTest extends TestCase
 
             protected $casts = [
                 'Active' => 'bool',
-                'Foo' => 'datetime',
+                'Foo'    => 'datetime',
             ];
 
             public function name(): string
@@ -1102,7 +1102,7 @@ class ModelTest extends TestCase
 
             protected $casts = [
                 'Active' => 'bool',
-                'Foo' => 'date',
+                'Foo'    => 'date',
             ];
 
             public function name(): string
@@ -1173,7 +1173,7 @@ class ModelTest extends TestCase
 
             protected $casts = [
                 'Active' => 'bool',
-                'Foo' => 'time',
+                'Foo'    => 'time',
             ];
 
             public function name(): string
@@ -1244,7 +1244,7 @@ class ModelTest extends TestCase
 
             protected $casts = [
                 'Active' => 'bool',
-                'Foo' => 'boolean',
+                'Foo'    => 'boolean',
             ];
 
             public function name(): string
@@ -1311,7 +1311,7 @@ class ModelTest extends TestCase
 
             protected $casts = [
                 'Active' => 'bool',
-                'Foo' => 'array',
+                'Foo'    => 'array',
             ];
 
             public function name(): string
