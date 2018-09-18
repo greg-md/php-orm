@@ -3,7 +3,7 @@
 namespace Greg\Orm\Connection;
 
 use Greg\Orm\Dialect\MysqlDialect;
-use Greg\Orm\Dialect\SqlDialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 
 class MysqlConnection extends PdoConnectionAbstract
 {
@@ -11,7 +11,7 @@ class MysqlConnection extends PdoConnectionAbstract
 
     private $dialect;
 
-    public function __construct(Pdo $pdo, SqlDialectStrategy $dialect = null)
+    public function __construct(Pdo $pdo, MysqlDialect $dialect = null)
     {
         $this->pdo = $pdo;
 
@@ -29,7 +29,7 @@ class MysqlConnection extends PdoConnectionAbstract
         return $this->pdo;
     }
 
-    public function dialect(): SqlDialectStrategy
+    public function dialect(): SqlDialect
     {
         return $this->dialect;
     }

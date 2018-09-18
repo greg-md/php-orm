@@ -2,7 +2,7 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Dialect\SqlDialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 
 interface SqlStrategy
 {
@@ -15,7 +15,7 @@ interface SqlStrategy
     public function when(bool $condition, callable $callable);
 
     /**
-     * @return SqlDialectStrategy
+     * @return SqlDialect
      */
-    public function dialect(): SqlDialectStrategy;
+    public function dialect(): SqlDialect;
 }

@@ -2,16 +2,16 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Dialect\SqlDialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 
 abstract class SqlAbstract implements SqlStrategy
 {
     /**
-     * @var SqlDialectStrategy
+     * @var SqlDialect
      */
     private $dialect;
 
-    public function setDialect(SqlDialectStrategy $dialect)
+    public function setDialect(SqlDialect $dialect)
     {
         $this->dialect = $dialect;
 
@@ -23,7 +23,7 @@ abstract class SqlAbstract implements SqlStrategy
         return $this->dialect;
     }
 
-    public function dialect(): SqlDialectStrategy
+    public function dialect(): SqlDialect
     {
         if (!$this->dialect) {
             throw new SqlException('Dialect is not defined.');

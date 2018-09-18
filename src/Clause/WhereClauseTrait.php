@@ -3,7 +3,7 @@
 namespace Greg\Orm\Clause;
 
 use Greg\Orm\Conditions;
-use Greg\Orm\Dialect\SqlDialectStrategy;
+use Greg\Orm\Dialect\SqlDialect;
 use Greg\Orm\Query\SelectQuery;
 
 trait WhereClauseTrait
@@ -673,7 +673,7 @@ trait WhereClauseTrait
     }
 
     /**
-     * @return SqlDialectStrategy
+     * @return SqlDialect
      */
-    abstract protected function dialect(): SqlDialectStrategy;
+    abstract protected function dialect(): SqlDialect;
 }
