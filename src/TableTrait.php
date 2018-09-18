@@ -227,7 +227,7 @@ trait TableTrait
         return $this->connection()->sqlFetchColumn($sql, $params, $column);
     }
 
-    public function fetchColumnAll(string $column = '0'): array
+    public function fetchAllColumn(string $column = '0'): array
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 

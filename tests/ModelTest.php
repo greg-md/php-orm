@@ -509,7 +509,7 @@ class ModelTest extends TestCase
     {
         $this->connectionMock->method('sqlFetchAllColumn')->willReturn([1, 2]);
 
-        $this->assertEquals([1, 2], $this->model->fetchColumnAll());
+        $this->assertEquals([1, 2], $this->model->fetchAllColumn());
     }
 
     public function testCanFetchPairs()
