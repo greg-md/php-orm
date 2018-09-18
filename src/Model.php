@@ -2,18 +2,18 @@
 
 namespace Greg\Orm;
 
-use Greg\Orm\Connection\ConnectionStrategy;
+use Greg\Orm\Connection\Connection;
 
 abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \Serializable
 {
     use RowTrait;
 
     /**
-     * @var ConnectionStrategy|null
+     * @var Connection|null
      */
     private $connection;
 
-    public function __construct(ConnectionStrategy $connection)
+    public function __construct(Connection $connection)
     {
         $this->connection = $connection;
 
@@ -24,19 +24,19 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         return $this;
     }
 
-    public function setConnection(ConnectionStrategy $strategy)
+    public function setConnection(Connection $strategy)
     {
         $this->connection = $strategy;
 
         return $this;
     }
 
-    public function getConnection(): ?ConnectionStrategy
+    public function getConnection(): ?Connection
     {
         return $this->connection;
     }
 
-    public function connection(): ConnectionStrategy
+    public function connection(): Connection
     {
         if (!$this->connection) {
             throw new \Exception('Model connection is not defined.');

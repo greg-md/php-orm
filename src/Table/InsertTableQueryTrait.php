@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Table;
 
-use Greg\Orm\Connection\ConnectionStrategy;
+use Greg\Orm\Connection\Connection;
 use Greg\Orm\Query\InsertQuery;
 
 trait InsertTableQueryTrait
@@ -16,5 +16,5 @@ trait InsertTableQueryTrait
         return $query;
     }
 
-    abstract public function connection(): ConnectionStrategy;
+    abstract public function connection(): Connection;
 }

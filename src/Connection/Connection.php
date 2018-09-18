@@ -16,7 +16,7 @@ use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 
-interface ConnectionStrategy
+interface Connection
 {
     /**
      * @param callable $callable

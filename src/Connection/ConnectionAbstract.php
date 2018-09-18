@@ -15,7 +15,7 @@ use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 
-abstract class ConnectionAbstract implements ConnectionStrategy
+abstract class ConnectionAbstract implements Connection
 {
     /**
      * @var callable[]

@@ -4,7 +4,7 @@ namespace Greg\Orm\Table;
 
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Conditions;
-use Greg\Orm\Connection\ConnectionStrategy;
+use Greg\Orm\Connection\Connection;
 use Greg\Orm\Model;
 use Greg\Orm\SqlException;
 
@@ -838,7 +838,7 @@ trait WhereTableClauseTraitTest
     abstract protected function model(): Model;
 
     /**
-     * @return ConnectionStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @return Connection|\PHPUnit_Framework_MockObject_MockObject
      */
     abstract protected function connectionMock(): \PHPUnit_Framework_MockObject_MockObject;
 }

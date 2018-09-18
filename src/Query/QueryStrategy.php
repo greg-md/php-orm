@@ -2,17 +2,17 @@
 
 namespace Greg\Orm\Query;
 
-use Greg\Orm\Connection\ConnectionStrategy;
+use Greg\Orm\Connection\Connection;
 
 use Greg\Orm\SqlStrategy;
 
 interface QueryStrategy extends SqlStrategy
 {
-    public function setConnection(ConnectionStrategy $strategy);
+    public function setConnection(Connection $strategy);
 
-    public function getConnection(): ?ConnectionStrategy;
+    public function getConnection(): ?Connection;
 
-    public function connection(): ConnectionStrategy;
+    public function connection(): Connection;
 
     /**
      * @return array
