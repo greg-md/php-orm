@@ -495,7 +495,7 @@ trait RowsTrait
         }
     }
 
-    protected function firstRowKey(): int
+    private function firstRowKey(): int
     {
         if (!$this->rows) {
             throw new \Exception('Model row is not found.');
@@ -506,17 +506,17 @@ trait RowsTrait
         return key($this->rows);
     }
 
-    protected function &firstRow(): array
+    private function &firstRow(): array
     {
         return $this->rows[$this->firstRowKey()];
     }
 
-    protected function hasInRow(array $row, string $column): bool
+    private function hasInRow(array $row, string $column): bool
     {
         return (bool) ($row[$column] ?? false);
     }
 
-    protected function setInRow(int $key, string $column, $value)
+    private function setInRow(int $key, string $column, $value)
     {
         if ($this->rows[$key][$column] !== $value) {
             if ($this->rowStateIsNew($key)) {
@@ -533,7 +533,7 @@ trait RowsTrait
         return $this;
     }
 
-    protected function getFromRow(int $key, string $column)
+    private function getFromRow(int $key, string $column)
     {
         if (isset($this->rowsState[$key]) and array_key_exists($column, $this->rowsState[$key]['modified'])) {
             return $this->rowsState[$key]['modified'][$column];
@@ -542,7 +542,7 @@ trait RowsTrait
         return $this->castValue($column, $this->rows[$key][$column] ?? null);
     }
 
-    protected function rowFirstUnique(array $row)
+    private function rowFirstUnique(array $row)
     {
         $keys = [];
 
@@ -553,7 +553,7 @@ trait RowsTrait
         return $keys;
     }
 
-    protected function markRowAsNew(int $key)
+    private function markRowAsNew(int $key)
     {
         $rowState = &$this->rowGetState($key);
 
@@ -568,7 +568,7 @@ trait RowsTrait
         return $this;
     }
 
-    protected function validateFillableColumn(string $column)
+    private function validateFillableColumn(string $column)
     {
         $this->validateColumn($column);
 
@@ -580,28 +580,17 @@ trait RowsTrait
         return $this;
     }
 
-    protected function defaultRecord(): array
-    {
-        $record = [];
-
-        foreach ($this->columns() as $column) {
-            $record[$column['name']] = $column['default'];
-        }
-
-        return $record;
-    }
-
-    protected function getAttributeGetMethod(string $column): string
+    private function getAttributeGetMethod(string $column): string
     {
         return 'get' . ucfirst($column) . 'Attribute';
     }
 
-    protected function getAttributeSetMethod(string $column): string
+    private function getAttributeSetMethod(string $column): string
     {
         return 'set' . ucfirst($column) . 'Attribute';
     }
 
-    protected function &rowGetState(int $key)
+    private function &rowGetState(int $key)
     {
         if (!isset($this->rowsState[$key])) {
             $this->rowsState[$key] = [
@@ -613,13 +602,24 @@ trait RowsTrait
         return $this->rowsState[$key];
     }
 
-    protected function rowStateIsNew(int $key)
+    private function rowStateIsNew(int $key)
     {
         return $this->rowsState[$key]['isNew'] ?? false;
     }
 
-    protected function rowStateGetModified(int $key)
+    private function rowStateGetModified(int $key)
     {
         return $this->rowsState[$key]['modified'] ?? [];
+    }
+
+    private function getFirstMultiple(array $columns)
+    {
+        $items = [];
+
+        foreach ($columns as $column) {
+            $items[$column] = $this->getFirst($column);
+        }
+
+        return $items;
     }
 }

@@ -229,7 +229,7 @@ trait QueryBuilderTrait
         return $this->toString();
     }
 
-    protected function clausesToSql(): array
+    private function clausesToSql(): array
     {
         $sql = $params = [];
 
@@ -294,7 +294,7 @@ trait QueryBuilderTrait
         return [$sql, $params];
     }
 
-    protected function hasAppliers()
+    private function hasAppliers()
     {
         return $this->fromAppliers
             || $this->joinAppliers
@@ -306,7 +306,7 @@ trait QueryBuilderTrait
             || $this->offsetAppliers;
     }
 
-    protected function transferAppliersTo(Model $model)
+    private function transferAppliersTo(Model $model)
     {
         if ($this->fromAppliers) {
             $model->setFromAppliers($this->fromAppliers);

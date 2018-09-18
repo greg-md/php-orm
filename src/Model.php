@@ -130,7 +130,7 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         return $this;
     }
 
-    protected function bootTraits()
+    private function bootTraits()
     {
         foreach ($this->usesRecursive(static::class, self::class) as $trait) {
             if (method_exists($this, $method = 'boot' . $this->baseName($trait))) {

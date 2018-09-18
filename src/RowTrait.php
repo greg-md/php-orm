@@ -142,12 +142,12 @@ trait RowTrait
         return $this->setFirst($name, $value);
     }
 
-    protected function hasFirst(string $column): bool
+    private function hasFirst(string $column): bool
     {
         return $this->hasInRow($this->firstRow(), $column);
     }
 
-    protected function setFirst(string $column, string $value)
+    private function setFirst(string $column, string $value)
     {
         $method = $this->getAttributeSetMethod($column);
 
@@ -164,7 +164,7 @@ trait RowTrait
         return $this->setFirstRow($column, $value);
     }
 
-    protected function setFirstRow(string $column, string $value)
+    private function setFirstRow(string $column, string $value)
     {
         $this->validateFillableColumn($column);
 
@@ -175,7 +175,7 @@ trait RowTrait
         return $this;
     }
 
-    protected function getFirst(string $column)
+    private function getFirst(string $column)
     {
         $method = $this->getAttributeGetMethod($column);
 
@@ -192,25 +192,14 @@ trait RowTrait
         return $this->getFirstRow($column);
     }
 
-    protected function getFirstRow(string $column)
+    private function getFirstRow(string $column)
     {
         $this->validateColumn($column);
 
         return $this->getFromRow($this->firstRowKey(), $column);
     }
 
-    protected function getFirstMultiple(array $columns)
-    {
-        $items = [];
-
-        foreach ($columns as $column) {
-            $items[$column] = $this->getFirst($column);
-        }
-
-        return $items;
-    }
-
-//    protected function methodWasCalled($object, $method, $times = 1): bool
+//    private function methodWasCalled($object, $method, $times = 1): bool
 //    {
 //        $k = 0;
 //

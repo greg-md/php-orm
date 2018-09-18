@@ -254,7 +254,7 @@ class Pdo
         return true;
     }
 
-    protected function errorsAsExceptions(): bool
+    private function errorsAsExceptions(): bool
     {
         set_error_handler(function ($errNo, $errStr/*, $errFile, $errLine*/) {
             throw new \PDOException($errStr, $errNo);
@@ -263,7 +263,7 @@ class Pdo
         return true;
     }
 
-    protected function restoreErrors(): bool
+    private function restoreErrors(): bool
     {
         return restore_error_handler();
     }

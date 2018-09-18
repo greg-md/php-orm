@@ -207,7 +207,7 @@ abstract class PdoConnectionAbstract extends ConnectionAbstract
      *
      * @return \PDOStatement
      */
-    protected function prepare(string $sql, array $params = []): \PDOStatement
+    private function prepare(string $sql, array $params = []): \PDOStatement
     {
         return $this->pdo()->connectionProcess(function (Pdo $pdo) use ($sql, $params) {
             $stmt = $pdo->prepare($sql);

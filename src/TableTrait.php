@@ -615,7 +615,7 @@ trait TableTrait
         return $value;
     }
 
-    protected function castValue(string $columnName, $value)
+    private function castValue(string $columnName, $value)
     {
         if (is_null($value)) {
             return $value;
@@ -661,7 +661,7 @@ trait TableTrait
         }
     }
 
-    protected function validateColumn(string $name)
+    private function validateColumn(string $name)
     {
         if ($this->columns === false) {
             $this->loadSchema();
@@ -674,7 +674,18 @@ trait TableTrait
         return $this;
     }
 
-    protected function combinePrimary($value)
+    private function defaultRecord(): array
+    {
+        $record = [];
+
+        foreach ($this->columns() as $column) {
+            $record[$column['name']] = $column['default'];
+        }
+
+        return $record;
+    }
+
+    private function combinePrimary($value)
     {
         $value = (array) $value;
 
@@ -687,7 +698,7 @@ trait TableTrait
         return array_combine($keys, $value);
     }
 
-    protected function loadSchema()
+    private function loadSchema()
     {
         $schema = (array) $this->describe() + [
             'columns' => [],
@@ -717,7 +728,7 @@ trait TableTrait
         return $this;
     }
 
-    protected function rowsQueryInstance()
+    private function rowsQueryInstance()
     {
         if ($this->hasSelect()) {
             throw new SqlException('You cannot fetch as rows while you have custom SELECT columns.');
@@ -726,7 +737,7 @@ trait TableTrait
         return $this->selectOnly('*');
     }
 
-    protected function selectQueryInstanceToSql()
+    private function selectQueryInstanceToSql()
     {
         if ($this->query) {
             return $this->selectQueryInstance()->toSql();
@@ -735,7 +746,7 @@ trait TableTrait
         return [$this->connection()->dialect()->selectAll($this->name()), []];
     }
 
-    protected function rowsQueryInstanceToSql()
+    private function rowsQueryInstanceToSql()
     {
         if ($this->query) {
             return $this->rowsQueryInstance()->toSql();
