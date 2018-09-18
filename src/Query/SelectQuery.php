@@ -158,7 +158,7 @@ class SelectQuery extends SqlAbstract implements
             $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnLogic($this->dialect()->quoteName($column), $alias);
+        $this->addColumn($this->dialect()->quoteName($column), $alias);
 
         return $this;
     }
@@ -176,7 +176,7 @@ class SelectQuery extends SqlAbstract implements
             $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnLogic($this->dialect()->concat($columns, '?'), $alias, [$delimiter]);
+        $this->addColumn($this->dialect()->concat($columns, '?'), $alias, [$delimiter]);
 
         return $this;
     }
@@ -193,7 +193,7 @@ class SelectQuery extends SqlAbstract implements
             $alias = $this->dialect()->quoteName($alias);
         }
 
-        $this->columnLogic($query, $alias);
+        $this->addColumn($query, $alias);
 
         return $this;
     }
@@ -206,7 +206,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function columnRaw(string $sql, string ...$params)
     {
-        $this->columnLogic($this->dialect()->quote($sql), null, $params);
+        $this->addColumn($this->dialect()->quote($sql), null, $params);
 
         return $this;
     }
@@ -309,7 +309,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function union(self $query)
     {
-        $this->unionLogic(null, $query);
+        $this->addUnion(null, $query);
 
         return $this;
     }
@@ -321,7 +321,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function unionAll(self $query)
     {
-        $this->unionLogic('ALL', $query);
+        $this->addUnion('ALL', $query);
 
         return $this;
     }
@@ -334,7 +334,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function unionRaw(string $sql, string ...$params)
     {
-        $this->unionLogic(null, $sql, $params);
+        $this->addUnion(null, $sql, $params);
 
         return $this;
     }
@@ -347,7 +347,7 @@ class SelectQuery extends SqlAbstract implements
      */
     public function unionAllRaw(string $sql, string ...$params)
     {
-        $this->unionLogic('ALL', $sql, $params);
+        $this->addUnion('ALL', $sql, $params);
 
         return $this;
     }
@@ -677,7 +677,7 @@ class SelectQuery extends SqlAbstract implements
         $this->havingClone();
     }
 
-    protected function generateQuery(int $chunkSize, bool $oneByOne = true): \Generator
+    private function generateQuery(int $chunkSize, bool $oneByOne = true): \Generator
     {
         if ($chunkSize < 1) {
             throw new SqlException('Chunk count should be greater than 0.');
@@ -751,7 +751,7 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return array
      */
-    protected function prepareColumn(array $column)
+    private function prepareColumn(array $column)
     {
         if ($column['sql'] instanceof self) {
             [$sql, $params] = $column['sql']->toSql();
@@ -771,7 +771,7 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return $this
      */
-    protected function columnLogic($sql, $alias = null, array $params = [])
+    private function addColumn($sql, $alias = null, array $params = [])
     {
         $this->columns[] = [
             'sql'    => $sql,
@@ -789,7 +789,7 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return $this
      */
-    protected function unionLogic(?string $type, $sql, array $params = [])
+    private function addUnion(?string $type, $sql, array $params = [])
     {
         $this->unions[] = [
             'type'   => $type,
@@ -805,7 +805,7 @@ class SelectQuery extends SqlAbstract implements
      *
      * @return array
      */
-    protected function prepareUnion(array $union)
+    private function prepareUnion(array $union)
     {
         if ($union['sql'] instanceof self) {
             [$sql, $params] = $union['sql']->toSql();

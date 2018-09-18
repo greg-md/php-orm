@@ -201,7 +201,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      */
     public function select(SelectQuery $query)
     {
-        $this->selectLogic($query);
+        $this->addSelect($query);
 
         return $this;
     }
@@ -214,7 +214,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      */
     public function selectRaw(string $sql, string ...$params)
     {
-        $this->selectLogic($sql, $params);
+        $this->addSelect($sql, $params);
 
         return $this;
     }
@@ -245,12 +245,8 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
         return $this;
     }
 
-    public function insert(array $data = []): int
+    public function execute(): int
     {
-        if ($data) {
-            $this->data($data);
-        }
-
         [$sql, $params] = $this->toSql();
 
         return $this->connection()->sqlExecute($sql, $params);
@@ -327,7 +323,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      *
      * @return $this
      */
-    protected function selectLogic($sql, array $params = [])
+    private function addSelect($sql, array $params = [])
     {
         $this->values = [];
 
@@ -346,7 +342,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      *
      * @return array
      */
-    protected function prepareSelect(array $select)
+    private function prepareSelect(array $select)
     {
         if ($select['sql'] instanceof SelectQuery) {
             $columnsCount = count($this->columns);
@@ -372,7 +368,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
      *
      * @return string
      */
-    protected function prepareBindKeys(array $value): string
+    private function prepareBindKeys(array $value): string
     {
         return '(' . implode(', ', array_fill(0, count($value), '?')) . ')';
     }

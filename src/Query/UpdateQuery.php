@@ -123,7 +123,7 @@ class UpdateQuery extends SqlAbstract implements
      */
     public function set(string $column, string $value)
     {
-        $this->setLogic($this->dialect()->quoteName($column) . ' = ?', [$value]);
+        $this->addSet($this->dialect()->quoteName($column) . ' = ?', [$value]);
 
         return $this;
     }
@@ -150,7 +150,7 @@ class UpdateQuery extends SqlAbstract implements
      */
     public function setRaw(string $sql, string ...$params)
     {
-        $this->setLogic($this->dialect()->quote($sql), $params);
+        $this->addSet($this->dialect()->quote($sql), $params);
 
         return $this;
     }
@@ -165,7 +165,7 @@ class UpdateQuery extends SqlAbstract implements
     {
         $column = $this->dialect()->quoteName($column);
 
-        $this->setLogic($column . ' = ' . $column . ' + ?', [$step]);
+        $this->addSet($column . ' = ' . $column . ' + ?', [$step]);
 
         return $this;
     }
@@ -180,7 +180,7 @@ class UpdateQuery extends SqlAbstract implements
     {
         $column = $this->dialect()->quoteName($column);
 
-        $this->setLogic($column . ' = ' . $column . ' - ?', [$step]);
+        $this->addSet($column . ' = ' . $column . ' - ?', [$step]);
 
         return $this;
     }
@@ -211,12 +211,8 @@ class UpdateQuery extends SqlAbstract implements
         return $this;
     }
 
-    public function update(array $columns = []): int
+    public function execute(): int
     {
-        if ($columns) {
-            $this->setMultiple($columns);
-        }
-
         [$sql, $params] = $this->toSql();
 
         return $this->connection()->sqlExecute($sql, $params);
@@ -368,7 +364,7 @@ class UpdateQuery extends SqlAbstract implements
      *
      * @return $this
      */
-    protected function setLogic($sql, array $params = [])
+    private function addSet($sql, array $params = [])
     {
         $this->set[] = [
             'sql'    => $sql,

@@ -94,12 +94,8 @@ class DeleteQuery extends SqlAbstract implements
         return $this;
     }
 
-    public function delete(string ...$tables)
+    public function execute()
     {
-        if ($tables) {
-            $this->rowsFrom(...$tables);
-        }
-
         [$sql, $params] = $this->toSql();
 
         return $this->connection()->sqlExecute($sql, $params);
