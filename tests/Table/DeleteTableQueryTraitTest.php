@@ -57,7 +57,7 @@ trait DeleteTableQueryTraitTest
     {
         $query = $this->model()
             ->from('Table2')
-            ->innerOn('Table3', function (Conditions $strategy) {
+            ->innerJoinOn('Table3', function (Conditions $strategy) {
                 $strategy->isNull('Column');
             })
             ->where('Foo', 'foo')

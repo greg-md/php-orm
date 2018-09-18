@@ -719,7 +719,7 @@ class ConditionsTest extends TestCase
     {
         $query = $this->newQuery();
 
-        $query->logic('and', '`Foo` = ?', ['foo']);
+        $query->addCondition('and', '`Foo` = ?', ['foo']);
 
         $this->assertEquals('`Foo` = ?', (string) $query);
     }

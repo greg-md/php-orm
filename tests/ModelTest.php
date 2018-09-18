@@ -140,7 +140,7 @@ class ModelTest extends TestCase
     {
         $query = $this->model
             ->from('Table1')
-            ->inner('Table2')
+            ->innerJoin('Table2')
             ->where('Column', 'foo')
             ->having('Column', 'foo')
             ->orderBy('Column')

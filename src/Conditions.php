@@ -38,7 +38,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('AND', $column, $operator, $value);
+        $this->addColumn('AND', $column, $operator, $value);
 
         return $this;
     }
@@ -58,7 +58,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('OR', $column, $operator, $value);
+        $this->addColumn('OR', $column, $operator, $value);
 
         return $this;
     }
@@ -106,7 +106,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('AND', $column, $operator, $value,
+        $this->addColumn('AND', $column, $operator, $value,
             function (string $column) {
                 return 'DATE(' . $column . ')';
             },
@@ -134,7 +134,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('OR', $column, $operator, $value,
+        $this->addColumn('OR', $column, $operator, $value,
             function (string $column) {
                 return 'DATE(' . $column . ')';
             },
@@ -162,7 +162,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('AND', $column, $operator, $value,
+        $this->addColumn('AND', $column, $operator, $value,
             function (string $column) {
                 return 'TIME(' . $column . ')';
             },
@@ -190,7 +190,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('OR', $column, $operator, $value,
+        $this->addColumn('OR', $column, $operator, $value,
             function (string $column) {
                 return 'TIME(' . $column . ')';
             },
@@ -218,7 +218,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('AND', $column, $operator, $value,
+        $this->addColumn('AND', $column, $operator, $value,
             function (string $column) {
                 return 'YEAR(' . $column . ')';
             },
@@ -246,7 +246,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('OR', $column, $operator, $value,
+        $this->addColumn('OR', $column, $operator, $value,
             function (string $column) {
                 return 'YEAR(' . $column . ')';
             },
@@ -274,7 +274,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('AND', $column, $operator, $value,
+        $this->addColumn('AND', $column, $operator, $value,
             function (string $column) {
                 return 'MONTH(' . $column . ')';
             },
@@ -302,7 +302,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('OR', $column, $operator, $value,
+        $this->addColumn('OR', $column, $operator, $value,
             function (string $column) {
                 return 'MONTH(' . $column . ')';
             },
@@ -330,7 +330,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('AND', $column, $operator, $value,
+        $this->addColumn('AND', $column, $operator, $value,
             function (string $column) {
                 return 'DAY(' . $column . ')';
             },
@@ -358,7 +358,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->columnLogic('OR', $column, $operator, $value,
+        $this->addColumn('OR', $column, $operator, $value,
             function (string $column) {
                 return 'DAY(' . $column . ')';
             },
@@ -386,7 +386,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->relationLogic('AND', $column1, $operator, $column2);
+        $this->addRelation('AND', $column1, $operator, $column2);
 
         return $this;
     }
@@ -406,7 +406,7 @@ class Conditions extends SqlAbstract
             $operator = null;
         }
 
-        $this->relationLogic('OR', $column1, $operator, $column2);
+        $this->addRelation('OR', $column1, $operator, $column2);
 
         return $this;
     }
@@ -446,7 +446,7 @@ class Conditions extends SqlAbstract
      */
     public function is(string $columnName)
     {
-        $this->logic('AND', $this->dialect()->quoteName($columnName) . ' = 1');
+        $this->addCondition('AND', $this->dialect()->quoteName($columnName) . ' = 1');
 
         return $this;
     }
@@ -458,7 +458,7 @@ class Conditions extends SqlAbstract
      */
     public function orIs(string $columnName)
     {
-        $this->logic('OR', $this->dialect()->quoteName($columnName) . ' = 1');
+        $this->addCondition('OR', $this->dialect()->quoteName($columnName) . ' = 1');
 
         return $this;
     }
@@ -470,7 +470,7 @@ class Conditions extends SqlAbstract
      */
     public function isNot(string $columnName)
     {
-        $this->logic('AND', $this->dialect()->quoteName($columnName) . ' = 0');
+        $this->addCondition('AND', $this->dialect()->quoteName($columnName) . ' = 0');
 
         return $this;
     }
@@ -482,7 +482,7 @@ class Conditions extends SqlAbstract
      */
     public function orIsNot(string $columnName)
     {
-        $this->logic('OR', $this->dialect()->quoteName($columnName) . ' = 0');
+        $this->addCondition('OR', $this->dialect()->quoteName($columnName) . ' = 0');
 
         return $this;
     }
@@ -494,7 +494,7 @@ class Conditions extends SqlAbstract
      */
     public function isNull(string $columnName)
     {
-        $this->logic('AND', $this->dialect()->quoteName($columnName) . ' IS NULL');
+        $this->addCondition('AND', $this->dialect()->quoteName($columnName) . ' IS NULL');
 
         return $this;
     }
@@ -506,7 +506,7 @@ class Conditions extends SqlAbstract
      */
     public function orIsNull(string $columnName)
     {
-        $this->logic('OR', $this->dialect()->quoteName($columnName) . ' IS NULL');
+        $this->addCondition('OR', $this->dialect()->quoteName($columnName) . ' IS NULL');
 
         return $this;
     }
@@ -518,7 +518,7 @@ class Conditions extends SqlAbstract
      */
     public function isNotNull(string $columnName)
     {
-        $this->logic('AND', $this->dialect()->quoteName($columnName) . ' IS NOT NULL');
+        $this->addCondition('AND', $this->dialect()->quoteName($columnName) . ' IS NOT NULL');
 
         return $this;
     }
@@ -530,7 +530,7 @@ class Conditions extends SqlAbstract
      */
     public function orIsNotNull(string $columnName)
     {
-        $this->logic('OR', $this->dialect()->quoteName($columnName) . ' IS NOT NULL');
+        $this->addCondition('OR', $this->dialect()->quoteName($columnName) . ' IS NOT NULL');
 
         return $this;
     }
@@ -544,7 +544,7 @@ class Conditions extends SqlAbstract
      */
     public function between(string $column, int $min, int $max)
     {
-        $this->logic('AND', $this->dialect()->quoteName($column) . ' BETWEEN ? AND ?', [$min, $max]);
+        $this->addCondition('AND', $this->dialect()->quoteName($column) . ' BETWEEN ? AND ?', [$min, $max]);
 
         return $this;
     }
@@ -558,7 +558,7 @@ class Conditions extends SqlAbstract
      */
     public function orBetween(string $column, int $min, int $max)
     {
-        $this->logic('OR', $this->dialect()->quoteName($column) . ' BETWEEN ? AND ?', [$min, $max]);
+        $this->addCondition('OR', $this->dialect()->quoteName($column) . ' BETWEEN ? AND ?', [$min, $max]);
 
         return $this;
     }
@@ -572,7 +572,7 @@ class Conditions extends SqlAbstract
      */
     public function notBetween(string $column, int $min, int $max)
     {
-        $this->logic('AND', $this->dialect()->quoteName($column) . ' NOT BETWEEN ? AND ?', [$min, $max]);
+        $this->addCondition('AND', $this->dialect()->quoteName($column) . ' NOT BETWEEN ? AND ?', [$min, $max]);
 
         return $this;
     }
@@ -586,7 +586,7 @@ class Conditions extends SqlAbstract
      */
     public function orNotBetween(string $column, int $min, int $max)
     {
-        $this->logic('OR', $this->dialect()->quoteName($column) . ' NOT BETWEEN ? AND ?', [$min, $max]);
+        $this->addCondition('OR', $this->dialect()->quoteName($column) . ' NOT BETWEEN ? AND ?', [$min, $max]);
 
         return $this;
     }
@@ -598,7 +598,7 @@ class Conditions extends SqlAbstract
      */
     public function conditions($conditions)
     {
-        $this->logic('AND', $this->prepareConditions($conditions));
+        $this->addCondition('AND', $this->prepareConditions($conditions));
 
         return $this;
     }
@@ -610,7 +610,7 @@ class Conditions extends SqlAbstract
      */
     public function orConditions($conditions)
     {
-        $this->logic('OR', $this->prepareConditions($conditions));
+        $this->addCondition('OR', $this->prepareConditions($conditions));
 
         return $this;
     }
@@ -623,7 +623,7 @@ class Conditions extends SqlAbstract
      */
     public function raw(string $sql, string ...$params)
     {
-        $this->logic('AND', '(' . $this->dialect()->quote($sql) . ')', $params);
+        $this->addCondition('AND', '(' . $this->dialect()->quote($sql) . ')', $params);
 
         return $this;
     }
@@ -636,7 +636,7 @@ class Conditions extends SqlAbstract
      */
     public function orRaw(string $sql, string ...$params)
     {
-        $this->logic('OR', '(' . $this->dialect()->quote($sql) . ')', $params);
+        $this->addCondition('OR', '(' . $this->dialect()->quote($sql) . ')', $params);
 
         return $this;
     }
@@ -648,7 +648,7 @@ class Conditions extends SqlAbstract
      *
      * @return $this
      */
-    public function logic(string $logic, $sql, array $params = [])
+    public function addCondition(string $logic, $sql, array $params = [])
     {
         $this->conditions[] = [
             'logic'  => $logic,
@@ -722,7 +722,7 @@ class Conditions extends SqlAbstract
     }
 
     /**
-     * @param string        $type
+     * @param string        $logic
      * @param array         $columns
      * @param null|string   $operator
      * @param array         $values
@@ -733,8 +733,8 @@ class Conditions extends SqlAbstract
      *
      * @return $this
      */
-    protected function rowLogic(string $type, array $columns, ?string $operator, array $values,
-                                callable $columnCallable = null, callable $valueCallable = null)
+    private function addRow(string $logic, array $columns, ?string $operator, array $values,
+                              callable $columnCallable = null, callable $valueCallable = null)
     {
         $this->prepareRowLogic($columns, $operator, $values);
 
@@ -755,13 +755,13 @@ class Conditions extends SqlAbstract
 
         $values = $this->prepareValues($values, $valueCallable);
 
-        $this->logic($type, $sql, $values);
+        $this->addCondition($logic, $sql, $values);
 
         return $this;
     }
 
     /**
-     * @param string $type
+     * @param string $logic
      * @param $column
      * @param null|string $operator
      * @param $value
@@ -772,13 +772,13 @@ class Conditions extends SqlAbstract
      *
      * @return $this
      */
-    protected function columnLogic(string $type, $column, ?string $operator, $value,
-                                   callable $columnCallable = null, callable $valueCallable = null)
+    private function addColumn(string $logic, $column, ?string $operator, $value,
+                                 callable $columnCallable = null, callable $valueCallable = null)
     {
         $column = $this->prepareRow($column);
 
         if (is_array($column)) {
-            $this->rowLogic($type, $column, $operator, (array) $value, $columnCallable, $valueCallable);
+            $this->addRow($logic, $column, $operator, (array) $value, $columnCallable, $valueCallable);
 
             return $this;
         }
@@ -789,13 +789,13 @@ class Conditions extends SqlAbstract
 
         $sql = $this->prepareColumn($column, $columnCallable) . ' ' . $operator . ' ' . $this->prepareBindKeys($value);
 
-        $this->logic($type, $sql, (array) $this->prepareValues($value, $valueCallable));
+        $this->addCondition($logic, $sql, (array) $this->prepareValues($value, $valueCallable));
 
         return $this;
     }
 
     /**
-     * @param string      $type
+     * @param string      $logic
      * @param array       $columns1
      * @param null|string $operator
      * @param array       $columns2
@@ -804,7 +804,7 @@ class Conditions extends SqlAbstract
      *
      * @return $this
      */
-    protected function rowRelationLogic(string $type, array $columns1, ?string $operator, array $columns2)
+    private function addRowRelation(string $logic, array $columns1, ?string $operator, array $columns2)
     {
         $operator = strtoupper($operator);
 
@@ -842,13 +842,13 @@ class Conditions extends SqlAbstract
         //$sql = $this->prepareColumns($columns1, true) . ' ' . $operator . ' ' . $this->prepareColumns($columns2, true);
         $sql = $this->prepareColumns($columns1) . ' ' . $operator . ' ' . $this->prepareColumns($columns2);
 
-        $this->logic($type, $sql);
+        $this->addCondition($logic, $sql);
 
         return $this;
     }
 
     /**
-     * @param string $type
+     * @param string $logic
      * @param $column1
      * @param null|string $operator
      * @param $column2
@@ -857,14 +857,14 @@ class Conditions extends SqlAbstract
      *
      * @return $this
      */
-    protected function relationLogic(string $type, $column1, ?string $operator, $column2)
+    private function addRelation(string $logic, $column1, ?string $operator, $column2)
     {
         $column1 = $this->prepareRow($column1);
 
         $column2 = $this->prepareRow($column2);
 
         if (is_array($column1)) {
-            $this->rowRelationLogic($type, $column1, $operator, (array) $column2);
+            $this->addRowRelation($logic, $column1, $operator, (array) $column2);
 
             return $this;
         }
@@ -885,7 +885,7 @@ class Conditions extends SqlAbstract
 
         $sql = $this->dialect()->quoteName($column1) . ' ' . $operator . ' ' . $column2;
 
-        $this->logic($type, $sql);
+        $this->addCondition($logic, $sql);
 
         return $this;
     }
@@ -899,7 +899,7 @@ class Conditions extends SqlAbstract
      *
      * @return $this
      */
-    protected function prepareRowLogic(array &$columns, ?string &$operator, array &$values)
+    private function prepareRowLogic(array &$columns, ?string &$operator, array &$values)
     {
         $values = array_values($values);
 
@@ -923,7 +923,7 @@ class Conditions extends SqlAbstract
      *
      * @return string
      */
-    protected function prepareColumn(string $column, callable $columnCallable = null): string
+    private function prepareColumn(string $column, callable $columnCallable = null): string
     {
         $column = $this->dialect()->quoteName($column);
 
@@ -943,7 +943,7 @@ class Conditions extends SqlAbstract
      *
      * @return string
      */
-    protected function prepareRowOperator(?string $operator, $value, int $key): string
+    private function prepareRowOperator(?string $operator, $value, int $key): string
     {
         if (!$operator) {
             $operator = is_array($value) ? 'IN' : '=';
@@ -972,7 +972,7 @@ class Conditions extends SqlAbstract
      *
      * @return string
      */
-    protected function prepareOperator(?string $operator, $value): string
+    private function prepareOperator(?string $operator, $value): string
     {
         $operator = strtoupper($operator);
 
@@ -996,7 +996,7 @@ class Conditions extends SqlAbstract
      *
      * @return array|string
      */
-    protected function prepareRow($value)
+    private function prepareRow($value)
     {
         if (is_array($value) and count($value) === 1) {
             $value = array_shift($value);
@@ -1010,7 +1010,7 @@ class Conditions extends SqlAbstract
      *
      * @return array|string
      */
-    protected function prepareValue($value)
+    private function prepareValue($value)
     {
         if (is_array($value)) {
             foreach ($value as &$val) {
@@ -1034,7 +1034,7 @@ class Conditions extends SqlAbstract
      *
      * @return string
      */
-    protected function prepareColumns(array $columns, callable $columnCallable = null): string
+    private function prepareColumns(array $columns, callable $columnCallable = null): string
     {
         foreach ($columns as &$column) {
             if (is_array($column)) {
@@ -1054,7 +1054,7 @@ class Conditions extends SqlAbstract
      *
      * @return array|string
      */
-    protected function prepareValues($values, callable $valueCallable = null)
+    private function prepareValues($values, callable $valueCallable = null)
     {
         if (is_array($values)) {
             foreach ($values as &$value) {
@@ -1083,7 +1083,7 @@ class Conditions extends SqlAbstract
      *
      * @return array
      */
-    protected function prepareCondition(array $condition): array
+    private function prepareCondition(array $condition): array
     {
         if ($condition['sql'] instanceof self) {
             list($sql, $params) = $condition['sql']->toSql();
@@ -1118,7 +1118,7 @@ class Conditions extends SqlAbstract
      *
      * @return string
      */
-    protected function prepareBindKeys($value, int $rowLength = null): string
+    private function prepareBindKeys($value, int $rowLength = null): string
     {
         if (is_array($value)) {
             $result = '(' . implode(', ', array_fill(0, count($value), '?')) . ')';
@@ -1133,7 +1133,7 @@ class Conditions extends SqlAbstract
         return '?';
     }
 
-    protected function prepareConditions($conditions)
+    private function prepareConditions($conditions)
     {
         if (is_callable($conditions)) {
             $callable = $conditions;

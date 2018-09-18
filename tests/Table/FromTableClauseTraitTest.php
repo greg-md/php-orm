@@ -168,7 +168,7 @@ trait FromTableClauseTraitTest
     public function testCanFromJoin()
     {
         $query = $this->model()
-            ->innerTo('Foo', 'Bar')
+            ->innerJoinTo('Foo', 'Bar')
             ->from('Foo');
 
         $this->assertEquals('FROM `Foo` INNER JOIN `Bar`', $query->fromToString($query->joinStrategy()));

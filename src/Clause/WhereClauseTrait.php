@@ -463,7 +463,7 @@ trait WhereClauseTrait
      */
     public function addWhere(string $logic, $sql, array $params = [])
     {
-        $this->wConditions()->logic($logic, $sql, $params);
+        $this->wConditions()->addCondition($logic, $sql, $params);
 
         return $this;
     }

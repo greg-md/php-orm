@@ -100,7 +100,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function left($table, string $on = null, string ...$params)
+    public function leftJoin($table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -115,7 +115,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function leftOn($table, $on)
+    public function leftJoinOn($table, $on)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -131,7 +131,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function right($table, string $on = null, string ...$params)
+    public function rightJoin($table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -146,7 +146,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function rightOn($table, $on)
+    public function rightJoinOn($table, $on)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -162,7 +162,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function inner($table, string $on = null, string ...$params)
+    public function innerJoin($table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -177,7 +177,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function innerOn($table, $on)
+    public function innerJoinOn($table, $on)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -191,7 +191,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function cross($table)
+    public function crossJoin($table)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -208,7 +208,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function leftTo($source, $table, string $on = null, string ...$params)
+    public function leftJoinTo($source, $table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -224,7 +224,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function leftToOn($source, $table, $on)
+    public function leftJoinOnTo($source, $table, $on)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -241,7 +241,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function rightTo($source, $table, string $on = null, string ...$params)
+    public function rightJoinTo($source, $table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -257,7 +257,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function rightToOn($source, $table, $on)
+    public function rightJoinOnTo($source, $table, $on)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -274,7 +274,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function innerTo($source, $table, string $on = null, string ...$params)
+    public function innerJoinTo($source, $table, string $on = null, string ...$params)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -290,7 +290,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function innerToOn($source, $table, $on)
+    public function innerJoinOnTo($source, $table, $on)
     {
         $instance = $this->joinStrategyInstance();
 
@@ -305,7 +305,7 @@ trait JoinTableClauseTrait
      *
      * @return $this
      */
-    public function crossTo($source, $table)
+    public function crossJoinTo($source, $table)
     {
         $instance = $this->joinStrategyInstance();
 

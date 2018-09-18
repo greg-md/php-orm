@@ -263,7 +263,7 @@ trait SelectTableQueryTraitTest
     {
         $query = $this->model()
             ->from('Table2')
-            ->inner('Table3')
+            ->innerJoin('Table3')
             ->where('Column', 'foo')
             ->groupBy('Column')
             ->having('Column', 'foo')

@@ -467,7 +467,7 @@ trait HavingClauseTrait
      */
     public function addHaving(string $logic, $sql, array $params = [])
     {
-        $this->hConditions()->logic($logic, $sql, $params);
+        $this->hConditions()->addCondition($logic, $sql, $params);
 
         return $this;
     }

@@ -115,7 +115,7 @@ trait UpdateTableQueryTraitTest
     public function testCanCombineQuery()
     {
         $query = $this->model()
-            ->inner('Table2')
+            ->innerJoin('Table2')
             ->where('Column', 'foo')
             ->orderBy('Column')
             ->limit(1)

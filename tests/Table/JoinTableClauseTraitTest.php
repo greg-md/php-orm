@@ -20,7 +20,7 @@ trait JoinTableClauseTraitTest
     public function testCanJoin(string $type)
     {
         /** @var Model $query */
-        $query = $this->model()->{$type}('Foo');
+        $query = $this->model()->{$type . 'Join'}('Foo');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->toString());
     }
@@ -35,7 +35,7 @@ trait JoinTableClauseTraitTest
     public function testCanJoinOn(string $type)
     {
         /** @var Model $query */
-        $query = $this->model()->{$type}('Foo', '`Foo`.`Id` = !Bar.Id');
+        $query = $this->model()->{$type . 'Join'}('Foo', '`Foo`.`Id` = !Bar.Id');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->toString());
     }
@@ -50,7 +50,7 @@ trait JoinTableClauseTraitTest
     public function testCanJoinOnCallable(string $type)
     {
         /** @var Model $query */
-        $query = $this->model()->{$type . 'On'}('Foo', function (Conditions $query) {
+        $query = $this->model()->{$type . 'JoinOn'}('Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -59,7 +59,7 @@ trait JoinTableClauseTraitTest
 
     public function testCanCross()
     {
-        $query = $this->model()->cross('Foo');
+        $query = $this->model()->crossJoin('Foo');
 
         $this->assertEquals('CROSS JOIN `Foo`', $query->toString());
     }
@@ -74,7 +74,7 @@ trait JoinTableClauseTraitTest
     public function testCanJoinTo(string $type)
     {
         /** @var Model $query */
-        $query = $this->model()->{$type . 'To'}('bar', 'Foo');
+        $query = $this->model()->{$type . 'JoinTo'}('bar', 'Foo');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo`', $query->joinToString('bar'));
 
@@ -91,7 +91,7 @@ trait JoinTableClauseTraitTest
     public function testCanJoinToOn(string $type)
     {
         /** @var Model $query */
-        $query = $this->model()->{$type . 'To'}('bar', 'Foo', '`Foo`.`Id` = !Bar.Id');
+        $query = $this->model()->{$type . 'JoinTo'}('bar', 'Foo', '`Foo`.`Id` = !Bar.Id');
 
         $this->assertEquals(strtoupper($type) . ' JOIN `Foo` ON `Foo`.`Id` = `Bar`.`Id`', $query->joinToString('bar'));
     }
@@ -106,7 +106,7 @@ trait JoinTableClauseTraitTest
     public function testCanJoinToCallable(string $type)
     {
         /** @var Model $query */
-        $query = $this->model()->{$type . 'ToOn'}('bar', 'Foo', function (Conditions $query) {
+        $query = $this->model()->{$type . 'JoinOnTo'}('bar', 'Foo', function (Conditions $query) {
             $query->relation('Foo.Id', 'Bar.Id');
         });
 
@@ -115,7 +115,7 @@ trait JoinTableClauseTraitTest
 
     public function testCanCrossTo()
     {
-        $query = $this->model()->crossTo('bar', 'Foo');
+        $query = $this->model()->crossJoinTo('bar', 'Foo');
 
         $this->assertEquals('CROSS JOIN `Foo`', $query->joinToString('bar'));
     }
@@ -124,7 +124,7 @@ trait JoinTableClauseTraitTest
     {
         $this->assertFalse($this->model()->hasJoin());
 
-        $query = $this->model()->inner('Foo');
+        $query = $this->model()->innerJoin('Foo');
 
         $this->assertTrue($query->hasJoin());
     }
@@ -133,21 +133,21 @@ trait JoinTableClauseTraitTest
     {
         $this->assertFalse($this->model()->hasJoinClause());
 
-        $query = $this->model()->inner('Foo');
+        $query = $this->model()->innerJoin('Foo');
 
         $this->assertTrue($query->hasJoinClause());
     }
 
     public function testCanGetJoin()
     {
-        $query = $this->model()->inner('Foo');
+        $query = $this->model()->innerJoin('Foo');
 
         $this->assertCount(1, $query->getJoin());
     }
 
     public function testCanClearJoin()
     {
-        $query = $this->model()->inner('Foo');
+        $query = $this->model()->innerJoin('Foo');
 
         $query->clearJoin();
 
@@ -156,21 +156,21 @@ trait JoinTableClauseTraitTest
 
     public function testCanJoinWithAlias()
     {
-        $query = $this->model()->inner(['f' => 'Foo']);
+        $query = $this->model()->innerJoin(['f' => 'Foo']);
 
         $this->assertEquals('INNER JOIN `Foo` AS `f`', $query->toString());
     }
 
     public function testCanTransformToString()
     {
-        $query = $this->model()->inner(['f' => 'Foo']);
+        $query = $this->model()->innerJoin(['f' => 'Foo']);
 
         $this->assertEquals('INNER JOIN `Foo` AS `f`', (string) $query);
     }
 
     public function testCanCombineClausesWithJoin()
     {
-        $query = $this->model()->inner(['t' => new SelectQuery()]);
+        $query = $this->model()->innerJoin(['t' => new SelectQuery()]);
 
         $this->assertEquals('INNER JOIN (SELECT *) AS `t`', $query->toString());
     }
@@ -179,14 +179,14 @@ trait JoinTableClauseTraitTest
     {
         $this->expectException(SqlException::class);
 
-        $this->model()->inner(new SelectQuery());
+        $this->model()->innerJoin(new SelectQuery());
     }
 
     public function testCanThrowExceptionIfDerivedTableNotHaveAliasInSource()
     {
         $this->expectException(SqlException::class);
 
-        $this->model()->innerTo(new SelectQuery(), 'Table');
+        $this->model()->innerJoinTo(new SelectQuery(), 'Table');
     }
 
     public function joins()
@@ -202,7 +202,7 @@ trait JoinTableClauseTraitTest
             $clause->innerJoin('Table1');
         });
 
-        $query = $this->model()->inner('Table2');
+        $query = $this->model()->innerJoin('Table2');
 
         $this->assertEquals('INNER JOIN `Table1` INNER JOIN `Table2`', $query->toString());
     }
@@ -254,7 +254,7 @@ trait JoinTableClauseTraitTest
 
     public function testCanGetJoinString()
     {
-        $this->assertEquals('INNER JOIN `Table`', $this->model()->inner('Table')->joinToString());
+        $this->assertEquals('INNER JOIN `Table`', $this->model()->innerJoin('Table')->joinToString());
     }
 
     public function testCanGetEmptyJoinString()
@@ -264,7 +264,7 @@ trait JoinTableClauseTraitTest
 
     public function testCanCombineClausesWithJoin2()
     {
-        $this->assertTrue($this->model()->select('Column')->inner('Table2')->hasJoin());
+        $this->assertTrue($this->model()->select('Column')->innerJoin('Table2')->hasJoin());
     }
 
     public function testCanTransformIntoJoin()
@@ -276,7 +276,7 @@ trait JoinTableClauseTraitTest
 
     public function testCanCombineClauses3()
     {
-        $this->assertEquals('FROM `Table1` INNER JOIN `Table2`', $this->model()->from('Table1')->inner('Table2')->toString());
+        $this->assertEquals('FROM `Table1` INNER JOIN `Table2`', $this->model()->from('Table1')->innerJoin('Table2')->toString());
     }
 
     abstract protected function model(): Model;
