@@ -428,7 +428,7 @@ class SelectQuery extends SqlAbstract implements
     {
         [$sql, $params] = $this->toSql();
 
-        return $this->connection()->fetch($sql, $params);
+        return $this->connection()->sqlFetch($sql, $params);
     }
 
     public function fetchOrFail(): array
@@ -444,7 +444,7 @@ class SelectQuery extends SqlAbstract implements
     {
         [$sql, $params] = $this->toSql();
 
-        return $this->connection()->fetchAll($sql, $params);
+        return $this->connection()->sqlFetchAll($sql, $params);
     }
 
     public function generate(?int $chunkSize = null): \Generator
@@ -454,7 +454,7 @@ class SelectQuery extends SqlAbstract implements
         } else {
             [$sql, $params] = $this->toSql();
 
-            yield from $this->connection()->generate($sql, $params);
+            yield from $this->connection()->sqlGenerate($sql, $params);
         }
     }
 
@@ -467,21 +467,21 @@ class SelectQuery extends SqlAbstract implements
     {
         [$sql, $params] = $this->toSql();
 
-        return $this->connection()->column($sql, $params, $column);
+        return $this->connection()->sqlFetchColumn($sql, $params, $column);
     }
 
     public function fetchColumnAll(string $column = '0'): array
     {
         [$sql, $params] = $this->toSql();
 
-        return $this->connection()->columnAll($sql, $params, $column);
+        return $this->connection()->sqlFetchAllColumn($sql, $params, $column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
     {
         [$sql, $params] = $this->toSql();
 
-        return $this->connection()->pairs($sql, $params, $key, $value);
+        return $this->connection()->sqlFetchPairs($sql, $params, $key, $value);
     }
 
     public function fetchCount(string $column = '*', string $alias = null): int
@@ -698,7 +698,7 @@ class SelectQuery extends SqlAbstract implements
             [$sql, $params] = $this->limit($limit)->offset($offset)->toSql();
 
             if ($oneByOne) {
-                $recordsGenerator = $this->connection()->generate($sql, $params);
+                $recordsGenerator = $this->connection()->sqlGenerate($sql, $params);
 
                 $recordsCount = 0;
 
@@ -708,7 +708,7 @@ class SelectQuery extends SqlAbstract implements
                     $recordsCount++;
                 }
             } else {
-                $records = $this->connection()->fetchAll($sql, $params);
+                $records = $this->connection()->sqlFetchAll($sql, $params);
 
                 if (!$records) {
                     break;

@@ -46,7 +46,7 @@ class MysqlConnection extends PdoConnectionAbstract
 
     protected function describeTable(string $tableName): array
     {
-        $records = $this->fetchAll('DESCRIBE ' . $this->dialect->quoteTable($tableName));
+        $records = $this->sqlFetchAll('DESCRIBE ' . $this->dialect->quoteTable($tableName));
 
         $columns = $primary = [];
 

@@ -131,7 +131,7 @@ trait RowsTrait
         }
         [$sql, $params] = $query->clearColumns()->count()->toSql();
 
-        $this->rowsTotal = $this->connection()->column($sql, $params);
+        $this->rowsTotal = $this->connection()->sqlFetchColumn($sql, $params);
 
         return $this;
     }

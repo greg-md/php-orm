@@ -46,7 +46,7 @@ class SqliteConnection extends PdoConnectionAbstract
 
     protected function describeTable(string $tableName): array
     {
-        $records = $this->fetchAll('PRAGMA TABLE_INFO(' . $this->dialect()->quoteTable($tableName) . ')');
+        $records = $this->sqlFetchAll('PRAGMA TABLE_INFO(' . $this->dialect()->quoteTable($tableName) . ')');
 
         $columns = $primary = [];
 

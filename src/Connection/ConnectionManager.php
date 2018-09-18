@@ -199,9 +199,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return string[]
      */
-    public function fetch(string $sql, array $params = []): ?array
+    public function sqlFetch(string $sql, array $params = []): ?array
     {
-        return $this->connection()->fetch($sql, $params);
+        return $this->connection()->sqlFetch($sql, $params);
     }
 
     /**
@@ -210,9 +210,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return string[][]
      */
-    public function fetchAll(string $sql, array $params = []): array
+    public function sqlFetchAll(string $sql, array $params = []): array
     {
-        return $this->connection()->fetchAll($sql, $params);
+        return $this->connection()->sqlFetchAll($sql, $params);
     }
 
     /**
@@ -221,9 +221,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return string[][]|\Generator
      */
-    public function generate(string $sql, array $params = []): \Generator
+    public function sqlGenerate(string $sql, array $params = []): \Generator
     {
-        yield from $this->connection()->generate($sql, $params);
+        yield from $this->connection()->sqlGenerate($sql, $params);
     }
 
     /**
@@ -233,9 +233,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return string
      */
-    public function column(string $sql, array $params = [], string $column = '0')
+    public function sqlFetchColumn(string $sql, array $params = [], string $column = '0')
     {
-        return $this->connection()->column($sql, $params, $column);
+        return $this->connection()->sqlFetchColumn($sql, $params, $column);
     }
 
     /**
@@ -245,9 +245,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return string[]
      */
-    public function columnAll(string $sql, array $params = [], string $column = '0'): array
+    public function sqlFetchAllColumn(string $sql, array $params = [], string $column = '0'): array
     {
-        return $this->connection()->columnAll($sql, $params, $column);
+        return $this->connection()->sqlFetchAllColumn($sql, $params, $column);
     }
 
     /**
@@ -258,9 +258,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return string[]
      */
-    public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array
+    public function sqlFetchPairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array
     {
-        return $this->connection()->pairs($sql, $params, $key, $value);
+        return $this->connection()->sqlFetchPairs($sql, $params, $key, $value);
     }
 
     /**

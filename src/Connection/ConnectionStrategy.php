@@ -73,7 +73,7 @@ interface ConnectionStrategy
      *
      * @return string[]
      */
-    public function fetch(string $sql, array $params = []): ?array;
+    public function sqlFetch(string $sql, array $params = []): ?array;
 
     /**
      * @param string $sql
@@ -81,7 +81,7 @@ interface ConnectionStrategy
      *
      * @return string[][]
      */
-    public function fetchAll(string $sql, array $params = []): array;
+    public function sqlFetchAll(string $sql, array $params = []): array;
 
     /**
      * @param string $sql
@@ -89,7 +89,7 @@ interface ConnectionStrategy
      *
      * @return string[][]|\Generator
      */
-    public function generate(string $sql, array $params = []): \Generator;
+    public function sqlGenerate(string $sql, array $params = []): \Generator;
 
     /**
      * @param string $sql
@@ -98,7 +98,7 @@ interface ConnectionStrategy
      *
      * @return string
      */
-    public function column(string $sql, array $params = [], string $column = '0');
+    public function sqlFetchColumn(string $sql, array $params = [], string $column = '0');
 
     /**
      * @param string $sql
@@ -107,7 +107,7 @@ interface ConnectionStrategy
      *
      * @return string[]
      */
-    public function columnAll(string $sql, array $params = [], string $column = '0'): array;
+    public function sqlFetchAllColumn(string $sql, array $params = [], string $column = '0'): array;
 
     /**
      * @param string $sql
@@ -117,7 +117,7 @@ interface ConnectionStrategy
      *
      * @return string[]
      */
-    public function pairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array;
+    public function sqlFetchPairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array;
 
     /**
      * @return SqlDialectStrategy

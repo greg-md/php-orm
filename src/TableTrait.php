@@ -200,7 +200,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->connection()->fetch($sql, $params);
+        return $this->connection()->sqlFetch($sql, $params);
     }
 
     public function fetchOrFail(): array
@@ -216,7 +216,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->connection()->fetchAll($sql, $params);
+        return $this->connection()->sqlFetchAll($sql, $params);
     }
 
     public function generate(?int $chunkSize = null): \Generator
@@ -226,7 +226,7 @@ trait TableTrait
         } else {
             [$sql, $params] = $this->selectQueryInstanceToSql();
 
-            yield from $this->connection()->generate($sql, $params);
+            yield from $this->connection()->sqlGenerate($sql, $params);
         }
     }
 
@@ -239,21 +239,21 @@ trait TableTrait
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->connection()->column($sql, $params, $column);
+        return $this->connection()->sqlFetchColumn($sql, $params, $column);
     }
 
     public function fetchColumnAll(string $column = '0'): array
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->connection()->columnAll($sql, $params, $column);
+        return $this->connection()->sqlFetchAllColumn($sql, $params, $column);
     }
 
     public function fetchPairs(string $key = '0', string $value = '1'): array
     {
         [$sql, $params] = $this->selectQueryInstanceToSql();
 
-        return $this->connection()->pairs($sql, $params, $key, $value);
+        return $this->connection()->sqlFetchPairs($sql, $params, $key, $value);
     }
 
     /**
@@ -263,7 +263,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-        if ($record = $this->connection()->fetch($sql, $params)) {
+        if ($record = $this->connection()->sqlFetch($sql, $params)) {
             return $this->cleanClone()->addPristineRecord($record);
         }
 
@@ -291,7 +291,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-        $records = $this->connection()->fetchAll($sql, $params);
+        $records = $this->connection()->sqlFetchAll($sql, $params);
 
         return $this->cleanClone()->setPristineRecords($records);
     }
@@ -308,7 +308,7 @@ trait TableTrait
         } else {
             [$sql, $params] = $this->rowsQueryInstanceToSql();
 
-            $recordsGenerator = $this->connection()->generate($sql, $params);
+            $recordsGenerator = $this->connection()->sqlGenerate($sql, $params);
         }
 
         foreach ($recordsGenerator as $record) {
@@ -336,7 +336,7 @@ trait TableTrait
             return $this->clearSelect()->selectCount($column, $alias)->fetchColumn();
         }
 
-        return $this->connection()->column($this->connection()->dialect()->selectCount($column, $alias));
+        return $this->connection()->sqlFetchColumn($this->connection()->dialect()->selectCount($column, $alias));
     }
 
     public function fetchMax(string $column, string $alias = null): int
@@ -345,7 +345,7 @@ trait TableTrait
             return $this->clearSelect()->selectMax($column, $alias)->fetchColumn();
         }
 
-        return $this->connection()->column($this->connection()->dialect()->selectMax($column, $alias));
+        return $this->connection()->sqlFetchColumn($this->connection()->dialect()->selectMax($column, $alias));
     }
 
     public function fetchMin(string $column, string $alias = null): int
@@ -354,7 +354,7 @@ trait TableTrait
             return $this->clearSelect()->selectMin($column, $alias)->fetchColumn();
         }
 
-        return $this->connection()->column($this->connection()->dialect()->selectMin($column, $alias));
+        return $this->connection()->sqlFetchColumn($this->connection()->dialect()->selectMin($column, $alias));
     }
 
     public function fetchAvg(string $column, string $alias = null): float
@@ -363,7 +363,7 @@ trait TableTrait
             return $this->clearSelect()->selectAvg($column, $alias)->fetchColumn();
         }
 
-        return $this->connection()->column($this->connection()->dialect()->selectAvg($column, $alias));
+        return $this->connection()->sqlFetchColumn($this->connection()->dialect()->selectAvg($column, $alias));
     }
 
     public function fetchSum(string $column, string $alias = null): string
@@ -372,7 +372,7 @@ trait TableTrait
             return $this->clearSelect()->selectSum($column, $alias)->fetchColumn();
         }
 
-        return $this->connection()->column($this->connection()->dialect()->selectSum($column, $alias));
+        return $this->connection()->sqlFetchColumn($this->connection()->dialect()->selectSum($column, $alias));
     }
 
     /**
@@ -755,7 +755,7 @@ trait TableTrait
             [$sql, $params] = $query->limit($chunkSize)->offset($offset)->toSql();
 
             if ($oneByOne) {
-                $recordsGenerator = $this->connection()->generate($sql, $params);
+                $recordsGenerator = $this->connection()->sqlGenerate($sql, $params);
 
                 $k = 0;
 
@@ -765,7 +765,7 @@ trait TableTrait
                     $k++;
                 }
             } else {
-                $records = $this->connection()->fetchAll($sql, $params);
+                $records = $this->connection()->sqlFetchAll($sql, $params);
 
                 if (!$records) {
                     break;

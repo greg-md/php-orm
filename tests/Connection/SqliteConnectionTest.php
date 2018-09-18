@@ -144,7 +144,7 @@ class SqliteConnectionTest extends TestCase
             ->expects($this->once())
             ->method('bindValue');
 
-        $this->assertEquals([1], $this->connection->fetch('SELECT foo WHERE bar = ?', [1]));
+        $this->assertEquals([1], $this->connection->sqlFetch('SELECT foo WHERE bar = ?', [1]));
     }
 
     public function testCanFetchAll()
@@ -156,7 +156,7 @@ class SqliteConnectionTest extends TestCase
             ->method('fetchAll')
             ->willReturn([[1], [1]]);
 
-        $this->assertEquals([[1], [1]], $this->connection->fetchAll('SELECT foo'));
+        $this->assertEquals([[1], [1]], $this->connection->sqlFetchAll('SELECT foo'));
     }
 
     public function testCanGenerate()
@@ -168,7 +168,7 @@ class SqliteConnectionTest extends TestCase
             ->method('fetch')
             ->willReturnOnConsecutiveCalls([1], [1], false);
 
-        $generator = $this->connection->generate('SELECT foo');
+        $generator = $this->connection->sqlGenerate('SELECT foo');
 
         $this->assertInstanceOf(\Generator::class, $generator);
 
@@ -186,7 +186,7 @@ class SqliteConnectionTest extends TestCase
             ->method('fetchColumn')
             ->willReturn(1);
 
-        $this->assertEquals(1, $this->connection->column('SELECT foo', [], 0));
+        $this->assertEquals(1, $this->connection->sqlFetchColumn('SELECT foo', [], 0));
     }
 
     public function testCanFetchColumnByName()
@@ -198,7 +198,7 @@ class SqliteConnectionTest extends TestCase
             ->method('fetch')
             ->willReturn(['foo' => 1]);
 
-        $this->assertEquals(1, $this->connection->column('SELECT foo', [], 'foo'));
+        $this->assertEquals(1, $this->connection->sqlFetchColumn('SELECT foo', [], 'foo'));
     }
 
     public function testCanFetchColumnAllByNumber()
@@ -210,7 +210,7 @@ class SqliteConnectionTest extends TestCase
             ->method('fetchColumn')
             ->willReturnOnConsecutiveCalls(1, 1, false);
 
-        $this->assertEquals([1, 1], $this->connection->columnAll('SELECT foo', [], 0));
+        $this->assertEquals([1, 1], $this->connection->sqlFetchAllColumn('SELECT foo', [], 0));
     }
 
     public function testCanFetchColumnAllByName()
@@ -222,7 +222,7 @@ class SqliteConnectionTest extends TestCase
             ->method('fetch')
             ->willReturn(['foo' => 1], ['foo' => 1], false);
 
-        $this->assertEquals([1, 1], $this->connection->columnAll('SELECT foo', [], 'foo'));
+        $this->assertEquals([1, 1], $this->connection->sqlFetchAllColumn('SELECT foo', [], 'foo'));
     }
 
     public function testCanFetchPairs()
@@ -234,7 +234,7 @@ class SqliteConnectionTest extends TestCase
             ->method('fetch')
             ->willReturnOnConsecutiveCalls([1, 1], [2, 2], false);
 
-        $this->assertEquals([1 => 1, 2 => 2], $this->connection->pairs('SELECT foo, bar'));
+        $this->assertEquals([1 => 1, 2 => 2], $this->connection->sqlFetchPairs('SELECT foo, bar'));
     }
 
     public function testCanTruncate()
@@ -258,9 +258,9 @@ class SqliteConnectionTest extends TestCase
 
         $this->connection->listen([$mocker, 'call']);
 
-        $this->connection->fetch('select 1');
+        $this->connection->sqlFetch('select 1');
 
-        $this->connection->fetch('select 1');
+        $this->connection->sqlFetch('select 1');
     }
 
     public function testCanDescribeTable()

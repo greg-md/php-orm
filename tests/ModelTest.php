@@ -248,7 +248,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
+        $this->connectionMock->method('sqlFetchPairs')->willReturn([1 => 1, 2 => 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->model->pairs());
     }
@@ -344,7 +344,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateInChunks()
     {
-        $this->connectionMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('sqlFetchAll')->will($this->onConsecutiveCalls(
             [
                 ['Id' => 1],
                 ['Id' => 2],
@@ -373,7 +373,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateOneByOne()
     {
-        $this->connectionMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('sqlGenerate')->will($this->onConsecutiveCalls(
             (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
@@ -406,7 +406,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->expects($this->exactly(3))->method('fetchAll')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('sqlFetchAll')->will($this->onConsecutiveCalls(
             [
                 ['Id' => 1],
                 ['Id' => 2],
@@ -437,7 +437,7 @@ class ModelTest extends TestCase
 
     public function testCanGenerateRowsOneByOne()
     {
-        $this->connectionMock->expects($this->exactly(3))->method('generate')->will($this->onConsecutiveCalls(
+        $this->connectionMock->expects($this->exactly(3))->method('sqlGenerate')->will($this->onConsecutiveCalls(
             (function () {
                 yield ['Id' => 1];
                 yield ['Id' => 2];
@@ -470,21 +470,21 @@ class ModelTest extends TestCase
 
     public function testCanFetch()
     {
-        $this->connectionMock->method('fetch')->willReturn(['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn(['Id' => 1]);
 
         $this->assertEquals(['Id' => 1], $this->model->fetch());
     }
 
     public function testCanFetchOrFail()
     {
-        $this->connectionMock->method('fetch')->willReturn(['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn(['Id' => 1]);
 
         $this->assertEquals(['Id' => 1], $this->model->fetchOrFail());
     }
 
     public function testCanThrowExceptionIfFetchFail()
     {
-        $this->connectionMock->method('fetch')->willReturn(null);
+        $this->connectionMock->method('sqlFetch')->willReturn(null);
 
         $this->expectException(\Exception::class);
 
@@ -493,70 +493,70 @@ class ModelTest extends TestCase
 
     public function testCanFetchAll()
     {
-        $this->connectionMock->method('fetchAll')->willReturn([['Id' => 1]]);
+        $this->connectionMock->method('sqlFetchAll')->willReturn([['Id' => 1]]);
 
         $this->assertCount(1, $this->model->fetchAll());
     }
 
     public function testCanFetchColumn()
     {
-        $this->connectionMock->method('column')->willReturn(1);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchColumn());
     }
 
     public function testCanFetchAllColumn()
     {
-        $this->connectionMock->method('columnAll')->willReturn([1, 2]);
+        $this->connectionMock->method('sqlFetchAllColumn')->willReturn([1, 2]);
 
         $this->assertEquals([1, 2], $this->model->fetchColumnAll());
     }
 
     public function testCanFetchPairs()
     {
-        $this->connectionMock->method('pairs')->willReturn([1 => 1, 2 => 2]);
+        $this->connectionMock->method('sqlFetchPairs')->willReturn([1 => 1, 2 => 2]);
 
         $this->assertEquals([1 => 1, 2 => 2], $this->model->fetchPairs());
     }
 
     public function testCanFetchCount()
     {
-        $this->connectionMock->method('column')->willReturn(1);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchCount());
     }
 
     public function testCanFetchMax()
     {
-        $this->connectionMock->method('column')->willReturn(1);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchMax('Column'));
     }
 
     public function testCanFetchMin()
     {
-        $this->connectionMock->method('column')->willReturn(1);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchMin('Column'));
     }
 
     public function testCanFetchAvg()
     {
-        $this->connectionMock->method('column')->willReturn(1);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchAvg('Column'));
     }
 
     public function testCanFetchSum()
     {
-        $this->connectionMock->method('column')->willReturn(1);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(1);
 
         $this->assertEquals(1, $this->model->fetchSum('Column'));
     }
 
     public function testCanFetchExists()
     {
-        $this->connectionMock->method('column')->willReturn(1);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(1);
 
         $this->assertTrue($this->model->exists());
     }
@@ -671,12 +671,12 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
         })());
 
-        $this->connectionMock->method('column')->willReturn(20);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(20);
 
         $pagination = $this->model->pagination(10, 10);
 
@@ -691,12 +691,12 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
         })());
 
-        $this->connectionMock->method('column')->willReturn(20);
+        $this->connectionMock->method('sqlFetchColumn')->willReturn(20);
 
         $pagination = $this->model->pagination(10, 10, function (SelectQuery $query) {
             $query->where('foo', 'bar');
@@ -810,7 +810,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $this->assertEquals($record, $this->model->fetchRow()->record());
     }
@@ -824,7 +824,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn(['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn(['Id' => 1]);
 
         $this->assertEquals(['Id' => 1], $this->model->fetchRowOrFail()->record());
     }
@@ -840,7 +840,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             if (false) {
                 yield;
             }
@@ -853,7 +853,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetchAll')->willReturn([
+        $this->connectionMock->method('sqlFetchAll')->willReturn([
             ['Id' => 1],
             ['Id' => 2],
         ]);
@@ -865,7 +865,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('generate')->willReturn((function () {
+        $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             yield ['Id' => 1];
 
             yield ['Id' => 2];
@@ -888,7 +888,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->find(1);
 
@@ -899,7 +899,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->findOrFail(1);
 
@@ -919,7 +919,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->first($record);
 
@@ -930,7 +930,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrFail($record);
 
@@ -950,7 +950,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrNew($record);
 
@@ -970,7 +970,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1]);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrCreate($record);
 
@@ -1052,7 +1052,7 @@ class ModelTest extends TestCase
             ],
         ]);
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017 18:00:00']);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017 18:00:00']);
 
         $row = $this->model->fetchRow();
 
@@ -1095,7 +1095,7 @@ class ModelTest extends TestCase
             ],
         ]);
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017']);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1, 'Foo' => '01.01.2017']);
 
         $row = $this->model->fetchRow();
 
@@ -1138,7 +1138,7 @@ class ModelTest extends TestCase
             ],
         ]);
 
-        $this->connectionMock->method('fetch')->willReturn($record = ['Id' => 1, 'Foo' => '18:00']);
+        $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1, 'Foo' => '18:00']);
 
         $row = $this->model->fetchRow();
 
