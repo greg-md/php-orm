@@ -8,6 +8,8 @@ trait TableTrait
 {
     use QueryBuilderTrait;
 
+    protected $name;
+
     protected $prefix;
 
     protected $alias;
@@ -28,7 +30,14 @@ trait TableTrait
 
     protected $defaults = [];
 
-    abstract public function name(): string;
+    public function name(): string
+    {
+        if (!$this->name) {
+            $this->name = (new \ReflectionClass($this))->getShortName();
+        }
+
+        return $this->name;
+    }
 
     public function prefix(): ?string
     {
