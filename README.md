@@ -15,7 +15,7 @@ and write your first queries using the [Query Builder](#query-builder---quick-st
 
 # Why use Greg ORM?
 
-I wrote an article about it: _pending_ 
+You can read in the next article: _pending_ 
 
 # Get Started
 
@@ -52,12 +52,12 @@ In progress:
 There are two ways of creating a database connection:
 
 1. Instantiate a database connection for a specific driver;
-2. Instantiate a Connection Manager to store multiple database connections.
+2. Instantiate a connection manager to store multiple database connections.
 
-> The Connection Manager implements the same connection strategy.
+> The connection manager implements the same connection strategy.
 > This means that you can define a connection to act like it.
 
-In the next example we will use a Connection Manager to store multiple connections of different drivers.
+In the next example we will use a connection manager to store multiple connections of different drivers.
 
 ```php
 // Instantiate a Connection Manager
@@ -85,10 +85,16 @@ Now you can work with this manager:
 
 ```php
 // Fetch a statement from "sqlite_connection"
-$manager->connection('sqlite_connection')->fetchAll('SELECT * FROM `FooTable`');
+$manager->connection('sqlite_connection')
+    ->select()
+    ->from('Table')
+    ->fetchAll();
 
 // Fetch a statement from mysql_connection, which is used by default
-$manager->fetchAll('SELECT * FROM `BarTable`');
+$manager
+    ->select()
+    ->from('Table')
+    ->fetchAll();
 ```
 
 Full documentation can be found [here](docs/DatabaseConnection.md).
@@ -281,67 +287,31 @@ Let's say you have `Students` table.
 Find students names that lives in Chisinau and were born in 1990:
 
 ```php
-$query = $connection->select()
+$students = $connection->select()
     ->columns('Id', 'Name')
     ->from('Students')
     ->where('City', 'Chisinau')
     ->whereYear('Birthday', 1990)
-;
-
-[$statement, $parameters] = $query->toSql();
-
-print_r($statement);
-// SELECT `Id`, `Name` FROM `Students` WHERE `City` = ? AND YEAR(`Birthday`) = ?
-
-print_r($parameters);
-//Array
-//(
-//    [0] => Chisinau
-//    [1] => 1990
-//)
+    ->fetchAll();
 ```
 
 Update the grade of a student:
 
 ```php
-$query = $connection->update()
+$connection->update()
     ->table('Students')
     ->set('Grade', 1400)
     ->where('Id', 10)
-;
-
-[$statement, $parameters] = $query->toSql();
-
-print_r($statement);
-// UPDATE `Students` SET `Grade` = ? WHERE `Id` = ?
-
-print_r($parameters);
-//Array
-//(
-//    [0] => 1400
-//    [1] => 10
-//)
+    ->execute();
 ```
 
 Delete students that were not admitted in the current year:
 
 ```php
-$query = $connection->delete()
+$connection->delete()
     ->from('Students')
     ->whereIsNot('Admitted')
-;
-
-[$statement, $parameters] = $query->toSql();
-
-print_r($statement);
-// DELETE FROM `Students` WHERE `Admited` = 0
-
-print_r($parameters);
-//Array
-//(
-//    [0] => 1400
-//    [1] => 10
-//)
+    ->execute();
 ```
 
 Add a new student:
@@ -350,19 +320,7 @@ Add a new student:
 $query = $connection->insert()
     ->into('Students')
     ->data(['Name' => 'John Doe', 'Year' => 2017])
-;
-
-[$statement, $parameters] = $query->toSql();
-
-print_r($statement);
-// INSERT INTO `Students` (`Name`, 'Year') VALUES (?, ?)
-
-print_r($parameters);
-//Array
-//(
-//    [0] => 'Jogn Doe'
-//    [1] => 2017
-//)
+    ->execute();
 ```
 
 Full documentation can be found [here](docs/QueryBuilder.md).
