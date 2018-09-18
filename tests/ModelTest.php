@@ -59,8 +59,8 @@ class ModelTest extends TestCase
         $connectionMock = $this->connectionMock = $this->createMock(ConnectionStrategy::class);
 
         foreach ($this->connectionSql() as $method => $class) {
-            $connectionMock->method($method)->willReturnCallback(function () use ($class) {
-                return new $class();
+            $connectionMock->method($method)->willReturnCallback(function () use ($class, $connectionMock) {
+                return new $class(null, $connectionMock);
             });
         }
 

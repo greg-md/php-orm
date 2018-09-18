@@ -683,8 +683,8 @@ class SelectQuery extends SqlAbstract implements
             throw new SqlException('Chunk count should be greater than 0.');
         }
 
-        $originalLimit = $this->limit;
-        $originalOffset = $this->offset;
+        $originalLimit = (int) $this->limit;
+        $originalOffset = (int) $this->offset;
 
         $offset = $originalOffset;
 
@@ -730,7 +730,7 @@ class SelectQuery extends SqlAbstract implements
         $this->offset = $originalOffset;
     }
 
-    private function getMaxLimit(?int $originalOffset, ?int $originalLimit, int $currentOffset, int $currentLimit): int
+    private function getMaxLimit(int $originalOffset, int $originalLimit, int $currentOffset, int $currentLimit): int
     {
         $limit = $currentLimit;
 

@@ -222,7 +222,7 @@ trait TableTrait
     public function generate(?int $chunkSize = null): \Generator
     {
         if ($chunkSize) {
-            yield from $this->generateQuery($this->selectQueryInstance()->selectQuery(), $chunkSize);
+            yield from $this->selectQueryInstance()->selectQuery()->generate($chunkSize);
         } else {
             [$sql, $params] = $this->selectQueryInstanceToSql();
 
@@ -232,7 +232,7 @@ trait TableTrait
 
     public function generateInChunks(int $chunkSize): \Generator
     {
-        yield from $this->generateQuery($this->selectQueryInstance()->selectQuery(), $chunkSize, false);
+        yield from $this->selectQueryInstance()->selectQuery()->generateInChunks($chunkSize);
     }
 
     public function fetchColumn(string $column = '0'): string
@@ -304,7 +304,7 @@ trait TableTrait
     public function generateRows(?int $chunkSize = null): \Generator
     {
         if ($chunkSize) {
-            $recordsGenerator = $this->generateQuery($this->rowsQueryInstance()->selectQuery(), $chunkSize);
+            $recordsGenerator = $this->rowsQueryInstance()->selectQuery()->generate($chunkSize);
         } else {
             [$sql, $params] = $this->rowsQueryInstanceToSql();
 
@@ -323,7 +323,7 @@ trait TableTrait
      */
     public function generateRowsInChunks(int $chunkSize): \Generator
     {
-        $recordsGenerator = $this->generateQuery($this->rowsQueryInstance()->selectQuery(), $chunkSize, false);
+        $recordsGenerator = $this->rowsQueryInstance()->selectQuery()->generateInChunks($chunkSize);
 
         foreach ($recordsGenerator as $records) {
             yield $this->cleanClone()->setPristineRecords($records);
@@ -739,49 +739,6 @@ trait TableTrait
         }
 
         return $this->selectOnly('*');
-    }
-
-    protected function generateQuery(SelectQuery $query, int $chunkSize, bool $oneByOne = true): \Generator
-    {
-        if ($chunkSize < 1) {
-            throw new SqlException('Chunk count should be greater than 0.');
-        }
-
-        $offset = 0;
-
-        $query = clone $query;
-
-        while (true) {
-            [$sql, $params] = $query->limit($chunkSize)->offset($offset)->toSql();
-
-            if ($oneByOne) {
-                $recordsGenerator = $this->connection()->sqlGenerate($sql, $params);
-
-                $k = 0;
-
-                foreach ($recordsGenerator as $record) {
-                    yield $record;
-
-                    $k++;
-                }
-            } else {
-                $records = $this->connection()->sqlFetchAll($sql, $params);
-
-                if (!$records) {
-                    break;
-                }
-
-                yield $records;
-
-                $k = count($records);
-            }
-
-            if ($k < $chunkSize) {
-                break;
-            }
-
-            $offset += $chunkSize;
-        }
     }
 
     protected function selectQueryInstanceToSql()
