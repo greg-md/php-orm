@@ -15,7 +15,7 @@ and write your first queries using the [Query Builder](#query-builder---quick-st
 
 # Why use Greg ORM?
 
-You can read in the next article: _pending_ 
+You can read about it in the next article: _pending_ 
 
 # Get Started
 
