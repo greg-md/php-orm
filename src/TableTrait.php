@@ -470,7 +470,7 @@ trait TableTrait
     {
         [$sql, $params] = $this->setValues($columns)->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     public function insert(array $data): int
@@ -479,7 +479,7 @@ trait TableTrait
 
         [$sql, $params] = $this->newInsertQuery()->data($data)->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     public function insertSelect(array $columns, SelectQuery $query): int
@@ -495,7 +495,7 @@ trait TableTrait
         }
         [$sql, $params] = $this->newInsertQuery()->columns($columns)->select($query)->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     /**
@@ -513,7 +513,7 @@ trait TableTrait
 
         [$sql, $params] = $this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params)->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     public function insertForEach(string $column, array $values, array $data = []): int
@@ -536,7 +536,7 @@ trait TableTrait
         }
         [$sql, $params] = $instance->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     public function erase($primary)
@@ -545,7 +545,7 @@ trait TableTrait
 
         [$sql, $params] = $query->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     public function truncate()

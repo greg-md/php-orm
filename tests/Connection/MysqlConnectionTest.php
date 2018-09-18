@@ -114,7 +114,7 @@ class MysqlConnectionTest extends TestCase
 
         $this->pdoStatementMock->expects($this->once())->method('rowCount')->willReturn(1);
 
-        $this->assertEquals(1, $this->connection->execute('INSERT INTO `Table` (`Column`) VALUES ("foo")'));
+        $this->assertEquals(1, $this->connection->sqlExecute('INSERT INTO `Table` (`Column`) VALUES ("foo")'));
     }
 
     public function testCanGetLastInsertId()

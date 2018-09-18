@@ -102,7 +102,7 @@ class DeleteQuery extends SqlAbstract implements
 
         [$sql, $params] = $this->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     /**

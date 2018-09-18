@@ -164,9 +164,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return int
      */
-    public function execute(string $sql, array $params = []): int
+    public function sqlExecute(string $sql, array $params = []): int
     {
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     /**

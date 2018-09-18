@@ -253,7 +253,7 @@ trait RowsTrait
 
                 $query = $this->newInsertQuery()->data($record);
 
-                $this->connection()->execute(...$query->toSql());
+                $this->connection()->sqlExecute(...$query->toSql());
 
                 if (!$this->getAutoIncrement() and $column = $this->autoIncrement()) {
                     $row[$column] = (int) $this->connection()->lastInsertId();
@@ -272,7 +272,7 @@ trait RowsTrait
                         ->setMultiple($modified)
                         ->whereMultiple($this->rowFirstUnique($row));
 
-                    $this->connection()->execute(...$query->toSql());
+                    $this->connection()->sqlExecute(...$query->toSql());
 
                     unset($this->rowsState[$key]);
                 }
@@ -303,7 +303,7 @@ trait RowsTrait
         if ($keys) {
             [$sql, $params] = $this->newDeleteQuery()->where($this->firstUnique(), $keys)->toSql();
 
-            $this->connection()->execute($sql, $params);
+            $this->connection()->sqlExecute($sql, $params);
         }
 
         return $this;

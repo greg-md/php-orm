@@ -563,14 +563,14 @@ class ModelTest extends TestCase
 
     public function testCanUpdate()
     {
-        $this->connectionMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('sqlExecute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->update(['Column' => 'foo']));
     }
 
     public function testCanDelete()
     {
-        $this->connectionMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('sqlExecute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->delete());
 
@@ -632,14 +632,14 @@ class ModelTest extends TestCase
 
     public function testCanInsert()
     {
-        $this->connectionMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('sqlExecute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->insert(['Column' => 'foo']));
     }
 
     public function testCanInsertSelectWithDefaults()
     {
-        $this->connectionMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('sqlExecute')->willReturn(1);
 
         $this->model->setDefaults(['Foo' => 'bar']);
 
@@ -648,21 +648,21 @@ class ModelTest extends TestCase
 
     public function testCanInsertSelect()
     {
-        $this->connectionMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('sqlExecute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->connectionMock->select()->columns('Column')));
     }
 
     public function testCanInsertSelectRaw()
     {
-        $this->connectionMock->method('execute')->willReturn(1);
+        $this->connectionMock->method('sqlExecute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->insertSelectRaw(['Column'], $this->connectionMock->select()->columns('Column')));
     }
 
     public function testCanInsertForEach()
     {
-        $this->connectionMock->expects($this->exactly(2))->method('execute')->willReturn(1);
+        $this->connectionMock->expects($this->exactly(2))->method('sqlExecute')->willReturn(1);
 
         $this->model->insertForEach('Column', ['foo', 'bar']);
     }
@@ -990,7 +990,7 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->connectionMock->expects($this->once())->method('execute')->with('DELETE FROM `Table` WHERE `Id` = ?', [1]);
+        $this->connectionMock->expects($this->once())->method('sqlExecute')->with('DELETE FROM `Table` WHERE `Id` = ?', [1]);
 
         $this->model->erase(1);
     }
@@ -1479,7 +1479,7 @@ class ModelTest extends TestCase
 
         $this->connectionMock
             ->expects($this->once())
-            ->method('execute')
+            ->method('sqlExecute')
             ->with('UPDATE `Table` SET `Id` = ? WHERE `Id` = ?', ['2', '1']);
 
         $rows->set('Id', 2);
@@ -1497,7 +1497,7 @@ class ModelTest extends TestCase
 
         $this->connectionMock
             ->expects($this->once())
-            ->method('execute')
+            ->method('sqlExecute')
             ->with('DELETE FROM `Table` WHERE `Id` = ?', ['1']);
 
         $rows->destroy();

@@ -253,7 +253,7 @@ class InsertQuery extends SqlAbstract implements QueryStrategy
 
         [$sql, $params] = $this->toSql();
 
-        return $this->connection()->execute($sql, $params);
+        return $this->connection()->sqlExecute($sql, $params);
     }
 
     /**

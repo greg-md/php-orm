@@ -16,7 +16,7 @@ use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\SelectQuery;
 use Greg\Orm\Query\UpdateQuery;
 
-interface ConnectionStrategy
+interface ConnectionStrategy extends SqlConnection
 {
     /**
      * @param callable $callable
@@ -46,14 +46,6 @@ interface ConnectionStrategy
     public function rollBack(): bool;
 
     /**
-     * @param string $sql
-     * @param array  $params
-     *
-     * @return int
-     */
-    public function execute(string $sql, array $params = []): int;
-
-    /**
      * @param string|null $sequenceId
      *
      * @return string
@@ -66,58 +58,6 @@ interface ConnectionStrategy
      * @return string
      */
     public function quote(string $value): string;
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     *
-     * @return string[]
-     */
-    public function sqlFetch(string $sql, array $params = []): ?array;
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     *
-     * @return string[][]
-     */
-    public function sqlFetchAll(string $sql, array $params = []): array;
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     *
-     * @return string[][]|\Generator
-     */
-    public function sqlGenerate(string $sql, array $params = []): \Generator;
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     * @param string $column
-     *
-     * @return string
-     */
-    public function sqlFetchColumn(string $sql, array $params = [], string $column = '0');
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     * @param string $column
-     *
-     * @return string[]
-     */
-    public function sqlFetchAllColumn(string $sql, array $params = [], string $column = '0'): array;
-
-    /**
-     * @param string $sql
-     * @param array  $params
-     * @param string $key
-     * @param string $value
-     *
-     * @return string[]
-     */
-    public function sqlFetchPairs(string $sql, array $params = [], string $key = '0', string $value = '1'): array;
 
     /**
      * @return SqlDialectStrategy

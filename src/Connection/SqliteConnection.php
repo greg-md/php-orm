@@ -41,7 +41,7 @@ class SqliteConnection extends PdoConnectionAbstract
      */
     public function truncate(string $tableName): int
     {
-        return $this->execute('TRUNCATE ' . $this->dialect()->quoteTable($tableName));
+        return $this->sqlExecute('TRUNCATE ' . $this->dialect()->quoteTable($tableName));
     }
 
     protected function describeTable(string $tableName): array

@@ -66,7 +66,7 @@ abstract class PdoConnectionAbstract extends ConnectionAbstract
      *
      * @return int
      */
-    public function execute(string $sql, array $params = []): int
+    public function sqlExecute(string $sql, array $params = []): int
     {
         return $this->prepare($sql, $params)->rowCount();
     }
