@@ -419,7 +419,7 @@ trait SelectTableQueryTrait
         return $this;
     }
 
-    private function selectQueryInstance()
+    protected function selectQueryInstance()
     {
         if ($query = $this->getNewSelectQuery()) {
             return $this->cleanClone()->setQuery($query);

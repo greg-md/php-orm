@@ -98,7 +98,7 @@ trait DeleteTableQueryTrait
     /**
      * @return $this
      */
-    private function deleteQueryInstance()
+    protected function deleteQueryInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateDeleteQuery($query);

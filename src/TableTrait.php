@@ -507,7 +507,7 @@ trait TableTrait
         return array_merge($this->defaultRecord, $this->customRecord, $record);
     }
 
-    private function castValue(string $columnName, $value)
+    protected function castValue(string $columnName, $value)
     {
         if (is_null($value)) {
             return $value;

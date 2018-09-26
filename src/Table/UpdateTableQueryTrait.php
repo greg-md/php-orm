@@ -195,7 +195,7 @@ trait UpdateTableQueryTrait
         return $query;
     }
 
-    private function updateQueryInstance()
+    protected function updateQueryInstance()
     {
         if ($query = $this->getQuery()) {
             $this->validateUpdateQuery($query);

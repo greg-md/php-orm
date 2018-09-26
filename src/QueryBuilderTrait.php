@@ -306,7 +306,7 @@ trait QueryBuilderTrait
             || $this->offsetAppliers;
     }
 
-    private function transferAppliersTo(Model $model)
+    private function transferAppliersTo(ModelAbstract $model)
     {
         if ($this->fromAppliers) {
             $model->setFromAppliers($this->fromAppliers);

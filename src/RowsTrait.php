@@ -3,11 +3,14 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Clause\WhereClause;
+use Greg\Orm\Connection\ConnectionStrategy;
+use Greg\Orm\Query\DeleteQuery;
+use Greg\Orm\Query\InsertQuery;
+use Greg\Orm\Query\SelectQuery;
+use Greg\Orm\Query\UpdateQuery;
 
 trait RowsTrait
 {
-    use TableTrait;
-
     protected $fillable = '*';
 
     protected $guarded = [];
@@ -610,4 +613,36 @@ trait RowsTrait
 
         return $items;
     }
+
+    /**
+     * @return $this
+     */
+    abstract protected function selectQueryInstance();
+
+    /**
+     * @param int $number
+     * @return $this
+     */
+    abstract public function limit(int $number);
+
+    /**
+     * @param int $number
+     * @return $this
+     */
+    abstract public function offset(int $number);
+
+    abstract public function getSelectQuery(): ?SelectQuery;
+
+    abstract public function connection(): ConnectionStrategy;
+
+    abstract public function newInsertQuery(): InsertQuery;
+
+    abstract public function newUpdateQuery(): UpdateQuery;
+
+    abstract public function newDeleteQuery(): DeleteQuery;
+
+    /**
+     * @return $this
+     */
+    abstract public function cleanClone();
 }
