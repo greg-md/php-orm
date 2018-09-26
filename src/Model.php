@@ -82,16 +82,12 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
     public function serialize()
     {
         return serialize([
-            $this->prefix,
             $this->alias,
-            $this->label,
-            $this->columns,
-            $this->primary,
+            $this->primaryKey,
             $this->autoIncrement,
             $this->unique,
-            $this->nameColumn,
             $this->casts,
-            $this->defaults,
+            $this->customRecord,
 
             $this->fillable,
             $this->guarded,
@@ -105,16 +101,12 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
     public function unserialize($serialized)
     {
         [
-            $this->prefix,
             $this->alias,
-            $this->label,
-            $this->columns,
-            $this->primary,
+            $this->primaryKey,
             $this->autoIncrement,
             $this->unique,
-            $this->nameColumn,
             $this->casts,
-            $this->defaults,
+            $this->customRecord,
 
             $this->fillable,
             $this->guarded,
@@ -133,7 +125,9 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
     private function bootTraits()
     {
         foreach ($this->usesRecursive(static::class, self::class) as $trait) {
-            if (method_exists($this, $method = 'boot' . $this->baseName($trait))) {
+            $baseName = (new \ReflectionClass($trait))->getShortName();
+
+            if (method_exists($this, $method = 'boot' . $baseName)) {
                 call_user_func_array([$this, $method], []);
             }
         }
@@ -165,10 +159,5 @@ abstract class Model implements \IteratorAggregate, \Countable, \ArrayAccess, \S
         }
 
         return array_unique($results);
-    }
-
-    private function baseName($class)
-    {
-        return basename(str_replace('\\', '/', is_object($class) ? get_class($class) : $class));
     }
 }

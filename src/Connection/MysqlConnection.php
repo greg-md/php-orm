@@ -44,7 +44,7 @@ class MysqlConnection extends PdoConnectionAbstract
         return $this->sqlExecute('TRUNCATE ' . $this->dialect->quoteTable($tableName));
     }
 
-    protected function describeTable(string $tableName): array
+    public function describe(string $tableName): array
     {
         $records = $this->sqlFetchAll('DESCRIBE ' . $this->dialect->quoteTable($tableName));
 

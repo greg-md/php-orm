@@ -10,25 +10,21 @@ trait TableTrait
 
     protected $name;
 
-    protected $prefix;
-
     protected $alias;
 
-    protected $label;
+    protected $primaryKey;
 
-    private $columns = false;
-
-    private $primary = false;
-
-    private $autoIncrement = false;
+    protected $autoIncrement;
 
     protected $unique = [];
 
-    protected $nameColumn;
-
     protected $casts = [];
 
-    protected $defaults = [];
+    protected $defaultRecord = [];
+
+    protected $customRecord = [];
+
+    private $tableInitEvents = [];
 
     public function name(): string
     {
@@ -39,62 +35,43 @@ trait TableTrait
         return $this->name;
     }
 
-    public function prefix(): ?string
-    {
-        return $this->prefix;
-    }
-
-    public function fullName(): string
-    {
-        return $this->prefix() . $this->name();
-    }
-
     public function alias(): ?string
     {
+        $this->prepareTableInfo();
+
         return $this->alias;
     }
 
-    public function label(): ?string
+    public function primaryKey(): ?array
     {
-        return $this->label;
+        $this->prepareTableInfo();
+
+        return $this->primaryKey;
     }
 
-    public function columns(): array
+    public function autoIncrement(): ?string
     {
-        if ($this->columns === false) {
-            $this->loadSchema();
-        }
+        $this->prepareTableInfo();
 
-        return (array) $this->columns;
+        return $this->autoIncrement;
     }
 
-    public function hasColumn(string $name): bool
+    public function defaultRecord(): array
     {
-        if ($this->columns === false) {
-            $this->loadSchema();
-        }
+        $this->prepareTableInfo();
 
-        return isset($this->columns[$name]);
+        return $this->autoIncrement;
     }
 
-    public function column(string $name): array
+    public function customRecord(): array
     {
-        $this->validateColumn($name);
-
-        return $this->columns[$name];
+        return $this->autoIncrement;
     }
 
-    public function primary(): array
+    public function uniqueKeys(): array
     {
-        if ($this->primary === false) {
-            $this->loadSchema();
-        }
+        $this->prepareTableInfo();
 
-        return (array) $this->primary;
-    }
-
-    public function unique(): array
-    {
         $keys = (array) $this->unique;
 
         foreach ($keys as &$key) {
@@ -105,9 +82,9 @@ trait TableTrait
         return $keys;
     }
 
-    public function firstUnique(): array
+    public function firstUniqueKey(): array
     {
-        if ($primary = $this->primary()) {
+        if ($primary = $this->primaryKey()) {
             return $primary;
         }
 
@@ -118,20 +95,6 @@ trait TableTrait
         }
 
         throw new \Exception('No unique keys found in `' . $this->name() . '`.');
-    }
-
-    public function autoIncrement(): ?string
-    {
-        if ($this->autoIncrement === false) {
-            $this->loadSchema();
-        }
-
-        return $this->autoIncrement;
-    }
-
-    public function nameColumn(): ?string
-    {
-        return $this->nameColumn;
     }
 
     public function casts(): array
@@ -145,25 +108,25 @@ trait TableTrait
     }
 
     /**
-     * @param array $defaults
+     * @param array $customRecord
      *
      * @return $this
      */
-    public function setDefaults(array $defaults)
+    public function setCustomRecord(array $customRecord)
     {
-        $this->defaults = $defaults;
+        $this->customRecord = $customRecord;
 
         return $this;
     }
 
-    public function getDefaults(): array
+    public function getCustomRecord(): array
     {
-        return $this->defaults;
+        return $this->customRecord;
     }
 
     public function describe(): array
     {
-        return $this->connection()->describe($this->fullName());
+        return $this->connection()->describe($this->name());
     }
 
     /**
@@ -174,8 +137,6 @@ trait TableTrait
     public function new(array $record = [])
     {
         $record = $this->prepareRecord($record);
-
-        $record = array_merge($this->defaultRecord(), $record);
 
         return $this->cleanClone()->addPristineRecord($record)->markAsNew();
     }
@@ -449,27 +410,6 @@ trait TableTrait
         return $row;
     }
 
-    /**
-     * @throws SqlException
-     *
-     * @return array
-     */
-    public function pairs()
-    {
-        if (!$columnName = $this->nameColumn()) {
-            throw new SqlException('Undefined column name for table `' . $this->name() . '`.');
-        }
-
-        if ($this->hasSelect()) {
-            throw new SqlException('You cannot select table pairs while you have custom SELECT columns.');
-        }
-
-        return $this
-            ->selectConcat($this->firstUnique(), ':')
-            ->selectColumn($columnName)
-            ->fetchPairs();
-    }
-
     public function exists(): bool
     {
         return (bool) $this->clearSelect()->selectRaw(1)->limit(1)->fetchColumn();
@@ -484,7 +424,7 @@ trait TableTrait
 
     public function insert(array $data): int
     {
-        $data = array_merge($data, $this->defaults);
+        $data = array_merge($data, $this->customRecord);
 
         [$sql, $params] = $this->newInsertQuery()->data($data)->toSql();
 
@@ -493,12 +433,12 @@ trait TableTrait
 
     public function insertSelect(array $columns, SelectQuery $query): int
     {
-        $columns = array_unique(array_merge($columns, array_keys($this->defaults)));
+        $columns = array_unique(array_merge($columns, array_keys($this->customRecord)));
 
-        if ($this->defaults) {
+        if ($this->customRecord) {
             $query = clone $query;
 
-            foreach ($this->defaults as $column => $value) {
+            foreach ($this->customRecord as $column => $value) {
                 $query->columnRaw('? as ' . $this->connection()->dialect()->quoteName($column), $value);
             }
         }
@@ -518,7 +458,7 @@ trait TableTrait
      */
     public function insertSelectRaw(array $columns, string $sql, string ...$params): int
     {
-        $columns = array_unique(array_merge($columns, array_keys($this->defaults)));
+        $columns = array_unique(array_merge($columns, array_keys($this->customRecord)));
 
         [$sql, $params] = $this->newInsertQuery()->columns($columns)->selectRaw($sql, ...$params)->toSql();
 
@@ -559,69 +499,12 @@ trait TableTrait
 
     public function truncate()
     {
-        return $this->connection()->truncate($this->fullName());
+        return $this->connection()->truncate($this->name());
     }
 
-    public function prepareRecord(array $record, $reverse = false): array
+    private function prepareRecord(array $record): array
     {
-        foreach ($record as $columnName => &$value) {
-            $value = $this->prepareValue($columnName, $value, $reverse);
-        }
-        unset($value);
-
-        return $record;
-    }
-
-    public function prepareValue(string $columnName, $value, bool $reverse = false)
-    {
-        $column = $this->column($columnName);
-
-        if ($value === '') {
-            $value = null;
-        }
-
-        if (!$column['null']) {
-            $value = (string) $value;
-        }
-
-        if ($value === null) {
-            return $value;
-        }
-
-        if ($column['extra']['isInt'] and (!$column['null'] or $value !== null)) {
-            $value = (int) $value;
-        }
-
-        if ($column['extra']['isFloat'] and (!$column['null'] or $value !== null)) {
-            $value = (float) $value;
-        }
-
-        switch ($this->cast($columnName) ?: $column['type']) {
-            case 'datetime':
-            case 'timestamp':
-                $value = $this->connection()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
-
-                break;
-            case 'date':
-                $value = $this->connection()->dialect()->dateString($value);
-
-                break;
-            case 'time':
-                $value = $this->connection()->dialect()->timeString($value);
-
-                break;
-            case 'bool':
-            case 'boolean':
-                $value = (bool) $value;
-
-                break;
-            case 'array':
-                $value = $reverse ? json_encode($value) : json_decode($value, true);
-
-                break;
-        }
-
-        return $value;
+        return array_merge($this->defaultRecord, $this->customRecord, $record);
     }
 
     private function castValue(string $columnName, $value)
@@ -670,71 +553,17 @@ trait TableTrait
         }
     }
 
-    private function validateColumn(string $name)
-    {
-        if ($this->columns === false) {
-            $this->loadSchema();
-        }
-
-        if (!isset($this->columns[$name])) {
-            throw new \Exception('Column `' . $name . '` not found in table `' . $this->name() . '`.');
-        }
-
-        return $this;
-    }
-
-    private function defaultRecord(): array
-    {
-        $record = [];
-
-        foreach ($this->columns() as $column) {
-            $record[$column['name']] = $column['default'];
-        }
-
-        return $record;
-    }
-
     private function combinePrimary($value)
     {
         $value = (array) $value;
 
-        $keys = $this->primary();
+        $keys = $this->primaryKey();
 
         if (count($keys) !== count($value)) {
             throw new \Exception('Unique keys count should be the same as values count.');
         }
 
         return array_combine($keys, $value);
-    }
-
-    private function loadSchema()
-    {
-        $schema = (array) $this->describe() + [
-            'columns' => [],
-            'primary' => [],
-        ];
-
-        if ($this->columns === false) {
-            $this->columns = $schema['columns'];
-        }
-
-        if ($this->primary === false) {
-            $this->primary = $schema['primary'];
-        }
-
-        if ($this->autoIncrement === false) {
-            $this->autoIncrement = null;
-
-            foreach ($schema['columns'] as $column) {
-                if ($column['extra']['autoIncrement'] ?? false) {
-                    $this->autoIncrement = $column['name'];
-
-                    break;
-                }
-            }
-        }
-
-        return $this;
     }
 
     private function rowsQueryInstance()
@@ -762,5 +591,21 @@ trait TableTrait
         }
 
         return [$this->connection()->dialect()->selectAll($this->name()), []];
+    }
+
+    protected function onTableInit(callable $callable)
+    {
+        $this->tableInitEvents[] = $callable;
+
+        return $this;
+    }
+
+    private function prepareTableInfo()
+    {
+        foreach ($this->tableInitEvents as $event) {
+            call_user_func_array($event, []);
+        }
+
+        return $this;
     }
 }

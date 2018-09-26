@@ -12,6 +12,7 @@ use Greg\Orm\Clause\OrderByClause;
 use Greg\Orm\Clause\WhereClause;
 use Greg\Orm\Connection\ConnectionStrategy;
 use Greg\Orm\Dialect\SqlDialect;
+use Greg\Orm\Model\TableSchemaTrait;
 use Greg\Orm\Query\DeleteQuery;
 use Greg\Orm\Query\InsertQuery;
 use Greg\Orm\Query\QueryStrategy;
@@ -30,6 +31,33 @@ use Greg\Orm\Table\UpdateTableQueryTraitTest;
 use Greg\Orm\Table\WhereTableClauseTraitTest;
 use PHPUnit\Framework\TestCase;
 
+class MyModel extends Model {
+    use TableSchemaTrait;
+
+    protected $unique = [
+        'SystemName',
+    ];
+
+    protected $casts = [
+        'Active' => 'bool',
+    ];
+
+    public function name(): string
+    {
+        return 'Table';
+    }
+
+    protected function getActiveAttribute()
+    {
+        return $this['Active'];
+    }
+
+    protected function setActiveAttribute($value)
+    {
+        $this['Active'] = $value;
+    }
+}
+
 class ModelTest extends TestCase
 {
     use DeleteTableQueryTraitTest,
@@ -45,7 +73,7 @@ class ModelTest extends TestCase
         WhereTableClauseTraitTest;
 
     /**
-     * @var Model
+     * @var MyModel
      */
     protected $model;
 
@@ -66,34 +94,9 @@ class ModelTest extends TestCase
 
         $this->connectionMock->method('dialect')->willReturn(new SqlDialect());
 
-        $this->model = new class($connectionMock) extends Model {
-            protected $label = 'My Table';
+        $this->mockDescribe();
 
-            protected $nameColumn = 'Name';
-
-            protected $unique = [
-                'SystemName',
-            ];
-
-            protected $casts = [
-                'Active' => 'bool',
-            ];
-
-            public function name(): string
-            {
-                return 'Table';
-            }
-
-            protected function getActiveAttribute()
-            {
-                return $this['Active'];
-            }
-
-            protected function setActiveAttribute($value)
-            {
-                $this['Active'] = $value;
-            }
-        };
+        $this->model = new MyModel($this->connectionMock);
     }
 
     public function testCanManageQuery()
@@ -193,11 +196,6 @@ class ModelTest extends TestCase
         $this->assertFalse($query->hasClause('WHERE'));
     }
 
-    public function testCanGetLabel()
-    {
-        $this->assertEquals('My Table', $this->model->label());
-    }
-
     public function testCanGetFillable()
     {
         $this->assertEquals('*', $this->model->fillable());
@@ -207,19 +205,19 @@ class ModelTest extends TestCase
     {
         $this->mockDescribe();
 
-        $this->assertEquals(['Id'], $this->model->primary());
+        $this->assertEquals(['Id'], $this->model->primaryKey());
     }
 
     public function testCanGetUnique()
     {
-        $this->assertEquals([['SystemName']], $this->model->unique());
+        $this->assertEquals([['SystemName']], $this->model->uniqueKeys());
     }
 
     public function testCanGetFirstUnique()
     {
         $this->mockDescribe();
 
-        $this->assertEquals(['Id'], $this->model->firstUnique());
+        $this->assertEquals(['Id'], $this->model->firstUniqueKey());
     }
 
     public function testCanGetAutoIncrement()
@@ -227,11 +225,6 @@ class ModelTest extends TestCase
         $this->mockDescribe();
 
         $this->assertEquals('Id', $this->model->autoIncrement());
-    }
-
-    public function testCanGetNameColumn()
-    {
-        $this->assertEquals('Name', $this->model->nameColumn());
     }
 
     public function testCanGetCasts()
@@ -242,43 +235,6 @@ class ModelTest extends TestCase
     public function testCanGetCast()
     {
         $this->assertEquals('bool', $this->model->cast('Active'));
-    }
-
-    public function testCanSelectPairs()
-    {
-        $this->mockDescribe();
-
-        $this->connectionMock->method('sqlFetchPairs')->willReturn([1 => 1, 2 => 2]);
-
-        $this->assertEquals([1 => 1, 2 => 2], $this->model->pairs());
-    }
-
-    public function testCanThrowExceptionIfCanNotSelectPairs()
-    {
-        $connectionMock = $this->connectionMock;
-
-        /** @var Model $model */
-        $model = new class($connectionMock) extends Model {
-            public function name(): string
-            {
-                return 'Table';
-            }
-        };
-
-        $this->expectException(\Exception::class);
-
-        $model->pairs();
-    }
-
-    public function testCanThrowExceptionIfCanNotSelectPairsWhenCustomSelect()
-    {
-        $this->mockDescribe();
-
-        $query = $this->model->select(1);
-
-        $this->expectException(\Exception::class);
-
-        $query->pairs();
     }
 
     public function testCanGetFirstByCallable()
@@ -623,11 +579,11 @@ class ModelTest extends TestCase
 
     public function testCanSetDefaults()
     {
-        $this->assertCount(0, $this->model->getDefaults());
+        $this->assertCount(0, $this->model->getCustomRecord());
 
-        $this->model->setDefaults(['Active' => 1]);
+        $this->model->setCustomRecord(['Active' => 1]);
 
-        $this->assertCount(1, $this->model->getDefaults());
+        $this->assertCount(1, $this->model->getCustomRecord());
     }
 
     public function testCanInsert()
@@ -641,7 +597,7 @@ class ModelTest extends TestCase
     {
         $this->connectionMock->method('sqlExecute')->willReturn(1);
 
-        $this->model->setDefaults(['Foo' => 'bar']);
+        $this->model->setCustomRecord(['Foo' => 'bar']);
 
         $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->connectionMock->select()->columns('Column')));
     }
@@ -770,7 +726,7 @@ class ModelTest extends TestCase
             }
         };
 
-        $this->assertEquals(['Id'], $model->firstUnique());
+        $this->assertEquals(['Id'], $model->firstUniqueKey());
     }
 
     public function testCanThrowExceptionIfFirstUniqueNotFound()
@@ -794,7 +750,7 @@ class ModelTest extends TestCase
 
         $this->expectException(\Exception::class);
 
-        $model->firstUnique();
+        $model->firstUniqueKey();
     }
 
     public function testCanCreateNewRowUsingCreateMethod()
@@ -1231,142 +1187,6 @@ class ModelTest extends TestCase
         $this->assertEquals('18:00:00', $row['Foo']);
     }
 
-    public function testCanFetchRowAndTransformToBooleanValue()
-    {
-        $this->model = new class($this->connectionMock) extends Model {
-            protected $label = 'My Table';
-
-            protected $nameColumn = 'Name';
-
-            protected $unique = [
-                'SystemName',
-            ];
-
-            protected $casts = [
-                'Active' => 'bool',
-                'Foo'    => 'boolean',
-            ];
-
-            public function name(): string
-            {
-                return 'Table';
-            }
-
-            protected function getActiveAttribute()
-            {
-                return $this['Active'];
-            }
-
-            protected function setActiveAttribute($value)
-            {
-                $this['Active'] = $value;
-            }
-        };
-
-        $this->connectionMock->method('describe')->willReturn([
-            'columns' => [
-                'Id' => [
-                    'name'    => 'Id',
-                    'type'    => 'int',
-                    'null'    => false,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => true,
-                    ],
-                ],
-                'Foo' => [
-                    'name'    => 'Foo',
-                    'type'    => 'tinyint',
-                    'null'    => true,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => false,
-                    ],
-                ],
-            ],
-            'primary' => [
-                'Id',
-            ],
-        ]);
-
-        $this->assertTrue($this->model->prepareValue('Foo', 1));
-    }
-
-    public function testCanFetchRowAndTransformToArrayValue()
-    {
-        $this->model = new class($this->connectionMock) extends Model {
-            protected $label = 'My Table';
-
-            protected $nameColumn = 'Name';
-
-            protected $unique = [
-                'SystemName',
-            ];
-
-            protected $casts = [
-                'Active' => 'bool',
-                'Foo'    => 'array',
-            ];
-
-            public function name(): string
-            {
-                return 'Table';
-            }
-
-            protected function getActiveAttribute()
-            {
-                return $this['Active'];
-            }
-
-            protected function setActiveAttribute($value)
-            {
-                $this['Active'] = $value;
-            }
-        };
-
-        $this->connectionMock->method('describe')->willReturn([
-            'columns' => [
-                'Id' => [
-                    'name'    => 'Id',
-                    'type'    => 'int',
-                    'null'    => false,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => true,
-                    ],
-                ],
-                'Foo' => [
-                    'name'    => 'Foo',
-                    'type'    => 'string',
-                    'null'    => true,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => false,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => false,
-                    ],
-                ],
-            ],
-            'primary' => [
-                'Id',
-            ],
-        ]);
-
-        $this->assertEquals($value = ['Foo' => 'bar'], $this->model->prepareValue('Foo', json_encode($value)));
-
-        $this->assertEquals(json_encode($value), $this->model->prepareValue('Foo', $value, true));
-    }
-
     public function testCanDetermineIfModelRowsHasColumn()
     {
         $this->mockDescribe();
@@ -1604,41 +1424,6 @@ class ModelTest extends TestCase
         $row['Id'] = 2;
     }
 
-    public function testCanGetCustomAttribute()
-    {
-        $this->connectionMock->method('describe')->willReturn([
-            'columns' => [
-                'Active' => [
-                    'name'    => 'Active',
-                    'type'    => 'tinyint',
-                    'null'    => false,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => false,
-                    ],
-                ],
-            ],
-            'primary' => [],
-        ]);
-
-        $row = $this->model->create(['Active' => true]);
-
-        $this->assertTrue($row['Active']);
-
-        $row['Active'] = false;
-
-        $this->assertFalse($row['Active']);
-
-        $this->assertFalse($row->get('Active')[0]);
-
-        $row->set('Active', true);
-
-        $this->assertTrue($row->get('Active')[0]);
-    }
-
     protected function model(): Model
     {
         return $this->model;
@@ -1651,25 +1436,27 @@ class ModelTest extends TestCase
 
     protected function mockDescribe()
     {
-        $this->connectionMock->method('describe')->willReturn([
-            'columns' => [
-                'Id' => [
-                    'name'    => 'Id',
-                    'type'    => 'int',
-                    'null'    => false,
-                    'default' => null,
-                    'extra'   => [
-                        'isInt'         => true,
-                        'isFloat'       => false,
-                        'isNumeric'     => false,
-                        'autoIncrement' => true,
+        $this->connectionMock
+            ->method('describe')
+            ->willReturn([
+                'columns' => [
+                    'Id' => [
+                        'name'    => 'Id',
+                        'type'    => 'int',
+                        'null'    => false,
+                        'default' => null,
+                        'extra'   => [
+                            'isInt'         => true,
+                            'isFloat'       => false,
+                            'isNumeric'     => false,
+                            'autoIncrement' => true,
+                        ],
                     ],
                 ],
-            ],
-            'primary' => [
-                'Id',
-            ],
-        ]);
+                'primary' => [
+                    'Id',
+                ],
+            ]);
     }
 
     protected function connectionSql()

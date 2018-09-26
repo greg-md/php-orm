@@ -180,8 +180,6 @@ trait RowsTrait
 
         $this->validateFillableColumn($column);
 
-        $value = $this->prepareValue($column, $value);
-
         foreach (array_keys($this->rows) as $key) {
             $this->setInRow($key, $column, $value);
         }
@@ -216,8 +214,6 @@ trait RowsTrait
             return $values;
         }
 
-        $this->validateColumn($column);
-
         $values = [];
 
         foreach (array_keys($this->rows) as $key) {
@@ -249,9 +245,7 @@ trait RowsTrait
 
         foreach ($this->rows as $key => &$row) {
             if ($this->rowStateIsNew($key)) {
-                $record = $this->prepareRecord($row, true);
-
-                $query = $this->newInsertQuery()->data($record);
+                $query = $this->newInsertQuery()->data($row);
 
                 $this->connection()->sqlExecute(...$query->toSql());
 
@@ -262,10 +256,6 @@ trait RowsTrait
                 unset($this->rowsState[$key]);
             } else {
                 $modified = $this->rowStateGetModified($key);
-
-                if ($modified) {
-                    $modified = $this->prepareRecord($modified, true);
-                }
 
                 if ($modified) {
                     $query = $this->newUpdateQuery()
@@ -301,7 +291,7 @@ trait RowsTrait
         }
 
         if ($keys) {
-            [$sql, $params] = $this->newDeleteQuery()->where($this->firstUnique(), $keys)->toSql();
+            [$sql, $params] = $this->newDeleteQuery()->where($this->firstUniqueKey(), $keys)->toSql();
 
             $this->connection()->sqlExecute($sql, $params);
         }
@@ -424,7 +414,7 @@ trait RowsTrait
             $relationshipKey = (array) $relationshipKey;
 
             if (!$tableKey) {
-                $tableKey = $this->primary();
+                $tableKey = $this->primaryKey();
             }
 
             $tableKey = (array) $tableKey;
@@ -437,7 +427,7 @@ trait RowsTrait
 
             $filters = array_combine($relationshipKey, $this->getFirstMultiple($tableKey));
 
-            $relationshipTable->setDefaults($filters);
+            $relationshipTable->setCustomRecord($filters);
         }
 
         return $relationshipTable;
@@ -457,7 +447,7 @@ trait RowsTrait
         $tableKey = (array) $tableKey;
 
         if (!$referenceTableKey) {
-            $referenceTableKey = $referenceTable->primary();
+            $referenceTableKey = $referenceTable->primaryKey();
         }
 
         $referenceTableKey = (array) $referenceTableKey;
@@ -472,7 +462,7 @@ trait RowsTrait
 
         $filters = array_combine($referenceTableKey, $this->getFirstMultiple($tableKey));
 
-        $referenceTable->setDefaults($filters);
+        $referenceTable->setCustomRecord($filters);
 
         return $referenceTable;
     }
@@ -546,7 +536,7 @@ trait RowsTrait
     {
         $keys = [];
 
-        foreach ($this->firstUnique() as $key) {
+        foreach ($this->firstUniqueKey() as $key) {
             $keys[$key] = $row[$key];
         }
 
@@ -570,8 +560,6 @@ trait RowsTrait
 
     private function validateFillableColumn(string $column)
     {
-        $this->validateColumn($column);
-
         if (($this->fillable !== '*' and !in_array($column, (array) $this->fillable))
             or ($this->guarded === '*' or in_array($column, (array) $this->guarded))) {
             throw new \Exception('Column `' . $column . '` is not fillable in the row.');

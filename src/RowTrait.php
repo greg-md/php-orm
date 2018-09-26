@@ -44,7 +44,7 @@ trait RowTrait
     {
         $keys = [];
 
-        foreach ($this->primary() as $key) {
+        foreach ($this->primaryKey() as $key) {
             $keys[$key] = $this[$key];
         }
 
@@ -60,7 +60,7 @@ trait RowTrait
      */
     public function setPrimary($value)
     {
-        if (!$keys = $this->primary()) {
+        if (!$keys = $this->primaryKey()) {
             throw new \Exception('Primary keys not defined for table `' . $this->name() . '`');
         }
 
@@ -79,7 +79,7 @@ trait RowTrait
     {
         $allValues = [];
 
-        foreach ($this->unique() as $name => $keys) {
+        foreach ($this->uniqueKeys() as $name => $keys) {
             $values = [];
 
             foreach ($keys as $key) {
@@ -104,12 +104,12 @@ trait RowTrait
 
     public function original(): array
     {
-        return $this->prepareRecord($this->firstRow(), true);
+        return $this->firstRow();
     }
 
     public function originalModified(): array
     {
-        return $this->prepareRecord($this->rowStateGetModified($this->firstRowKey()), true);
+        return $this->rowStateGetModified($this->firstRowKey());
     }
 
     public function offsetExists($offset): bool
@@ -151,7 +151,7 @@ trait RowTrait
     {
         $method = $this->getAttributeSetMethod($column);
 
-        if (method_exists($this, $method) and !isset($this->mutatorTracer[$column])) { // and !$this->methodWasCalled($this, $method)
+        if (method_exists($this, $method) and !isset($this->mutatorTracer[$column])) {
             $this->mutatorTracer[$column] = true;
 
             $this->{$method}($value);
@@ -168,8 +168,6 @@ trait RowTrait
     {
         $this->validateFillableColumn($column);
 
-        $value = $this->prepareValue($column, $value);
-
         $this->setInRow($this->firstRowKey(), $column, $value);
 
         return $this;
@@ -179,10 +177,10 @@ trait RowTrait
     {
         $method = $this->getAttributeGetMethod($column);
 
-        if (method_exists($this, $method) and !isset($this->mutatorTracer[$column])) { // and !$this->methodWasCalled($this, $method)
+        if (method_exists($this, $method) and !isset($this->mutatorTracer[$column])) {
             $this->mutatorTracer[$column] = true;
 
-            $value = $this->hasColumn($column) ? $this->{$method}($this->getFirstRow($column)) : $this->{$method}();
+            $value = $this->hasFirst($column) ? $this->{$method}($this->getFirstRow($column)) : $this->{$method}();
 
             unset($this->mutatorTracer[$column]);
 
@@ -194,25 +192,6 @@ trait RowTrait
 
     private function getFirstRow(string $column)
     {
-        $this->validateColumn($column);
-
         return $this->getFromRow($this->firstRowKey(), $column);
     }
-
-//    private function methodWasCalled($object, $method, $times = 1): bool
-//    {
-//        $k = 0;
-//
-//        foreach (debug_backtrace() as $item) {
-//            if (isset($item['object']) and $item['object'] === $object and $item['function'] === $method) {
-//                $k++;
-//            }
-//
-//            if ($k >= $times) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
 }

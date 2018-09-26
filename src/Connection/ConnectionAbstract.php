@@ -22,8 +22,6 @@ abstract class ConnectionAbstract implements ConnectionStrategy
      */
     private $listeners = [];
 
-    private $descriptions = [];
-
     /**
      * @param callable $callable
      *
@@ -34,15 +32,6 @@ abstract class ConnectionAbstract implements ConnectionStrategy
         $this->listeners[] = $callable;
 
         return $this;
-    }
-
-    public function describe(string $tableName, bool $force = false): array
-    {
-        if ($force or !array_key_exists($tableName, $this->descriptions)) {
-            $this->descriptions[$tableName] = $this->describeTable($tableName);
-        }
-
-        return $this->descriptions[$tableName];
     }
 
     /**
@@ -156,5 +145,5 @@ abstract class ConnectionAbstract implements ConnectionStrategy
         return $this;
     }
 
-    abstract protected function describeTable(string $tableName): array;
+    abstract public function describe(string $tableName): array;
 }

@@ -83,7 +83,7 @@ class SqlDialect implements SqlDialectStrategy
     public function parseTable($name): array
     {
         if ($name instanceof Model) {
-            return [$name->alias(), $name->fullName()];
+            return [$name->alias(), $name->name()];
         }
 
         if (is_array($name)) {

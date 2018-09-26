@@ -299,9 +299,9 @@ class ConnectionManager implements ConnectionStrategy
      *
      * @return array
      */
-    public function describe(string $tableName, bool $force = false): array
+    public function describe(string $tableName): array
     {
-        return $this->connection()->describe($tableName, $force);
+        return $this->connection()->describe($tableName);
     }
 
     /**

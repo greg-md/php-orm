@@ -84,7 +84,7 @@ interface ConnectionStrategy extends SqlConnection
      *
      * @return array
      */
-    public function describe(string $tableName, bool $force = false): array;
+    public function describe(string $tableName): array;
 
     /**
      * @return SelectQuery
