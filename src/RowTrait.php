@@ -40,7 +40,7 @@ trait RowTrait
         return $this;
     }
 
-    public function getPrimary(): array
+    public function getPrimaryKey(): array
     {
         $keys = [];
 
@@ -58,7 +58,7 @@ trait RowTrait
      *
      * @return $this
      */
-    public function setPrimary($value)
+    public function setPrimaryKey($value)
     {
         if (!$keys = $this->primaryKey()) {
             throw new \Exception('Primary keys not defined for table `' . $this->name() . '`');
@@ -75,7 +75,7 @@ trait RowTrait
         return $this;
     }
 
-    public function getUnique(): array
+    public function getUniqueKey(): array
     {
         $allValues = [];
 
@@ -92,7 +92,7 @@ trait RowTrait
         return $allValues;
     }
 
-    public function getFirstUnique(): array
+    public function getFirstUniqueKey(): array
     {
         return $this->rowFirstUnique($this->firstRow());
     }

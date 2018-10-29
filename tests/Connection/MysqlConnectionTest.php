@@ -206,9 +206,10 @@ class MysqlConnectionTest extends TestCase
         $this->mockStatements();
 
         $this->pdoStatementMock
-            ->expects($this->exactly(3))
-            ->method('fetchColumn')
-            ->willReturnOnConsecutiveCalls(1, 1, false);
+            ->expects($this->once())
+            ->method('fetchAll')
+            ->with(\PDO::FETCH_COLUMN, 0)
+            ->willReturn([1, 1]);
 
         $this->assertEquals([1, 1], $this->connection->sqlFetchAllColumn('SELECT foo', [], 0));
     }

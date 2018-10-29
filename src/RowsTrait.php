@@ -11,6 +11,12 @@ use Greg\Orm\Query\UpdateQuery;
 
 trait RowsTrait
 {
+    protected $casts = [];
+
+    protected $uncasts = [];
+
+    protected $defaultRecord = [];
+
     protected $fillable = '*';
 
     protected $guarded = [];
@@ -24,6 +30,144 @@ trait RowsTrait
     private $rowsLimit = 0;
 
     private $rowsState = [];
+
+    public function defaultRecord(): array
+    {
+        return $this->defaultRecord;
+    }
+
+    /**
+     * @param array $record
+     *
+     * @return $this
+     */
+    public function new(array $record = [])
+    {
+        $record = $this->prepareBaseRecord($record);
+
+        return $this->cleanClone()->addPristineRecord($record, ['isCasted' => true])->markAsNew();
+    }
+
+    /**
+     * @param array $record
+     *
+     * @return $this
+     */
+    public function create(array $record = [])
+    {
+        return $this->new($record)->save();
+    }
+
+    public function insert(array $record): int
+    {
+        $record = $this->prepareBaseRecord($record);
+
+        return parent::insert($record);
+    }
+
+    public function fetchRow()
+    {
+        [$sql, $params] = $this->rowsQueryInstanceToSql();
+
+        if ($record = $this->connection()->sqlFetch($sql, $params)) {
+            return $this->prepareRowInstance($record);
+        }
+
+        return null;
+    }
+
+    public function fetchRowOrFail()
+    {
+        if (!$row = $this->fetchRow()) {
+            throw new SqlException('Row was not found.');
+        }
+
+        return $row;
+    }
+
+    public function fetchRows()
+    {
+        [$sql, $params] = $this->rowsQueryInstanceToSql();
+
+        $records = $this->connection()->sqlFetchAll($sql, $params);
+
+        return $this->prepareRowsInstance($records);
+    }
+
+    public function generateRows(?int $chunkSize = null): \Generator
+    {
+        if ($chunkSize) {
+            $recordsGenerator = $this->rowsQueryInstance()->selectQuery()->generate($chunkSize);
+        } else {
+            [$sql, $params] = $this->rowsQueryInstanceToSql();
+
+            $recordsGenerator = $this->connection()->sqlGenerate($sql, $params);
+        }
+
+        foreach ($recordsGenerator as $record) {
+            yield $this->prepareRowInstance($record);
+        }
+    }
+
+    public function generateRowsInChunks(int $chunkSize): \Generator
+    {
+        $recordsGenerator = $this->rowsQueryInstance()->selectQuery()->generateInChunks($chunkSize);
+
+        foreach ($recordsGenerator as $records) {
+            yield $this->prepareRowsInstance($records);
+        }
+    }
+
+    public function find($primary)
+    {
+        return $this->whereMultiple($this->combinePrimaryKey($primary))->fetchRow();
+    }
+
+    public function findOrFail($primary)
+    {
+        if (!$row = $this->find($primary)) {
+            throw new SqlException('Row was not found.');
+        }
+
+        return $row;
+    }
+
+    public function first(array $data)
+    {
+        return $this->whereMultiple($data)->limit(1)->fetchRow();
+    }
+
+    public function firstOrFail(array $data)
+    {
+        if (!$row = $this->first($data)) {
+            throw new SqlException('Row was not found.');
+        }
+
+        return $row;
+    }
+
+    public function firstOrNew(array $data)
+    {
+        if (!$row = $this->first($data)) {
+            $row = $this->new($data);
+        }
+
+        return $row;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function firstOrCreate(array $data)
+    {
+        if (!$row = $this->first($data)) {
+            $row = $this->create($data);
+        }
+
+        return $row;
+    }
 
     public function fillable()
     {
@@ -66,7 +210,7 @@ trait RowsTrait
         if ($recordState) {
             end($this->rows);
 
-            $this->rowsState[key($this->rows)] = $recordState;
+            $this->rowsState[key($this->rows)] = $recordState + $this->defaultRowState();
         }
 
         return $this;
@@ -84,6 +228,8 @@ trait RowsTrait
 
         if ($recordState) {
             end($this->rows);
+
+            $recordState += $this->defaultRowState();
 
             $this->rowsState[key($this->rows)] = &$recordState;
         }
@@ -247,8 +393,13 @@ trait RowsTrait
         $this->setMultiple($values);
 
         foreach ($this->rows as $key => &$row) {
+            $data = $row;
+            if ($this->rowStateIsCasted($key)) {
+                $data = $this->uncastRecord($data);
+            }
+
             if ($this->rowStateIsNew($key)) {
-                $query = $this->newInsertQuery()->data($row);
+                $query = $this->newInsertQuery()->data($data);
 
                 $this->connection()->sqlExecute(...$query->toSql());
 
@@ -402,13 +553,6 @@ trait RowsTrait
         });
     }
 
-    /**
-     * @param Model $relationshipTable
-     * @param $relationshipKey
-     * @param null $tableKey
-     *
-     * @return Model
-     */
     public function hasMany(Model $relationshipTable, $relationshipKey, $tableKey = null)
     {
         $relationshipTable = $relationshipTable->cleanClone();
@@ -427,22 +571,11 @@ trait RowsTrait
             $relationshipTable->setWhereApplier(function (WhereClause $query) use ($relationshipKey, $values) {
                 $query->where($relationshipKey, $values);
             });
-
-            $filters = array_combine($relationshipKey, $this->getFirstMultiple($tableKey));
-
-            $relationshipTable->setCustomRecord($filters);
         }
 
         return $relationshipTable;
     }
 
-    /**
-     * @param Model $referenceTable
-     * @param $tableKey
-     * @param null $referenceTableKey
-     *
-     * @return Model
-     */
     public function belongsTo(Model $referenceTable, $tableKey, $referenceTableKey = null)
     {
         $referenceTable = $referenceTable->cleanClone();
@@ -457,15 +590,9 @@ trait RowsTrait
 
         $values = $this->getMultiple($tableKey);
 
-        //        return $referenceTable->where($referenceTableKey, $values)->fetchRow();
-
         $referenceTable->setWhereApplier(function (WhereClause $query) use ($referenceTableKey, $values) {
             $query->where($referenceTableKey, $values);
         });
-
-        $filters = array_combine($referenceTableKey, $this->getFirstMultiple($tableKey));
-
-        $referenceTable->setCustomRecord($filters);
 
         return $referenceTable;
     }
@@ -486,6 +613,39 @@ trait RowsTrait
                 $this->rowGetState($key)
             );
         }
+    }
+
+    private function rowsQueryInstance()
+    {
+        if ($this->hasSelect()) {
+            throw new SqlException('You cannot fetch as rows while you have custom SELECT columns.');
+        }
+
+        return $this->selectOnly('*');
+    }
+
+    private function rowsQueryInstanceToSql()
+    {
+        if ($this->getQuery()) {
+            return $this->rowsQueryInstance()->toSql();
+        }
+
+        return [$this->connection()->dialect()->selectAll($this->name()), []];
+    }
+
+    protected function prepareRowInstance(array $record)
+    {
+        return $this->cleanClone()->addPristineRecord($record);
+    }
+
+    protected function prepareRowsInstance(array $records)
+    {
+        return $this->cleanClone()->setPristineRecords($records);
+    }
+
+    protected function prepareBaseRecord(array $record)
+    {
+        return array_merge($this->defaultRecord, $record);
     }
 
     private function firstRowKey(): int
@@ -511,6 +671,8 @@ trait RowsTrait
 
     private function setInRow(int $key, string $column, $value)
     {
+        $this->castRowByKey($key);
+
         if ($this->rows[$key][$column] !== $value) {
             if ($this->rowStateIsNew($key)) {
                 $this->rows[$key][$column] = $value;
@@ -528,11 +690,135 @@ trait RowsTrait
 
     private function getFromRow(int $key, string $column)
     {
-        if (isset($this->rowsState[$key]) and array_key_exists($column, $this->rowsState[$key]['modified'])) {
-            return $this->rowsState[$key]['modified'][$column];
+        $this->castRowByKey($key);
+
+        $modified = $this->rowStateGetModified($key);
+
+        if (array_key_exists($column, $modified)) {
+            return $modified[$column];
         }
 
-        return $this->castValue($column, $this->rows[$key][$column] ?? null);
+        return $this->rows[$key][$column] ?? null;
+    }
+
+    private function castRowByKey($key)
+    {
+        foreach (array_keys($this->casts) as $columnName) {
+            $this->rows[$key][$columnName] = $this->castValue($columnName, $this->rows[$key][$columnName] ?? null);
+        }
+
+        $rowState = &$this->rowGetState($key);
+
+        $rowState['isCasted'] = true;
+
+        return $this;
+    }
+
+    private function uncastRecord(array $record)
+    {
+        foreach (array_keys($this->casts) as $columnName) {
+            $record[$columnName] = $this->castValue($columnName, $record[$columnName] ?? null);
+        }
+
+        return $record;
+    }
+
+    protected function castValue(string $columnName, $value)
+    {
+        if (is_null($value)) {
+            return $value;
+        }
+
+        $castType = $this->casts[$columnName] ?? null;
+
+        if ($castType instanceof \Closure) {
+            return call_user_func_array($castType, [$value]);
+        }
+
+        switch ($castType) {
+            case 'int':
+            case 'integer':
+                return (int) $value;
+            case 'real':
+            case 'float':
+            case 'double':
+                switch ((string) $value) {
+                    case 'Infinity':
+                        return INF;
+                    case '-Infinity':
+                        return -INF;
+                    case 'NaN':
+                        return NAN;
+                    default:
+                        return (float) $value;
+                }
+            case 'string':
+                return (string) $value;
+            case 'bool':
+            case 'boolean':
+                return (bool) $value;
+            case 'object':
+                return json_decode($value, false);
+            case 'array':
+            case 'json':
+                return json_decode($value, true);
+            case 'date':
+                return $this->connection()->dialect()->dateString($value);
+            case 'time':
+                return $this->connection()->dialect()->timeString($value);
+            case 'datetime':
+                return $this->connection()->dialect()->dateTimeString(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+            case 'timestamp':
+                return ctype_digit((string) $value) ? $value : strtotime(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+            default:
+                return $value;
+        }
+    }
+
+    protected function uncastValue(string $columnName, $value)
+    {
+        if (is_null($value)) {
+            return $value;
+        }
+
+        $uncastType = $this->uncasts[$columnName] ?? $this->casts[$columnName] ?? null;
+
+        if (is_callable($uncastType)) {
+            return call_user_func_array($uncastType, $value);
+        }
+
+        switch ($uncastType) {
+            case 'int':
+            case 'integer':
+                return (int) $value;
+            case 'real':
+            case 'float':
+            case 'double':
+                if ($value === INF) {
+                    return 'Infinity';
+                }
+                if ($value === -INF) {
+                    return '-Infinity';
+                }
+                if ($value === NAN) {
+                    return 'NaN';
+                }
+                return (float) $value;
+            case 'string':
+                return (string) $value;
+            case 'bool':
+            case 'boolean':
+                return (bool) $value;
+            case 'object':
+                return json_encode($value);
+            case 'array':
+            case 'json':
+                return json_encode($value);
+            case 'timestamp':
+                return ctype_digit((string) $value) ? $value : strtotime(strtoupper($value) === 'CURRENT_TIMESTAMP' ? 'now' : $value);
+            default:
+                return $value;
+        }
     }
 
     private function rowFirstUnique(array $row)
@@ -584,18 +870,20 @@ trait RowsTrait
     private function &rowGetState(int $key)
     {
         if (!isset($this->rowsState[$key])) {
-            $this->rowsState[$key] = [
-                'isNew'    => false,
-                'modified' => [],
-            ];
+            $this->rowsState[$key] = $this->defaultRowState();
         }
 
         return $this->rowsState[$key];
     }
 
-    private function rowStateIsNew(int $key)
+    private function rowStateIsNew(int $key): bool
     {
         return $this->rowsState[$key]['isNew'] ?? false;
+    }
+
+    private function rowStateIsCasted(int $key): bool
+    {
+        return $this->rowsState[$key]['isCasted'] ?? false;
     }
 
     private function rowStateGetModified(int $key)
@@ -603,15 +891,13 @@ trait RowsTrait
         return $this->rowsState[$key]['modified'] ?? [];
     }
 
-    private function getFirstMultiple(array $columns)
+    private function defaultRowState()
     {
-        $items = [];
-
-        foreach ($columns as $column) {
-            $items[$column] = $this->getFirst($column);
-        }
-
-        return $items;
+        return [
+            'isNew'    => false,
+            'modified' => [],
+            'isCasted'   => false,
+        ];
     }
 
     /**

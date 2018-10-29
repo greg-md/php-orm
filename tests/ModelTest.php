@@ -34,7 +34,7 @@ use PHPUnit\Framework\TestCase;
 class MyModel extends Model {
     use TableSchemaTrait;
 
-    protected $unique = [
+    protected $uniqueKeys = [
         'SystemName',
     ];
 
@@ -203,8 +203,6 @@ class ModelTest extends TestCase
 
     public function testCanGetPrimary()
     {
-        $this->mockDescribe();
-
         $this->assertEquals(['Id'], $this->model->primaryKey());
     }
 
@@ -215,32 +213,16 @@ class ModelTest extends TestCase
 
     public function testCanGetFirstUnique()
     {
-        $this->mockDescribe();
-
         $this->assertEquals(['Id'], $this->model->firstUniqueKey());
     }
 
     public function testCanGetAutoIncrement()
     {
-        $this->mockDescribe();
-
         $this->assertEquals('Id', $this->model->autoIncrement());
-    }
-
-    public function testCanGetCasts()
-    {
-        $this->assertEquals(['Active' => 'bool'], $this->model->casts());
-    }
-
-    public function testCanGetCast()
-    {
-        $this->assertEquals('bool', $this->model->cast('Active'));
     }
 
     public function testCanGetFirstByCallable()
     {
-        $this->mockDescribe();
-
         $connectionMock = $this->connectionMock;
 
         /** @var Model $rows */
@@ -271,8 +253,6 @@ class ModelTest extends TestCase
 
     public function testCanSearchWhere()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $rows->addPristineRecord(['Id' => 2]);
@@ -360,8 +340,6 @@ class ModelTest extends TestCase
 
     public function testCanGenerateRowsInChunks()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->expects($this->exactly(3))->method('sqlFetchAll')->will($this->onConsecutiveCalls(
             [
                 ['Id' => 1],
@@ -542,15 +520,11 @@ class ModelTest extends TestCase
 
     public function testCanGetColumns()
     {
-        $this->mockDescribe();
-
         $this->assertCount(1, $this->model->columns());
     }
 
     public function testCanGetDetermineIfColumnExists()
     {
-        $this->mockDescribe();
-
         $this->assertTrue($this->model->hasColumn('Id'));
 
         $this->assertFalse($this->model->hasColumn('Undefined'));
@@ -558,15 +532,11 @@ class ModelTest extends TestCase
 
     public function testCanGetColumn()
     {
-        $this->mockDescribe();
-
         $this->assertNotEmpty($this->model->column('Id'));
     }
 
     public function testCanThrowExceptionIfColumnNotFound()
     {
-        $this->mockDescribe();
-
         $this->expectException(\Exception::class);
 
         $this->model->column('Undefined');
@@ -577,15 +547,6 @@ class ModelTest extends TestCase
         $this->assertEquals([], $this->model->guarded());
     }
 
-    public function testCanSetDefaults()
-    {
-        $this->assertCount(0, $this->model->getCustomRecord());
-
-        $this->model->setCustomRecord(['Active' => 1]);
-
-        $this->assertCount(1, $this->model->getCustomRecord());
-    }
-
     public function testCanInsert()
     {
         $this->connectionMock->method('sqlExecute')->willReturn(1);
@@ -593,27 +554,11 @@ class ModelTest extends TestCase
         $this->assertEquals(1, $this->model->insert(['Column' => 'foo']));
     }
 
-    public function testCanInsertSelectWithDefaults()
-    {
-        $this->connectionMock->method('sqlExecute')->willReturn(1);
-
-        $this->model->setCustomRecord(['Foo' => 'bar']);
-
-        $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->connectionMock->select()->columns('Column')));
-    }
-
     public function testCanInsertSelect()
     {
         $this->connectionMock->method('sqlExecute')->willReturn(1);
 
         $this->assertEquals(1, $this->model->insertSelect(['Column'], $this->connectionMock->select()->columns('Column')));
-    }
-
-    public function testCanInsertSelectRaw()
-    {
-        $this->connectionMock->method('sqlExecute')->willReturn(1);
-
-        $this->assertEquals(1, $this->model->insertSelectRaw(['Column'], $this->connectionMock->select()->columns('Column')));
     }
 
     public function testCanInsertForEach()
@@ -625,8 +570,6 @@ class ModelTest extends TestCase
 
     public function testCanFetchPagination()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
@@ -645,8 +588,6 @@ class ModelTest extends TestCase
 
     public function testCanFetchPaginationTotalQuery()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             yield ['Id' => 1];
             yield ['Id' => 2];
@@ -667,8 +608,6 @@ class ModelTest extends TestCase
 
     public function testCanIterateRows()
     {
-        $this->mockDescribe();
-
         $this->model->setPristineRecords([
             ['Id' => 1],
             ['Id' => 2],
@@ -683,8 +622,6 @@ class ModelTest extends TestCase
 
     public function testCanAddPristineRecordReference()
     {
-        $this->mockDescribe();
-
         $record = ['Id' => 1];
 
         $recordState = [
@@ -718,7 +655,7 @@ class ModelTest extends TestCase
 
         /** @var Model $model */
         $model = new class($connectionMock) extends Model {
-            protected $unique = ['Id'];
+            protected $uniqueKeys = ['Id'];
 
             public function name(): string
             {
@@ -755,8 +692,6 @@ class ModelTest extends TestCase
 
     public function testCanCreateNewRowUsingCreateMethod()
     {
-        $this->mockDescribe();
-
         $row = $this->model->new(['Id' => 1]);
 
         $this->assertEquals(1, $row['Id']);
@@ -764,8 +699,6 @@ class ModelTest extends TestCase
 
     public function testCanFetchRow()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $this->assertEquals($record, $this->model->fetchRow()->record());
@@ -778,8 +711,6 @@ class ModelTest extends TestCase
 
     public function testCanFetchRowOrFail()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn(['Id' => 1]);
 
         $this->assertEquals(['Id' => 1], $this->model->fetchRowOrFail()->record());
@@ -794,8 +725,6 @@ class ModelTest extends TestCase
 
     public function testCanFetchNoRows()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             if (false) {
                 yield;
@@ -807,8 +736,6 @@ class ModelTest extends TestCase
 
     public function testCanFetchRows()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetchAll')->willReturn([
             ['Id' => 1],
             ['Id' => 2],
@@ -819,8 +746,6 @@ class ModelTest extends TestCase
 
     public function testCanGenerateRows()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlGenerate')->willReturn((function () {
             yield ['Id' => 1];
 
@@ -842,8 +767,6 @@ class ModelTest extends TestCase
 
     public function testCanFind()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->find(1);
@@ -853,8 +776,6 @@ class ModelTest extends TestCase
 
     public function testCanFindOrFail()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->findOrFail(1);
@@ -864,8 +785,6 @@ class ModelTest extends TestCase
 
     public function testCanThrowExceptionIfFindFail()
     {
-        $this->mockDescribe();
-
         $this->expectException(\Exception::class);
 
         $this->model->findOrFail(1);
@@ -873,8 +792,6 @@ class ModelTest extends TestCase
 
     public function testCanGetFirst()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->first($record);
@@ -884,8 +801,6 @@ class ModelTest extends TestCase
 
     public function testCanGetFirstOrFail()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrFail($record);
@@ -895,8 +810,6 @@ class ModelTest extends TestCase
 
     public function testCanThrowExceptionIfGetFirstFail()
     {
-        $this->mockDescribe();
-
         $this->expectException(\Exception::class);
 
         $this->model->firstOrFail(['Id' => 1]);
@@ -904,8 +817,6 @@ class ModelTest extends TestCase
 
     public function testCanGetFirstFromFirstOrNew()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrNew($record);
@@ -915,8 +826,6 @@ class ModelTest extends TestCase
 
     public function testCanGetNewFromFirstOrNew()
     {
-        $this->mockDescribe();
-
         $row = $this->model->firstOrNew(['Id' => 1]);
 
         $this->assertTrue($row->isNew());
@@ -924,8 +833,6 @@ class ModelTest extends TestCase
 
     public function testCanGetFirstFromFirstOrCreate()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->method('sqlFetch')->willReturn($record = ['Id' => 1]);
 
         $row = $this->model->firstOrCreate($record);
@@ -935,8 +842,6 @@ class ModelTest extends TestCase
 
     public function testCanGetNewFromFirstOrCreate()
     {
-        $this->mockDescribe();
-
         $row = $this->model->firstOrCreate(['Id' => 1]);
 
         $this->assertFalse($row->isNew());
@@ -944,8 +849,6 @@ class ModelTest extends TestCase
 
     public function testCanErase()
     {
-        $this->mockDescribe();
-
         $this->connectionMock->expects($this->once())->method('sqlExecute')->with('DELETE FROM `Table` WHERE `Id` = ?', [1]);
 
         $this->model->erase(1);
@@ -960,8 +863,6 @@ class ModelTest extends TestCase
 
     public function testCanThrowExceptionIfCanNotCombinePrimaryKeys()
     {
-        $this->mockDescribe();
-
         $this->expectException(\Exception::class);
 
         $this->model->find([1, 2]);
@@ -1202,8 +1103,6 @@ class ModelTest extends TestCase
 
     public function testCanDetermineIfModelRowsHasMultipleColumns()
     {
-        $this->mockDescribe();
-
         $this->assertFalse($this->model->hasMultiple(['Id']));
 
         $rows = $this->model->new(['Id' => 1]);
@@ -1217,8 +1116,6 @@ class ModelTest extends TestCase
 
     public function testCanSetColumn()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $rows->addPristineRecord(['Id' => 2]);
@@ -1232,8 +1129,6 @@ class ModelTest extends TestCase
 
     public function testCanSetMultipleColumns()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $rows->addPristineRecord(['Id' => 2]);
@@ -1249,8 +1144,6 @@ class ModelTest extends TestCase
 
     public function testCanGetColumnsValues()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $rows->addPristineRecord(['Id' => 2]);
@@ -1260,8 +1153,6 @@ class ModelTest extends TestCase
 
     public function testCanGetModifiedValue()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->create(['Id' => 1]);
 
         $this->assertEquals(1, $rows['Id']);
@@ -1273,8 +1164,6 @@ class ModelTest extends TestCase
 
     public function testCanGetMultipleColumnsValues()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $rows->addPristineRecord(['Id' => 2]);
@@ -1284,8 +1173,6 @@ class ModelTest extends TestCase
 
     public function testCanSaveValues()
     {
-        $this->mockDescribe();
-
         $this->connectionMock
             ->expects($this->once())
             ->method('lastInsertId')
@@ -1309,8 +1196,6 @@ class ModelTest extends TestCase
 
     public function testCanDestroyRows()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->create(['Id' => 1]);
 
         $rows->addPristineRecord(['Id' => 2], ['isNew' => true, 'modified' => false]);
@@ -1325,8 +1210,6 @@ class ModelTest extends TestCase
 
     public function testCanGetRow()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $this->assertNotNull($rows->row(0));
@@ -1336,8 +1219,6 @@ class ModelTest extends TestCase
 
     public function testCanGetToArray()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $this->assertEquals([['Id' => 1]], $rows->records());
@@ -1345,8 +1226,6 @@ class ModelTest extends TestCase
 
     public function testCanChangeRowStatus()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $rows->markAsOld();
@@ -1360,8 +1239,6 @@ class ModelTest extends TestCase
 
     public function testCanGetMany()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $manyRows = $rows->hasMany($this->model, 'Id');
@@ -1373,8 +1250,6 @@ class ModelTest extends TestCase
 
     public function testCanBelongsTo()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->new(['Id' => 1]);
 
         $belongsTo = $rows->belongsTo($this->model, 'Id');
@@ -1386,8 +1261,6 @@ class ModelTest extends TestCase
 
     public function testCanSetUnmodified()
     {
-        $this->mockDescribe();
-
         $rows = $this->model->create(['Id' => 1]);
 
         $this->assertEmpty($rows->originalModified());
@@ -1403,8 +1276,6 @@ class ModelTest extends TestCase
 
     public function testCanThrowExceptionIfColumnIsNotFillable()
     {
-        $this->mockDescribe();
-
         $connectionMock = $this->connectionMock;
 
         /** @var Model $row */

@@ -162,13 +162,7 @@ abstract class PdoConnectionAbstract extends ConnectionAbstract
         $stmt = $this->prepare($sql, $params);
 
         if (ctype_digit((string) $column)) {
-            $values = [];
-
-            while (($value = $stmt->fetchColumn($column)) !== false) {
-                $values[] = $value;
-            }
-
-            return $values;
+            return $stmt->fetchAll(\PDO::FETCH_COLUMN, $column);
         }
 
         $values = [];
