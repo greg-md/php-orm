@@ -31,7 +31,6 @@ class EntityModel extends ModelAbstract
 
     public function save($entity)
     {
-
     }
 
     protected function prepareRowInstance(array $record)
@@ -40,7 +39,7 @@ class EntityModel extends ModelAbstract
 
         $entity = $reflection->newInstanceWithoutConstructor();
 
-        (function() use ($record, $reflection) {
+        (function () use ($record, $reflection) {
             foreach ($record as $key => $value) {
                 if ($reflection->hasProperty($key)) {
                     $this->{$key} = $value;

@@ -4,7 +4,7 @@ namespace Greg\Orm\Model;
 
 trait TableSchemaTrait
 {
-    static private $schema;
+    private static $schema;
 
     protected function bootTableSchemaTrait()
     {

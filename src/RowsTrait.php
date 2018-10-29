@@ -803,6 +803,7 @@ trait RowsTrait
                 if ($value === NAN) {
                     return 'NaN';
                 }
+
                 return (float) $value;
             case 'string':
                 return (string) $value;
@@ -894,8 +895,8 @@ trait RowsTrait
     private function defaultRowState()
     {
         return [
-            'isNew'    => false,
-            'modified' => [],
+            'isNew'      => false,
+            'modified'   => [],
             'isCasted'   => false,
         ];
     }
@@ -907,12 +908,14 @@ trait RowsTrait
 
     /**
      * @param int $number
+     *
      * @return $this
      */
     abstract public function limit(int $number);
 
     /**
      * @param int $number
+     *
      * @return $this
      */
     abstract public function offset(int $number);

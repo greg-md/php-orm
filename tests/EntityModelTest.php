@@ -15,7 +15,8 @@ class TableEntity
     }
 }
 
-class TableEntityModel extends EntityModel {
+class TableEntityModel extends EntityModel
+{
     protected $name = 'TableEntity';
 
     protected $entityClass = TableEntity::class;

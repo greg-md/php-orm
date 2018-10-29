@@ -31,7 +31,8 @@ use Greg\Orm\Table\UpdateTableQueryTraitTest;
 use Greg\Orm\Table\WhereTableClauseTraitTest;
 use PHPUnit\Framework\TestCase;
 
-class MyModel extends Model {
+class MyModel extends Model
+{
     use TableSchemaTrait;
 
     protected $uniqueKeys = [
