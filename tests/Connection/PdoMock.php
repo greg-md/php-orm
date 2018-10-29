@@ -2,7 +2,7 @@
 
 namespace Greg\Orm\Connection;
 
-use PHPUnit_Framework_MockObject_MockBuilder;
+use PHPUnit\Framework\MockObject\MockBuilder;
 
 trait PdoMock
 {
@@ -84,10 +84,5 @@ trait PdoMock
         return $this;
     }
 
-    /**
-     * @param $className
-     *
-     * @return PHPUnit_Framework_MockObject_MockBuilder
-     */
-    abstract public function getMockBuilder($className);
+    abstract public function getMockBuilder($className): MockBuilder;
 }

@@ -556,7 +556,7 @@ trait WhereTableClauseTraitTest
 
         $query->whereMonth('Foo', '01');
 
-        $this->assertEquals(['WHERE MONTH(`Foo`) = ?', ['01']], $query->toSql());
+        $this->assertEquals(['WHERE MONTH(`Foo`) = ?', [1]], $query->toSql());
 
         return $query;
     }
@@ -572,7 +572,7 @@ trait WhereTableClauseTraitTest
     {
         $query->orWhereMonth('Bar', '01');
 
-        $this->assertEquals(['WHERE MONTH(`Foo`) = ? OR MONTH(`Bar`) = ?', ['01', '01']], $query->toSql());
+        $this->assertEquals(['WHERE MONTH(`Foo`) = ? OR MONTH(`Bar`) = ?', [1, 1]], $query->toSql());
     }
 
     public function testCanSetDay()
@@ -581,7 +581,7 @@ trait WhereTableClauseTraitTest
 
         $query->whereDay('Foo', '01');
 
-        $this->assertEquals(['WHERE DAY(`Foo`) = ?', ['01']], $query->toSql());
+        $this->assertEquals(['WHERE DAY(`Foo`) = ?', [1]], $query->toSql());
 
         return $query;
     }
@@ -597,7 +597,7 @@ trait WhereTableClauseTraitTest
     {
         $query->orWhereDay('Bar', '01');
 
-        $this->assertEquals(['WHERE DAY(`Foo`) = ? OR DAY(`Bar`) = ?', ['01', '01']], $query->toSql());
+        $this->assertEquals(['WHERE DAY(`Foo`) = ? OR DAY(`Bar`) = ?', [1, 1]], $query->toSql());
     }
 
     public function testCanSetConditionsCallable()

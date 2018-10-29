@@ -552,7 +552,7 @@ class ConditionsTest extends TestCase
 
         $query->month('Foo', '01');
 
-        $this->assertEquals(['MONTH(`Foo`) = ?', ['01']], $query->toSql());
+        $this->assertEquals(['MONTH(`Foo`) = ?', [1]], $query->toSql());
 
         return $query;
     }
@@ -568,7 +568,7 @@ class ConditionsTest extends TestCase
     {
         $query->orMonth('Bar', '01');
 
-        $this->assertEquals(['MONTH(`Foo`) = ? OR MONTH(`Bar`) = ?', ['01', '01']], $query->toSql());
+        $this->assertEquals(['MONTH(`Foo`) = ? OR MONTH(`Bar`) = ?', [1, 1]], $query->toSql());
     }
 
     public function testCanSetDay()
@@ -577,7 +577,7 @@ class ConditionsTest extends TestCase
 
         $query->day('Foo', '01');
 
-        $this->assertEquals(['DAY(`Foo`) = ?', ['01']], $query->toSql());
+        $this->assertEquals(['DAY(`Foo`) = ?', [1]], $query->toSql());
 
         return $query;
     }
@@ -593,7 +593,7 @@ class ConditionsTest extends TestCase
     {
         $query->orDay('Bar', '01');
 
-        $this->assertEquals(['DAY(`Foo`) = ? OR DAY(`Bar`) = ?', ['01', '01']], $query->toSql());
+        $this->assertEquals(['DAY(`Foo`) = ? OR DAY(`Bar`) = ?', [1, 1]], $query->toSql());
     }
 
     public function testCanSetConditionsCallable()

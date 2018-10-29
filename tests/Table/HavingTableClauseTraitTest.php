@@ -555,7 +555,7 @@ trait HavingTableClauseTraitTest
 
         $query->havingMonth('Foo', '01');
 
-        $this->assertEquals(['HAVING MONTH(`Foo`) = ?', ['01']], $query->toSql());
+        $this->assertEquals(['HAVING MONTH(`Foo`) = ?', [1]], $query->toSql());
 
         return $query;
     }
@@ -571,7 +571,7 @@ trait HavingTableClauseTraitTest
     {
         $query->orHavingMonth('Bar', '01');
 
-        $this->assertEquals(['HAVING MONTH(`Foo`) = ? OR MONTH(`Bar`) = ?', ['01', '01']], $query->toSql());
+        $this->assertEquals(['HAVING MONTH(`Foo`) = ? OR MONTH(`Bar`) = ?', [1, 1]], $query->toSql());
     }
 
     public function testCanSetHavingDay()
@@ -580,7 +580,7 @@ trait HavingTableClauseTraitTest
 
         $query->havingDay('Foo', '01');
 
-        $this->assertEquals(['HAVING DAY(`Foo`) = ?', ['01']], $query->toSql());
+        $this->assertEquals(['HAVING DAY(`Foo`) = ?', [1]], $query->toSql());
 
         return $query;
     }
@@ -596,7 +596,7 @@ trait HavingTableClauseTraitTest
     {
         $query->orHavingDay('Bar', '01');
 
-        $this->assertEquals(['HAVING DAY(`Foo`) = ? OR DAY(`Bar`) = ?', ['01', '01']], $query->toSql());
+        $this->assertEquals(['HAVING DAY(`Foo`) = ? OR DAY(`Bar`) = ?', [1, 1]], $query->toSql());
     }
 
     public function testCanSetHavingConditionsCallable()

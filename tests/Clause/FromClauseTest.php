@@ -90,7 +90,7 @@ class FromClauseTest extends TestCase
         $this->newClause()->from(new SelectQuery());
     }
 
-    protected function newClause(): FromClause
+    private function newClause(): FromClause
     {
         return new FromClause();
     }
