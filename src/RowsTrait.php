@@ -427,8 +427,9 @@ trait RowsTrait
     }
 
     /**
-     * @return $this
      * @throws SqlException
+     *
+     * @return $this
      */
     public function destroy()
     {

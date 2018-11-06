@@ -49,7 +49,7 @@ class EntityModel extends ModelAbstract
             $record = get_object_vars($this);
         })->call($entity);
 
-        switch($this->getEntityState($entity)) {
+        switch ($this->getEntityState($entity)) {
             case self::STATE_NEW:
                 $this->insert($record);
 
