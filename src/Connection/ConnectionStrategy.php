@@ -80,6 +80,7 @@ interface ConnectionStrategy extends SqlConnection
 
     /**
      * @param string $tableName
+     *
      * @return array
      */
     public function describe(string $tableName): array;
