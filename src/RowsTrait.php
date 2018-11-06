@@ -394,14 +394,13 @@ trait RowsTrait
 
         foreach ($this->rows as $key => &$row) {
             $data = $row;
+
             if ($this->rowStateIsCasted($key)) {
                 $data = $this->uncastRecord($data);
             }
 
             if ($this->rowStateIsNew($key)) {
-                $query = $this->newInsertQuery()->data($data);
-
-                $this->connection()->sqlExecute(...$query->toSql());
+                $this->insert($data);
 
                 if (!$this->getAutoIncrement() and $column = $this->autoIncrement()) {
                     $row[$column] = (int) $this->connection()->lastInsertId();
@@ -429,6 +428,7 @@ trait RowsTrait
 
     /**
      * @return $this
+     * @throws SqlException
      */
     public function destroy()
     {

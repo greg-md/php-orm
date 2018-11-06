@@ -4,7 +4,13 @@ namespace Greg\Orm;
 
 class EntityModel extends ModelAbstract
 {
+    const STATE_NEW = 1;
+
+    const STATE_MANAGED = 2;
+
     protected $entityClass;
+
+    private $entityStates = [];
 
     public function entityClass()
     {
@@ -31,6 +37,62 @@ class EntityModel extends ModelAbstract
 
     public function save($entity)
     {
+        $entityClass = $this->entityClass();
+
+        if (!$entity instanceof $entityClass) {
+            throw new \Exception('Entity should be an instance of `' . $entityClass . '`.');
+        }
+
+        $record = [];
+
+        (function () use (&$record) {
+            $record = get_object_vars($this);
+        })->call($entity);
+
+        switch($this->getEntityState($entity)) {
+            case self::STATE_NEW:
+                $this->insert($record);
+
+                if ($autoIncrement = $this->autoIncrement()) {
+                    $id = (int) $this->connection()->lastInsertId();
+
+                    (function () use ($autoIncrement, $id) {
+                        $this->{$autoIncrement} = $id;
+                    })->call($entity);
+                }
+
+                $this->setEntityState($entity, self::STATE_MANAGED);
+
+                break;
+            case self::STATE_MANAGED:
+                $keys = [];
+
+                foreach ($this->firstUniqueKey() as $key) {
+                    $keys[$key] = $record[$key];
+                }
+
+                $query = $this->newUpdateQuery()
+                    ->setMultiple(array_diff_key($record, $keys))
+                    ->whereMultiple($keys);
+
+                $this->connection()->sqlExecute(...$query->toSql());
+
+                break;
+        }
+
+        return $this;
+    }
+
+    private function setEntityState($entity, $state)
+    {
+        $this->entityStates[spl_object_hash($entity)] = $state;
+
+        return $this;
+    }
+
+    private function getEntityState($entity)
+    {
+        return $this->entityStates[spl_object_hash($entity)] ?? self::STATE_NEW;
     }
 
     protected function prepareRowInstance(array $record)

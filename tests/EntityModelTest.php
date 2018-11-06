@@ -53,7 +53,7 @@ class EntityModelTest extends TestCase
 
         $model = $this->newEntityModel($connection);
 
-        $item = $model->create(['Id' => 1]);
+        $item = $model->new(['Id' => 1]);
 
         $this->assertInstanceOf(TableEntity::class, $item);
 

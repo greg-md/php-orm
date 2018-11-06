@@ -27,7 +27,6 @@ class Model extends ModelAbstract implements \IteratorAggregate, \Countable, \Ar
             $this->autoIncrement,
             $this->uniqueKeys,
             $this->casts,
-            $this->customRecord,
 
             $this->fillable,
             $this->guarded,
@@ -46,7 +45,6 @@ class Model extends ModelAbstract implements \IteratorAggregate, \Countable, \Ar
             $this->autoIncrement,
             $this->uniqueKeys,
             $this->casts,
-            $this->customRecord,
 
             $this->fillable,
             $this->guarded,

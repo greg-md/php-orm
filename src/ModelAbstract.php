@@ -81,8 +81,6 @@ abstract class ModelAbstract implements \Serializable
             $this->primaryKey,
             $this->autoIncrement,
             $this->uniqueKeys,
-            $this->casts,
-            $this->customRecord,
         ]);
     }
 
@@ -93,8 +91,6 @@ abstract class ModelAbstract implements \Serializable
             $this->primaryKey,
             $this->autoIncrement,
             $this->uniqueKeys,
-            $this->casts,
-            $this->customRecord,
         ] = unserialize($serialized);
     }
 
