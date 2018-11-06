@@ -4,7 +4,7 @@ namespace Greg\Orm\Connection;
 
 use PHPUnit\Framework\MockObject\MockBuilder;
 
-trait PdoMock
+trait PdoMockTrait
 {
     /**
      * @var Pdo|\PHPUnit_Framework_MockObject_MockObject

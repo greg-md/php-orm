@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class SqliteConnectionTest extends TestCase
 {
-    use PdoMock;
+    use PdoMockTrait;
 
     /**
      * @var SqliteConnection

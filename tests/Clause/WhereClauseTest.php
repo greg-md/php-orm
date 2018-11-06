@@ -777,6 +777,15 @@ class WhereClauseTest extends TestCase
         $this->assertNull($query->getExists());
     }
 
+    public function testCanAddLogic()
+    {
+        $query = $this->newQuery();
+
+        $query->addWhere('and', '`Foo` = ?', ['foo']);
+
+        $this->assertEquals('WHERE `Foo` = ?', (string) $query);
+    }
+
     public function testCanClone()
     {
         $query = $this->newQuery()->where('Foo', 'foo');

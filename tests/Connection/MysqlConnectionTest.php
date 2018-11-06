@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class MysqlConnectionTest extends TestCase
 {
-    use PdoMock;
+    use PdoMockTrait;
 
     /**
      * @var MysqlConnection
