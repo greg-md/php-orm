@@ -48,9 +48,9 @@ interface ConnectionStrategy extends SqlConnection
     /**
      * @param string|null $sequenceId
      *
-     * @return string
+     * @return mixed
      */
-    public function lastInsertId(string $sequenceId = null): string;
+    public function lastInsertId(string $sequenceId = null);
 
     /**
      * @param string $value

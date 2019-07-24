@@ -25,10 +25,8 @@ class MysqlConnectionTest extends TestCase
      */
     private $connection;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        parent::setUp();
-
         $this->initPdoMock();
 
         $this->connection = new MysqlConnection($this->pdoMock);

@@ -74,9 +74,9 @@ abstract class PdoConnectionAbstract extends ConnectionAbstract
     /**
      * @param string|null $sequenceId
      *
-     * @return string
+     * @return mixed
      */
-    public function lastInsertId(string $sequenceId = null): string
+    public function lastInsertId(string $sequenceId = null)
     {
         return $this->pdo()->lastInsertId(...func_get_args());
     }

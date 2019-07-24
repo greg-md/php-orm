@@ -29,6 +29,7 @@ use Greg\Orm\Table\OrderByTableClauseTraitTest;
 use Greg\Orm\Table\SelectTableQueryTraitTest;
 use Greg\Orm\Table\UpdateTableQueryTraitTest;
 use Greg\Orm\Table\WhereTableClauseTraitTest;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class MyModel extends Model
@@ -79,11 +80,11 @@ class ModelTest extends TestCase
     protected $model;
 
     /**
-     * @var ConnectionStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConnectionStrategy|MockObject
      */
     protected $connectionMock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $connectionMock = $this->connectionMock = $this->createMock(ConnectionStrategy::class);
 
@@ -1301,7 +1302,7 @@ class ModelTest extends TestCase
         return $this->model;
     }
 
-    protected function connectionMock(): \PHPUnit_Framework_MockObject_MockObject
+    protected function connectionMock(): MockObject
     {
         return $this->connectionMock;
     }

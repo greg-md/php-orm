@@ -3,6 +3,7 @@
 namespace Greg\Orm;
 
 use Greg\Orm\Connection\ConnectionStrategy;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class TableEntity
@@ -66,7 +67,7 @@ class EntityModelTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ConnectionStrategy
+     * @return MockObject|ConnectionStrategy
      */
     private function mockConnection()
     {

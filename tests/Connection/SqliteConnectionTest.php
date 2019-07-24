@@ -25,10 +25,8 @@ class SqliteConnectionTest extends TestCase
      */
     private $connection;
 
-    public function setUp()
+    protected function setUp(): void
     {
-        parent::setUp();
-
         $this->initPdoMock();
 
         $this->connection = new SqliteConnection($this->pdoMock);

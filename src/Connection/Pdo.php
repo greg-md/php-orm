@@ -190,7 +190,7 @@ class Pdo
         }
     }
 
-    public function lastInsertId(string $sequenceId = null): string
+    public function lastInsertId(string $sequenceId = null)
     {
         return $this->connection()->lastInsertId(...func_get_args());
     }

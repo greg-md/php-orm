@@ -7,6 +7,7 @@ use Greg\Orm\Conditions;
 use Greg\Orm\Connection\ConnectionStrategy;
 use Greg\Orm\Model;
 use Greg\Orm\SqlException;
+use PHPUnit\Framework\MockObject\MockObject;
 
 trait WhereTableClauseTraitTest
 {
@@ -838,7 +839,7 @@ trait WhereTableClauseTraitTest
     abstract protected function model(): Model;
 
     /**
-     * @return ConnectionStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @return ConnectionStrategy|MockObject
      */
-    abstract protected function connectionMock(): \PHPUnit_Framework_MockObject_MockObject;
+    abstract protected function connectionMock(): MockObject;
 }

@@ -3,16 +3,17 @@
 namespace Greg\Orm\Connection;
 
 use PHPUnit\Framework\MockObject\MockBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 
 trait PdoMockTrait
 {
     /**
-     * @var Pdo|\PHPUnit_Framework_MockObject_MockObject
+     * @var Pdo|MockObject
      */
     protected $pdoMock;
 
     /**
-     * @var \PDOStatement|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PDOStatement|MockObject
      */
     protected $pdoStatementMock;
 

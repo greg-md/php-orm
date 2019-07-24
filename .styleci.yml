@@ -6,3 +6,4 @@ enabled:
 disabled:
   - concat_without_spaces
   - simplified_null_return
+  - align_double_arrow

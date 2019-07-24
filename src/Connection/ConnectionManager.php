@@ -172,9 +172,10 @@ class ConnectionManager implements ConnectionStrategy
     /**
      * @param string|null $sequenceId
      *
-     * @return string
+     * @return mixed
+     * @throws \Exception
      */
-    public function lastInsertId(string $sequenceId = null): string
+    public function lastInsertId(string $sequenceId = null)
     {
         if ($sequenceId !== null) {
             return $this->connection()->lastInsertId($sequenceId);
