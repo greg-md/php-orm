@@ -172,8 +172,9 @@ class ConnectionManager implements ConnectionStrategy
     /**
      * @param string|null $sequenceId
      *
-     * @return mixed
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function lastInsertId(string $sequenceId = null)
     {
